@@ -36,8 +36,14 @@ graphify-out/transcripts/
 Thumbs.db
 
 # Secrets (never commit these)
+# .env.template is the ONLY .env file that should be committed.
+.env
 .env.local
 .env.production
+.env.staging
+.env.development
+.env.test
+.env.secrets
 .env.claude
 *.pem
 *.key

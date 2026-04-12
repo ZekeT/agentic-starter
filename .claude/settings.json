@@ -7,6 +7,19 @@
           {
             "type": "command",
             "command": "python3 .claude/hooks/pre_tool_dangerous.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/pre_tool_env_guard.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob|LS|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/pre_tool_env_guard.py"
           }
         ]
       }
