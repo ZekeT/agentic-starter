@@ -1,0 +1,309 @@
+#!/usr/bin/env python3
+"""
+scripts/configure.py — apply model config to agent definitions and CLAUDE.md.
+
+Usage:
+    python scripts/configure.py                    # apply active config
+    python scripts/configure.py --profile ollama-qwen  # switch to a profile
+    python scripts/configure.py --show             # print current config
+    python scripts/configure.py --list             # list available profiles
+
+What this does:
+    1. Reads config/models.json (active section or named profile).
+    2. Patches .claude/agents/*.md frontmatter with resolved model strings.
+    3. Injects or removes the advisor tool block in each agent file.
+    4. Writes .env.claude with ANTHROPIC_API_URL for local model providers.
+    5. Updates the "Active Model Config" section in CLAUDE.md.
+
+Why a script instead of manual edits:
+    Agent files reference model tiers (planning/implement/fast), not hardcoded
+    model strings. This keeps agent definitions stable across config changes —
+    you only edit models.json, not every agent file.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
+MODELS_FILE = ROOT / "config" / "models.json"
+AGENTS_DIR = ROOT / ".claude" / "agents"
+CLAUDE_MD = ROOT / "CLAUDE.md"
+ENV_FILE = ROOT / ".env.claude"
+
+# Maps agent filename → model tier
+AGENT_TIER: dict[str, str] = {
+    "developer.md": "implement",
+    "code-reviewer.md": "review",
+    "security-reviewer.md": "review",
+    "scrum-master.md": "planning",
+    "analyst.md": "planning",
+    "pm.md": "planning",
+    "architect.md": "planning",
+    "qa-engineer.md": "fast",
+    "devops.md": "fast",
+}
+
+ADVISOR_TOOL_BLOCK = """\
+## Advisor tool (Anthropic only)
+
+When you hit a decision you cannot reasonably resolve — architectural ambiguity,
+conflicting requirements, a blocking bug you've tried twice to fix — invoke the
+`advisor` tool. Opus will receive the curated context and return a short plan.
+Resume immediately after receiving guidance. Do not invoke the advisor for
+routine decisions.
+
+Source: https://claude.com/blog/the-advisor-strategy
+"""
+
+
+def load_config(profile: str | None = None) -> dict:
+    """Load and resolve the active model configuration."""
+    raw = json.loads(MODELS_FILE.read_text())
+
+    if profile:
+        profiles = raw.get("profiles", {})
+        if profile not in profiles:
+            available = ", ".join(profiles.keys())
+            print(f"Error: profile '{profile}' not found. Available: {available}")
+            sys.exit(1)
+        # Merge profile over base config
+        cfg = {k: v for k, v in raw.items() if k not in ("profiles", "_comment")}
+        cfg.update({k: v for k, v in profiles[profile].items() if k != "_comment"})
+        return cfg
+
+    return {k: v for k, v in raw.items() if k not in ("profiles", "_comment")}
+
+
+def resolve_model(cfg: dict, tier: str) -> str:
+    """Return the model string for a given tier."""
+    return cfg["models"].get(tier, cfg["models"]["implement"])
+
+
+def advisor_enabled(cfg: dict) -> bool:
+    """Advisor only works with Anthropic's API."""
+    if cfg.get("provider") != "anthropic":
+        return False
+    return cfg.get("advisor", {}).get("enabled", False)
+
+
+def patch_agent_frontmatter(path: Path, model: str) -> None:
+    """Replace the model: field in YAML frontmatter."""
+    content = path.read_text()
+    patched = re.sub(
+        r"^(model:\s*).*$",
+        f"model: {model}",
+        content,
+        flags=re.MULTILINE,
+    )
+    if patched != content:
+        path.write_text(patched)
+        print(f"  {path.name}: model → {model}")
+    else:
+        print(f"  {path.name}: no frontmatter model field found, skipping")
+
+
+def patch_advisor_section(path: Path, enabled: bool, cfg: dict) -> None:
+    """Add or remove the advisor tool section from an agent file."""
+    content = path.read_text()
+    marker_start = "## Advisor tool (Anthropic only)"
+    marker_end_pattern = r"Source: https://claude\.com/blog/the-advisor-strategy\n"
+
+    has_section = marker_start in content
+
+    if enabled and not has_section:
+        # Append before the last "## Context" section, or at end
+        if "## Context" in content:
+            content = content.replace("## Context", ADVISOR_TOOL_BLOCK + "\n## Context", 1)
+        else:
+            content = content.rstrip() + "\n\n" + ADVISOR_TOOL_BLOCK
+        path.write_text(content)
+        print(f"  {path.name}: advisor tool section added")
+
+    elif not enabled and has_section:
+        # Remove the advisor section
+        pattern = re.compile(
+            r"## Advisor tool \(Anthropic only\).*?Source: https://claude\.com/blog/the-advisor-strategy\n",
+            re.DOTALL,
+        )
+        content = pattern.sub("", content)
+        path.write_text(content)
+        print(f"  {path.name}: advisor tool section removed")
+
+
+def write_env_file(cfg: dict) -> None:
+    """Write .env.claude with provider-specific env vars."""
+    lines = [
+        "# Generated by scripts/configure.py — do not edit manually.",
+        "# Source this in your shell: source .env.claude",
+        "# Or add to your shell profile for permanent effect.",
+        "",
+    ]
+
+    provider = cfg.get("provider", "anthropic")
+    base_url = cfg.get("base_url")
+
+    if provider == "anthropic" or not base_url:
+        lines.append("# Using Anthropic API (default). No override needed.")
+        lines.append("# unset ANTHROPIC_API_URL")
+    else:
+        lines.append(f"# Local model provider: {provider}")
+        lines.append(f"export ANTHROPIC_API_URL={base_url}")
+
+        if provider == "ollama":
+            lines += [
+                "",
+                "# Ollama: make sure the server is running:",
+                "#   ollama serve",
+                "#   ollama pull qwen2.5-coder:32b  # or whichever model",
+            ]
+        elif provider == "lmstudio":
+            lines += [
+                "",
+                "# LM Studio: start the local server from the LM Studio UI,",
+                "# then load a model. The server runs on port 1234 by default.",
+            ]
+
+    ENV_FILE.write_text("\n".join(lines) + "\n")
+    print(f"  .env.claude written (provider: {provider})")
+
+
+def update_claude_md(cfg: dict) -> None:
+    """Update the Active Model Config section in CLAUDE.md."""
+    if not CLAUDE_MD.exists():
+        return
+
+    provider = cfg["provider"]
+    models = cfg["models"]
+    adv = cfg.get("advisor", {})
+    adv_enabled = advisor_enabled(cfg)
+
+    block_lines = [
+        "## Active Model Config",
+        "",
+        f"Provider: `{provider}`",
+    ]
+    if cfg.get("base_url"):
+        block_lines.append(f"Base URL: `{cfg['base_url']}`")
+
+    block_lines += [
+        "",
+        "| Tier | Model |",
+        "|------|-------|",
+    ]
+    for tier, model in models.items():
+        block_lines.append(f"| {tier} | `{model}` |")
+
+    if adv_enabled:
+        block_lines += [
+            "",
+            f"Advisor strategy: **enabled** — `{adv['model']}` advises executor agents",
+            f"(max {adv.get('max_uses', 3)} uses per request).",
+            "Source: https://claude.com/blog/the-advisor-strategy",
+        ]
+    else:
+        reason = "local model provider" if provider != "anthropic" else "disabled in config"
+        block_lines.append(f"\nAdvisor strategy: disabled ({reason}).")
+
+    new_block = "\n".join(block_lines)
+
+    content = CLAUDE_MD.read_text()
+    # Replace existing section if present
+    pattern = re.compile(
+        r"## Active Model Config.*?(?=\n## |\Z)",
+        re.DOTALL,
+    )
+    if pattern.search(content):
+        content = pattern.sub(new_block + "\n\n", content)
+    else:
+        # Insert after Tech Stack section
+        content = content.replace(
+            "\n---\n\n## Coding Standards",
+            f"\n\n{new_block}\n\n---\n\n## Coding Standards",
+        )
+
+    CLAUDE_MD.write_text(content)
+    print("  CLAUDE.md: Active Model Config section updated")
+
+
+def show_config(cfg: dict) -> None:
+    """Pretty-print the active config."""
+    print("\n=== Active Model Configuration ===")
+    print(f"Provider : {cfg['provider']}")
+    if cfg.get("base_url"):
+        print(f"Base URL : {cfg['base_url']}")
+    print("\nModel tiers:")
+    for tier, model in cfg["models"].items():
+        print(f"  {tier:<12} {model}")
+    adv = cfg.get("advisor", {})
+    if advisor_enabled(cfg):
+        print(f"\nAdvisor  : ENABLED — {adv['model']} (max_uses={adv.get('max_uses', 3)})")
+    else:
+        reason = "local provider" if cfg["provider"] != "anthropic" else "disabled"
+        print(f"\nAdvisor  : disabled ({reason})")
+    print()
+
+
+def list_profiles() -> None:
+    """List available profiles from models.json."""
+    raw = json.loads(MODELS_FILE.read_text())
+    profiles = raw.get("profiles", {})
+    print("\nAvailable profiles:")
+    for name, data in profiles.items():
+        comment = data.get("_comment", "")
+        print(f"  {name:<25} {comment}")
+    print()
+
+
+def main() -> None:
+    """Entry point."""
+    parser = argparse.ArgumentParser(description="Configure model assignments for agents.")
+    parser.add_argument("--profile", "-p", help="Apply a named profile from models.json")
+    parser.add_argument("--show", action="store_true", help="Show current config and exit")
+    parser.add_argument("--list", action="store_true", help="List available profiles and exit")
+    args = parser.parse_args()
+
+    if args.list:
+        list_profiles()
+        return
+
+    cfg = load_config(args.profile)
+
+    if args.show:
+        show_config(cfg)
+        return
+
+    if args.profile:
+        # Persist the profile choice back to models.json active section
+        raw = json.loads(MODELS_FILE.read_text())
+        profile_data = raw["profiles"][args.profile]
+        for key in ("provider", "base_url", "models", "advisor"):
+            if key in profile_data:
+                raw[key] = profile_data[key]
+        MODELS_FILE.write_text(json.dumps(raw, indent=2) + "\n")
+        print(f"\nProfile '{args.profile}' applied to config/models.json")
+
+    print("\n=== Patching agent files ===")
+    for agent_file in sorted(AGENTS_DIR.glob("*.md")):
+        tier = AGENT_TIER.get(agent_file.name, "implement")
+        model = resolve_model(cfg, tier)
+        patch_agent_frontmatter(agent_file, model)
+        patch_advisor_section(agent_file, advisor_enabled(cfg), cfg)
+
+    print("\n=== Writing environment file ===")
+    write_env_file(cfg)
+
+    print("\n=== Updating CLAUDE.md ===")
+    update_claude_md(cfg)
+
+    print("\nDone. To activate local model URL in your shell:")
+    print("  source .env.claude")
+    show_config(cfg)
+
+
+if __name__ == "__main__":
+    main()

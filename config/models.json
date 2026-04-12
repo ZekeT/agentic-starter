@@ -1,0 +1,124 @@
+{
+  "_comment": [
+    "Single source of truth for all model assignments.",
+    "Run `make configure` after changing this file.",
+    "Provider options: 'anthropic' | 'ollama' | 'lmstudio' | 'openai_compatible'",
+    "",
+    "Advisor strategy (Anthropic only):",
+    "  Set 'advisor.enabled: true' to use Opus as advisor for Sonnet/Haiku executors.",
+    "  Source: https://claude.com/blog/the-advisor-strategy",
+    "  The advisor tool is server-side — it does NOT work with local models.",
+    "  When provider is not 'anthropic', advisor is automatically disabled.",
+    "",
+    "Local model setup:",
+    "  Ollama:     ollama serve  (default: http://localhost:11434)",
+    "  LM Studio:  start server  (default: http://localhost:1234)",
+    "  Both expose an OpenAI-compatible API.",
+    "  Set ANTHROPIC_API_URL in your shell to point Claude Code at the local endpoint.",
+    "",
+    "Model tiers (used in agent frontmatter):",
+    "  planning  — high-stakes decisions: architecture, PRD, gate-checks",
+    "  review    — read-only review: code review, security scan",
+    "  implement — high-volume implementation: developer agent",
+    "  fast      — low-latency tasks: QA, simple transforms"
+  ],
+
+  "provider": "anthropic",
+
+  "base_url": null,
+
+  "models": {
+    "planning":  "claude-opus-4-6",
+    "review":    "claude-opus-4-6",
+    "implement": "claude-sonnet-4-6",
+    "fast":      "claude-haiku-4-5-20251001"
+  },
+
+  "advisor": {
+    "enabled": true,
+    "model": "claude-opus-4-6",
+    "max_uses": 3,
+    "_comment": "max_uses caps how many times the executor calls the advisor per request. 3 is a good default — enough for complex tasks, cheap enough to not hurt on simple ones."
+  },
+
+  "profiles": {
+    "_comment": "Named presets. Switch with: make configure PROFILE=<name>",
+
+    "anthropic-default": {
+      "provider": "anthropic",
+      "base_url": null,
+      "models": {
+        "planning":  "claude-opus-4-6",
+        "review":    "claude-opus-4-6",
+        "implement": "claude-sonnet-4-6",
+        "fast":      "claude-haiku-4-5-20251001"
+      },
+      "advisor": { "enabled": true, "model": "claude-opus-4-6", "max_uses": 3 }
+    },
+
+    "anthropic-budget": {
+      "_comment": "Sonnet everywhere + advisor on planning/review only. Lower cost.",
+      "provider": "anthropic",
+      "base_url": null,
+      "models": {
+        "planning":  "claude-sonnet-4-6",
+        "review":    "claude-sonnet-4-6",
+        "implement": "claude-sonnet-4-6",
+        "fast":      "claude-haiku-4-5-20251001"
+      },
+      "advisor": { "enabled": true, "model": "claude-opus-4-6", "max_uses": 2 }
+    },
+
+    "ollama-qwen": {
+      "_comment": "Fully local via Ollama. No advisor (server-side tool, Anthropic only).",
+      "provider": "ollama",
+      "base_url": "http://localhost:11434/v1",
+      "models": {
+        "planning":  "qwen2.5-coder:32b",
+        "review":    "qwen2.5-coder:32b",
+        "implement": "qwen2.5-coder:14b",
+        "fast":      "qwen2.5-coder:7b"
+      },
+      "advisor": { "enabled": false }
+    },
+
+    "ollama-llama": {
+      "_comment": "Llama 3.3 local via Ollama.",
+      "provider": "ollama",
+      "base_url": "http://localhost:11434/v1",
+      "models": {
+        "planning":  "llama3.3:70b",
+        "review":    "llama3.3:70b",
+        "implement": "llama3.3:70b",
+        "fast":      "llama3.2:3b"
+      },
+      "advisor": { "enabled": false }
+    },
+
+    "lmstudio": {
+      "_comment": "LM Studio local server. Replace model strings with whatever you have loaded.",
+      "provider": "lmstudio",
+      "base_url": "http://localhost:1234/v1",
+      "models": {
+        "planning":  "your-model-here",
+        "review":    "your-model-here",
+        "implement": "your-model-here",
+        "fast":      "your-model-here"
+      },
+      "advisor": { "enabled": false }
+    },
+
+    "openai": {
+      "_comment": "OpenAI fallback — no advisor tool (Anthropic-only).",
+      "provider": "openai_compatible",
+      "base_url": "https://api.openai.com/v1",
+      "models": {
+        "planning":  "o3",
+        "review":    "gpt-4o",
+        "implement": "gpt-4o-mini",
+        "fast":      "gpt-4o-mini"
+      },
+      "advisor": { "enabled": false }
+    }
+  }
+}
