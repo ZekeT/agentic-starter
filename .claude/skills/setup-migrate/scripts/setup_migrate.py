@@ -66,39 +66,39 @@ CLAUDE_MD_SECTIONS = [
 ]
 
 # Hooks that should exist and what they do
+# Note: agentic-base uses Python hooks (.py), not shell scripts (.sh)
 EXPECTED_HOOKS = {
-    "post-write-lint.sh":    "Auto-lint after every file write/edit",
-    "post-write-tests.sh":   "Run tests after every file write/edit",
-    "post-write-secrets.sh": "Block committed credentials",
-    "pre-bash-guard.sh":     "Block dangerous bash (rm -rf, force push)",
+    "pre_tool_dangerous.py": "Block dangerous bash (rm -rf, force push, etc.)",
+    "pre_tool_env_guard.py": "Block Claude reading .env files",
+    "post_tool_secrets.py":  "Block committed credentials",
+    "post_tool_lint.py":     "Auto-lint after every file write/edit",
 }
 
-# Slash commands expected
+# Slash commands in .claude/commands/ — our implementation layer only
+# BMAD planning commands (/plan, /prd, /architecture, /gate-check, /sprint-planning)
+# come from BMAD skill stubs in .claude/skills/, NOT from .claude/commands/
 EXPECTED_COMMANDS = {
-    "plan.md":            "/plan  — Analyst: stakeholder interviews, product brief",
-    "prd.md":             "/prd   — PM: structured PRD with acceptance criteria",
-    "architecture.md":    "/architecture — Architect: system design, API contracts",
-    "gate-check.md":      "/gate-check — Validator: PRD ↔ architecture consistency",
-    "sprint-planning.md": "/sprint-planning — Scrum Master: break into story files",
-    "implement.md":       "/implement — Developer: TDD implementation (Superpowers)",
-    "review.md":          "/review — Code reviewer: convention + bug check",
-    "code-review.md":     "/code-review — 4 parallel agents, confidence scoring",
-    "security-scan.md":   "/security-scan — OWASP Top 10, secrets, CVEs",
-    "dispatch.md":        "/dispatch — Background worker for long-running tasks",
-    "loop.md":            "/loop — Polling loop for auto-implementation",
+    "implement.md":       "/implement — Superpowers TDD implementation",
+    "review.md":          "/review — Security reviewer: OWASP/CVE check",
+    "commit-push-pr.md":  "/commit-push-pr — Stage, commit, push, open PR",
 }
 
-# Agents expected
+# BMAD skill stubs that should exist in .claude/skills/ (after make bmad-trim-apply)
+EXPECTED_BMAD_STUBS = {
+    "bmad-agent-analyst",
+    "bmad-agent-pm",
+    "bmad-agent-architect",
+    "bmad-create-prd",
+    "bmad-create-architecture",
+    "bmad-create-epics-and-stories",
+    "bmad-check-implementation-readiness",
+}
+
+# Agents in .claude/agents/ — only what our template owns
+# BMAD agents (Analyst, PM, Architect, SM) live in _bmad/ runtime — not here
+# Superpowers agents (Developer, Code Reviewer) installed globally to ~/.claude/ — not here
 EXPECTED_AGENTS = {
-    "analyst.md":           "Analyst (BMAD planning)",
-    "pm.md":                "Product Manager (BMAD planning)",
-    "architect.md":         "Architect (BMAD planning)",
-    "scrum-master.md":      "Scrum Master (BMAD sprint planning)",
-    "developer.md":         "Developer / Subagent (implementation)",
-    "code-reviewer.md":     "Code Reviewer (read-only subagent)",
-    "security-reviewer.md": "Security Reviewer (read-only subagent)",
-    "qa-engineer.md":       "QA Engineer (validation)",
-    "devops.md":            "DevOps (CI/CD)",
+    "security-reviewer.md": "Security Reviewer (read-only, OWASP/CVE) — our only custom agent",
 }
 
 
@@ -134,18 +134,53 @@ def audit_hooks(root: Path) -> dict:
     return {k: k in existing for k in EXPECTED_HOOKS}
 
 def audit_commands(root: Path) -> dict:
+    """Audit our implementation commands (.claude/commands/)."""
     cmd_dir = root / ".claude" / "commands"
     if not cmd_dir.exists():
         return {k: False for k in EXPECTED_COMMANDS}
     existing = {f.name for f in cmd_dir.iterdir()}
     return {k: k in existing for k in EXPECTED_COMMANDS}
 
+def audit_bmad_stubs(root: Path) -> dict:
+    """Audit BMAD skill stubs (.claude/skills/bmad-*/).
+    These come from npx bmad-method install + make bmad-trim-apply.
+    They are NOT in .claude/commands/.
+    """
+    skills_dir = root / ".claude" / "skills"
+    if not skills_dir.exists():
+        return {k: False for k in EXPECTED_BMAD_STUBS}
+    existing = {p.name for p in skills_dir.iterdir() if p.is_dir()}
+    return {k: k in existing for k in EXPECTED_BMAD_STUBS}
+
 def audit_agents(root: Path) -> dict:
+    """Audit .claude/agents/. Only security-reviewer.md should be here."""
     agents_dir = root / ".claude" / "agents"
     if not agents_dir.exists():
         return {k: False for k in EXPECTED_AGENTS}
     existing = {f.name for f in agents_dir.iterdir()}
     return {k: k in existing for k in EXPECTED_AGENTS}
+
+def audit_stale_agents(root: Path) -> list[str]:
+    """Find agent files that should NOT exist because other tools own them.
+    - developer.md, code-reviewer.md → Superpowers owns these
+    - analyst.md, pm.md, architect.md, scrum-master.md → BMAD _bmad/ runtime owns these
+    """
+    should_not_exist = {
+        "developer.md":     "Superpowers owns implementation (installed globally via /plugin install)",
+        "code-reviewer.md": "Superpowers owns code review (installed globally via /plugin install)",
+        "analyst.md":       "BMAD owns planning — agent lives in _bmad/, not .claude/agents/",
+        "pm.md":            "BMAD owns planning — agent lives in _bmad/, not .claude/agents/",
+        "architect.md":     "BMAD owns planning — agent lives in _bmad/, not .claude/agents/",
+        "scrum-master.md":  "BMAD owns sprint planning — agent lives in _bmad/, not .claude/agents/",
+    }
+    agents_dir = root / ".claude" / "agents"
+    if not agents_dir.exists():
+        return []
+    found = []
+    for f in agents_dir.iterdir():
+        if f.name in should_not_exist:
+            found.append(f"{f.name}  ({should_not_exist[f.name]})")
+    return found
 
 def audit_stories(root: Path) -> dict:
     """Find story files outside the kanban structure."""
@@ -168,145 +203,67 @@ def audit_stories(root: Path) -> dict:
     return results
 
 def check_superpowers_conflict(root: Path) -> bool:
-    """Check if run-tests hook + Superpowers could conflict."""
+    """Check if post_tool_lint.py hook is present alongside Superpowers.
+    Superpowers already runs tests per subtask — double-running is wasteful.
+    """
     hooks_dir = root / ".claude" / "hooks"
-    has_run_tests = (hooks_dir / "post-write-tests.sh").exists()
-    # Heuristic: if superpowers skill/plugin is referenced anywhere
+    has_lint_hook = (hooks_dir / "post_tool_lint.py").exists()
     claude_md = (root / "CLAUDE.md").read_text(errors="replace") if (root / "CLAUDE.md").exists() else ""
     has_superpowers = "superpowers" in claude_md.lower()
-    return has_run_tests and has_superpowers
+    return has_lint_hook and has_superpowers
 
 
 # ── scaffold functions ────────────────────────────────────────────────────────
 
+# Hooks scaffold our .py hooks (matching agentic-base template convention).
+# Shell-based (.sh) hooks are NOT used — Python hooks give richer logic,
+# better error messages, and cross-platform consistency.
 HOOK_TEMPLATES = {
-    "post-write-lint.sh": """\
-#!/usr/bin/env bash
-# Auto-lint after every Write/Edit tool call.
-# Adjust the linter command for your stack.
-# Examples: ruff check, eslint, flake8, etc.
-
-FILE="$1"   # Claude Code passes the modified file path
-
-# --- Python ---
-if [[ "$FILE" == *.py ]]; then
-  command -v ruff &>/dev/null && ruff check --fix "$FILE" && ruff format "$FILE"
-  exit 0
-fi
-
-# --- JavaScript / TypeScript ---
-if [[ "$FILE" == *.js || "$FILE" == *.ts || "$FILE" == *.tsx ]]; then
-  command -v eslint &>/dev/null && eslint --fix "$FILE"
-  exit 0
-fi
-""",
-
-    "post-write-secrets.sh": """\
-#!/usr/bin/env bash
-# Block accidental credential commits.
-# Runs after every Write/Edit. Exits non-zero to block if secrets found.
-
-FILE="$1"
-[ -z "$FILE" ] && exit 0
-[ ! -f "$FILE" ] && exit 0
-
-PATTERNS=(
-  'PRIVATE KEY'
-  'BEGIN RSA'
-  'AWS_SECRET'
-  r'api_key\s*='
-  r'password\s*=\s*[^$]'
-  r'secret\s*=\s*[^$]'
-)
-
-for pat in "${PATTERNS[@]}"; do
-  if grep -qiE "$pat" "$FILE" 2>/dev/null; then
-    echo "⛔  Potential secret detected in $FILE (pattern: $pat)"
-    echo "    Remove the credential and use environment variables instead."
-    exit 1
-  fi
-done
-""",
-
-    "pre-bash-guard.sh": """\
-#!/usr/bin/env bash
-# Block dangerous bash commands before execution.
-# Claude Code passes the command as $1.
-
-CMD="$1"
-
-DANGEROUS=(
-  'rm -rf /'
-  'rm -rf ~'
-  'git push --force'
-  'git push -f'
-  'git reset --hard HEAD'
-  'DROP TABLE'
-  'DROP DATABASE'
-  'format '
-  'mkfs.'
-)
-
-for danger in "${DANGEROUS[@]}"; do
-  if echo "$CMD" | grep -qF "$danger"; then
-    echo "⛔  Blocked dangerous command: $danger"
-    echo "    If intentional, run this manually outside Claude Code."
-    exit 1
-  fi
-done
-""",
-
-    "post-write-tests.sh": """\
-#!/usr/bin/env bash
-# Run tests after every Write/Edit.
-# NOTE: Disable this hook when using Superpowers TDD —
-#       Superpowers already runs tests per subtask (see CLAUDE.md).
-
-FILE="$1"
-
-# Only run for source files, skip test files themselves to avoid loops
-if [[ "$FILE" == *test* || "$FILE" == *spec* ]]; then
-  exit 0
-fi
-
-# --- Python ---
-if [[ "$FILE" == *.py ]]; then
-  command -v pytest &>/dev/null && pytest --tb=short -q 2>&1 | tail -20
-  exit 0
-fi
-
-# --- JavaScript / TypeScript ---
-if [[ "$FILE" == *.js || "$FILE" == *.ts || "$FILE" == *.tsx ]]; then
-  command -v npm &>/dev/null && npm test --silent 2>&1 | tail -20
-  exit 0
-fi
-""",
+    'pre_tool_dangerous.py': '#!/usr/bin/env python3\n"""\nPreToolUse hook — block dangerous bash commands before execution.\n\nTriggered by: Bash tool calls.\nPurpose: Deterministic guardrail. No LLM judgment — pure pattern matching.\nSource: Agentic Engineering guide (Layer 4: Deterministic Hooks)\n\nexit 1 → block and show reason to agent so it can correct itself.\n"""\n\nimport json\nimport re\nimport sys\n\n# (pattern, human-readable reason)\nDANGEROUS_PATTERNS = [\n    (r"\\brm\\s+-rf\\s+/", "rm -rf / is not allowed"),\n    (r"\\brm\\s+--no-preserve-root", "rm --no-preserve-root is not allowed"),\n    (r"\\bgit\\s+push\\s+.*--force\\b(?!-with-lease)", "force push without --force-with-lease is not allowed"),\n    (r"\\bgit\\s+push\\s+-f\\b", "force push (-f) is not allowed — use --force-with-lease"),\n    (r"\\bchmod\\s+-R\\s+777\\b", "chmod -R 777 is not allowed"),\n    (r"\\bdd\\s+if=.*of=/dev/(sd|hd|nvme)", "writing directly to block device is not allowed"),\n    (r"\\bcurl\\s+.*\\|\\s*(ba)?sh\\b", "piping curl to shell is not allowed"),\n    (r"\\bwget\\s+.*\\|\\s*(ba)?sh\\b", "piping wget to shell is not allowed"),\n    (r":\\(\\)\\s*\\{.*\\};\\s*:", "fork bomb pattern detected"),\n    (r"\\b(DROP|TRUNCATE)\\s+(TABLE|DATABASE)\\b", "destructive SQL statement — use a migration"),\n]\n\n\ndef main() -> None:\n    """Check bash command against dangerous pattern list."""\n    payload = json.loads(sys.stdin.read())\n\n    if payload.get("tool_name") != "Bash":\n        return\n\n    command = payload.get("tool_input", {}).get("command", "")\n    if not command:\n        return\n\n    for pattern, reason in DANGEROUS_PATTERNS:\n        if re.search(pattern, command, re.IGNORECASE):\n            print(f"BLOCKED: {reason}", file=sys.stderr)\n            print(f"Command was: {command[:200]}", file=sys.stderr)\n            sys.exit(1)\n\n\nif __name__ == "__main__":\n    main()\n',
+    'pre_tool_env_guard.py': '#!/usr/bin/env python3\n"""\nPreToolUse hook — block Claude from reading .env files.\n\nTriggered by: Read, Glob, Grep, LS, Bash tool calls.\nPurpose: Prevent Claude from ingesting real secrets during agentic sessions.\n         Claude should read .env.template (committed, no real values) not .env.\n\nWhy this matters:\n    During long agentic sessions Claude reads many files to build context.\n    If it reads .env it may inadvertently include secrets in its context window,\n    in summaries, in logs, or in generated code. Blocking the read eliminates\n    the risk entirely — Claude doesn\'t need the real values to do its job.\n\nWhat Claude should use instead:\n    - .env.template  — understand what variables exist and their purpose\n    - os.environ / pydantic BaseSettings — reference env vars by name in code\n    - Never hardcode values, never read .env directly\n\nSource: Anthropic free course best practices for agentic security.\n\nexit 1 → block the tool call and explain why.\nexit 0 → allow the tool call to proceed.\n"""\n\nfrom __future__ import annotations\n\nimport json\nimport re\nimport sys\nfrom pathlib import Path\n\n# Files Claude must never read.\n# .env.template is explicitly allowed — it has no real values.\nBLOCKED_FILENAMES = {\n    ".env",\n    ".env.local",\n    ".env.production",\n    ".env.staging",\n    ".env.development",\n    ".env.test",\n    ".env.secrets",\n    ".env.claude",   # generated by configure.py, may contain API URL overrides\n}\n\n# Patterns in Bash commands that would read .env content into Claude\'s context.\n# We want to catch: cat .env, source .env, . .env, grep .env, etc.\nBASH_ENV_READ_PATTERNS = [\n    r"\\bcat\\s+[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n    r"\\bsource\\s+[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n    r"^\\.\\s+[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",          # POSIX `. .env`\n    r"\\bgrep\\s+.*[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n    r"\\bless\\s+[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n    r"\\bmore\\s+[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n    r"\\bhead\\s+.*[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n    r"\\btail\\s+.*[\'\\"]?\\.env[\'\\"]?(?:\\s|$)",\n]\n\n\ndef is_blocked_path(path_str: str) -> bool:\n    """Return True if the path resolves to a blocked .env file."""\n    p = Path(path_str)\n    # Match on filename only — .env in any subdirectory is blocked\n    return p.name in BLOCKED_FILENAMES\n\n\ndef is_blocked_bash(command: str) -> bool:\n    """Return True if the bash command would read a .env file."""\n    for pattern in BASH_ENV_READ_PATTERNS:\n        if re.search(pattern, command, re.IGNORECASE | re.MULTILINE):\n            return True\n    return False\n\n\ndef block(reason: str) -> None:\n    """Print block reason and exit 1."""\n    print(f"BLOCKED: {reason}", file=sys.stderr)\n    print("", file=sys.stderr)\n    print("Claude should not read .env files — they may contain real secrets.", file=sys.stderr)\n    print("Use .env.template to understand available variables (no real values).", file=sys.stderr)\n    print("Reference env vars by name in code: os.environ[\'VAR\'] or pydantic BaseSettings.", file=sys.stderr)\n    sys.exit(1)\n\n\ndef main() -> None:\n    """Check tool call for .env access attempts."""\n    payload = json.loads(sys.stdin.read())\n    tool_name = payload.get("tool_name", "")\n    tool_input = payload.get("tool_input", {})\n\n    # --- File read tools ---\n    if tool_name == "Read":\n        path = tool_input.get("file_path", "") or tool_input.get("path", "")\n        if path and is_blocked_path(path):\n            block(f"Attempted to read \'{Path(path).name}\'")\n\n    # --- Glob / LS — block if pattern would match .env files ---\n    elif tool_name in ("Glob", "LS"):\n        pattern = tool_input.get("pattern", "") or tool_input.get("path", "")\n        # Be conservative: if the glob pattern could match a .env file, block it.\n        # e.g. ".env*", ".*", "**/.env" all warrant blocking.\n        if pattern and re.search(r"(^|/)\\.env", pattern):\n            block(f"Glob/LS pattern \'{pattern}\' could match .env files")\n\n    # --- Grep — block if searching in .env files ---\n    elif tool_name == "Grep":\n        include = tool_input.get("include", "")\n        path = tool_input.get("path", "")\n        if include and is_blocked_path(include):\n            block(f"Grep include pattern targets \'{include}\'")\n        if path and is_blocked_path(path):\n            block(f"Grep path targets \'{Path(path).name}\'")\n\n    # --- Bash — block commands that read .env content ---\n    elif tool_name == "Bash":\n        command = tool_input.get("command", "")\n        if command and is_blocked_bash(command):\n            block("Bash command would read .env file content")\n\n\nif __name__ == "__main__":\n    main()\n',
+    'post_tool_secrets.py': '#!/usr/bin/env python3\n"""\nPostToolUse hook — block secrets from being written to any file.\n\nTriggered by: Write, Edit, MultiEdit tool calls.\nPurpose: Defense-in-depth first layer. The Security Reviewer agent\n         catches indirect exposure during formal review — keep both.\nSource: Agentic Engineering guide (Layer 4: Deterministic Hooks)\n\nexit 1 → block the tool call and show the pattern that matched.\n"""\n\nimport json\nimport re\nimport sys\nfrom pathlib import Path\n\n# Patterns that suggest a hardcoded secret.\n# Tuned to avoid false positives on test fixtures and example values.\nSECRET_PATTERNS = [\n    (r\'(?i)(api[_-]?key|apikey)\\s*=\\s*["\\\'][A-Za-z0-9_\\-]{16,}["\\\']\', "API key"),\n    (r\'(?i)(secret[_-]?key|secret)\\s*=\\s*["\\\'][A-Za-z0-9_\\-]{16,}["\\\']\', "Secret key"),\n    (r\'(?i)(password|passwd|pwd)\\s*=\\s*["\\\'][^"\\\']{6,}["\\\']\', "Password"),\n    (r\'(?i)(token)\\s*=\\s*["\\\'][A-Za-z0-9_\\-\\.]{20,}["\\\']\', "Token"),\n    (r\'(?i)(aws_access_key_id)\\s*=\\s*["\\\'][A-Z0-9]{20}["\\\']\', "AWS key"),\n    (r\'(?i)(aws_secret_access_key)\\s*=\\s*["\\\'][A-Za-z0-9/+=]{40}["\\\']\', "AWS secret"),\n    (r\'sk-[A-Za-z0-9]{32,}\', "OpenAI/Anthropic key"),\n]\n\n# Files that are allowed to contain secret-like patterns (e.g., .env.example)\nALLOWED_PATHS = {".env.example", ".env.sample", ".env.template"}\n\n\ndef main() -> None:\n    """Scan newly written file content for secret patterns."""\n    payload = json.loads(sys.stdin.read())\n    tool_name = payload.get("tool_name", "")\n\n    if tool_name not in ("Write", "Edit", "MultiEdit"):\n        return\n\n    tool_input = payload.get("tool_input", {})\n    file_path = tool_input.get("file_path") or tool_input.get("path", "")\n\n    if Path(file_path).name in ALLOWED_PATHS:\n        return\n\n    # Get the content being written\n    content = tool_input.get("content", "") or tool_input.get("new_string", "")\n    if not content:\n        return\n\n    hits = []\n    for pattern, label in SECRET_PATTERNS:\n        if re.search(pattern, content):\n            hits.append(label)\n\n    if hits:\n        print(f"BLOCKED: Possible secret(s) detected: {\', \'.join(hits)}", file=sys.stderr)\n        print("Use environment variables or a secrets manager instead.", file=sys.stderr)\n        print("If this is a false positive, add the pattern to ALLOWED_PATHS.", file=sys.stderr)\n        sys.exit(1)\n\n\nif __name__ == "__main__":\n    main()\n',
+    'post_tool_lint.py': '#!/usr/bin/env python3\n"""\nPostToolUse hook — auto-lint after every file write or edit.\n\nTriggered by: Write, Edit, MultiEdit tool calls.\nPurpose: Catch formatting issues immediately, not at commit time.\nSource: Agentic Engineering guide (Layer 4: Deterministic Hooks)\n\nClaude Code hook spec:\n  stdin  → JSON with keys: tool_name, tool_input, tool_response\n  stdout → ignored\n  exit 0 → proceed\n  exit 1 → block + show stderr to agent\n  exit 2 → block silently\n"""\n\nimport json\nimport subprocess\nimport sys\nfrom pathlib import Path\n\n\ndef main() -> None:\n    """Run lint checks on the file that was just written or edited."""\n    payload = json.loads(sys.stdin.read())\n    tool_name = payload.get("tool_name", "")\n\n    if tool_name not in ("Write", "Edit", "MultiEdit"):\n        return\n\n    # Resolve the file path that was touched\n    tool_input = payload.get("tool_input", {})\n    file_path = tool_input.get("file_path") or tool_input.get("path")\n    if not file_path:\n        return\n\n    path = Path(file_path)\n    if not path.exists() or path.suffix != ".py":\n        return\n\n    # Run non-mutating checks so the agent sees failures immediately.\n    # We do NOT auto-fix here — that\'s make fmt\'s job (mutating).\n    # The agent should call `make fmt` if these fail.\n    checks = [\n        ["uv", "run", "black", "--check", str(path)],\n        ["uv", "run", "isort", "--check-only", str(path)],\n    ]\n\n    failed = []\n    for cmd in checks:\n        result = subprocess.run(cmd, capture_output=True, text=True)\n        if result.returncode != 0:\n            failed.append(result.stdout + result.stderr)\n\n    if failed:\n        print("\\n".join(failed), file=sys.stderr)\n        print("Run `make fmt` to auto-fix.", file=sys.stderr)\n        sys.exit(1)\n\n\nif __name__ == "__main__":\n    main()\n',
 }
 
+
+# Only scaffold our implementation commands — BMAD planning commands
+# come from npx bmad-method install (as .claude/skills/bmad-*/ stubs),
+# NOT from .claude/commands/
 COMMAND_TEMPLATES = {
-    "plan.md": "# /plan\nActivate the **Analyst** agent.\n\nConduct stakeholder interviews and produce a product brief ready for `/prd`.\n\nLoad `.claude/agents/analyst.md` for full persona and instructions.\n",
-    "prd.md": "# /prd\nActivate the **PM** agent.\n\nTransform the product brief into a structured PRD with acceptance criteria.\n\nLoad `.claude/agents/pm.md` for full persona and instructions.\n",
-    "architecture.md": "# /architecture\nActivate the **Architect** agent.\n\nProduce system design, API contracts, and data models from the PRD.\n\nLoad `.claude/agents/architect.md` for full persona and instructions.\n",
-    "gate-check.md": "# /gate-check\nActivate the **Validator**.\n\nCheck PRD ↔ architecture consistency. Surface gaps before sprint planning.\n**Human gate** — review output before proceeding.\n",
-    "sprint-planning.md": "# /sprint-planning\nActivate the **Scrum Master** agent.\n\nBreak the architecture into self-contained story files in `stories/draft/`.\n**Human gate** — prioritise and confirm stories before moving to `ready/`.\n\nLoad `.claude/agents/scrum-master.md` for full persona and instructions.\n",
-    "implement.md": "# /implement\nActivate the **Developer** subagent with Superpowers TDD.\n\nUsage: `/implement <story-file>`\n\nWorkflow:\n1. Brainstorm — clarifying questions, design spec, file paths\n2. Plan — 2-5 min subtasks with exact code context\n3. Test First — write failing tests before any code\n4. Implement — minimum code to pass tests\n5. Verify — full test suite, coverage check\n\nCode written before tests is deleted. This is enforced, not suggested.\n",
-    "review.md": "# /review\nDefault code reviewer (included with subscription).\n\nChecks: convention compliance, bug detection, CLAUDE.md adherence.\nUse for all routine PRs.\n",
-    "code-review.md": "# /code-review\nSelective deep review — 4 parallel review agents with confidence scoring (>=80).\n\nUse for: security-sensitive changes, core infrastructure PRs.\nCost: ~$15-25 per review.\n",
-    "security-scan.md": "# /security-scan\nDedicated read-only security agent.\n\nCovers: OWASP Top 10, secrets, CVEs, CWE classification.\nAgent has no write access — read-only by design.\n",
-    "dispatch.md": "# /dispatch\nBackground worker for long-running tasks.\n\nUsage: `/dispatch <task description>`\n\nMain session stays focused on orchestration.\nWorker gets full context, asks async Q&A, reports back when done.\n",
-    "loop.md": "# /loop\nPolling loop for auto-implementation.\n\nUsage: `/loop <interval>  <task>`\n\nExamples:\n  `/loop 5m  Check stories/ready/ and auto-implement in worktrees`\n  `/loop 30m Check open PRs and summarise status`\n\nCap parallel worktrees at 3-5 to limit merge conflicts.\n",
+    "implement.md": (
+        "# /implement\n"
+        "Activate Superpowers TDD for the given story file.\n\n"
+        "Usage: `/implement <story-file>`\n\n"
+        "Superpowers handles the full workflow automatically:\n"
+        "brainstorm → git worktree → write plan → test-first → implement → review\n"
+    ),
+    "review.md": (
+        "# /review\n"
+        "Run the security-reviewer agent on the current PR.\n\n"
+        "Checks: OWASP Top 10, secrets, CVEs, CLAUDE.md convention compliance.\n"
+        "Use for security-sensitive PRs or before merging to main.\n"
+    ),
+    "commit-push-pr.md": (
+        "# /commit-push-pr\n"
+        "Stage, commit, push, and open a PR.\n\n"
+        "Pre-computes git context. Only proceeds if `make check` passes.\n"
+        "Usage: `/commit-push-pr \"feat(auth): add JWT validation\"` \n"
+    ),
 }
 
+# Only scaffold our custom agent — Superpowers and BMAD provide the rest.
+# Superpowers (global ~/.claude/): developer, code-reviewer
+# BMAD (_bmad/ runtime): analyst, pm, architect, scrum-master
 AGENT_TEMPLATES = {
-    "analyst.md":           "# Analyst\n\nYou are a senior business analyst. Your job is to interview stakeholders, clarify requirements, and produce a concise product brief.\n\n## Responsibilities\n- Ask clarifying questions to surface unknowns\n- Identify scope boundaries\n- Produce a product brief ready for the PM\n\n## Output format\nMarkdown document: problem statement, goals, non-goals, constraints, open questions.\n",
-    "pm.md":                 "# Product Manager\n\nYou are a senior PM. Transform the product brief into a structured PRD.\n\n## Output format\n- Overview\n- User stories (As a… I want… So that…)\n- Acceptance criteria (testable, unambiguous)\n- Out of scope\n- Open questions\n",
-    "architect.md":          "# Architect\n\nYou are a senior software architect. Design the system from the PRD.\n\n## Output format\n- System diagram (text/ASCII)\n- Component responsibilities\n- API contracts\n- Data models\n- Tech decisions + rationale\n- Risks\n",
-    "scrum-master.md":       "# Scrum Master\n\nBreak the architecture into self-contained story files.\n\n## Each story file must include\n- Feature description + user story\n- Exact file paths to touch\n- Acceptance criteria (testable)\n- Test strategy (unit / integration / e2e)\n- Architectural constraints\n\nWrite story files to `stories/draft/story-NNN-<slug>.md`.\n",
-    "developer.md":          "# Developer\n\nYou are a senior developer using Superpowers TDD.\n\n## Workflow (enforced)\n1. Brainstorm — clarifying questions, design spec, file paths\n2. Plan — 2-5 min subtasks with exact code context\n3. Test First — write failing tests before any implementation code\n4. Implement — minimum code to pass tests\n5. Verify — full suite passes, coverage acceptable\n\n**Any code written before tests are green is deleted.**\n",
-    "code-reviewer.md":      "# Code Reviewer\n\nRead-only. Review PRs for:\n- Logic bugs\n- Convention compliance (see CLAUDE.md)\n- Test coverage gaps\n- Performance issues\n\nOutput: structured review with severity levels (blocker / major / minor / nit).\n",
-    "security-reviewer.md":  "# Security Reviewer\n\nRead-only. Scan for:\n- OWASP Top 10\n- Hardcoded secrets / credentials\n- Known CVEs in dependencies\n- CWE classifications\n\nNever modify files. Output: security report with CWE IDs and remediation steps.\n",
-    "qa-engineer.md":        "# QA Engineer\n\nValidate completed implementations against story acceptance criteria.\n\n- Run the full test suite\n- Verify acceptance criteria manually where automated tests don't cover\n- Move story file to `stories/done/` on pass\n- Move back to `stories/in-progress/` with failure notes on fail\n",
-    "devops.md":             "# DevOps\n\nManage CI/CD pipeline.\n\n- Configure GitHub Actions workflows\n- Monitor deployment health\n- Manage secrets and environment config\n- Ensure main branch is always deployable\n",
+    "security-reviewer.md": (
+        "# Security Reviewer\n\n"
+        "Read-only. Scan for:\n"
+        "- OWASP Top 10\n"
+        "- Hardcoded secrets / credentials\n"
+        "- Known CVEs in dependencies\n"
+        "- CWE classifications\n\n"
+        "Never modify files. Output: security report with CWE IDs and remediation steps.\n"
+    ),
 }
 
 CLAUDE_MD_TEMPLATE = """\
@@ -465,23 +422,37 @@ def print_audit(root: Path):
         for s, found in sections.items():
             (ok if found else warn)(s)
 
-    header("4 / HOOKS")
+    header("4 / HOOKS  (.claude/hooks/*.py)")
     hooks = audit_hooks(root)
     for name, exists in hooks.items():
         desc = EXPECTED_HOOKS[name]
         (ok if exists else missing)(f"{name}  ({desc})")
 
-    header("5 / SLASH COMMANDS")
+    header("5 / OUR COMMANDS  (.claude/commands/)")
     cmds = audit_commands(root)
     for name, exists in cmds.items():
         desc = EXPECTED_COMMANDS[name]
         (ok if exists else missing)(f"{name}  —  {desc}")
 
-    header("6 / AGENTS")
+    header("5b / BMAD SKILL STUBS  (.claude/skills/bmad-*/)")
+    info("These come from: npx bmad-method install + make bmad-trim-apply")
+    stubs = audit_bmad_stubs(root)
+    for name, exists in stubs.items():
+        (ok if exists else missing)(f"{name}")
+    if not any(stubs.values()):
+        info("Run: npx bmad-method install && make bmad-trim-apply")
+
+    header("6 / OUR AGENTS  (.claude/agents/)")
+    info("Only security-reviewer.md should be here.")
+    info("Superpowers owns: developer, code-reviewer (global ~/.claude/)")
+    info("BMAD owns: analyst, pm, architect, scrum-master (_bmad/ runtime)")
     agents = audit_agents(root)
     for name, exists in agents.items():
         desc = EXPECTED_AGENTS[name]
         (ok if exists else missing)(f"{name}  —  {desc}")
+    stale = audit_stale_agents(root)
+    for item in stale:
+        warn(f"REMOVE: {item}")
 
     header("7 / STORY FILES")
     stories = audit_stories(root)
@@ -494,8 +465,8 @@ def print_audit(root: Path):
 
     header("8 / CONFLICT CHECKS")
     if check_superpowers_conflict(root):
-        warn("run-tests hook + Superpowers TDD detected — these are redundant.")
-        info("Disable post-write-tests.sh in Superpowers sessions (see CLAUDE.md note).")
+        warn("post_tool_lint.py + Superpowers TDD detected — these may double-run tests.")
+        info("Superpowers already runs tests per subtask — consider disabling post_tool_lint.py in Superpowers sessions.")
     else:
         ok("No hook/Superpowers conflict detected")
 

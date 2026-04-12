@@ -1,5 +1,5 @@
 ---
-name: agentic-engineering-migrate
+name: setup-migrate
 description: >
   Migrate an existing Claude Code / BMAD project to the full Agentic Engineering
   framework (BMAD + Superpowers + Claude Code Primitives). Use this skill whenever

@@ -86,7 +86,7 @@ def find_story_files(bmad_output: Path) -> list[Path]:
     return [
         f for f in bmad_output.rglob("*.md")
         if f.name not in DOCS_ARTEFACTS
-        and "story" in f.name.lower() or f.parent.name in ("stories", "epics")
+        and ("story" in f.name.lower() or f.parent.name in ("stories", "epics"))
     ]
 
 

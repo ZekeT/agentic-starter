@@ -232,8 +232,14 @@ _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.
     bmad-create-architecture/ # │
     bmad-create-epics-and-stories/ # │
     bmad-check-implementation-readiness/ # ┘
-    graphify/            # Optional: knowledge graph skill
-    caveman/             # Optional: token-efficient inter-agent comms
+    graphify/            # Knowledge graph (71x token reduction)
+    caveman/             # Token-efficient inter-agent comms (optional)
+    setup-base/          # Project structure scanner
+      scripts/
+        setup_base.py          # Fresh project setup + BMAD output migration
+    setup-migrate/  # Migration skill for existing projects
+      scripts/
+        setup_migrate.py       # Full audit + scaffold for existing projects
   settings.json          # Hook wiring
 
 stories/
@@ -311,8 +317,15 @@ Our command `/review` triggers this explicitly when needed.
 
 ```
 _bmad-output/ → stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
-                  (BMAD writes)   🖐 human moves    (developer agent)       (PR open)         (merged)
+                  (BMAD writes)   🖐 human moves    (Superpowers)           (PR open)         (merged)
 ```
+
+After `/sprint-planning` creates new stories, rebuild the knowledge graph:
+```bash
+graphify . --update    # fast — only re-processes changed files
+```
+
+This keeps Superpowers subagents from grepping raw files when they need project context.
 
 ---
 
