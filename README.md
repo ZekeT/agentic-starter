@@ -53,49 +53,65 @@ bash setup.sh
 
 ## Structure
 
+After `bash setup.sh` completes, the project looks like this:
+
 ```
 .
-├── CLAUDE.md                    # Project brain — read every session
-├── Makefile                     # Single entry point: make check
-├── pyproject.toml               # Python deps + tool config
-├── setup.sh                     # One-command bootstrap
-├── .gitignore
-├── .graphifyignore
+├── _bmad/                               # BMAD runtime — DO NOT EDIT (npx owns this)
+│   ├── core/                            # Agent logic: Analyst, PM, Architect, SM
+│   └── bmm/                             # Workflows: create-prd, create-architecture, etc.
+├── _bmad-output/                        # BMAD writes planning docs here
+│
+├── CLAUDE.md                            # Project brain — read every session
+├── Makefile                             # Single entry point for all commands
+├── pyproject.toml                       # Python deps + tool config
+├── setup.sh                             # One-command bootstrap
+├── .env.template                        # Committed — documents all env vars, no real values
+├── .gitignore / .graphifyignore
 │
 ├── .claude/
-│   ├── settings.json            # Hook wiring (lint, secrets, dangerous bash)
-│   ├── agents/
-│   │   ├── developer.md         # TDD implementation (Sonnet)
-│   │   ├── code-reviewer.md     # PR review, read-only (Opus)
-│   │   ├── security-reviewer.md # OWASP/CVE scan, read-only (Opus)
-│   │   └── scrum-master.md      # Sprint planning (Opus)
-│   ├── commands/
-│   │   ├── implement.md         # /implement story-NNN
-│   │   ├── review.md            # /review
-│   │   ├── commit-push-pr.md    # /commit-push-pr
-│   │   └── sprint-planning.md   # /sprint-planning
+│   ├── settings.json                    # Hook wiring
+│   ├── agents/                          # Our implementation agents
+│   │   ├── developer.md                 # TDD (Sonnet + Opus advisor)
+│   │   ├── code-reviewer.md             # PR review, read-only (Opus)
+│   │   └── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
+│   ├── commands/                        # Our implementation commands
+│   │   ├── implement.md                 # /implement story-NNN
+│   │   ├── review.md                    # /review
+│   │   └── commit-push-pr.md            # /commit-push-pr
 │   ├── hooks/
-│   │   ├── post_tool_lint.py    # Auto-lint after every file write
-│   │   ├── post_tool_secrets.py # Block committed credentials
-│   │   └── pre_tool_dangerous.py # Block rm -rf, force push, etc.
+│   │   ├── pre_tool_dangerous.py        # Block rm -rf, force push
+│   │   ├── pre_tool_env_guard.py        # Block Claude reading .env
+│   │   ├── post_tool_secrets.py         # Block committed credentials
+│   │   └── post_tool_lint.py            # Auto-lint after file writes
 │   └── skills/
-│       ├── graphify/SKILL.md    # Knowledge graph (optional, token-saving)
-│       └── caveman/SKILL.md     # Token-efficient inter-agent comms (optional)
+│       ├── bmad-agent-analyst/          # ┐
+│       ├── bmad-agent-pm/               # │ 7 lean BMAD stubs
+│       ├── bmad-agent-architect/        # │ (after make bmad-trim-apply)
+│       ├── bmad-create-prd/             # │
+│       ├── bmad-create-architecture/    # │
+│       ├── bmad-create-epics-and-stories/ # │
+│       ├── bmad-check-implementation-readiness/ # ┘
+│       ├── graphify/SKILL.md            # Optional: knowledge graph
+│       └── caveman/SKILL.md             # Optional: token-efficient comms
 │
 ├── stories/
-│   ├── STORY_TEMPLATE.md        # Copy this to create a new story
-│   ├── draft/                   # Being written, not agent-ready
-│   ├── ready/                   # Human-confirmed, agent can pick up
-│   ├── in-progress/             # Agent currently working
-│   ├── review/                  # PR open, awaiting human
-│   └── done/                    # Merged
+│   ├── STORY_TEMPLATE.md
+│   ├── draft/        ← BMAD /sprint-planning writes here
+│   ├── ready/        ← human moves stories here to unblock agents
+│   ├── in-progress/  ← agent working (git worktree)
+│   ├── review/       ← PR open
+│   └── done/         ← merged
 │
-├── docs/
-│   ├── prd.md                   # Product requirements (BMAD output)
-│   └── architecture.md          # System design (BMAD output)
-│
-└── graphify-out/                # Knowledge graph (built by graphify .)
-    └── GRAPH_REPORT.md          # Read before answering arch questions
+├── config/
+│   └── models.json                      # Model assignments + advisor config
+├── scripts/
+│   ├── configure.py                     # Patches agents with model assignments
+│   └── trim_bmad_skills.py              # Trims BMAD stubs to lean 7
+└── docs/
+    ├── prd.md / architecture.md         # Templates (BMAD overwrites these)
+    ├── coding-standards.md
+    └── local-models.md
 ```
 
 ---

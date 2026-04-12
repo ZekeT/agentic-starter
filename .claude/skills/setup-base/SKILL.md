@@ -1,6 +1,6 @@
 ---
-name: foundation
-description: Scans a project to check if it is correctly set up for the BMAD + Superpowers agentic engineering workflow. Use this skill whenever the user says "scan my project", "check my setup", "is my project clean", "did setup work", "migrate from BMAD", or wants to verify the agentic project structure is correct before starting a sprint. Also trigger when the user mentions they've just run setup_agentic_project.py or installed BMAD/Superpowers.
+name: setup-base
+description: Scans a project to check if it is correctly set up for the BMAD + Superpowers agentic engineering workflow. Use this skill whenever the user says "scan my project", "check my setup", "is my project clean", "did setup work", "migrate from BMAD", or wants to verify the agentic project structure is correct before starting a sprint. Also trigger when the user mentions they've just run setup_base.py.py or installed BMAD/Superpowers.
 ---
 
 # Foundation
@@ -10,7 +10,7 @@ Produces a clear pass/fail report with actionable fixes.
 
 ## When to use
 
-- After running `setup_agentic_project.py`
+- After running `setup_base.py.py`
 - After migrating from a BMAD-only project
 - Before starting a new sprint (quick sanity check)
 - When something feels wrong with the pipeline
@@ -121,7 +121,7 @@ Root: /path/to/project
   PASS  CLAUDE.md
   WARN  CLAUDE.md not customised — edit it before starting implementation
   FAIL  docs/prd.md missing — run /prd in BMAD to generate it
-  WARN  _bmad/output/story-001.md not migrated — run setup_agentic_project.py
+  WARN  _bmad/output/story-001.md not migrated — run setup_base.py.py
   WARN  .claude/agents/developer.md found — remove it (Superpowers handles implementation)
   PASS  Git initialised
 

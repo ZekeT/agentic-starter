@@ -1,20 +1,37 @@
 #!/usr/bin/env python3
 """
-scripts/trim_bmad_skills.py — remove non-core bmad- skills from .claude/skills/
+scripts/trim_bmad_skills.py — remove non-core bmad- skill stubs from .claude/skills/
 
-Keeps only the 7 skills that map directly to the Agentic Engineering guide's
-5-step BMAD pipeline. Everything else with a bmad- prefix is removed.
+HOW BMAD WORKS (important before running this):
 
-Source: Agentic Engineering guide (Layer 2: Planning with BMAD)
-  Step 1: /plan        → bmad-agent-analyst
-  Step 2: /prd         → bmad-agent-pm + bmad-create-prd
+    _bmad/                    ← BMAD runtime. DO NOT TOUCH. npx owns this.
+      core/                   ← actual agent logic Claude reads
+      bmm/                    ← BMAD Method module files
+
+    .claude/skills/
+      bmad-agent-analyst/     ← thin stub: "load _bmad/core/analyst.md"
+      bmad-create-prd/        ← thin stub: "load _bmad/bmm/create-prd.md"
+      ...                     ← this script only touches these stubs
+
+    .claude/commands/
+      plan.md                 ← /plan → triggers bmad-agent-analyst skill stub
+      prd.md                  ← /prd  → triggers bmad-agent-pm skill stub
+
+This script removes stubs from .claude/skills/ only.
+It never touches _bmad/ — that's BMAD's runtime, managed by npx bmad-method install.
+Removing a stub doesn't delete the underlying agent from _bmad/; it just makes it
+uninvokable by name. Re-run npx bmad-method install to restore all stubs.
+
+Keeps only the 7 stubs that map to the Agentic Engineering guide's 5-step pipeline:
+  Step 1: /plan         → bmad-agent-analyst
+  Step 2: /prd          → bmad-agent-pm + bmad-create-prd
   Step 3: /architecture → bmad-agent-architect + bmad-create-architecture
-  Step 4: /gate-check  → bmad-check-implementation-readiness
-  Step 5: /sprint-plan → bmad-create-epics-and-stories
+  Step 4: /gate-check   → bmad-check-implementation-readiness
+  Step 5: /sprint-plan  → bmad-create-epics-and-stories
 
 Usage:
     python scripts/trim_bmad_skills.py           # dry-run (safe, no changes)
-    python scripts/trim_bmad_skills.py --apply   # actually delete
+    python scripts/trim_bmad_skills.py --apply   # actually delete stubs
     python scripts/trim_bmad_skills.py --audit   # show keep/remove table only
 """
 
@@ -26,9 +43,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / ".claude" / "skills"
+BMAD_RUNTIME = ROOT / "_bmad"
 
-# Exactly the 7 skills the Agentic Engineering guide's pipeline needs.
-# Nothing more — this is intentionally lean.
+# Exactly the 7 skill stubs the Agentic Engineering guide's pipeline needs.
 KEEP: set[str] = {
     "bmad-agent-analyst",            # /plan  — Analyst agent
     "bmad-agent-pm",                 # /prd   — PM agent
@@ -41,7 +58,7 @@ KEEP: set[str] = {
 
 
 def get_bmad_skills() -> list[Path]:
-    """Return all bmad- prefixed skill folders, sorted."""
+    """Return all bmad- prefixed skill stub folders, sorted."""
     if not SKILLS_DIR.exists():
         return []
     return sorted(
@@ -61,10 +78,13 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
     """Print a clear keep/remove summary."""
     col = 45
 
-    print("\n=== BMAD Skill Audit (Agentic Engineering guide — lean pipeline) ===\n")
+    print("\n=== BMAD Skill Stub Audit (.claude/skills/ only — _bmad/ is untouched) ===\n")
 
-    print(f"  {'KEEP':<{col}}  Role")
-    print(f"  {'-' * col}  {'-' * 35}")
+    if BMAD_RUNTIME.exists():
+        print(f"  _bmad/ runtime: found ✓ (will not be touched)\n")
+    else:
+        print(f"  _bmad/ runtime: not found — run npx bmad-method install first\n")
+
     roles = {
         "bmad-agent-analyst":                   "/plan → Analyst",
         "bmad-agent-pm":                        "/prd → PM",
@@ -74,6 +94,9 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
         "bmad-create-epics-and-stories":        "/sprint-planning → story breakdown",
         "bmad-check-implementation-readiness":  "/gate-check → PRD↔arch validation",
     }
+
+    print(f"  {'KEEP (stub)':<{col}}  Role")
+    print(f"  {'-' * col}  {'-' * 35}")
     for p in keep:
         print(f"  {p.name:<{col}}  {roles.get(p.name, '')}")
 
@@ -81,23 +104,24 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
         print("\n  Nothing to remove — already lean.\n")
         return
 
-    print(f"\n  {'REMOVE':<{col}}  Reason")
+    print(f"\n  {'REMOVE (stub only)':<{col}}  Reason")
     print(f"  {'-' * col}  {'-' * 35}")
     for p in remove:
         print(f"  {p.name:<{col}}  not in guide pipeline")
 
-    print(f"\n  Total: {len(keep)} keep, {len(remove)} remove\n")
+    print(f"\n  Total: {len(keep)} keep, {len(remove)} remove")
+    print(f"  Note: underlying agents remain in _bmad/ — restore with npx bmad-method install\n")
 
 
 def main() -> None:
     """Entry point."""
     parser = argparse.ArgumentParser(
-        description="Trim bmad- skills to the lean Agentic Engineering guide pipeline."
+        description="Trim bmad- skill stubs to the lean Agentic Engineering guide pipeline."
     )
     parser.add_argument(
         "--apply",
         action="store_true",
-        help="Actually delete the non-core skills (default is dry-run).",
+        help="Actually delete the non-core stubs (default is dry-run).",
     )
     parser.add_argument(
         "--audit",
@@ -113,7 +137,7 @@ def main() -> None:
 
     skills = get_bmad_skills()
     if not skills:
-        print("No bmad- skills found in .claude/skills/")
+        print("No bmad- skill stubs found in .claude/skills/")
         return
 
     keep, remove = partition(skills)
@@ -123,20 +147,18 @@ def main() -> None:
         return
 
     if not args.apply:
-        # Dry-run — show what would happen, prompt to confirm
         print("  Dry-run. To apply, run:")
         print("    python scripts/trim_bmad_skills.py --apply\n")
         return
 
-    # --apply: confirm then delete
-    print("  About to permanently delete the REMOVE skills listed above.")
+    print("  About to delete the REMOVE stubs listed above from .claude/skills/")
+    print("  _bmad/ runtime is NOT affected.")
     answer = input("  Type 'yes' to confirm: ").strip().lower()
     if answer != "yes":
         print("  Aborted.")
         return
 
-    removed = []
-    errors = []
+    removed, errors = [], []
     for p in remove:
         try:
             shutil.rmtree(p)
@@ -146,13 +168,12 @@ def main() -> None:
 
     print()
     for name in removed:
-        print(f"  deleted  {name}")
+        print(f"  deleted stub  {name}")
     for name, err in errors:
-        print(f"  ERROR    {name}: {err}")
+        print(f"  ERROR         {name}: {err}")
 
-    print(f"\n  Done. {len(removed)} skills removed, {len(errors)} errors.")
-    if errors:
-        print("  Check the errors above — those skills may need manual removal.")
+    print(f"\n  Done. {len(removed)} stubs removed, {len(errors)} errors.")
+    print(f"  To restore all stubs: npx bmad-method install")
 
 
 if __name__ == "__main__":

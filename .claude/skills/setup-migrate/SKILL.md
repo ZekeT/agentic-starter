@@ -15,7 +15,7 @@ description: >
 
 This skill guides Claude Code through migrating an existing project to the
 Agentic Engineering framework. The mechanical parts (directory creation, file
-scaffolding) are handled by `migrate.py`. This skill handles the **judgment
+scaffolding) are handled by `setup_migrate.py`. This skill handles the **judgment
 calls** that a script cannot: merging existing content, reconciling conflicts,
 and making project-specific decisions.
 
@@ -27,7 +27,7 @@ Before doing anything else, run the migration script in dry-run mode to get
 a complete picture of the project's current state:
 
 ```bash
-python migrate.py . --dry
+python setup_migrate.py . --dry
 ```
 
 Read the output carefully. You now know:
@@ -45,7 +45,7 @@ Read the output carefully. You now know:
 Once you and the user have reviewed the audit, run the scaffold:
 
 ```bash
-python migrate.py .
+python setup_migrate.py .
 ```
 
 This creates all missing structure **without overwriting anything existing**.
@@ -203,7 +203,7 @@ jobs:
 Run the audit one more time to confirm everything is in place:
 
 ```bash
-python migrate.py . --dry
+python setup_migrate.py . --dry
 ```
 
 The output should show mostly ✓ (green). Remaining ✗ items are ones that

@@ -1,5 +1,5 @@
 """
-setup_project.py
+setup_base.py
 
 Run once per project after installing BMAD and Superpowers.
 Handles two cases:
@@ -7,8 +7,8 @@ Handles two cases:
   2. Existing BMAD-only project — migrates _bmad/ output into the correct layout
 
 Usage:
-    python setup_project.py           # auto-detects mode
-    python setup_project.py --dry-run # preview only, no changes
+    python setup_base.py           # auto-detects mode
+    python setup_base.py --dry-run # preview only, no changes
 """
 
 import argparse
