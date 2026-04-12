@@ -33,21 +33,18 @@ else
   echo "    npx bmad-method install && make bmad-trim-apply"
 fi
 
-# 4. Install Superpowers (global — handles developer + code-review workflow)
-echo "[4/6] Installing Superpowers..."
-if command -v claude &> /dev/null; then
-  # Superpowers installs globally to ~/.claude/ — not per-project
-  # It provides: subagent-driven-development, code-reviewer, TDD workflow
-  # Skills trigger automatically — no manual invocation needed
-  claude --dangerously-skip-permissions -p "/plugin marketplace add obra/superpowers-marketplace && /plugin install superpowers@superpowers-marketplace" 2>/dev/null || true
-  echo "  If the above failed, run manually inside Claude Code:"
-  echo "    /plugin marketplace add obra/superpowers-marketplace"
-  echo "    /plugin install superpowers@superpowers-marketplace"
-else
-  echo "  SKIP: claude CLI not found. Run inside Claude Code:"
-  echo "    /plugin marketplace add obra/superpowers-marketplace"
-  echo "    /plugin install superpowers@superpowers-marketplace"
-fi
+# 4. Superpowers — must be installed manually inside Claude Code.
+# /plugin is an interactive slash command, not a CLI argument.
+# There is no way to automate this from a shell script.
+echo "[4/6] Superpowers (manual step required)..."
+echo ""
+echo "  Open Claude Code in this project directory, then run:"
+echo "    /plugin marketplace add obra/superpowers-marketplace"
+echo "    /plugin install superpowers@superpowers-marketplace"
+echo ""
+echo "  This installs globally to ~/.claude/ — do it once,"
+echo "  and it works for all your projects."
+echo 
 
 # 5. Install graphify (optional but recommended)
 echo "[5/6] Setting up graphify..."
