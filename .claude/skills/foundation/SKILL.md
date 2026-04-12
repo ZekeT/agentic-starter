@@ -1,9 +1,9 @@
 ---
-name: agentic-project-scanner
+name: foundation
 description: Scans a project to check if it is correctly set up for the BMAD + Superpowers agentic engineering workflow. Use this skill whenever the user says "scan my project", "check my setup", "is my project clean", "did setup work", "migrate from BMAD", or wants to verify the agentic project structure is correct before starting a sprint. Also trigger when the user mentions they've just run setup_agentic_project.py or installed BMAD/Superpowers.
 ---
 
-# Agentic project scanner
+# Foundation
 
 Checks that a project is correctly structured for the BMAD + Superpowers workflow.
 Produces a clear pass/fail report with actionable fixes.
