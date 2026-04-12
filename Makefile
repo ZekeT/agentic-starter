@@ -70,3 +70,16 @@ clean:
 	find . -type d -name "dist" -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	@echo "Cleaned."
+
+# ---- BMAD skill management --------------------------------
+# After `npx bmad-method install`, trim to the lean pipeline.
+# Dry-run first (bmad-trim), then apply (bmad-trim-apply).
+
+bmad-audit:
+	uv run python scripts/trim_bmad_skills.py --audit
+
+bmad-trim:
+	uv run python scripts/trim_bmad_skills.py
+
+bmad-trim-apply:
+	uv run python scripts/trim_bmad_skills.py --apply

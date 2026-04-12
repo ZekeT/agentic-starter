@@ -21,12 +21,16 @@ fi
 echo "[2/5] Installing Python dependencies..."
 uv sync --all-extras
 
-# 3. Install BMAD
+# 3. Install BMAD then immediately trim to the lean pipeline
 echo "[3/5] Installing BMAD..."
 if command -v npx &> /dev/null; then
   npx bmad-method install
+  echo "  Trimming to lean pipeline (Agentic Engineering guide — 5 steps only)..."
+  echo "yes" | uv run python scripts/trim_bmad_skills.py --apply
+  echo "  BMAD trimmed. Run 'make bmad-audit' to verify."
 else
-  echo "  SKIP: npx not found. Install Node.js then run: npx bmad-method install"
+  echo "  SKIP: npx not found. Install Node.js then run:"
+  echo "    npx bmad-method install && make bmad-trim-apply"
 fi
 
 # 4. Install graphify (optional but recommended)
