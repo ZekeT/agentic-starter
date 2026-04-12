@@ -10,19 +10,19 @@ echo ""
 
 # 1. Install uv if not present
 if ! command -v uv &> /dev/null; then
-  echo "[1/5] Installing uv..."
+  echo "[1/6] Installing uv..."
   curl -LsSf https://astral.sh/uv/install.sh | sh
   source "$HOME/.cargo/env" 2>/dev/null || true
 else
-  echo "[1/5] uv already installed ($(uv --version))"
+  echo "[1/6] uv already installed ($(uv --version))"
 fi
 
 # 2. Install Python deps
-echo "[2/5] Installing Python dependencies..."
+echo "[2/6] Installing Python dependencies..."
 uv sync --all-extras
 
 # 3. Install BMAD then immediately trim to the lean pipeline
-echo "[3/5] Installing BMAD..."
+echo "[3/6] Installing BMAD..."
 if command -v npx &> /dev/null; then
   npx bmad-method install
   echo "  Trimming to lean pipeline (Agentic Engineering guide — 5 steps only)..."
@@ -33,8 +33,24 @@ else
   echo "    npx bmad-method install && make bmad-trim-apply"
 fi
 
-# 4. Install graphify (optional but recommended)
-echo "[4/5] Setting up graphify..."
+# 4. Install Superpowers (global — handles developer + code-review workflow)
+echo "[4/6] Installing Superpowers..."
+if command -v claude &> /dev/null; then
+  # Superpowers installs globally to ~/.claude/ — not per-project
+  # It provides: subagent-driven-development, code-reviewer, TDD workflow
+  # Skills trigger automatically — no manual invocation needed
+  claude --dangerously-skip-permissions -p "/plugin marketplace add obra/superpowers-marketplace && /plugin install superpowers@superpowers-marketplace" 2>/dev/null || true
+  echo "  If the above failed, run manually inside Claude Code:"
+  echo "    /plugin marketplace add obra/superpowers-marketplace"
+  echo "    /plugin install superpowers@superpowers-marketplace"
+else
+  echo "  SKIP: claude CLI not found. Run inside Claude Code:"
+  echo "    /plugin marketplace add obra/superpowers-marketplace"
+  echo "    /plugin install superpowers@superpowers-marketplace"
+fi
+
+# 5. Install graphify (optional but recommended)
+echo "[5/6] Setting up graphify..."
 if command -v pip &> /dev/null; then
   pip install graphifyy --quiet
   graphify claude install
@@ -44,7 +60,7 @@ else
 fi
 
 # 5. Verify make check works (no src yet, just confirm tooling)
-echo "[5/5] Verifying toolchain..."
+echo "[6/6] Verifying toolchain..."
 uv run black --version
 uv run isort --version-number
 uv run autoflake --version

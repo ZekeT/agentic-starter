@@ -220,7 +220,8 @@ _bmad/                   # BMAD runtime — DO NOT EDIT. npx owns this.
 _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.md)
 
 .claude/
-  agents/                # Our implementation agents (developer, code-reviewer, security-reviewer)
+  agents/                # Our agents only — Superpowers + BMAD provide the rest
+                         # security-reviewer.md — OWASP/CVE scan (read-only)
   commands/              # Our slash commands (implement, review, commit-push-pr)
   hooks/                 # Deterministic guardrails (lint, secrets, env guard, dangerous bash)
   skills/
@@ -280,17 +281,31 @@ and live in `_bmad/` (runtime) + `.claude/skills/bmad-*/` (stubs). Do not edit `
 
 After `setup.sh`, only these 7 BMAD skill stubs remain (all others trimmed by `make bmad-trim-apply`).
 
-### Layer 2: Implementation — Our agents + commands
+### Layer 2: Implementation — Superpowers (installed globally via plugin)
 
-These live in `.claude/` and are ours to own and customise.
+Superpowers owns the implementation workflow. It installs to `~/.claude/` — not
+per-project. Skills trigger automatically when Claude detects relevant context.
 
-| Command | Agent | What it does |
-|---------|-------|--------------|
-| `/implement` | `developer` | TDD implementation (Superpowers workflow) |
-| `/review` | `code-reviewer` | PR review — read-only |
-| `/commit-push-pr` | — | Stage, commit, push, open PR |
+| Skill | Triggers when... |
+|-------|-----------------|
+| `brainstorming` | You describe something to build |
+| `using-git-worktrees` | Design is approved — creates isolated branch |
+| `writing-plans` | Ready to implement — breaks into 2–5 min tasks |
+| `subagent-driven-development` | Plan exists — dispatches subagents per task |
+| `code-reviewer` | A task completes — two-stage review |
+| `verification-before-completion` | Before any commit or PR |
 
-Security review runs via the `security-reviewer` agent on sensitive PRs.
+Install once globally:
+```
+/plugin marketplace add obra/superpowers-marketplace
+/plugin install superpowers@superpowers-marketplace
+```
+
+### Layer 3: Security — Our agent (`.claude/agents/`)
+
+`/security-scan` → `security-reviewer` agent — OWASP Top 10, secrets, CVEs.
+Use on PRs touching auth, data access, or external integrations.
+Our command `/review` triggers this explicitly when needed.
 
 ### Story file lifecycle
 
@@ -357,25 +372,34 @@ cp .env.template .env   # then fill in real values
 
 ## Agent Team
 
-**BMAD agents** (come with `npx bmad-method install` — do not edit):
+**BMAD agents** (from `npx bmad-method install` → `_bmad/` runtime, do not edit):
 
 | Agent | Command | Phase |
 |-------|---------|-------|
 | Analyst | `/plan` | Product brief |
 | PM | `/prd` | PRD generation |
 | Architect | `/architecture` | System design |
-| Scrum Master | `/sprint-planning` | Story breakdown |
+| Scrum Master | `/sprint-planning` | Story breakdown → `stories/draft/` |
 
-**Our agents** (`.claude/agents/` — customise freely):
+**Superpowers agents** (installed globally to `~/.claude/` via `/plugin install`, do not edit):
 
-| Agent | Phase | Model tier |
-|-------|-------|-----------|
-| `developer` | Implementation — TDD | `implement` (Sonnet) |
-| `code-reviewer` | PR review — read-only | `review` (Opus) |
-| `security-reviewer` | Security scan — read-only | `review` (Opus) |
+| Agent / Skill | Triggers | What it does |
+|--------------|----------|--------------|
+| `subagent-driven-development` | Automatically when implementing | TDD workflow — brainstorm → plan → test-first → implement → review |
+| `code-reviewer` | After each implementation task | Two-stage review: spec compliance then code quality |
+| `brainstorming` | Before writing code | Refines requirements, explores alternatives |
+| `writing-plans` | After design approved | Breaks work into 2–5 min tasks with exact file paths |
+| `verification-before-completion` | Before any PR/commit | Runs tests, confirms output before claiming done |
 
-Route planning → BMAD. Route implementation/review → our agents.
-Run `make configure` after changing `config/models.json`.
+Skills trigger **automatically** based on context — you do not invoke them manually.
+
+**Our agent** (`.claude/agents/` — customise freely):
+
+| Agent | Phase | Why we own it |
+|-------|-------|--------------|
+| `security-reviewer` | Security scan — read-only | Superpowers has no security-specific agent |
+
+---
 
 ---
 
