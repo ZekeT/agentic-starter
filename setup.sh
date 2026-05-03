@@ -10,19 +10,19 @@ echo ""
 
 # 1. Install uv if not present
 if ! command -v uv &> /dev/null; then
-  echo "[1/6] Installing uv..."
+  echo "[1/8] Installing uv..."
   curl -LsSf https://astral.sh/uv/install.sh | sh
   source "$HOME/.cargo/env" 2>/dev/null || true
 else
-  echo "[1/6] uv already installed ($(uv --version))"
+  echo "[1/8] uv already installed ($(uv --version))"
 fi
 
 # 2. Install Python deps
-echo "[2/6] Installing Python dependencies..."
+echo "[2/8] Installing Python dependencies..."
 uv sync --all-extras
 
 # 3. Install BMAD then immediately trim to the lean pipeline
-echo "[3/6] Installing BMAD..."
+echo "[3/8] Installing BMAD..."
 if command -v npx &> /dev/null; then
   npx bmad-method install
   echo "  Trimming to lean pipeline (Agentic Engineering guide — 5 steps only)..."
@@ -33,10 +33,25 @@ else
   echo "    npx bmad-method install && make bmad-trim-apply"
 fi
 
-# 4. Superpowers — must be installed manually inside Claude Code.
+# 4. Apply model config to .claude/agents/*.md frontmatter
+echo "[4/8] Applying model configuration to agents..."
+uv run python scripts/configure.py
+
+# 5. Bootstrap .env from the committed template if missing
+echo "[5/8] Bootstrapping .env from .env.template..."
+if [ -f .env ]; then
+  echo "  .env already exists — leaving it alone."
+elif [ -f .env.template ]; then
+  cp .env.template .env
+  echo "  .env created from .env.template — fill in real values before running."
+else
+  echo "  SKIP: .env.template not found."
+fi
+
+# 6. Superpowers — must be installed manually inside Claude Code.
 # /plugin is an interactive slash command, not a CLI argument.
 # There is no way to automate this from a shell script.
-echo "[4/6] Superpowers (manual step required)..."
+echo "[6/8] Superpowers (manual step required)..."
 echo ""
 echo "  Open Claude Code in this project directory, then run:"
 echo "    /plugin marketplace add obra/superpowers-marketplace"
@@ -44,20 +59,21 @@ echo "    /plugin install superpowers@superpowers-marketplace"
 echo ""
 echo "  This installs globally to ~/.claude/ — do it once,"
 echo "  and it works for all your projects."
-echo 
+echo
 
-# 5. Install graphify (optional but recommended)
-echo "[5/6] Setting up graphify..."
-if command -v pip &> /dev/null; then
-  pip install graphifyy --quiet
-  graphify claude install
+# 7. Install graphify (optional but recommended).
+# Use `uv pip` so it lands in the project venv rather than the system Python.
+echo "[7/8] Setting up graphify..."
+if uv pip install graphifyy --quiet 2>/dev/null; then
+  uv run graphify claude install || true
   echo "  graphify installed and wired to CLAUDE.md"
 else
-  echo "  SKIP: pip not found. Run manually: pip install graphifyy && graphify claude install"
+  echo "  SKIP: graphify install failed. Run manually:"
+  echo "    uv pip install graphifyy && uv run graphify claude install"
 fi
 
-# 5. Verify make check works (no src yet, just confirm tooling)
-echo "[6/6] Verifying toolchain..."
+# 8. Verify make check works (no src yet, just confirm tooling)
+echo "[8/8] Verifying toolchain..."
 uv run black --version
 uv run isort --version-number
 uv run autoflake --version

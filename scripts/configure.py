@@ -94,17 +94,16 @@ def advisor_enabled(cfg: dict) -> bool:
 def patch_agent_frontmatter(path: Path, model: str) -> None:
     """Replace the model: field in YAML frontmatter."""
     content = path.read_text()
-    patched = re.sub(
-        r"^(model:\s*).*$",
-        f"model: {model}",
-        content,
-        flags=re.MULTILINE,
-    )
+    pattern = re.compile(r"^(model:\s*).*$", re.MULTILINE)
+    if not pattern.search(content):
+        print(f"  {path.name}: no frontmatter model field found, skipping")
+        return
+    patched = pattern.sub(f"model: {model}", content)
     if patched != content:
         path.write_text(patched)
         print(f"  {path.name}: model → {model}")
     else:
-        print(f"  {path.name}: no frontmatter model field found, skipping")
+        print(f"  {path.name}: model already {model}")
 
 
 def patch_advisor_section(path: Path, enabled: bool, cfg: dict) -> None:
@@ -185,6 +184,9 @@ def update_claude_md(cfg: dict) -> None:
     block_lines = [
         "## Active Model Config",
         "",
+        "<!-- This section is auto-updated by scripts/configure.py — do not edit manually. -->",
+        "<!-- Run `make configure-show` to see current assignments. -->",
+        "",
         f"Provider: `{provider}`",
     ]
     if cfg.get("base_url"):
@@ -201,24 +203,23 @@ def update_claude_md(cfg: dict) -> None:
     if adv_enabled:
         block_lines += [
             "",
-            f"Advisor strategy: **enabled** — `{adv['model']}` advises executor agents",
-            f"(max {adv.get('max_uses', 3)} uses per request).",
+            f"Advisor strategy: **enabled** — `{adv['model']}` advises executor agents (max {adv.get('max_uses', 3)} uses per request).",
             "Source: https://claude.com/blog/the-advisor-strategy",
         ]
     else:
         reason = "local model provider" if provider != "anthropic" else "disabled in config"
-        block_lines.append(f"\nAdvisor strategy: disabled ({reason}).")
+        block_lines += ["", f"Advisor strategy: disabled ({reason})."]
 
     new_block = "\n".join(block_lines)
 
     content = CLAUDE_MD.read_text()
-    # Replace existing section if present
+    # Replace existing section if present, preserving the trailing `---` separator.
     pattern = re.compile(
         r"## Active Model Config.*?(?=\n## |\Z)",
         re.DOTALL,
     )
     if pattern.search(content):
-        content = pattern.sub(new_block + "\n\n", content)
+        content = pattern.sub(new_block + "\n\n---\n", content)
     else:
         # Insert after Tech Stack section
         content = content.replace(
