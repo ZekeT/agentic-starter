@@ -317,8 +317,15 @@ Our command `/review` triggers this explicitly when needed.
 
 ```
 _bmad-output/ → stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
-                  (BMAD writes)   🖐 human moves    (Superpowers)           (PR open)         (merged)
+                  (BMAD writes)   🖐 human moves    (/dev-story)            (Stop hook)       (merged)
 ```
+
+Use `/dev-story [id]` to pick up a story. With no id it grabs the
+lowest-numbered file in `stories/ready/`. The command moves the file to
+`in-progress/`, checks out `feat/story-{slug}`, and dispatches the
+Superpowers `subagent-driven-development` skill. The `stop_story_lifecycle.py`
+Stop hook moves the file to `review/` once a PR is open for the branch — no
+manual `mv` required.
 
 After `/sprint-planning` creates new stories, rebuild the knowledge graph:
 ```bash
