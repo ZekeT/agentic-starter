@@ -21,10 +21,31 @@ and making project-specific decisions.
 
 ---
 
-## Step 0 — Run the audit script first
+## Step 0 — Choose the right starting point
 
-Before doing anything else, run the migration script in dry-run mode to get
-a complete picture of the project's current state:
+**Greenfield migration** (existing codebase with zero Claude Code setup):
+Run `migrate_to_framework.py` from the agentic-starter repo first. It copies
+the actual hooks, commands, agents, config, and scripts directly from the
+starter — no embedded templates that can go stale:
+
+```bash
+python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target --dry
+python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target
+```
+
+It also merges pyproject.toml tool sections (Python projects) and Makefile
+targets, creates `.env.template`, and generates a CLAUDE.md scaffold. A report
+is saved to `.claude/migration-report.json`. Use this skill for the
+**judgment-heavy steps** that follow (Steps 2–8).
+
+**Existing Claude Code project** (already has `.claude/` structure):
+Skip straight to the audit script below.
+
+---
+
+## Step 0b — Audit script (always run before judgment steps)
+
+Run the audit in dry-run mode to get a picture of the project's current state:
 
 ```bash
 python setup_migrate.py . --dry
@@ -40,9 +61,10 @@ Read the output carefully. You now know:
 
 ---
 
-## Step 1 — Run the scaffold
+## Step 1 — Run the scaffold (existing Claude Code projects only)
 
-Once you and the user have reviewed the audit, run the scaffold:
+If the target already has partial Claude Code setup (skipped `migrate_to_framework.py`),
+scaffold any remaining missing structure:
 
 ```bash
 python setup_migrate.py .
