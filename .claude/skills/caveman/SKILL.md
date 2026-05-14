@@ -1,3 +1,8 @@
+---
+name: caveman
+description: Use when sending inter-agent messages, status updates to orchestrators, or intermediate reasoning steps where human-readable prose wastes tokens.
+---
+
 # Caveman Skill
 
 Cuts ~75% of output tokens by stripping filler words while keeping

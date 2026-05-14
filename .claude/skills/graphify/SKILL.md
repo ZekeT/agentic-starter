@@ -1,3 +1,8 @@
+---
+name: graphify
+description: Use when answering architecture questions, understanding cross-component relationships, or when grepping for context requires many tool calls on an unfamiliar codebase.
+---
+
 # Graphify Skill
 
 Turn the project into a queryable knowledge graph for token-efficient
