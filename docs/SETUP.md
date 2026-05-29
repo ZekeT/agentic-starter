@@ -22,9 +22,11 @@ Then open Claude Code and run the planning pipeline:
 /plan             # Analyst: stakeholder brief
 /prd              # PM: PRD → _bmad-output/prd.md
 /architecture     # Architect: system design → _bmad-output/architecture.md
-                  # ← HUMAN GATE
+                  # ← HUMAN GATE: review architecture
+/gate-check       # Verify PRD ↔ architecture consistency
 /sprint-planning  # Scrum Master: stories → stories/draft/
                   # ← HUMAN GATE: move stories to stories/ready/
+/dev-story [id]   # Implement a story end-to-end (omit id to pick lowest-numbered)
 ```
 
 ---
@@ -51,7 +53,13 @@ Then open Claude Code and run the planning pipeline:
 │   │   ├── developer.md                 # TDD (Sonnet + Opus advisor)
 │   │   ├── code-reviewer.md             # PR review, read-only (Opus)
 │   │   └── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
-│   ├── commands/                        # Our implementation commands
+│   ├── commands/                        # Slash commands
+│   │   ├── plan.md                      # /plan → bmad-agent-analyst
+│   │   ├── prd.md                       # /prd → bmad-agent-pm + bmad-create-prd
+│   │   ├── architecture.md              # /architecture → bmad-agent-architect + bmad-create-architecture
+│   │   ├── gate-check.md               # /gate-check → bmad-check-implementation-readiness
+│   │   ├── sprint-planning.md           # /sprint-planning → bmad-create-epics-and-stories
+│   │   ├── dev-story.md                 # /dev-story [id] — full story lifecycle
 │   │   ├── implement.md                 # /implement story-NNN
 │   │   ├── review.md                    # /review
 │   │   └── commit-push-pr.md            # /commit-push-pr
