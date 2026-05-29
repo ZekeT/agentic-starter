@@ -23,7 +23,7 @@ from pathlib import Path
 _REPORT = Path("graphify-out/GRAPH_REPORT.md")
 _REMINDER = (
     "GRAPHIFY: graph is available. "
-    "Try: graphify query \"<question>\" instead of grepping raw files "
+    'Try: graphify query "<question>" instead of grepping raw files '
     "(71x fewer tokens). Only grep if the graph doesn't answer your question."
 )
 
@@ -39,7 +39,11 @@ def _is_broad_grep(tool_input: dict[str, object]) -> bool:
 def _is_broad_glob(tool_input: dict[str, object]) -> bool:
     pattern = str(tool_input.get("pattern", "") or "")
     # Patterns starting with **/ or ./**/ are codebase-wide
-    return pattern.startswith("**") or pattern.startswith("./**") or pattern.startswith("./")
+    return (
+        pattern.startswith("**")
+        or pattern.startswith("./**")
+        or pattern.startswith("./")
+    )
 
 
 def main() -> None:

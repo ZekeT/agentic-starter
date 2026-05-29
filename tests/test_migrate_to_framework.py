@@ -15,7 +15,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 import migrate_to_framework as m  # noqa: E402
 
-
 # ── fixtures ──────────────────────────────────────────────────────────────────
 
 
@@ -222,9 +221,7 @@ def test_copy_framework_files_force_overwrites(tmp_path: Path) -> None:
     dst = tmp_path / ".claude" / "settings.json"
     dst.parent.mkdir(parents=True)
     dst.write_text('{"original": true}')
-    copied, skipped = m.copy_framework_files(
-        tmp_path, STARTER, force=True, dry=False
-    )
+    copied, skipped = m.copy_framework_files(tmp_path, STARTER, force=True, dry=False)
     assert ".claude/settings.json" in copied
     assert ".claude/settings.json" not in skipped
     assert "original" not in dst.read_text()
@@ -498,8 +495,6 @@ def test_full_migration_report_saved(tmp_path: Path) -> None:
     """Migration report JSON should be saved and contain expected keys."""
     audit = m.audit_target(tmp_path, STARTER)
     m.run_migration(tmp_path, STARTER, audit, force=False, dry=False)
-    data = json.loads(
-        (tmp_path / ".claude" / "migration-report.json").read_text()
-    )
+    data = json.loads((tmp_path / ".claude" / "migration-report.json").read_text())
     for key in ("timestamp", "target", "tech_stacks", "copied", "skipped"):
         assert key in data, f"Missing key in report: {key}"

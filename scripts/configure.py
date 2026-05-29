@@ -117,7 +117,9 @@ def patch_advisor_section(path: Path, enabled: bool, cfg: dict) -> None:
     if enabled and not has_section:
         # Append before the last "## Context" section, or at end
         if "## Context" in content:
-            content = content.replace("## Context", ADVISOR_TOOL_BLOCK + "\n## Context", 1)
+            content = content.replace(
+                "## Context", ADVISOR_TOOL_BLOCK + "\n## Context", 1
+            )
         else:
             content = content.rstrip() + "\n\n" + ADVISOR_TOOL_BLOCK
         path.write_text(content)
@@ -207,7 +209,9 @@ def update_claude_md(cfg: dict) -> None:
             "Source: https://claude.com/blog/the-advisor-strategy",
         ]
     else:
-        reason = "local model provider" if provider != "anthropic" else "disabled in config"
+        reason = (
+            "local model provider" if provider != "anthropic" else "disabled in config"
+        )
         block_lines += ["", f"Advisor strategy: disabled ({reason})."]
 
     new_block = "\n".join(block_lines)
@@ -242,7 +246,9 @@ def show_config(cfg: dict) -> None:
         print(f"  {tier:<12} {model}")
     adv = cfg.get("advisor", {})
     if advisor_enabled(cfg):
-        print(f"\nAdvisor  : ENABLED — {adv['model']} (max_uses={adv.get('max_uses', 3)})")
+        print(
+            f"\nAdvisor  : ENABLED — {adv['model']} (max_uses={adv.get('max_uses', 3)})"
+        )
     else:
         reason = "local provider" if cfg["provider"] != "anthropic" else "disabled"
         print(f"\nAdvisor  : disabled ({reason})")
@@ -262,10 +268,18 @@ def list_profiles() -> None:
 
 def main() -> None:
     """Entry point."""
-    parser = argparse.ArgumentParser(description="Configure model assignments for agents.")
-    parser.add_argument("--profile", "-p", help="Apply a named profile from models.json")
-    parser.add_argument("--show", action="store_true", help="Show current config and exit")
-    parser.add_argument("--list", action="store_true", help="List available profiles and exit")
+    parser = argparse.ArgumentParser(
+        description="Configure model assignments for agents."
+    )
+    parser.add_argument(
+        "--profile", "-p", help="Apply a named profile from models.json"
+    )
+    parser.add_argument(
+        "--show", action="store_true", help="Show current config and exit"
+    )
+    parser.add_argument(
+        "--list", action="store_true", help="List available profiles and exit"
+    )
     args = parser.parse_args()
 
     if args.list:

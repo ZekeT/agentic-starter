@@ -84,7 +84,8 @@ def find_bmad_output(root: Path) -> Path | None:
 def find_story_files(bmad_output: Path) -> list[Path]:
     """Return .md files that look like story files (not prd/architecture)."""
     return [
-        f for f in bmad_output.rglob("*.md")
+        f
+        for f in bmad_output.rglob("*.md")
         if f.name not in DOCS_ARTEFACTS
         and ("story" in f.name.lower() or f.parent.name in ("stories", "epics"))
     ]
@@ -155,9 +156,15 @@ def migrate_stories(bmad_output: Path, root: Path, dry_run: bool) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Set up agentic engineering project structure")
-    parser.add_argument("--dry-run", action="store_true", help="Preview changes without writing")
-    parser.add_argument("--root", default=".", help="Project root (default: current directory)")
+    parser = argparse.ArgumentParser(
+        description="Set up agentic engineering project structure"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview changes without writing"
+    )
+    parser.add_argument(
+        "--root", default=".", help="Project root (default: current directory)"
+    )
     args = parser.parse_args()
 
     root = Path(args.root).resolve()

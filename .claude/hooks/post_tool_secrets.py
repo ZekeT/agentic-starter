@@ -24,7 +24,7 @@ SECRET_PATTERNS = [
     (r'(?i)(token)\s*=\s*["\'][A-Za-z0-9_\-\.]{20,}["\']', "Token"),
     (r'(?i)(aws_access_key_id)\s*=\s*["\'][A-Z0-9]{20}["\']', "AWS key"),
     (r'(?i)(aws_secret_access_key)\s*=\s*["\'][A-Za-z0-9/+=]{40}["\']', "AWS secret"),
-    (r'sk-[A-Za-z0-9]{32,}', "OpenAI/Anthropic key"),
+    (r"sk-[A-Za-z0-9]{32,}", "OpenAI/Anthropic key"),
 ]
 
 # Files that are allowed to contain secret-like patterns (e.g., .env.example)
@@ -56,9 +56,16 @@ def main() -> None:
             hits.append(label)
 
     if hits:
-        print(f"BLOCKED: Possible secret(s) detected: {', '.join(hits)}", file=sys.stderr)
-        print("Use environment variables or a secrets manager instead.", file=sys.stderr)
-        print("If this is a false positive, add the pattern to ALLOWED_PATHS.", file=sys.stderr)
+        print(
+            f"BLOCKED: Possible secret(s) detected: {', '.join(hits)}", file=sys.stderr
+        )
+        print(
+            "Use environment variables or a secrets manager instead.", file=sys.stderr
+        )
+        print(
+            "If this is a false positive, add the pattern to ALLOWED_PATHS.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
 

@@ -47,12 +47,12 @@ BMAD_RUNTIME = ROOT / "_bmad"
 
 # Exactly the 7 skill stubs the Agentic Engineering guide's pipeline needs.
 KEEP: set[str] = {
-    "bmad-agent-analyst",            # /plan  — Analyst agent
-    "bmad-agent-pm",                 # /prd   — PM agent
-    "bmad-agent-architect",          # /architecture — Architect agent
-    "bmad-create-prd",               # generates docs/prd.md
-    "bmad-create-architecture",      # generates docs/architecture.md
-    "bmad-create-epics-and-stories", # /sprint-planning — story breakdown
+    "bmad-agent-analyst",  # /plan  — Analyst agent
+    "bmad-agent-pm",  # /prd   — PM agent
+    "bmad-agent-architect",  # /architecture — Architect agent
+    "bmad-create-prd",  # generates docs/prd.md
+    "bmad-create-architecture",  # generates docs/architecture.md
+    "bmad-create-epics-and-stories",  # /sprint-planning — story breakdown
     "bmad-check-implementation-readiness",  # /gate-check — PRD↔arch validation
 }
 
@@ -62,8 +62,7 @@ def get_bmad_skills() -> list[Path]:
     if not SKILLS_DIR.exists():
         return []
     return sorted(
-        p for p in SKILLS_DIR.iterdir()
-        if p.is_dir() and p.name.startswith("bmad-")
+        p for p in SKILLS_DIR.iterdir() if p.is_dir() and p.name.startswith("bmad-")
     )
 
 
@@ -78,7 +77,9 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
     """Print a clear keep/remove summary."""
     col = 45
 
-    print("\n=== BMAD Skill Stub Audit (.claude/skills/ only — _bmad/ is untouched) ===\n")
+    print(
+        "\n=== BMAD Skill Stub Audit (.claude/skills/ only — _bmad/ is untouched) ===\n"
+    )
 
     if BMAD_RUNTIME.exists():
         print(f"  _bmad/ runtime: found ✓ (will not be touched)\n")
@@ -86,13 +87,13 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
         print(f"  _bmad/ runtime: not found — run npx bmad-method install first\n")
 
     roles = {
-        "bmad-agent-analyst":                   "/plan → Analyst",
-        "bmad-agent-pm":                        "/prd → PM",
-        "bmad-agent-architect":                 "/architecture → Architect",
-        "bmad-create-prd":                      "generates docs/prd.md",
-        "bmad-create-architecture":             "generates docs/architecture.md",
-        "bmad-create-epics-and-stories":        "/sprint-planning → story breakdown",
-        "bmad-check-implementation-readiness":  "/gate-check → PRD↔arch validation",
+        "bmad-agent-analyst": "/plan → Analyst",
+        "bmad-agent-pm": "/prd → PM",
+        "bmad-agent-architect": "/architecture → Architect",
+        "bmad-create-prd": "generates docs/prd.md",
+        "bmad-create-architecture": "generates docs/architecture.md",
+        "bmad-create-epics-and-stories": "/sprint-planning → story breakdown",
+        "bmad-check-implementation-readiness": "/gate-check → PRD↔arch validation",
     }
 
     print(f"  {'KEEP (stub)':<{col}}  Role")
@@ -110,7 +111,9 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
         print(f"  {p.name:<{col}}  not in guide pipeline")
 
     print(f"\n  Total: {len(keep)} keep, {len(remove)} remove")
-    print(f"  Note: underlying agents remain in _bmad/ — restore with npx bmad-method install\n")
+    print(
+        f"  Note: underlying agents remain in _bmad/ — restore with npx bmad-method install\n"
+    )
 
 
 def main() -> None:

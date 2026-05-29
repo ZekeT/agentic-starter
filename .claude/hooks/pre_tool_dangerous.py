@@ -17,14 +17,23 @@ import sys
 DANGEROUS_PATTERNS = [
     (r"\brm\s+-rf\s+/", "rm -rf / is not allowed"),
     (r"\brm\s+--no-preserve-root", "rm --no-preserve-root is not allowed"),
-    (r"\bgit\s+push\s+.*--force\b(?!-with-lease)", "force push without --force-with-lease is not allowed"),
+    (
+        r"\bgit\s+push\s+.*--force\b(?!-with-lease)",
+        "force push without --force-with-lease is not allowed",
+    ),
     (r"\bgit\s+push\s+-f\b", "force push (-f) is not allowed — use --force-with-lease"),
     (r"\bchmod\s+-R\s+777\b", "chmod -R 777 is not allowed"),
-    (r"\bdd\s+if=.*of=/dev/(sd|hd|nvme)", "writing directly to block device is not allowed"),
+    (
+        r"\bdd\s+if=.*of=/dev/(sd|hd|nvme)",
+        "writing directly to block device is not allowed",
+    ),
     (r"\bcurl\s+.*\|\s*(ba)?sh\b", "piping curl to shell is not allowed"),
     (r"\bwget\s+.*\|\s*(ba)?sh\b", "piping wget to shell is not allowed"),
     (r":\(\)\s*\{.*\};\s*:", "fork bomb pattern detected"),
-    (r"\b(DROP|TRUNCATE)\s+(TABLE|DATABASE)\b", "destructive SQL statement — use a migration"),
+    (
+        r"\b(DROP|TRUNCATE)\s+(TABLE|DATABASE)\b",
+        "destructive SQL statement — use a migration",
+    ),
 ]
 
 

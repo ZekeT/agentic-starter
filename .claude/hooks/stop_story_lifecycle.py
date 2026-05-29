@@ -26,7 +26,11 @@ def _run(cmd: list[str]) -> str | None:
         out = subprocess.run(
             cmd, cwd=REPO, check=True, capture_output=True, text=True, timeout=10
         )
-    except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
+    except (
+        subprocess.CalledProcessError,
+        FileNotFoundError,
+        subprocess.TimeoutExpired,
+    ):
         return None
     return out.stdout.strip()
 
@@ -41,7 +45,7 @@ def _branch_slug(branch: str) -> str | None:
     prefix = "feat/story-"
     if not branch.startswith(prefix):
         return None
-    return branch[len(prefix):]
+    return branch[len(prefix) :]
 
 
 def _has_open_pr() -> bool:
@@ -83,7 +87,9 @@ def main() -> int:
     if target.exists():
         return 0
     story.rename(target)
-    print(f"[stop_story_lifecycle] moved {story.name} -> stories/review/", file=sys.stderr)
+    print(
+        f"[stop_story_lifecycle] moved {story.name} -> stories/review/", file=sys.stderr
+    )
     return 0
 
 

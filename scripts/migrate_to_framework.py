@@ -98,7 +98,7 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
     "tool.black": (
         "# --- Formatter ---\n"
         "[tool.black]\n"
-        'line-length = 88\n'
+        "line-length = 88\n"
         'target-version = ["py311"]\n'
     ),
     "tool.isort": (
@@ -359,12 +359,8 @@ def audit_target(target: Path, starter: Path) -> AuditResult:
     """
     existing_files = detect_existing_files(target)
 
-    files_to_copy = [
-        dst for dst in FILES_TO_COPY.values() if dst not in existing_files
-    ]
-    files_to_skip = [
-        dst for dst in FILES_TO_COPY.values() if dst in existing_files
-    ]
+    files_to_copy = [dst for dst in FILES_TO_COPY.values() if dst not in existing_files]
+    files_to_skip = [dst for dst in FILES_TO_COPY.values() if dst in existing_files]
     missing_dirs = [d for d in DIRS_TO_CREATE if not (target / d).is_dir()]
 
     claude_dir = target / ".claude"
@@ -917,7 +913,9 @@ def print_next_steps(audit: AuditResult) -> None:
             "uv sync --all-extras          # install dev dependencies",
             "make check                    # verify toolchain passes",
         ]
-    steps.append("/plan                         # start with BMAD planning in Claude Code")
+    steps.append(
+        "/plan                         # start with BMAD planning in Claude Code"
+    )
     for i, step in enumerate(steps, 1):
         print(f"  {i}. {step}")
     print()
@@ -963,9 +961,7 @@ def run_migration(
         _info("All directories already exist")
 
     _header("COPYING FRAMEWORK FILES")
-    report.copied, report.skipped = copy_framework_files(
-        target, starter, force, dry
-    )
+    report.copied, report.skipped = copy_framework_files(target, starter, force, dry)
     for f in report.copied:
         _ok(f"copied:  {f}")
     for f in report.skipped:
