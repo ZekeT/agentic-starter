@@ -22,6 +22,15 @@
             "command": "python3 .claude/hooks/pre_tool_env_guard.py"
           }
         ]
+      },
+      {
+        "matcher": "Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/pre_tool_graphify_remind.py"
+          }
+        ]
       }
     ],
     "PostToolUse": [

@@ -66,10 +66,12 @@ echo
 echo "[7/8] Setting up graphify..."
 if uv pip install graphifyy --quiet 2>/dev/null; then
   uv run graphify claude install || true
-  echo "  graphify installed and wired to CLAUDE.md"
+  echo "  graphify installed. Building initial knowledge graph..."
+  uv run graphify . --quiet 2>/dev/null && echo "  Knowledge graph built → graphify-out/GRAPH_REPORT.md" || \
+    echo "  WARN: graphify build failed — run 'graphify .' manually after adding source files"
 else
   echo "  SKIP: graphify install failed. Run manually:"
-  echo "    uv pip install graphifyy && uv run graphify claude install"
+  echo "    uv pip install graphifyy && graphify ."
 fi
 
 # 8. Verify make check works (no src yet, just confirm tooling)

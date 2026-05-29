@@ -426,11 +426,28 @@ Skills trigger **automatically** based on context — you do not invoke them man
 
 ## Knowledge Graph (Graphify)
 
-When `graphify-out/GRAPH_REPORT.md` exists, **read it before answering architecture questions**.
+When `graphify-out/GRAPH_REPORT.md` exists, **check it before any broad codebase search**.
 It provides a token-compressed map of the codebase (71x fewer tokens than grepping raw files).
+Prefer `graphify query "<question>"` over multi-file Grep for context gathering.
+Only fall back to grepping raw files if the graph doesn't answer your question.
 
 To build/update: `graphify . --update`
 To query: `graphify query "what connects X to Y?"`
+
+---
+
+## Token-Efficient Comms (Caveman)
+
+Subagents use **caveman-style output** for all internal messages — status updates,
+handoff notes, task completions passed to the orchestrator. Full prose is for
+human-facing output only (PR descriptions, CLAUDE.md updates, reviews).
+
+What caveman strips: articles, filler phrases, hedging. Code blocks are never touched.
+Example: "The component re-renders because a new object ref is created on every render cycle"
+→ "New obj ref each render. Inline object = new ref = re-render. Wrap in useMemo."
+
+**Use caveman for:** inter-agent messages, status updates, reasoning steps not read by humans.
+**Never use caveman for:** PR descriptions, commit messages, user-facing reviews, CLAUDE.md.
 
 ---
 

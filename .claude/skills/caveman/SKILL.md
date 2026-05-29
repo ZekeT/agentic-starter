@@ -9,9 +9,9 @@ Cuts ~75% of output tokens by stripping filler words while keeping
 full technical accuracy. Useful for inter-agent messages where
 human-readable prose wastes tokens.
 
-Install: `claude install-skill JuliusBrussee/caveman`
 Trigger: `/caveman`, "talk like caveman", "less tokens please"
 Stop:    "stop caveman", "normal mode"
+Auto:    subagents use this style for all inter-agent messages (see CLAUDE.md)
 
 ---
 
