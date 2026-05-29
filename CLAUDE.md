@@ -240,6 +240,7 @@ _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.
     setup-migrate/  # Migration skill for existing projects
       scripts/
         setup_migrate.py       # Full audit + scaffold for existing projects
+    rescan-docs/             # Reverse-engineer PRD + architecture + stories from existing code
   settings.json          # Hook wiring
 
 stories/

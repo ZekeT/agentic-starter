@@ -16,6 +16,16 @@ bash setup.sh
 `npx bmad-method install`, trims the BMAD skill set down to the lean 7,
 and applies model assignments from `config/models.json`.
 
+Then install Superpowers **once per machine** inside a Claude Code session:
+
+```
+/plugin marketplace add obra/superpowers-marketplace
+/plugin install superpowers@superpowers-marketplace
+```
+
+This installs implementation skills (TDD, subagent dispatch, code review) globally
+to `~/.claude/`. Required for `/dev-story` to use the full agentic TDD workflow.
+
 Then open Claude Code and run the planning pipeline:
 
 ```
@@ -49,18 +59,18 @@ Then open Claude Code and run the planning pipeline:
 │
 ├── .claude/
 │   ├── settings.json                    # Hook wiring
-│   ├── agents/                          # Our implementation agents
-│   │   ├── developer.md                 # TDD (Sonnet + Opus advisor)
-│   │   ├── code-reviewer.md             # PR review, read-only (Opus)
+│   ├── agents/                          # Project-specific agents only
 │   │   └── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
+│   │                                    # developer + code-reviewer live in Superpowers
+│   │                                    # (~/.claude/) — not committed here
 │   ├── commands/                        # Slash commands
 │   │   ├── plan.md                      # /plan → bmad-agent-analyst
 │   │   ├── prd.md                       # /prd → bmad-agent-pm + bmad-create-prd
 │   │   ├── architecture.md              # /architecture → bmad-agent-architect + bmad-create-architecture
 │   │   ├── gate-check.md               # /gate-check → bmad-check-implementation-readiness
 │   │   ├── sprint-planning.md           # /sprint-planning → bmad-create-epics-and-stories
-│   │   ├── dev-story.md                 # /dev-story [id] — full story lifecycle
-│   │   ├── implement.md                 # /implement story-NNN
+│   │   ├── dev-story.md                 # /dev-story [id] — full story lifecycle (canonical)
+│   │   ├── implement.md                 # /implement story-NNN — thin alias for dev-story
 │   │   ├── review.md                    # /review
 │   │   └── commit-push-pr.md            # /commit-push-pr
 │   ├── hooks/
@@ -77,7 +87,10 @@ Then open Claude Code and run the planning pipeline:
 │       ├── bmad-create-epics-and-stories/ # │
 │       ├── bmad-check-implementation-readiness/ # ┘
 │       ├── graphify/SKILL.md            # Optional: knowledge graph
-│       └── caveman/SKILL.md             # Optional: token-efficient comms
+│       ├── caveman/SKILL.md             # Optional: token-efficient comms
+│       ├── setup-base/                  # Scan project setup health
+│       ├── setup-migrate/               # Migrate existing projects to this framework
+│       └── rescan-docs/                 # Reverse-engineer PRD + architecture + stories from code
 │
 ├── stories/
 │   ├── STORY_TEMPLATE.md
@@ -130,11 +143,29 @@ claude install-skill JuliusBrussee/caveman
 Cuts ~75% of output tokens on internal agent messages. Use for
 agent-to-agent handoffs, not human-facing output.
 
-**Superpowers** (global plugin — installs to `~/.claude/`, not per-project):
+---
+
+## Migrating an existing project
+
+To adopt this framework on an existing codebase (instead of starting fresh),
+run the migration script from wherever you cloned this repo:
+
+```bash
+python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/project --dry
+python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/project
 ```
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install superpowers@superpowers-marketplace
+
+This copies hooks, commands, the security agent, config, and scripts into
+your project without overwriting anything that already exists.
+
+Then open Claude Code in your project and generate planning docs from the existing code:
+
 ```
+/rescan-docs    # Analyses codebase → generates PRD + architecture + story stubs in _bmad-output/
+/gate-check     # Validates PRD ↔ architecture consistency
+```
+
+Move stories from `stories/draft/` to `stories/ready/` when you're ready to implement.
 
 ---
 

@@ -234,8 +234,34 @@ need human attention (CLAUDE.md TODO sections, story enrichment, etc.).
 Tell the user:
 1. Which items are complete
 2. Which items need their input (CLAUDE.md TODOs, story quality)
-3. Recommended next command to run: `/gate-check` to validate
-   PRD ↔ architecture consistency
+3. Recommended next command to run: see Step 9 below
+
+---
+
+## Step 9 — Generate planning docs from existing code
+
+If the target project has no PRD or architecture doc (or they're stale),
+invoke the `rescan-docs` skill to reverse-engineer them from the codebase:
+
+```
+skill: "rescan-docs"
+```
+
+The skill will:
+1. Build a graphify knowledge graph of the codebase (or fall back to reading key files)
+2. Interview the user (5 questions) to understand intent vs. current state
+3. Write `_bmad-output/prd.md` — reverse-engineered PRD
+4. Write `_bmad-output/architecture.md` — component map and tech stack
+5. Create story stubs in `stories/draft/` for identified gaps, TODOs, and missing tests
+
+**When to skip this step:**
+- The project already has up-to-date `docs/prd.md` and `docs/architecture.md`
+- The user explicitly says they will write docs themselves
+
+After Step 9 completes, tell the user:
+> "Migration complete. Review `_bmad-output/` then run `/gate-check` to validate
+> PRD ↔ architecture consistency. Move stories from `stories/draft/` to
+> `stories/ready/` when ready to implement."
 
 ---
 
