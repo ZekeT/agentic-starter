@@ -36,12 +36,12 @@ Provider: `anthropic`
 
 | Tier | Model |
 |------|-------|
-| planning | `claude-opus-4-6` |
-| review | `claude-opus-4-6` |
-| implement | `claude-sonnet-4-6` |
+| planning | `claude-opus-4-8` |
+| review | `claude-opus-4-8` |
+| implement | `claude-sonnet-5` |
 | fast | `claude-haiku-4-5-20251001` |
 
-Advisor strategy: **enabled** — `claude-opus-4-6` advises executor agents (max 3 uses per request).
+Advisor strategy: **enabled** — `claude-opus-4-8` advises executor agents (max 3 uses per request).
 Source: https://claude.com/blog/the-advisor-strategy
 
 ---

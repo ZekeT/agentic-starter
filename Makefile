@@ -8,6 +8,11 @@
 # Source directory — override with: make fmt SRC=mypackage
 SRC ?= src
 
+# True once $(SRC) contains at least one .py file. Empty/missing $(SRC) is the
+# template's pre-setup state (see pyproject.toml) — interrogate and mypy both
+# error out on an empty directory, so skip them until there's real code.
+HAS_SRC_FILES := $(shell test -d $(SRC) && find $(SRC) -name '*.py' -print -quit)
+
 # ---- Setup ------------------------------------------------
 
 install:
@@ -16,6 +21,7 @@ install:
 # ---- Format (mutating — fixes code in place) --------------
 
 fmt:
+	@mkdir -p $(SRC)
 	uv run autoflake --remove-all-unused-imports --remove-unused-variables \
 		--in-place --recursive $(SRC) tests
 	uv run isort $(SRC) tests
@@ -24,10 +30,15 @@ fmt:
 # ---- Lint (non-mutating — fails if issues found) ----------
 
 lint:
+	@mkdir -p $(SRC)
 	uv run black --check $(SRC) tests
 	uv run isort --check-only $(SRC) tests
+ifneq ($(strip $(HAS_SRC_FILES)),)
 	uv run interrogate $(SRC)
 	uv run mypy $(SRC)
+else
+	@echo "  (skipping interrogate/mypy — no .py files in $(SRC) yet)"
+endif
 
 # ---- Test -------------------------------------------------
 

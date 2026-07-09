@@ -28,15 +28,15 @@
   "base_url": null,
 
   "models": {
-    "planning":  "claude-opus-4-6",
-    "review":    "claude-opus-4-6",
-    "implement": "claude-sonnet-4-6",
+    "planning":  "claude-opus-4-8",
+    "review":    "claude-opus-4-8",
+    "implement": "claude-sonnet-5",
     "fast":      "claude-haiku-4-5-20251001"
   },
 
   "advisor": {
     "enabled": true,
-    "model": "claude-opus-4-6",
+    "model": "claude-opus-4-8",
     "max_uses": 3,
     "_comment": "max_uses caps how many times the executor calls the advisor per request. 3 is a good default — enough for complex tasks, cheap enough to not hurt on simple ones."
   },
@@ -48,12 +48,12 @@
       "provider": "anthropic",
       "base_url": null,
       "models": {
-        "planning":  "claude-opus-4-6",
-        "review":    "claude-opus-4-6",
-        "implement": "claude-sonnet-4-6",
+        "planning":  "claude-opus-4-8",
+        "review":    "claude-opus-4-8",
+        "implement": "claude-sonnet-5",
         "fast":      "claude-haiku-4-5-20251001"
       },
-      "advisor": { "enabled": true, "model": "claude-opus-4-6", "max_uses": 3 }
+      "advisor": { "enabled": true, "model": "claude-opus-4-8", "max_uses": 3 }
     },
 
     "anthropic-budget": {
@@ -61,12 +61,12 @@
       "provider": "anthropic",
       "base_url": null,
       "models": {
-        "planning":  "claude-sonnet-4-6",
-        "review":    "claude-sonnet-4-6",
-        "implement": "claude-sonnet-4-6",
+        "planning":  "claude-sonnet-5",
+        "review":    "claude-sonnet-5",
+        "implement": "claude-sonnet-5",
         "fast":      "claude-haiku-4-5-20251001"
       },
-      "advisor": { "enabled": true, "model": "claude-opus-4-6", "max_uses": 2 }
+      "advisor": { "enabled": true, "model": "claude-opus-4-8", "max_uses": 2 }
     },
 
     "ollama-qwen": {

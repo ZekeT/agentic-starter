@@ -4,7 +4,7 @@ description: >
   Dedicated security review agent. OWASP Top 10, secrets, CVEs, CWE
   classification. Read-only. Use on security-sensitive PRs or core
   infrastructure changes.
-model: claude-opus-4-6
+model: claude-opus-4-8
 readonly: true
 ---
 
