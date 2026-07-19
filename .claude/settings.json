@@ -31,6 +31,24 @@
             "command": "python3 .claude/hooks/pre_tool_graphify_remind.py"
           }
         ]
+      },
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/zeke/Workspace/code/self/agentic-starter/.venv/bin/graphify hook-guard search"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/zeke/Workspace/code/self/agentic-starter/.venv/bin/graphify hook-guard read"
+          }
+        ]
       }
     ],
     "PostToolUse": [
