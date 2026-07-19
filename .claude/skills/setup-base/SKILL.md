@@ -17,7 +17,7 @@ Produces a clear pass/fail report with actionable fixes.
 ## When to use
 
 - After running `setup_base.py`
-- After running `python scripts/setup_migrate.py .`
+- After running the `setup-migrate` skill (or its `setup_migrate.py` audit script)
 - Before starting a new sprint (quick sanity check)
 - When something feels wrong with the pipeline
 
@@ -122,7 +122,8 @@ post_tool_secrets.py
 post_tool_lint.py
 ```
 
-FAIL if any are missing — run `python scripts/setup_migrate.py .` to scaffold.
+FAIL if any are missing — run the `setup-migrate` skill's scaffold
+(`python .claude/skills/setup-migrate/scripts/setup_migrate.py .`) to create them.
 
 ---
 
@@ -142,16 +143,19 @@ SKIP if no stories exist yet (fine at setup time).
 
 ### 9. Superpowers installed
 
-Check whether Superpowers is installed globally.
+Check whether the Superpowers plugin is installed globally. Plugins live in
+the plugin cache, not `~/.claude/skills/`:
 
 ```bash
-ls ~/.claude/skills/ 2>/dev/null | grep superpowers
+ls ~/.claude/plugins/cache/superpowers-marketplace/superpowers/ 2>/dev/null
 ```
 
 - WARN if not found — run inside Claude Code:
   `/plugin marketplace add obra/superpowers-marketplace`
   `/plugin install superpowers@superpowers-marketplace`
-- PASS if any `superpowers*` directory exists in `~/.claude/skills/`
+- WARN if only versions < 6 are present — this template assumes the v6
+  unified reviewer; run `/plugin update superpowers@superpowers-marketplace`
+- PASS if a version 6.x (or newer) directory exists
 
 Note: Superpowers cannot be installed from a shell script — it requires
 an interactive Claude Code session.

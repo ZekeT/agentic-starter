@@ -27,10 +27,12 @@ KANBAN_DIRS = [
 DOCS_DIR = "docs"
 
 # ── BMAD output locations to look for ────────────────────────────────────────
+# NOTE: bare "_bmad/" is the BMAD 6.x runtime (agent logic), never an output
+# dir — do not add it here or migration mode will scan the runtime for stories.
 BMAD_OUTPUT_CANDIDATES = [
-    "_bmad/output",
-    "_bmad",
+    "_bmad-output",
     "bmad-output",
+    "_bmad/output",
 ]
 
 # ── BMAD artefact filenames that belong in docs/ ──────────────────────────────

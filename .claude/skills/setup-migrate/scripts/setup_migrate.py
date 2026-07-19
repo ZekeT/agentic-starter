@@ -88,10 +88,16 @@ EXPECTED_HOOKS = {
     "post_tool_lint.py": "Auto-lint after every file write/edit",
 }
 
-# Slash commands in .claude/commands/ — our implementation layer only
-# BMAD planning commands (/plan, /prd, /architecture, /gate-check, /sprint-planning)
-# come from BMAD skill stubs in .claude/skills/, NOT from .claude/commands/
+# Slash commands in .claude/commands/ — the full template set.
+# Planning commands are thin triggers that invoke the BMAD skill stubs
+# in .claude/skills/ (bmad-prd, bmad-architecture, etc.).
 EXPECTED_COMMANDS = {
+    "plan.md": "/plan — BMAD Analyst: product brief",
+    "prd.md": "/prd — BMAD PM + bmad-prd: PRD generation",
+    "architecture.md": "/architecture — BMAD Architect + bmad-architecture",
+    "gate-check.md": "/gate-check — PRD ↔ architecture consistency",
+    "sprint-planning.md": "/sprint-planning — epics + stories → stories/draft/",
+    "dev-story.md": "/dev-story — full story lifecycle (canonical)",
     "implement.md": "/implement — Superpowers TDD implementation",
     "review.md": "/review — Security reviewer: OWASP/CVE check",
     "commit-push-pr.md": "/commit-push-pr — Stage, commit, push, open PR",
@@ -256,10 +262,43 @@ HOOK_TEMPLATES = {
 }
 
 
-# Only scaffold our implementation commands — BMAD planning commands
-# come from npx bmad-method install (as .claude/skills/bmad-*/ stubs),
-# NOT from .claude/commands/
+# Command stubs to scaffold when missing. Planning commands are thin
+# triggers for the BMAD skill stubs (installed by npx bmad-method install
+# + make bmad-trim-apply into .claude/skills/bmad-*/).
 COMMAND_TEMPLATES = {
+    "plan.md": (
+        "# /plan\n"
+        "Run the BMAD Analyst to conduct stakeholder interviews and produce a product brief.\n\n"
+        "Invoke the **`bmad-agent-analyst`** skill.\n"
+    ),
+    "prd.md": (
+        "# /prd\n"
+        "Run the BMAD PM to interview stakeholders and generate the PRD → `_bmad-output/prd.md`.\n\n"
+        "Invoke the **`bmad-agent-pm`** skill. Once the interview is complete,\n"
+        "invoke **`bmad-prd`** to write the PRD document.\n"
+    ),
+    "architecture.md": (
+        "# /architecture\n"
+        "Run the BMAD Architect to produce the system design → `_bmad-output/architecture.md`.\n\n"
+        "Invoke the **`bmad-agent-architect`** skill. Once the discussion is complete,\n"
+        "invoke **`bmad-architecture`** to write the architecture document.\n"
+    ),
+    "gate-check.md": (
+        "# /gate-check\n"
+        "Verify PRD ↔ architecture consistency before sprint planning.\n\n"
+        "Invoke the **`bmad-check-implementation-readiness`** skill.\n"
+    ),
+    "sprint-planning.md": (
+        "# /sprint-planning\n"
+        "Run the BMAD Scrum Master to break the PRD into epics and stories → `stories/draft/`.\n\n"
+        "Invoke the **`bmad-create-epics-and-stories`** skill.\n"
+    ),
+    "dev-story.md": (
+        "# /dev-story\n"
+        "Develop a story end-to-end using the Superpowers `subagent-driven-development`\n"
+        "skill. Handles the `ready/ → in-progress/ → review/` lifecycle automatically.\n\n"
+        "Usage: `/dev-story [id]` — omit id to pick the lowest-numbered story in `stories/ready/`.\n"
+    ),
     "implement.md": (
         "# /implement\n"
         "Activate Superpowers TDD for the given story file.\n\n"
@@ -355,9 +394,9 @@ What every reviewer (human or agent) checks on every PR:
 
 ## Notes on Hooks
 
-- `post-write-tests.sh` and Superpowers TDD are redundant.
-  **Disable the hook in Superpowers sessions** to avoid double test runs.
-- `check-secrets` hook + Security Reviewer are intentionally kept both
+- `post_tool_lint.py` and Superpowers verification both exercise the code —
+  keep the hook (deterministic) and avoid duplicating checks in commands.
+- `post_tool_secrets.py` hook + Security Reviewer are intentionally kept both
   (defence-in-depth).
 
 ---

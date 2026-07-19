@@ -40,7 +40,7 @@ cat graphify-out/GRAPH_REPORT.md 2>/dev/null | head -5 || echo "no GRAPH_REPORT.
 - Otherwise run graphify:
 
 ```bash
-graphify . 2>/dev/null || echo "graphify not installed — run: pip install graphify-cli"
+graphify . 2>/dev/null || echo "graphify not installed — run: uv pip install graphifyy"
 ```
 
 If graphify is not installed, proceed without it — fall back to reading key files

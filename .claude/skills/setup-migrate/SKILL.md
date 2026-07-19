@@ -92,16 +92,17 @@ you must merge intelligently.
 3. For each missing section, add it below the existing content — **never
    replace existing content**, only append or insert clearly-marked sections
 4. If the user has custom sections, preserve them exactly
-5. Add the Superpowers/run-tests conflict note if both are present
+5. Add the Superpowers/lint-hook conflict note if both are present
 
 **Key content to add if missing:**
 
 ```markdown
 ## Notes on Hooks
 
-- `post-write-tests.sh` and Superpowers TDD are redundant.
-  Disable the hook in Superpowers sessions to avoid double test runs.
-- `check-secrets` hook + Security Reviewer: keep both (defence-in-depth).
+- `post_tool_lint.py` and Superpowers TDD both exercise the code on every
+  change — if runs get slow, prefer keeping the hook (deterministic) and
+  let Superpowers rely on it.
+- `post_tool_secrets.py` hook + Security Reviewer: keep both (defence-in-depth).
 ```
 
 ---
@@ -134,8 +135,10 @@ Same pattern as commands. Check `.claude/agents/` for:
   preserved and merged into the framework agent stubs
 
 **If the user has a detailed existing developer agent:**
-Merge their instructions into `.claude/agents/developer.md` — their
-project-specific context is more valuable than the stub.
+Do NOT keep it as `.claude/agents/developer.md` — Superpowers owns
+implementation (the audit flags `developer.md` as stale). Instead merge
+their project-specific instructions into CLAUDE.md (coding standards,
+conventions, gotchas) where every agent will read them, then remove the file.
 
 ---
 
@@ -167,21 +170,24 @@ If existing names differ, rename them — but tell the user what you renamed.
 
 ## Step 6 — Configure hooks for the project's stack
 
-The scaffold creates hook stubs. Now fill in the actual commands:
+The scaffold creates the four Python hooks (`pre_tool_dangerous.py`,
+`pre_tool_env_guard.py`, `post_tool_secrets.py`, `post_tool_lint.py`).
+`post_tool_lint.py` ships with Python tooling (black/isort via uv) — adapt it:
 
 1. Ask the user (or detect from project files) what stack they're using:
-   - Check for `pyproject.toml`, `setup.py` → Python (ruff, pytest)
-   - Check for `package.json` → JS/TS (eslint, jest/vitest)
-   - Check for `go.mod` → Go (gofmt, go test)
-   - Check for `Cargo.toml` → Rust (cargo fmt, cargo test)
+   - Check for `pyproject.toml`, `setup.py` → Python (black/isort or ruff)
+   - Check for `package.json` → JS/TS (eslint, prettier)
+   - Check for `go.mod` → Go (gofmt)
+   - Check for `Cargo.toml` → Rust (cargo fmt)
 
-2. Edit `post-write-lint.sh` to use the correct linter
-3. Edit `post-write-tests.sh` to use the correct test runner
-4. Make all hooks executable: `chmod +x .claude/hooks/*.sh`
+2. Edit the `checks` list in `post_tool_lint.py` to run the correct
+   linter for the detected stack (and match on the right file suffixes)
+3. Confirm the hooks are wired in `.claude/settings.json`
+   (PreToolUse/PostToolUse matchers) — the scaffold does not edit settings
 
 **Important:** If Superpowers TDD is in use (check CLAUDE.md or ask user),
-add a comment in `post-write-tests.sh` and the CLAUDE.md notes section
-reminding them to disable the hook in Superpowers sessions.
+note in CLAUDE.md that the lint hook plus Superpowers verification both run
+checks — keep the hook (deterministic) and avoid duplicating it in commands.
 
 ---
 
