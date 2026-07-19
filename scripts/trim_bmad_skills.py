@@ -10,7 +10,7 @@ HOW BMAD WORKS (important before running this):
 
     .claude/skills/
       bmad-agent-analyst/     ← thin stub: "load _bmad/core/analyst.md"
-      bmad-create-prd/        ← thin stub: "load _bmad/bmm/create-prd.md"
+      bmad-prd/               ← thin stub: "load _bmad/bmm/... prd workflow"
       ...                     ← this script only touches these stubs
 
     .claude/commands/
@@ -24,10 +24,14 @@ uninvokable by name. Re-run npx bmad-method install to restore all stubs.
 
 Keeps only the 7 stubs that map to the Agentic Engineering guide's 5-step pipeline:
   Step 1: /plan         → bmad-agent-analyst
-  Step 2: /prd          → bmad-agent-pm + bmad-create-prd
-  Step 3: /architecture → bmad-agent-architect + bmad-create-architecture
+  Step 2: /prd          → bmad-agent-pm + bmad-prd
+  Step 3: /architecture → bmad-agent-architect + bmad-architecture
   Step 4: /gate-check   → bmad-check-implementation-readiness
   Step 5: /sprint-plan  → bmad-create-epics-and-stories
+
+BMAD 6.10 deprecated bmad-create-prd / bmad-create-architecture in favour of
+bmad-prd / bmad-architecture (create/update/validate intents in one skill).
+The deprecated shims are trimmed; v7 removes them entirely.
 
 Usage:
     python scripts/trim_bmad_skills.py           # dry-run (safe, no changes)
@@ -50,8 +54,8 @@ KEEP: set[str] = {
     "bmad-agent-analyst",  # /plan  — Analyst agent
     "bmad-agent-pm",  # /prd   — PM agent
     "bmad-agent-architect",  # /architecture — Architect agent
-    "bmad-create-prd",  # generates docs/prd.md
-    "bmad-create-architecture",  # generates docs/architecture.md
+    "bmad-prd",  # create/update/validate PRD (replaces bmad-create-prd)
+    "bmad-architecture",  # architecture spine (replaces bmad-create-architecture)
     "bmad-create-epics-and-stories",  # /sprint-planning — story breakdown
     "bmad-check-implementation-readiness",  # /gate-check — PRD↔arch validation
 }
@@ -90,8 +94,8 @@ def print_table(keep: list[Path], remove: list[Path]) -> None:
         "bmad-agent-analyst": "/plan → Analyst",
         "bmad-agent-pm": "/prd → PM",
         "bmad-agent-architect": "/architecture → Architect",
-        "bmad-create-prd": "generates docs/prd.md",
-        "bmad-create-architecture": "generates docs/architecture.md",
+        "bmad-prd": "PRD create/update/validate",
+        "bmad-architecture": "architecture spine",
         "bmad-create-epics-and-stories": "/sprint-planning → story breakdown",
         "bmad-check-implementation-readiness": "/gate-check → PRD↔arch validation",
     }

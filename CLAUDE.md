@@ -216,7 +216,7 @@ except httpx.TimeoutException as e:
 ```
 _bmad/                   # BMAD runtime — DO NOT EDIT. npx owns this.
   core/                  # Agent logic (Analyst, PM, Architect, Scrum Master)
-  bmm/                   # BMAD Method workflows (create-prd, create-architecture, etc.)
+  bmm/                   # BMAD Method workflows (prd, architecture, epics-and-stories, etc.)
 _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.md)
 
 .claude/
@@ -228,8 +228,8 @@ _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.
     bmad-agent-analyst/  # ┐
     bmad-agent-pm/       # │ 7 lean BMAD skill stubs (trimmed by make bmad-trim-apply)
     bmad-agent-architect/# │ Each stubs into _bmad/ runtime
-    bmad-create-prd/     # │
-    bmad-create-architecture/ # │
+    bmad-prd/            # │ (replaces deprecated bmad-create-prd)
+    bmad-architecture/   # │ (replaces deprecated bmad-create-architecture)
     bmad-create-epics-and-stories/ # │
     bmad-check-implementation-readiness/ # ┘
     graphify/            # Knowledge graph (71x token reduction)
@@ -281,8 +281,8 @@ and live in `_bmad/` (runtime) + `.claude/skills/bmad-*/` (stubs). Do not edit `
 | Command | BMAD Skill Stub | What it does |
 |---------|----------------|--------------|
 | `/plan` | `bmad-agent-analyst` | Stakeholder interviews → product brief |
-| `/prd` | `bmad-agent-pm` + `bmad-create-prd` | PRD → `_bmad-output/prd.md` |
-| `/architecture` | `bmad-agent-architect` + `bmad-create-architecture` | System design → `_bmad-output/architecture.md` |
+| `/prd` | `bmad-agent-pm` + `bmad-prd` | PRD (create/update/validate) → `_bmad-output/prd.md` |
+| `/architecture` | `bmad-agent-architect` + `bmad-architecture` | System design → `_bmad-output/architecture.md` |
 | `/gate-check` | `bmad-check-implementation-readiness` | PRD ↔ architecture consistency |
 | `/sprint-planning` | `bmad-create-epics-and-stories` | Break PRD into story files → `stories/` |
 
@@ -299,14 +299,16 @@ per-project. Skills trigger automatically when Claude detects relevant context.
 | `using-git-worktrees` | Design is approved — creates isolated branch |
 | `writing-plans` | Ready to implement — breaks into 2–5 min tasks |
 | `subagent-driven-development` | Plan exists — dispatches subagents per task |
-| `code-reviewer` | A task completes — two-stage review |
+| `requesting-code-review` | A task completes — unified single-pass task reviewer (v6) |
 | `verification-before-completion` | Before any commit or PR |
 
-Install once globally:
+Install once globally (this project assumes Superpowers **v6+**):
 ```
 /plugin marketplace add obra/superpowers-marketplace
 /plugin install superpowers@superpowers-marketplace
 ```
+Already installed? Update with `/plugin update superpowers@superpowers-marketplace`.
+v6 keeps SDD scratch files in `.superpowers/` (gitignored).
 
 ### Layer 3: Security — Our agent (`.claude/agents/`)
 
@@ -407,7 +409,7 @@ cp .env.template .env   # then fill in real values
 | Agent / Skill | Triggers | What it does |
 |--------------|----------|--------------|
 | `subagent-driven-development` | Automatically when implementing | TDD workflow — brainstorm → plan → test-first → implement → review |
-| `code-reviewer` | After each implementation task | Two-stage review: spec compliance then code quality |
+| `requesting-code-review` | After each implementation task | Unified single-pass review: spec compliance + code quality (v6) |
 | `brainstorming` | Before writing code | Refines requirements, explores alternatives |
 | `writing-plans` | After design approved | Breaks work into 2–5 min tasks with exact file paths |
 | `verification-before-completion` | Before any PR/commit | Runs tests, confirms output before claiming done |
@@ -457,3 +459,17 @@ Example: "The component re-renders because a new object ref is created on every 
 - Never use `os.system()` — use `subprocess.run()` with explicit args
 - Always use `pathlib.Path` not string concatenation for paths
 -->
+
+- BMAD runtime scripts (`_bmad/scripts/*.py`) need Python ≥ 3.11 (`tomllib`).
+  Run them via `uv run python`, never bare `python3` — the macOS system
+  python3 is 3.9 and fails with `ModuleNotFoundError: tomllib`.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

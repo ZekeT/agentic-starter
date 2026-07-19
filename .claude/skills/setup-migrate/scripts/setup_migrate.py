@@ -102,8 +102,8 @@ EXPECTED_BMAD_STUBS = {
     "bmad-agent-analyst",
     "bmad-agent-pm",
     "bmad-agent-architect",
-    "bmad-create-prd",
-    "bmad-create-architecture",
+    "bmad-prd",  # replaces deprecated bmad-create-prd (BMAD 6.10)
+    "bmad-architecture",  # replaces deprecated bmad-create-architecture (BMAD 6.10)
     "bmad-create-epics-and-stories",
     "bmad-check-implementation-readiness",
 }

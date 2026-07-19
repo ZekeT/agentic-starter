@@ -99,8 +99,8 @@ Check `.claude/skills/` for the 7 lean BMAD stubs:
 bmad-agent-analyst
 bmad-agent-pm
 bmad-agent-architect
-bmad-create-prd
-bmad-create-architecture
+bmad-prd
+bmad-architecture
 bmad-create-epics-and-stories
 bmad-check-implementation-readiness
 ```

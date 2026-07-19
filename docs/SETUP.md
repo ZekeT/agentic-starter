@@ -16,15 +16,28 @@ bash setup.sh
 `npx bmad-method install`, trims the BMAD skill set down to the lean 7,
 and applies model assignments from `config/models.json`.
 
-Then install Superpowers **once per machine** inside a Claude Code session:
+> BMAD's runtime scripts require **Python ≥ 3.11** (`tomllib`). The project
+> venv (via `uv`) satisfies this; the macOS system python3 (3.9) does not.
+> Always run BMAD scripts through `uv run python`.
+
+Then install Superpowers **once per machine** inside a Claude Code session
+(this template assumes Superpowers **v6+**):
 
 ```
 /plugin marketplace add obra/superpowers-marketplace
 /plugin install superpowers@superpowers-marketplace
 ```
 
+Already installed on this machine? Update instead:
+
+```
+/plugin update superpowers@superpowers-marketplace
+```
+
 This installs implementation skills (TDD, subagent dispatch, code review) globally
 to `~/.claude/`. Required for `/dev-story` to use the full agentic TDD workflow.
+Superpowers v6 replaced the two-stage review with a unified single-pass task
+reviewer and keeps SDD scratch files in `.superpowers/` (gitignored here).
 
 Then open Claude Code and run the planning pipeline:
 
@@ -65,8 +78,8 @@ Then open Claude Code and run the planning pipeline:
 │   │                                    # (~/.claude/) — not committed here
 │   ├── commands/                        # Slash commands
 │   │   ├── plan.md                      # /plan → bmad-agent-analyst
-│   │   ├── prd.md                       # /prd → bmad-agent-pm + bmad-create-prd
-│   │   ├── architecture.md              # /architecture → bmad-agent-architect + bmad-create-architecture
+│   │   ├── prd.md                       # /prd → bmad-agent-pm + bmad-prd
+│   │   ├── architecture.md              # /architecture → bmad-agent-architect + bmad-architecture
 │   │   ├── gate-check.md               # /gate-check → bmad-check-implementation-readiness
 │   │   ├── sprint-planning.md           # /sprint-planning → bmad-create-epics-and-stories
 │   │   ├── dev-story.md                 # /dev-story [id] — full story lifecycle (canonical)
@@ -82,8 +95,8 @@ Then open Claude Code and run the planning pipeline:
 │       ├── bmad-agent-analyst/          # ┐
 │       ├── bmad-agent-pm/               # │ 7 lean BMAD stubs
 │       ├── bmad-agent-architect/        # │ (after make bmad-trim-apply)
-│       ├── bmad-create-prd/             # │
-│       ├── bmad-create-architecture/    # │
+│       ├── bmad-prd/                    # │ (replaces deprecated bmad-create-prd)
+│       ├── bmad-architecture/           # │ (replaces deprecated bmad-create-architecture)
 │       ├── bmad-create-epics-and-stories/ # │
 │       ├── bmad-check-implementation-readiness/ # ┘
 │       ├── graphify/SKILL.md            # Optional: knowledge graph
@@ -173,7 +186,10 @@ Move stories from `stories/draft/` to `stories/ready/` when you're ready to impl
 
 Upstream framework updates do not touch your customisations:
 
-- **BMAD** (`npx bmad-method install`) — installs into `.claude/skills/`. Update with the same command.
-- **Superpowers** (`/plugin install superpowers@superpowers-marketplace`) — separate from your agent definitions.
+- **BMAD** (`npx bmad-method install`) — installs into `.claude/skills/`. Update with
+  the same command, then re-run `make bmad-trim-apply` to restore the lean 7.
+  BMAD 6.10 consolidated `bmad-create-prd`/`bmad-create-architecture` into
+  `bmad-prd`/`bmad-architecture` — this template already uses the new names.
+- **Superpowers** (`/plugin update superpowers@superpowers-marketplace`) — separate from your agent definitions.
 - **Your customisations** live in `.claude/agents/`, `.claude/commands/`, `.claude/hooks/`, and `CLAUDE.md` — none are touched by upstream updates.
 - **Graphify** (`pip install graphifyy --upgrade`) — your `.graphifyignore` and CLAUDE.md hook survive upgrades.

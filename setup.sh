@@ -28,6 +28,12 @@ if command -v npx &> /dev/null; then
   echo "  Trimming to lean pipeline (Agentic Engineering guide — 5 steps only)..."
   echo "yes" | uv run python scripts/trim_bmad_skills.py --apply
   echo "  BMAD trimmed. Run 'make bmad-audit' to verify."
+  # BMAD runtime scripts import tomllib (Python >= 3.11). Warn if the system
+  # python3 that `#!/usr/bin/env python3` resolves to outside the venv is older.
+  if ! python3 -c 'import tomllib' 2>/dev/null; then
+    echo "  WARN: default python3 is < 3.11 (no tomllib)."
+    echo "        BMAD scripts must be run via 'uv run python', not bare python3."
+  fi
 else
   echo "  SKIP: npx not found. Install Node.js then run:"
   echo "    npx bmad-method install && make bmad-trim-apply"
@@ -56,6 +62,9 @@ echo ""
 echo "  Open Claude Code in this project directory, then run:"
 echo "    /plugin marketplace add obra/superpowers-marketplace"
 echo "    /plugin install superpowers@superpowers-marketplace"
+echo ""
+echo "  Already installed on this machine? Update instead (v6+ required):"
+echo "    /plugin update superpowers@superpowers-marketplace"
 echo ""
 echo "  This installs globally to ~/.claude/ — do it once,"
 echo "  and it works for all your projects."
