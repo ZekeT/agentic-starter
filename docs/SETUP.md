@@ -103,6 +103,7 @@ Then open Claude Code and run the planning pipeline:
 │       ├── caveman/SKILL.md             # Optional: token-efficient comms
 │       ├── setup-base/                  # Scan project setup health
 │       ├── setup-migrate/               # Migrate existing projects to this framework
+│       ├── setup-update/                # Update a copied project to the latest template
 │       └── rescan-docs/                 # Reverse-engineer PRD + architecture + stories from code
 │
 ├── stories/
@@ -191,5 +192,15 @@ Upstream framework updates do not touch your customisations:
   BMAD 6.10 consolidated `bmad-create-prd`/`bmad-create-architecture` into
   `bmad-prd`/`bmad-architecture` — this template already uses the new names.
 - **Superpowers** (`/plugin update superpowers@superpowers-marketplace`) — separate from your agent definitions.
-- **Your customisations** live in `.claude/agents/`, `.claude/commands/`, `.claude/hooks/`, and `CLAUDE.md` — none are touched by upstream updates.
+- **The rest of the template** (hooks, commands, docs, scripts, our skills) —
+  use the **`setup-update`** skill (or `python
+  /path/to/agentic-starter/.claude/skills/setup-update/scripts/setup_update.py
+  /path/to/your-project --dry`). It hashes every template-owned file against
+  `template-manifest.json`: files you never touched are auto-updated, files
+  you customised are flagged for a guided merge instead of being overwritten.
+- **Your customisations** live in `.claude/agents/`, `.claude/commands/`, `.claude/hooks/`, and `CLAUDE.md` — protected by the same mechanism.
 - **Graphify** (`pip install graphifyy --upgrade`) — your `.graphifyignore` and CLAUDE.md hook survive upgrades.
+
+Every project created from this template records the template version it
+started from in `.claude/template-version.json` (or `.claude/migration-report.json`
+for older projects) — that's what `setup-update` diffs against.

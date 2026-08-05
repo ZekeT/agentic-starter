@@ -20,6 +20,10 @@ make configure                       # apply config/models.json to all agents
 make configure PROFILE=ollama-qwen   # switch to a named profile
 make configure-show                  # print current model assignments
 make configure-list                  # list available profiles
+
+make manifest                        # regenerate template-manifest.json (after
+                                      # editing any template-owned file, before
+                                      # bumping TEMPLATE_VERSION — powers setup-update)
 ```
 
 > Always run `make check` before committing. Never bypass it.
@@ -240,6 +244,9 @@ _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.
     setup-migrate/  # Migration skill for existing projects
       scripts/
         setup_migrate.py       # Full audit + scaffold for existing projects
+    setup-update/             # Update a copied project to the latest template
+      scripts/
+        setup_update.py        # Hash-compare against template-manifest.json
     rescan-docs/             # Reverse-engineer PRD + architecture + stories from existing code
   settings.json          # Hook wiring
 

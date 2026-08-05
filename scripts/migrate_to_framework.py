@@ -812,14 +812,22 @@ def create_env_template(target: Path, starter: Path, dry: bool) -> bool:
 
 
 def get_starter_version(starter: Path) -> str:
-    """Return a git describe string for the starter repo.
+    """Return the starter's template version.
+
+    Prefers TEMPLATE_VERSION (what setup-update's manifest is keyed on);
+    falls back to a git describe string if that file is absent.
 
     Args:
         starter: The starter repo root.
 
     Returns:
-        Git describe output, or "unknown" if git is unavailable.
+        The template version string, or "unknown" if neither is available.
     """
+    version_file = starter / "TEMPLATE_VERSION"
+    if version_file.exists():
+        version = version_file.read_text().strip()
+        if version:
+            return version
     try:
         result = subprocess.run(
             ["git", "-C", str(starter), "describe", "--tags", "--always"],
@@ -892,6 +900,27 @@ def save_migration_report(target: Path, report: MigrationReport) -> None:
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(asdict(report), indent=2))
     _info(f"Report saved: {report_path.relative_to(target)}")
+
+
+def save_template_version_stamp(target: Path, report: MigrationReport) -> None:
+    """Record the template version baseline for the setup-update skill.
+
+    Args:
+        target: The target project root.
+        report: The migration report (its starter_version is the baseline).
+    """
+    stamp_path = target / ".claude" / "template-version.json"
+    stamp_path.parent.mkdir(parents=True, exist_ok=True)
+    stamp_path.write_text(
+        json.dumps(
+            {
+                "template_version": report.starter_version,
+                "updated_at": report.timestamp,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
 
 
 def print_next_steps(audit: AuditResult) -> None:
@@ -1003,6 +1032,7 @@ def run_migration(
 
     if not dry:
         save_migration_report(target, report)
+        save_template_version_stamp(target, report)
 
     return report
 

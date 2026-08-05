@@ -94,3 +94,10 @@ bmad-trim:
 
 bmad-trim-apply:
 	uv run python scripts/trim_bmad_skills.py --apply
+
+# ---- Template maintenance (starter repo only) --------------
+# Regenerate after changing any template-owned file, before tagging a release.
+# Powers the setup-update skill's staleness detection in downstream projects.
+
+manifest:
+	uv run python scripts/generate_template_manifest.py

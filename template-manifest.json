@@ -1,0 +1,182 @@
+{
+  "template_version": "1.0.0",
+  "generated_at": "2026-08-05T05:17:33+00:00",
+  "files": {
+    ".claude/agents/security-reviewer.md": {
+      "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
+      "previous": []
+    },
+    ".claude/commands/architecture.md": {
+      "sha256": "275459d4efc9431ff988f63449cb82b99bdad211a4601d66c93151bd85a8497a",
+      "previous": []
+    },
+    ".claude/commands/commit-push-pr.md": {
+      "sha256": "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d",
+      "previous": []
+    },
+    ".claude/commands/dev-story.md": {
+      "sha256": "2e47cfa77a760938d24abce57147e704f1e4db337041b68b6aaa85f05c81223d",
+      "previous": []
+    },
+    ".claude/commands/gate-check.md": {
+      "sha256": "f5e2ed721ce50e6019436379942ebe48de20697bc818cac1094fd2a7a8f13860",
+      "previous": []
+    },
+    ".claude/commands/implement.md": {
+      "sha256": "05f7a7eab5bfa2278bc87a8f62d3d6e0be88f9ec2a109c5b3b8309fe5c057f81",
+      "previous": []
+    },
+    ".claude/commands/plan.md": {
+      "sha256": "e5c0cb0183cb8b04f9b310e275640583bfce98404dbc30ac7f5bd4dabc2d531b",
+      "previous": []
+    },
+    ".claude/commands/prd.md": {
+      "sha256": "7bf301e5825376d14360f5a7b9a39f9c059db227dd4e1ebfb0db5e915382fe9d",
+      "previous": []
+    },
+    ".claude/commands/review.md": {
+      "sha256": "79f505f1e1b1cca385eeb085199cf77efe844b7be36f04adf5ae768cbb3098e7",
+      "previous": []
+    },
+    ".claude/commands/sprint-planning.md": {
+      "sha256": "ab456810d5a1bba3a175373e770596356e27f7e8dfd6b482559b37e5c2f2bb5f",
+      "previous": []
+    },
+    ".claude/hooks/post_tool_lint.py": {
+      "sha256": "8e5058cdd34b9eb2ab8c253e9aaa22186e8b24d20e13359f3145f446a7c8fa77",
+      "previous": []
+    },
+    ".claude/hooks/post_tool_secrets.py": {
+      "sha256": "b5c5a5c4345f1c0d5db5d7cf0bc31771c6c19ffc3c8174fe876e71115f15c63d",
+      "previous": []
+    },
+    ".claude/hooks/pre_tool_dangerous.py": {
+      "sha256": "3df5405b465490a00f238366fc5f6b2274f2b13d797ba2cf7f6d96abc4fbd882",
+      "previous": []
+    },
+    ".claude/hooks/pre_tool_env_guard.py": {
+      "sha256": "99d3669bfd603e67be8f34267fc9c122d1b167b16324e319c84f3b877f01af02",
+      "previous": []
+    },
+    ".claude/hooks/pre_tool_graphify_remind.py": {
+      "sha256": "db206234d141ad5114a1863f8b447f9ad4ee78fe500abcd079c56bd2668b0169",
+      "previous": []
+    },
+    ".claude/hooks/stop_story_lifecycle.py": {
+      "sha256": "bd0e961dd5be6b484e8ce7dbec6f2a7651b6fce728e2593718deec50a5db3ac5",
+      "previous": []
+    },
+    ".claude/settings.json": {
+      "sha256": "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
+      "previous": []
+    },
+    ".claude/skills/caveman/SKILL.md": {
+      "sha256": "7619a06689d6415090f35d42caee8b4895a6715693550c7ed0d485947af5e432",
+      "previous": []
+    },
+    ".claude/skills/graphify/SKILL.md": {
+      "sha256": "887d686bf52b97cf3c02f53d3489239f3bf20f1154c0c42de9ff46b0661d2485",
+      "previous": []
+    },
+    ".claude/skills/rescan-docs/SKILL.md": {
+      "sha256": "5f91b4379fb79d2b65986d60bc5f3f3143524a61ce860be3925c658dfc829120",
+      "previous": []
+    },
+    ".claude/skills/setup-base/SKILL.md": {
+      "sha256": "6317bb19ef1f8fb2b6fe8a4d4ec2c29668769dc9e05ee4e1dabbf21885f1cef9",
+      "previous": []
+    },
+    ".claude/skills/setup-base/scripts/setup_base.py": {
+      "sha256": "7b6fa4e6398d2810853731ff4be7fc2a7a5d6cb42a6f4c0bcf6db9cdecc15508",
+      "previous": []
+    },
+    ".claude/skills/setup-migrate/SKILL.md": {
+      "sha256": "5eb270dc3c1a0b594635b7816a00433de2229f3573d15ae872dfbf725e30cfa0",
+      "previous": []
+    },
+    ".claude/skills/setup-migrate/scripts/setup_migrate.py": {
+      "sha256": "435fd4d557691fe2e84fd2a1b929ac4022ad389bea88eacca0ea1fec9a88bfa9",
+      "previous": []
+    },
+    ".claude/skills/setup-update/SKILL.md": {
+      "sha256": "2770516410b3a012ad36fb84a4d96ff96fb6ee99c542a632a61946ef83c6a021",
+      "previous": []
+    },
+    ".claude/skills/setup-update/scripts/setup_update.py": {
+      "sha256": "cef321f0439a74c260a21434a5fc2debd8c4cefa0f3ca02db59f9dc9bd42a79e",
+      "previous": []
+    },
+    ".env.template": {
+      "sha256": "81ca6deada6ca650dc5b58244853a2bfcde46e36092938f0a3ff92ac584c40c4",
+      "previous": []
+    },
+    ".gitignore": {
+      "sha256": "777c14d9dbc4ae5bfc1b9c799db4ae562ca5e64a5107164b1c25649a62f768e6",
+      "previous": []
+    },
+    "CLAUDE.md": {
+      "sha256": "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
+      "previous": [
+        "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04"
+      ]
+    },
+    "Makefile": {
+      "sha256": "dd03fdb0af9a0c26149a3cb5da2ad55e44daf5b99c9e5293e5dd7ce1b747a7b9",
+      "previous": []
+    },
+    "config/models.json": {
+      "sha256": "f3501cad90f43bfcb3957d11f15568be1e38c5159bc255920de0d65423a6456f",
+      "previous": []
+    },
+    "docs/SETUP.md": {
+      "sha256": "1bda4b21b753d5be6b4561f08bc8272cb0e01556da8aa62da546134f7ee54a4f",
+      "previous": [
+        "2245cffbe365dbb4902a58b04260995a3893bff33d12ee71ab40cb0ab52373e2"
+      ]
+    },
+    "docs/architecture.md": {
+      "sha256": "e65fe11d2ad3ae72be7413d25091ff6e12d9a908a41b1ecbf0ac8b99260c5961",
+      "previous": []
+    },
+    "docs/coding-standards.md": {
+      "sha256": "305de4c6ac8f31cd54f94d6f19463fd57b66ba23280c555f7dedfc76f684a7fa",
+      "previous": []
+    },
+    "docs/local-models.md": {
+      "sha256": "e20e9c1fcf801409de5ed4d840d09e6491378b46bc0de91d42398557be9f516c",
+      "previous": []
+    },
+    "docs/prd.md": {
+      "sha256": "509534abf687d45e08003ecfe1a7b51efdbcfe68992394e586cf8d3a274407b1",
+      "previous": []
+    },
+    "pyproject.toml": {
+      "sha256": "ef723cf85104a0dad4ef80525a3b09c6b0501bd1c7ededb614ce2a915aff4474",
+      "previous": []
+    },
+    "scripts/configure.py": {
+      "sha256": "34ff0976423df097867e196108fb7351cfc29045aa7ea819798e604d00d50f7e",
+      "previous": []
+    },
+    "scripts/generate_template_manifest.py": {
+      "sha256": "689f62fa525dc44247e611c482f88183427a38d9e2266dc7631cf30db9012b3b",
+      "previous": []
+    },
+    "scripts/migrate_to_framework.py": {
+      "sha256": "03af0fc0d33d9ba0840beebe78c2388922899d7f3807d254d19c2d1701ca04e6",
+      "previous": []
+    },
+    "scripts/trim_bmad_skills.py": {
+      "sha256": "07b7a923fe2118e3cb64234301f4ac01b91e02b8721ed0b303ed42d84ee9c8b7",
+      "previous": []
+    },
+    "setup.sh": {
+      "sha256": "5a0fef8c7005a1f828d7cc53547aea75bd09f9d4533a121a0b65d0b8a97c79c3",
+      "previous": []
+    },
+    "stories/STORY_TEMPLATE.md": {
+      "sha256": "e407695ab8e223cfca78d8220c857e17008352e72f179431ffd294992cd3aa50",
+      "previous": []
+    }
+  }
+}
