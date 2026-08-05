@@ -38,7 +38,15 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
     ".claude/hooks/post_tool_lint.py": ".claude/hooks/post_tool_lint.py",
     ".claude/hooks/stop_story_lifecycle.py": ".claude/hooks/stop_story_lifecycle.py",
+    ".claude/hooks/pre_tool_graphify_remind.py": ".claude/hooks/pre_tool_graphify_remind.py",
     ".claude/agents/security-reviewer.md": ".claude/agents/security-reviewer.md",
+    # BMAD planning triggers — thin, invoke the bmad-* skill stubs
+    ".claude/commands/plan.md": ".claude/commands/plan.md",
+    ".claude/commands/prd.md": ".claude/commands/prd.md",
+    ".claude/commands/architecture.md": ".claude/commands/architecture.md",
+    ".claude/commands/gate-check.md": ".claude/commands/gate-check.md",
+    ".claude/commands/sprint-planning.md": ".claude/commands/sprint-planning.md",
+    # Superpowers / our implementation commands
     ".claude/commands/implement.md": ".claude/commands/implement.md",
     ".claude/commands/review.md": ".claude/commands/review.md",
     ".claude/commands/commit-push-pr.md": ".claude/commands/commit-push-pr.md",
@@ -48,7 +56,27 @@ FILES_TO_COPY: dict[str, str] = {
     "scripts/configure.py": "scripts/configure.py",
     "scripts/trim_bmad_skills.py": "scripts/trim_bmad_skills.py",
     "stories/STORY_TEMPLATE.md": "stories/STORY_TEMPLATE.md",
+    # Docs — prd.md/architecture.md are placeholders until BMAD overwrites them
+    "docs/SETUP.md": "docs/SETUP.md",
+    "docs/coding-standards.md": "docs/coding-standards.md",
+    "docs/local-models.md": "docs/local-models.md",
+    "docs/prd.md": "docs/prd.md",
+    "docs/architecture.md": "docs/architecture.md",
 }
+
+# ── our skills to copy whole, starter-relative dir names ─────────────────────
+# BMAD skill stubs (bmad-*) are NOT here — they come from
+# `npx bmad-method install` + `make bmad-trim-apply`, never copied by us.
+SKILL_DIRS_TO_COPY: list[str] = [
+    "rescan-docs",
+    "setup-base",
+    "setup-migrate",
+    "setup-update",
+    "graphify",
+    "caveman",
+]
+
+_SKILL_COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store")
 
 # ── directories to create ─────────────────────────────────────────────────────
 DIRS_TO_CREATE: list[str] = [
@@ -244,6 +272,8 @@ class AuditResult:
     missing_dirs: list[str]
     files_to_copy: list[str]
     files_to_skip: list[str]
+    skill_dirs_to_copy: list[str]
+    skill_dirs_to_skip: list[str]
 
 
 @dataclass
@@ -257,6 +287,8 @@ class MigrationReport:
     dirs_created: list[str] = field(default_factory=list)
     copied: list[str] = field(default_factory=list)
     skipped: list[str] = field(default_factory=list)
+    skill_dirs_copied: list[str] = field(default_factory=list)
+    skill_dirs_skipped: list[str] = field(default_factory=list)
     pyproject_sections_added: list[str] = field(default_factory=list)
     pyproject_deps_to_add_manually: list[str] = field(default_factory=list)
     makefile_targets_added: bool = False
@@ -363,6 +395,15 @@ def audit_target(target: Path, starter: Path) -> AuditResult:
     files_to_skip = [dst for dst in FILES_TO_COPY.values() if dst in existing_files]
     missing_dirs = [d for d in DIRS_TO_CREATE if not (target / d).is_dir()]
 
+    skill_dirs_to_copy = [
+        name
+        for name in SKILL_DIRS_TO_COPY
+        if not (target / ".claude" / "skills" / name).is_dir()
+    ]
+    skill_dirs_to_skip = [
+        name for name in SKILL_DIRS_TO_COPY if name not in skill_dirs_to_copy
+    ]
+
     claude_dir = target / ".claude"
     existing_claude = (
         {
@@ -387,6 +428,8 @@ def audit_target(target: Path, starter: Path) -> AuditResult:
         missing_dirs=missing_dirs,
         files_to_copy=files_to_copy,
         files_to_skip=files_to_skip,
+        skill_dirs_to_copy=skill_dirs_to_copy,
+        skill_dirs_to_skip=skill_dirs_to_skip,
     )
 
 
@@ -462,6 +505,52 @@ def copy_framework_files(
                 dst.chmod(dst.stat().st_mode | 0o111)
 
         copied.append(dst_rel)
+
+    return copied, skipped
+
+
+def copy_skill_dirs(
+    target: Path,
+    starter: Path,
+    force: bool,
+    dry: bool,
+) -> tuple[list[str], list[str]]:
+    """Copy our whole skill directories (not BMAD stubs) from starter to target.
+
+    Skips skill directories that already exist unless force is True.
+
+    Args:
+        target: The target project root.
+        starter: The starter repo root.
+        force: Whether to overwrite existing skill directories.
+        dry: Whether to log only without writing.
+
+    Returns:
+        Tuple of (copied, skipped) skill directory names.
+    """
+    copied: list[str] = []
+    skipped: list[str] = []
+
+    for name in SKILL_DIRS_TO_COPY:
+        src = starter / ".claude" / "skills" / name
+        dst = target / ".claude" / "skills" / name
+
+        if not src.is_dir():
+            _warn(f"Skill missing in starter, skipping: {name}")
+            continue
+
+        if dst.exists() and not force:
+            skipped.append(name)
+            continue
+
+        if not dry:
+            if dst.exists():
+                shutil.rmtree(dst)
+            shutil.copytree(src, dst, ignore=_SKILL_COPY_IGNORE)
+            for py_file in dst.rglob("*.py"):
+                py_file.chmod(py_file.stat().st_mode | 0o111)
+
+        copied.append(name)
 
     return copied, skipped
 
@@ -870,6 +959,10 @@ def print_audit_summary(audit: AuditResult) -> None:
         f"{len(audit.files_to_copy)} file(s) to copy, "
         f"{len(audit.files_to_skip)} already present"
     )
+    _info(
+        f"{len(audit.skill_dirs_to_copy)} skill(s) to copy, "
+        f"{len(audit.skill_dirs_to_skip)} already present"
+    )
 
     if audit.missing_dirs:
         _info(f"{len(audit.missing_dirs)} director(y/ies) to create")
@@ -962,8 +1055,8 @@ def run_migration(
 ) -> MigrationReport:
     """Execute the full migration and return the report.
 
-    Phases run in dependency order: directories → files → env → CLAUDE.md →
-    pyproject → Makefile → report.
+    Phases run in dependency order: directories → files → skills → env →
+    CLAUDE.md → pyproject → Makefile → report.
 
     Args:
         target: The target project root.
@@ -995,6 +1088,15 @@ def run_migration(
         _ok(f"copied:  {f}")
     for f in report.skipped:
         _info(f"skipped: {f}  (exists — use --force to overwrite)")
+
+    _header("COPYING SKILLS  (rescan-docs, setup-*, graphify, caveman)")
+    report.skill_dirs_copied, report.skill_dirs_skipped = copy_skill_dirs(
+        target, starter, force, dry
+    )
+    for s in report.skill_dirs_copied:
+        _ok(f"copied:  .claude/skills/{s}/")
+    for s in report.skill_dirs_skipped:
+        _info(f"skipped: .claude/skills/{s}/  (exists — use --force to overwrite)")
 
     _header(".ENV TEMPLATE")
     report.env_template_created = create_env_template(target, starter, dry)

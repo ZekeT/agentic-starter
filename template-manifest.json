@@ -1,6 +1,6 @@
 {
   "template_version": "1.0.0",
-  "generated_at": "2026-08-05T05:17:33+00:00",
+  "generated_at": "2026-08-05T08:39:15+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -150,20 +150,8 @@
       "sha256": "509534abf687d45e08003ecfe1a7b51efdbcfe68992394e586cf8d3a274407b1",
       "previous": []
     },
-    "pyproject.toml": {
-      "sha256": "ef723cf85104a0dad4ef80525a3b09c6b0501bd1c7ededb614ce2a915aff4474",
-      "previous": []
-    },
     "scripts/configure.py": {
       "sha256": "34ff0976423df097867e196108fb7351cfc29045aa7ea819798e604d00d50f7e",
-      "previous": []
-    },
-    "scripts/generate_template_manifest.py": {
-      "sha256": "689f62fa525dc44247e611c482f88183427a38d9e2266dc7631cf30db9012b3b",
-      "previous": []
-    },
-    "scripts/migrate_to_framework.py": {
-      "sha256": "03af0fc0d33d9ba0840beebe78c2388922899d7f3807d254d19c2d1701ca04e6",
       "previous": []
     },
     "scripts/trim_bmad_skills.py": {

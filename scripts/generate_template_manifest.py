@@ -29,13 +29,19 @@ MANIFEST_PATH = ROOT / "template-manifest.json"
 VERSION_PATH = ROOT / "TEMPLATE_VERSION"
 
 # Exact template-owned files at fixed paths.
+# NOTE: pyproject.toml is deliberately excluded — migrate_to_framework.py
+# merges missing [tool.*] sections into the target's own file rather than
+# copying the starter's verbatim; blind-copying would clobber a non-Python
+# target's project metadata entirely. Same reasoning excludes
+# scripts/migrate_to_framework.py and scripts/generate_template_manifest.py
+# below — both are starter-repo-only maintainer tools, never meant to be
+# copied into a downstream project.
 MANIFEST_FILES = [
     "CLAUDE.md",
     "Makefile",
     "setup.sh",
     ".gitignore",
     ".env.template",
-    "pyproject.toml",
     "config/models.json",
     ".claude/settings.json",
     "docs/SETUP.md",
@@ -46,12 +52,19 @@ MANIFEST_FILES = [
     "stories/STORY_TEMPLATE.md",
 ]
 
+# Scripts copied into downstream projects (a curated list, not a glob —
+# migrate_to_framework.py and generate_template_manifest.py are starter-only
+# and must never appear here).
+MANIFEST_SCRIPTS = [
+    "scripts/configure.py",
+    "scripts/trim_bmad_skills.py",
+]
+
 # Glob patterns relative to the repo root (non-recursive).
 MANIFEST_GLOBS = [
     ".claude/hooks/*.py",
     ".claude/commands/*.md",
     ".claude/agents/*.md",
-    "scripts/*.py",
 ]
 
 # Our skills, walked recursively. BMAD stubs (bmad-*) are excluded —
@@ -77,7 +90,7 @@ def sha256_of(path: Path) -> str:
 def collect_files() -> list[Path]:
     """Collect all template-owned files that currently exist."""
     found: set[Path] = set()
-    for rel in MANIFEST_FILES:
+    for rel in MANIFEST_FILES + MANIFEST_SCRIPTS:
         p = ROOT / rel
         if p.is_file():
             found.add(p)

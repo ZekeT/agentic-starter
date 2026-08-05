@@ -139,6 +139,17 @@ def test_audit_target_empty(tmp_path: Path) -> None:
     assert len(audit.files_to_copy) == len(m.FILES_TO_COPY)
     assert audit.files_to_skip == []
     assert len(audit.missing_dirs) == len(m.DIRS_TO_CREATE)
+    assert set(audit.skill_dirs_to_copy) == set(m.SKILL_DIRS_TO_COPY)
+    assert audit.skill_dirs_to_skip == []
+
+
+def test_audit_target_existing_skill_dir(tmp_path: Path) -> None:
+    """A skill directory already present should appear in skill_dirs_to_skip."""
+    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst.mkdir(parents=True)
+    audit = m.audit_target(tmp_path, STARTER)
+    assert "graphify" in audit.skill_dirs_to_skip
+    assert "graphify" not in audit.skill_dirs_to_copy
 
 
 def test_audit_target_existing_file(tmp_path: Path) -> None:
@@ -224,6 +235,64 @@ def test_copy_framework_files_force_overwrites(tmp_path: Path) -> None:
     assert ".claude/settings.json" in copied
     assert ".claude/settings.json" not in skipped
     assert "original" not in dst.read_text()
+
+
+# ── skill directory copying ─────────────────────────────────────────────────
+
+
+def test_copy_skill_dirs_copies_all(tmp_path: Path) -> None:
+    """All SKILL_DIRS_TO_COPY should exist under .claude/skills/ after copy."""
+    copied, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=False)
+    assert skipped == []
+    assert set(copied) == set(m.SKILL_DIRS_TO_COPY)
+    for name in m.SKILL_DIRS_TO_COPY:
+        skill_dir = tmp_path / ".claude" / "skills" / name / "SKILL.md"
+        assert skill_dir.exists(), f"Missing: {skill_dir}"
+
+
+def test_copy_skill_dirs_excludes_bmad_stubs(tmp_path: Path) -> None:
+    """BMAD skill stubs must never be copied — they come from npx bmad-method install."""
+    assert not any(name.startswith("bmad-") for name in m.SKILL_DIRS_TO_COPY)
+
+
+def test_copy_skill_dirs_dry_run_writes_nothing(tmp_path: Path) -> None:
+    """Dry run should not create any skill directories."""
+    copied, _ = m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=True)
+    assert set(copied) == set(m.SKILL_DIRS_TO_COPY)
+    assert not (tmp_path / ".claude" / "skills").exists()
+
+
+def test_copy_skill_dirs_skip_existing(tmp_path: Path) -> None:
+    """An existing skill directory should be skipped without --force."""
+    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst.mkdir(parents=True)
+    (dst / "SKILL.md").write_text("custom content")
+    _, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=False)
+    assert "graphify" in skipped
+    assert (dst / "SKILL.md").read_text() == "custom content"
+
+
+def test_copy_skill_dirs_force_overwrites(tmp_path: Path) -> None:
+    """--force should overwrite an existing skill directory."""
+    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst.mkdir(parents=True)
+    (dst / "SKILL.md").write_text("custom content")
+    copied, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=True, dry=False)
+    assert "graphify" in copied
+    assert "graphify" not in skipped
+    assert (dst / "SKILL.md").read_text() != "custom content"
+
+
+def test_copy_skill_dirs_excludes_junk_files(tmp_path: Path) -> None:
+    """Copied skill dirs should never contain __pycache__ or .DS_Store."""
+    m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=False)
+    skills_dir = tmp_path / ".claude" / "skills"
+    junk = [
+        p
+        for p in skills_dir.rglob("*")
+        if p.name == "__pycache__" or p.name == ".DS_Store"
+    ]
+    assert junk == []
 
 
 def test_hooks_are_executable(tmp_path: Path) -> None:

@@ -169,8 +169,11 @@ python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/pr
 python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/project
 ```
 
-This copies hooks, commands, the security agent, config, and scripts into
-your project without overwriting anything that already exists.
+This copies hooks, commands (including the BMAD planning triggers), the
+security agent, config, scripts, docs, and our skills (`rescan-docs`,
+`setup-base`, `setup-migrate`, `setup-update`, `graphify`, `caveman`) into
+your project without overwriting anything that already exists. It does not
+touch BMAD (`npx bmad-method install`) — run that separately, see Step 2 below.
 
 Then open Claude Code in your project and generate planning docs from the existing code:
 
