@@ -309,13 +309,14 @@ per-project. Skills trigger automatically when Claude detects relevant context.
 | `requesting-code-review` | A task completes — unified single-pass task reviewer (v6) |
 | `verification-before-completion` | Before any commit or PR |
 
-Install once globally (this project assumes Superpowers **v6+**):
+Install once globally (this project assumes Superpowers **v6.2+**):
 ```
 /plugin marketplace add obra/superpowers-marketplace
 /plugin install superpowers@superpowers-marketplace
 ```
 Already installed? Update with `/plugin update superpowers@superpowers-marketplace`.
-v6 keeps SDD scratch files in `.superpowers/` (gitignored).
+SDD scratch files live in `.superpowers/sdd/<plan-basename>/` (gitignored, plan-scoped
+since 6.2.0 so a follow-up plan can't read a prior plan's ledger).
 
 ### Layer 3: Security — Our agent (`.claude/agents/`)
 

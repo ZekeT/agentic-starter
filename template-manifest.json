@@ -1,6 +1,6 @@
 {
-  "template_version": "1.0.0",
-  "generated_at": "2026-08-05T09:01:06+00:00",
+  "template_version": "1.0.1",
+  "generated_at": "2026-08-05T09:49:23+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -117,9 +117,10 @@
       "previous": []
     },
     "CLAUDE.md": {
-      "sha256": "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
+      "sha256": "caf328337b8a6c09afa423c95d49c0f490d846c04fe5cd754a17ae37a17c7053",
       "previous": [
-        "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04"
+        "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
+        "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5"
       ]
     },
     "Makefile": {
@@ -131,10 +132,11 @@
       "previous": []
     },
     "docs/SETUP.md": {
-      "sha256": "073be2866026cef22ffd67f2880cfc539cb0dc16c69bf3e32d578dd6345ae85e",
+      "sha256": "d080d7e8b979b65e744418ec17a19c88dd3fa7222cc6ff7d54171c50254b1f44",
       "previous": [
         "2245cffbe365dbb4902a58b04260995a3893bff33d12ee71ab40cb0ab52373e2",
-        "1bda4b21b753d5be6b4561f08bc8272cb0e01556da8aa62da546134f7ee54a4f"
+        "1bda4b21b753d5be6b4561f08bc8272cb0e01556da8aa62da546134f7ee54a4f",
+        "073be2866026cef22ffd67f2880cfc539cb0dc16c69bf3e32d578dd6345ae85e"
       ]
     },
     "docs/architecture.md": {
@@ -162,8 +164,10 @@
       "previous": []
     },
     "setup.sh": {
-      "sha256": "5a0fef8c7005a1f828d7cc53547aea75bd09f9d4533a121a0b65d0b8a97c79c3",
-      "previous": []
+      "sha256": "5b29cb82c0a87470c6c2b96ce73e03e2d298c95f434dd14a0ba77606a4d89db1",
+      "previous": [
+        "5a0fef8c7005a1f828d7cc53547aea75bd09f9d4533a121a0b65d0b8a97c79c3"
+      ]
     },
     "stories/STORY_TEMPLATE.md": {
       "sha256": "e407695ab8e223cfca78d8220c857e17008352e72f179431ffd294992cd3aa50",

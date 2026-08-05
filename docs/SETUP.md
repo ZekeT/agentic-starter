@@ -21,7 +21,7 @@ and applies model assignments from `config/models.json`.
 > Always run BMAD scripts through `uv run python`.
 
 Then install Superpowers **once per machine** inside a Claude Code session
-(this template assumes Superpowers **v6+**):
+(this template assumes Superpowers **v6.2+**, latest as of 2026-08-05):
 
 ```
 /plugin marketplace add obra/superpowers-marketplace
@@ -37,7 +37,9 @@ Already installed on this machine? Update instead:
 This installs implementation skills (TDD, subagent dispatch, code review) globally
 to `~/.claude/`. Required for `/dev-story` to use the full agentic TDD workflow.
 Superpowers v6 replaced the two-stage review with a unified single-pass task
-reviewer and keeps SDD scratch files in `.superpowers/` (gitignored here).
+reviewer. SDD scratch files live in `.superpowers/sdd/<plan-basename>/`
+(gitignored here) — since 6.2.0 the workspace is scoped per plan, so a
+follow-up plan can't read a prior plan's progress ledger.
 
 Then open Claude Code and run the planning pipeline:
 
