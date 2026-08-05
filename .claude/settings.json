@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/zeke/Workspace/code/self/agentic-starter/.venv/bin/graphify hook-guard search"
+            "command": ".venv/bin/graphify hook-guard search"
           }
         ]
       },
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/zeke/Workspace/code/self/agentic-starter/.venv/bin/graphify hook-guard read"
+            "command": ".venv/bin/graphify hook-guard read"
           }
         ]
       }

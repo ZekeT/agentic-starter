@@ -1,6 +1,6 @@
 {
   "template_version": "1.0.0",
-  "generated_at": "2026-08-05T08:39:15+00:00",
+  "generated_at": "2026-08-05T09:01:06+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -67,8 +67,10 @@
       "previous": []
     },
     ".claude/settings.json": {
-      "sha256": "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
-      "previous": []
+      "sha256": "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
+      "previous": [
+        "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842"
+      ]
     },
     ".claude/skills/caveman/SKILL.md": {
       "sha256": "7619a06689d6415090f35d42caee8b4895a6715693550c7ed0d485947af5e432",
@@ -129,9 +131,10 @@
       "previous": []
     },
     "docs/SETUP.md": {
-      "sha256": "1bda4b21b753d5be6b4561f08bc8272cb0e01556da8aa62da546134f7ee54a4f",
+      "sha256": "073be2866026cef22ffd67f2880cfc539cb0dc16c69bf3e32d578dd6345ae85e",
       "previous": [
-        "2245cffbe365dbb4902a58b04260995a3893bff33d12ee71ab40cb0ab52373e2"
+        "2245cffbe365dbb4902a58b04260995a3893bff33d12ee71ab40cb0ab52373e2",
+        "1bda4b21b753d5be6b4561f08bc8272cb0e01556da8aa62da546134f7ee54a4f"
       ]
     },
     "docs/architecture.md": {
