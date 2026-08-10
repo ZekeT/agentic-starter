@@ -40,13 +40,8 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/hooks/stop_story_lifecycle.py": ".claude/hooks/stop_story_lifecycle.py",
     ".claude/hooks/pre_tool_graphify_remind.py": ".claude/hooks/pre_tool_graphify_remind.py",
     ".claude/agents/security-reviewer.md": ".claude/agents/security-reviewer.md",
-    # BMAD planning triggers — thin, invoke the bmad-* skill stubs
-    ".claude/commands/plan.md": ".claude/commands/plan.md",
-    ".claude/commands/prd.md": ".claude/commands/prd.md",
-    ".claude/commands/architecture.md": ".claude/commands/architecture.md",
-    ".claude/commands/gate-check.md": ".claude/commands/gate-check.md",
+    # Planning / implementation commands
     ".claude/commands/sprint-planning.md": ".claude/commands/sprint-planning.md",
-    # Superpowers / our implementation commands
     ".claude/commands/implement.md": ".claude/commands/implement.md",
     ".claude/commands/review.md": ".claude/commands/review.md",
     ".claude/commands/commit-push-pr.md": ".claude/commands/commit-push-pr.md",
@@ -54,9 +49,8 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/settings.json": ".claude/settings.json",
     "config/models.json": "config/models.json",
     "scripts/configure.py": "scripts/configure.py",
-    "scripts/trim_bmad_skills.py": "scripts/trim_bmad_skills.py",
     "stories/STORY_TEMPLATE.md": "stories/STORY_TEMPLATE.md",
-    # Docs — prd.md/architecture.md are placeholders until BMAD overwrites them
+    # Docs — prd.md/architecture.md are placeholders until planning fills them in
     "docs/SETUP.md": "docs/SETUP.md",
     "docs/coding-standards.md": "docs/coding-standards.md",
     "docs/local-models.md": "docs/local-models.md",
@@ -65,8 +59,6 @@ FILES_TO_COPY: dict[str, str] = {
 }
 
 # ── our skills to copy whole, starter-relative dir names ─────────────────────
-# BMAD skill stubs (bmad-*) are NOT here — they come from
-# `npx bmad-method install` + `make bmad-trim-apply`, never copied by us.
 SKILL_DIRS_TO_COPY: list[str] = [
     "rescan-docs",
     "setup-base",
@@ -206,11 +198,6 @@ MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
         '\tfind . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true\n'
         '\tfind . -type d -name "dist" -exec rm -rf {} + 2>/dev/null || true\n'
         '\t@echo "Cleaned."\n'
-    ),
-    "bmad-audit": "bmad-audit:\n\tuv run python scripts/trim_bmad_skills.py --audit\n",
-    "bmad-trim": "bmad-trim:\n\tuv run python scripts/trim_bmad_skills.py\n",
-    "bmad-trim-apply": (
-        "bmad-trim-apply:\n\tuv run python scripts/trim_bmad_skills.py --apply\n"
     ),
 }
 
@@ -515,7 +502,7 @@ def copy_skill_dirs(
     force: bool,
     dry: bool,
 ) -> tuple[list[str], list[str]]:
-    """Copy our whole skill directories (not BMAD stubs) from starter to target.
+    """Copy our whole skill directories from starter to target.
 
     Skips skill directories that already exist unless force is True.
 
@@ -1025,8 +1012,6 @@ def print_next_steps(audit: AuditResult) -> None:
     _header("NEXT STEPS")
     steps = [
         f"cd {audit.target}",
-        "npx bmad-method install       # fetch BMAD planning agents",
-        "make bmad-trim-apply          # trim to 7 lean BMAD stubs",
         "make configure                # patch agents with model assignments",
         "cp .env.template .env         # then fill in real API keys",
     ]
@@ -1036,7 +1021,7 @@ def print_next_steps(audit: AuditResult) -> None:
             "make check                    # verify toolchain passes",
         ]
     steps.append(
-        "/plan                         # start with BMAD planning in Claude Code"
+        "Plan in Claude Code (Superpowers brainstorming), then /sprint-planning"
     )
     for i, step in enumerate(steps, 1):
         print(f"  {i}. {step}")

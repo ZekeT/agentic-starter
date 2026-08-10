@@ -250,11 +250,6 @@ def test_copy_skill_dirs_copies_all(tmp_path: Path) -> None:
         assert skill_dir.exists(), f"Missing: {skill_dir}"
 
 
-def test_copy_skill_dirs_excludes_bmad_stubs(tmp_path: Path) -> None:
-    """BMAD skill stubs must never be copied — they come from npx bmad-method install."""
-    assert not any(name.startswith("bmad-") for name in m.SKILL_DIRS_TO_COPY)
-
-
 def test_copy_skill_dirs_dry_run_writes_nothing(tmp_path: Path) -> None:
     """Dry run should not create any skill directories."""
     copied, _ = m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=True)

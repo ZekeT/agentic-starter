@@ -1,13 +1,13 @@
 ---
 name: setup-migrate
 description: >
-  Migrate an existing Claude Code / BMAD project to the full Agentic Engineering
-  framework (BMAD + Superpowers + Claude Code Primitives). Use this skill whenever
+  Migrate an existing Claude Code project to the full Agentic Engineering
+  framework (Superpowers + Claude Code Primitives). Use this skill whenever
   a user wants to adopt, retrofit, or align their project with the structured
   agentic engineering pipeline — including CLAUDE.md completion, story file
   canonicalisation, hook configuration, agent/command reconciliation, and
   CI/CD wiring. Trigger on phrases like "migrate to agentic engineering",
-  "set up agentic framework", "adopt BMAD structure", "add Claude Code primitives",
+  "set up agentic framework", "add Claude Code primitives",
   or "improve my Claude Code setup".
 ---
 
@@ -256,8 +256,8 @@ skill: "rescan-docs"
 The skill will:
 1. Build a graphify knowledge graph of the codebase (or fall back to reading key files)
 2. Interview the user (5 questions) to understand intent vs. current state
-3. Write `_bmad-output/prd.md` — reverse-engineered PRD
-4. Write `_bmad-output/architecture.md` — component map and tech stack
+3. Write `docs/prd.md` — reverse-engineered PRD
+4. Write `docs/architecture.md` — component map and tech stack
 5. Create story stubs in `stories/draft/` for identified gaps, TODOs, and missing tests
 
 **When to skip this step:**
@@ -265,17 +265,20 @@ The skill will:
 - The user explicitly says they will write docs themselves
 
 After Step 9 completes, tell the user:
-> "Migration complete. Review `_bmad-output/` then run `/gate-check` to validate
-> PRD ↔ architecture consistency. Move stories from `stories/draft/` to
-> `stories/ready/` when ready to implement."
+> "Migration complete. Review `docs/prd.md` and `docs/architecture.md`, then run
+> `/sprint-planning` to break them into stories. Move stories from
+> `stories/draft/` to `stories/ready/` when ready to implement."
 
 ---
 
-## Decision reference: BMAD vs Superpowers overlap
+## Decision reference: planning vs implementation
 
-Both BMAD and Superpowers have dev agents. The division is clean:
-- **BMAD** → planning phases (Analyst, PM, Architect, Scrum Master)
-- **Superpowers** → implementation discipline (TDD enforcement, subtask dispatch)
+The division is clean:
+- **Superpowers planning skills** (`brainstorming`, `writing-plans`) → planning
+  conversations that produce `docs/prd.md` and `docs/architecture.md`
+- **`/sprint-planning`** → converts approved docs into story files
+- **`/dev-story` + Superpowers implementation skills** → implementation
+  discipline (TDD enforcement, subtask dispatch)
 
 Don't merge or collapse these — they serve different phases.
 

@@ -1,7 +1,7 @@
 # Agentic Base
 
 Fork-ready template for structured AI-driven software delivery.
-BMAD + Superpowers + Claude Code Primitives, with Python tooling and deterministic guardrails.
+Superpowers + Claude Code Primitives, with Python tooling and deterministic guardrails.
 
 > The bottleneck isn't model intelligence. It's the absence of engineering discipline.
 
@@ -20,9 +20,8 @@ Requirements → Architecture → Stories → Implement → Review → Security 
 
 | Phase | Command | Output |
 |-------|---------|--------|
-| Plan | `/plan` | stakeholder brief |
-| PRD | `/prd` | `_bmad-output/prd.md` |
-| Architecture | `/architecture` | `_bmad-output/architecture.md` |
+| Plan | Superpowers `brainstorming` conversation | `docs/prd.md` |
+| Architecture | Superpowers `writing-plans` conversation | `docs/architecture.md` |
 | Stories | `/sprint-planning` | `stories/draft/` |
 | Implement | `/implement story-NNN` | code on a worktree branch |
 | Review | `/review` | code-reviewer pass |
@@ -34,7 +33,7 @@ Requirements → Architecture → Stories → Implement → Review → Security 
 
 ```
 stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
-   (BMAD)         🖐 human         (agent + worktree)        (PR open)        (merged)
+(/sprint-planning)  🖐 human        (agent + worktree)        (PR open)        (merged)
 ```
 
 After `/sprint-planning` adds new stories: `graphify . --update` to refresh the codebase graph.

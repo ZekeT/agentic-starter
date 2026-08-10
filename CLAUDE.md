@@ -2,7 +2,7 @@
 
 > This file is committed to git and shared by all agents and sessions.
 > Keep it short and high-signal. Add a rule every time Claude does something wrong.
-> Source: Boris Cherny's workflow + Agentic Engineering guide (BMAD + Superpowers + Claude Code Primitives)
+> Source: Boris Cherny's workflow + Agentic Engineering guide (Superpowers + Claude Code Primitives)
 
 ---
 
@@ -218,29 +218,17 @@ except httpx.TimeoutException as e:
 ## Project Structure
 
 ```
-_bmad/                   # BMAD runtime — DO NOT EDIT. npx owns this.
-  core/                  # Agent logic (Analyst, PM, Architect, Scrum Master)
-  bmm/                   # BMAD Method workflows (prd, architecture, epics-and-stories, etc.)
-_bmad-output/            # BMAD writes planning docs here (prd.md, architecture.md)
-
 .claude/
-  agents/                # Our agents only — Superpowers + BMAD provide the rest
+  agents/                # Our agents only — Superpowers provides the rest
                          # security-reviewer.md — OWASP/CVE scan (read-only)
-  commands/              # Our slash commands (implement, review, commit-push-pr)
+  commands/              # Our slash commands (sprint-planning, dev-story, implement, review, commit-push-pr)
   hooks/                 # Deterministic guardrails (lint, secrets, env guard, dangerous bash)
   skills/
-    bmad-agent-analyst/  # ┐
-    bmad-agent-pm/       # │ 7 lean BMAD skill stubs (trimmed by make bmad-trim-apply)
-    bmad-agent-architect/# │ Each stubs into _bmad/ runtime
-    bmad-prd/            # │ (replaces deprecated bmad-create-prd)
-    bmad-architecture/   # │ (replaces deprecated bmad-create-architecture)
-    bmad-create-epics-and-stories/ # │
-    bmad-check-implementation-readiness/ # ┘
     graphify/            # Knowledge graph (71x token reduction)
     caveman/             # Token-efficient inter-agent comms (optional)
     setup-base/          # Project structure scanner
       scripts/
-        setup_base.py          # Fresh project setup + BMAD output migration
+        setup_base.py          # Idempotent project scaffolder
     setup-migrate/  # Migration skill for existing projects
       scripts/
         setup_migrate.py       # Full audit + scaffold for existing projects
@@ -251,7 +239,7 @@ _bmad-output/            # BMAD writes planning docs here (prd.md, architecture.
   settings.json          # Hook wiring
 
 stories/
-  draft/                 # BMAD sprint-planning writes here
+  draft/                 # /sprint-planning writes here
   ready/                 # Human moves stories here to unblock agents
   in-progress/           # Agent working
   review/                # PR open
@@ -261,10 +249,9 @@ config/
   models.json            # Model assignments + advisor config
 scripts/
   configure.py           # Patches agents with model assignments
-  trim_bmad_skills.py    # Trims BMAD stubs to lean 7
 docs/
-  prd.md                 # Template (BMAD overwrites with real content)
-  architecture.md        # Template (BMAD overwrites with real content)
+  prd.md                 # Template — written during planning
+  architecture.md        # Template — written during planning
   coding-standards.md    # Full coding standards reference
   local-models.md        # Local model setup guide
 ```
@@ -280,20 +267,21 @@ Requirements → Architecture → Stories → Implement → Review → Security 
 
 `🖐` = human gate (blocking). Everything else = automated agent.
 
-### Layer 1: Planning — BMAD (installed by setup.sh)
+### Layer 1: Planning — Superpowers conversations + /sprint-planning
 
-BMAD owns the planning phase. Its commands and agents come from `npx bmad-method install`
-and live in `_bmad/` (runtime) + `.claude/skills/bmad-*/` (stubs). Do not edit `_bmad/`.
+Planning is conversational: the Superpowers `brainstorming` and `writing-plans`
+skills (see Layer 2) drive requirements and design discussions, whose approved
+output is written to `docs/prd.md` and `docs/architecture.md`. Human gates apply
+before each doc is considered approved.
 
-| Command | BMAD Skill Stub | What it does |
-|---------|----------------|--------------|
-| `/plan` | `bmad-agent-analyst` | Stakeholder interviews → product brief |
-| `/prd` | `bmad-agent-pm` + `bmad-prd` | PRD (create/update/validate) → `_bmad-output/prd.md` |
-| `/architecture` | `bmad-agent-architect` + `bmad-architecture` | System design → `_bmad-output/architecture.md` |
-| `/gate-check` | `bmad-check-implementation-readiness` | PRD ↔ architecture consistency |
-| `/sprint-planning` | `bmad-create-epics-and-stories` | Break PRD into story files → `stories/` |
+| Step | Owner | Output |
+|------|-------|--------|
+| Requirements | Superpowers `brainstorming` conversation | `docs/prd.md` |
+| System design | Superpowers `writing-plans` conversation | `docs/architecture.md` |
+| Story breakdown | `/sprint-planning` (our native command) | `stories/draft/story-{NNN}-{slug}.md` |
 
-After `setup.sh`, only these 7 BMAD skill stubs remain (all others trimmed by `make bmad-trim-apply`).
+For an existing codebase with no docs, the `rescan-docs` skill reverse-engineers
+both docs plus story stubs from the code.
 
 ### Layer 2: Implementation — Superpowers (installed globally via plugin)
 
@@ -327,8 +315,8 @@ Our command `/review` triggers this explicitly when needed.
 ### Story file lifecycle
 
 ```
-_bmad-output/ → stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
-                  (BMAD writes)   🖐 human moves    (/dev-story)            (Stop hook)       (merged)
+docs/ → stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
+        (/sprint-planning)  🖐 human moves   (/dev-story)           (Stop hook)       (merged)
 ```
 
 Use `/dev-story [id]` to pick up a story. With no id it grabs the
@@ -403,15 +391,6 @@ cp .env.template .env   # then fill in real values
 
 ## Agent Team
 
-**BMAD agents** (from `npx bmad-method install` → `_bmad/` runtime, do not edit):
-
-| Agent | Command | Phase |
-|-------|---------|-------|
-| Analyst | `/plan` | Product brief |
-| PM | `/prd` | PRD generation |
-| Architect | `/architecture` | System design |
-| Scrum Master | `/sprint-planning` | Story breakdown → `stories/draft/` |
-
 **Superpowers agents** (installed globally to `~/.claude/` via `/plugin install`, do not edit):
 
 | Agent / Skill | Triggers | What it does |
@@ -467,10 +446,6 @@ Example: "The component re-renders because a new object ref is created on every 
 - Never use `os.system()` — use `subprocess.run()` with explicit args
 - Always use `pathlib.Path` not string concatenation for paths
 -->
-
-- BMAD runtime scripts (`_bmad/scripts/*.py`) need Python ≥ 3.11 (`tomllib`).
-  Run them via `uv run python`, never bare `python3` — the macOS system
-  python3 is 3.9 and fails with `ModuleNotFoundError: tomllib`.
 
 ## graphify
 

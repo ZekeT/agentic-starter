@@ -1,7 +1,7 @@
 ---
 name: rescan-docs
 description: >
-  Reverse-engineer BMAD planning documents (PRD, architecture, story stubs) from
+  Reverse-engineer planning documents (PRD, architecture, story stubs) from
   an existing codebase. Use when migrating a project to the Agentic Engineering
   framework, when docs are missing or stale, or after inheriting a codebase with
   no planning artefacts. Trigger on: "rescan docs", "generate PRD from code",
@@ -10,12 +10,13 @@ description: >
 
 # Rescan-Docs Skill
 
-Analyse an existing codebase and produce BMAD-format planning documents so the
+Analyse an existing codebase and produce planning documents so the
 full agentic pipeline can resume from a documented baseline.
 
-**Announce at start:** "I'm using the rescan-docs skill to generate BMAD documents from the existing codebase."
+**Announce at start:** "I'm using the rescan-docs skill to generate planning documents from the existing codebase."
 
-**Output directory:** `_bmad-output/` — same location BMAD uses. Human reviews before copying to `docs/`.
+**Output directory:** `docs/` — never overwrites existing files (collisions get
+timestamped `*-rescan-{date}.md` siblings the human diffs and merges).
 
 ---
 
@@ -93,11 +94,11 @@ Wait for answers before proceeding. Their answers fill in the "why" — the code
 
 ## Step 3 — Generate the PRD
 
-Write `_bmad-output/prd.md` using this structure. Fill every section from your
+Write `docs/prd.md` using this structure. Fill every section from your
 analysis and the user's answers. Do not leave any section as a placeholder.
 
-If `_bmad-output/prd.md` already exists, create `_bmad-output/prd-rescan-{date}.md`
-instead and tell the user to diff them.
+If `docs/prd.md` already exists with real (non-placeholder) content, create
+`docs/prd-rescan-{date}.md` instead and tell the user to diff them.
 
 ```markdown
 # Product Requirements Document
@@ -137,10 +138,10 @@ grep -r "TODO\|FIXME\|HACK\|XXX\|PLACEHOLDER\|NotImplemented" \
 
 ## Step 4 — Generate the architecture doc
 
-Write `_bmad-output/architecture.md` using this structure.
+Write `docs/architecture.md` using this structure.
 
-If `_bmad-output/architecture.md` already exists, create
-`_bmad-output/architecture-rescan-{date}.md` instead.
+If `docs/architecture.md` already exists with real (non-placeholder) content,
+create `docs/architecture-rescan-{date}.md` instead.
 
 ```markdown
 # Architecture Document
@@ -225,33 +226,10 @@ find . -name "*.py" -not -path "*/test*" -not -path "*__pycache__*" \
 done | head -10
 ```
 
-**Story file format** — write to `stories/draft/story-{NNN}-{slug}.md`:
-
-```markdown
-# Story {NNN}: {title}
-
-**Type:** feature | bug | tech-debt | test-coverage
-
-## User Story
-As a {user type}, I want {capability} so that {benefit}.
-
-## Background
-{Why this exists — link to PRD section, TODO line, or tech debt description.}
-
-## Acceptance Criteria
-- [ ] {Testable criterion 1}
-- [ ] {Testable criterion 2}
-
-## Files to Touch
-- `src/path/to/file.ext` — {what changes}
-- `tests/path/to/test_file.ext` — {new or updated tests}
-
-## Test Strategy
-{Unit / integration / e2e — what to test and how}
-
-## Architectural Constraints
-{Any constraints from architecture.md that apply here}
-```
+**Story file format** — write to `stories/draft/story-{NNN}-{slug}.md`,
+following `stories/STORY_TEMPLATE.md` exactly (Status / What to build / Files
+to touch / Acceptance criteria / Test strategy / Architectural constraints /
+Out of scope / Dependencies / Notes for agent). Status stays `draft`.
 
 Quality over quantity: generate 3–8 well-specified stories. Flag thin story
 candidates to the user rather than writing vague stubs.
@@ -265,21 +243,22 @@ Print a summary:
 ```
 Rescan complete
 ===============
-PRD:           _bmad-output/prd.md              ({N} features documented)
-Architecture:  _bmad-output/architecture.md      ({N} components mapped)
+PRD:           docs/prd.md                       ({N} features documented)
+Architecture:  docs/architecture.md              ({N} components mapped)
 Stories:       stories/draft/story-{NNN}-*.md    ({N} stories created)
 
-Review _bmad-output/ before running /gate-check.
+Review docs/prd.md and docs/architecture.md — they are reverse-engineered;
+edit before treating as authoritative.
 Move stories from stories/draft/ to stories/ready/ when ready to implement.
 
-Next: /gate-check — validates PRD ↔ architecture consistency
+Next: /sprint-planning — breaks the reviewed docs into further stories
 ```
 
 ---
 
 ## Guardrails
 
-- **Do not overwrite** existing files in `_bmad-output/` or `docs/` — timestamp the
+- **Do not overwrite** existing files in `docs/` — timestamp the
   new file and tell the user to diff them
 - **Flag uncertainty** — if a section can't be inferred from code, say so explicitly
   in the doc with `<!-- UNKNOWN: explain what's missing -->` rather than guessing

@@ -77,7 +77,7 @@ For each flagged file, apply the **template delta**, not the template file:
   appended; changed template sections get updated only if the user never
   edited them. The user's Rules section always wins.
 - **docs/prd.md, docs/architecture.md** — if these hold real project
-  content (BMAD output), skip them entirely; template changes only matter
+  content (planning output), skip them entirely; template changes only matter
   for the placeholder versions.
 - **config/models.json** — keep the target's model assignments; merge only
   new structural keys (e.g. a new tier). Run `make configure` after.
@@ -90,14 +90,9 @@ For each flagged file, apply the **template delta**, not the template file:
 
 ---
 
-## Step 4 — Regenerate what is never copied
+## Step 4 — Update what is never copied
 
-```bash
-cd /path/to/target
-npx bmad-method install && make bmad-trim-apply   # BMAD runtime + lean 7 stubs
-```
-
-And inside Claude Code (global, once per machine):
+Inside Claude Code (global, once per machine):
 
 ```
 /plugin update superpowers@superpowers-marketplace
@@ -120,7 +115,6 @@ And inside Claude Code (global, once per machine):
 - **Never overwrite a CUSTOMIZED file** — the script won't; neither should you.
 - **Apply deltas, not whole files** in guided merges.
 - **Ask on conflicts** — when template delta and user edit collide, the user decides.
-- **Don't touch `_bmad/` or `bmad-*` stubs** — regenerated, not merged.
 - **Maintainers:** after changing template-owned files in the starter, bump
   `TEMPLATE_VERSION` and run `make manifest` — otherwise downstream updates
   will misclassify pristine files as customized.

@@ -1,17 +1,17 @@
 ---
 name: setup-base
 description: >
-  Scans a project to check if it is correctly set up for the BMAD + Superpowers
+  Scans a project to check if it is correctly set up for the Superpowers
   agentic engineering workflow. Use this skill whenever the user says "scan my
   project", "check my setup", "is my project clean", "did setup work", or wants
   to verify the agentic project structure is correct before starting a sprint.
   Also trigger when the user mentions they've just run setup_base.py or installed
-  BMAD/Superpowers.
+  Superpowers.
 ---
 
 # Foundation
 
-Checks that a project is correctly structured for the BMAD + Superpowers workflow.
+Checks that a project is correctly structured for the Superpowers workflow.
 Produces a clear pass/fail report with actionable fixes.
 
 ## When to use
@@ -63,22 +63,9 @@ Check for `docs/prd.md` and `docs/architecture.md`.
 - WARN if only one exists
 - PASS if both exist
 
-Do NOT check `_bmad-output/` for these — only `docs/` counts as the approved copy.
-
 ---
 
-### 4. BMAD output leftover check
-
-Look for `_bmad-output/` containing `.md` files that haven't been
-copied to `docs/` or `stories/draft/`.
-
-- WARN if files exist there that are NOT reflected in `docs/` or `stories/`
-  — this means the migration is incomplete
-- PASS if `_bmad-output/` doesn't exist, or all artefacts are already mirrored
-
----
-
-### 5. Stale agents in `.claude/agents/`
+### 4. Stale agents in `.claude/agents/`
 
 **Only `security-reviewer.md` should exist here.**
 
@@ -87,31 +74,12 @@ WARN if any of these are found — they belong to other tools:
   (installed globally to `~/.claude/` via `/plugin install`)
 - `code-reviewer.md`, `reviewer.md` → Superpowers owns code review
 - `analyst.md`, `pm.md`, `architect.md`, `scrum-master.md`
-  → BMAD owns these via `_bmad/` runtime, not `.claude/agents/`
+  → planning is conversational (Superpowers brainstorming / writing-plans);
+  story breakdown is `/sprint-planning` — no agents needed
 
 ---
 
-### 6. BMAD skill stubs
-
-Check `.claude/skills/` for the 7 lean BMAD stubs:
-
-```
-bmad-agent-analyst
-bmad-agent-pm
-bmad-agent-architect
-bmad-prd
-bmad-architecture
-bmad-create-epics-and-stories
-bmad-check-implementation-readiness
-```
-
-- FAIL if none exist → run `npx bmad-method install && make bmad-trim-apply`
-- WARN if extra `bmad-*` stubs exist → run `make bmad-trim-apply` to lean them
-- PASS if exactly these 7 exist
-
----
-
-### 7. Python hooks
+### 5. Python hooks
 
 Check `.claude/hooks/` for our 4 hooks:
 
@@ -127,7 +95,7 @@ FAIL if any are missing — run the `setup-migrate` skill's scaffold
 
 ---
 
-### 8. Story file quality spot-check
+### 6. Story file quality spot-check
 
 Pick up to 3 story files from `stories/draft/` or `stories/ready/` and check each for:
 
@@ -141,7 +109,7 @@ SKIP if no stories exist yet (fine at setup time).
 
 ---
 
-### 9. Superpowers installed
+### 7. Superpowers installed
 
 Check whether the Superpowers plugin is installed globally. Plugins live in
 the plugin cache, not `~/.claude/skills/`:
@@ -162,7 +130,7 @@ an interactive Claude Code session.
 
 ---
 
-### 10. Git initialised
+### 8. Git initialised
 
 Check that `.git/` exists at project root.
 
@@ -171,7 +139,7 @@ Check that `.git/` exists at project root.
 
 ---
 
-### 11. .env.template
+### 9. .env.template
 
 - WARN if `.env.template` doesn't exist — new team members won't know what env vars are needed
 - PASS if it exists
@@ -190,10 +158,8 @@ Root: /path/to/project
   PASS  Kanban folders
   PASS  CLAUDE.md
   WARN  CLAUDE.md not customised — edit before starting implementation
-  FAIL  docs/prd.md missing — run /prd in BMAD to generate it
-  WARN  _bmad-output/story-001.md not migrated — run setup_base.py
+  FAIL  docs/prd.md missing — write it during planning (Superpowers brainstorming)
   WARN  .claude/agents/developer.md found — remove (Superpowers owns implementation)
-  FAIL  bmad skill stubs missing — run: npx bmad-method install && make bmad-trim-apply
   PASS  Python hooks present
   PASS  Git initialised
 
@@ -202,7 +168,7 @@ Fix the FAILs before starting. WARNs are safe to defer.
 ```
 
 Always end with a one-line verdict:
-- "Ready to plan — run /plan in BMAD to start."  (all PASS, no docs yet)
+- "Ready to plan — start a planning conversation (Superpowers brainstorming)."  (all PASS, no docs yet)
 - "Ready to implement — move stories to stories/ready/."  (docs exist, stories in draft)
 - "Fix the FAILs above before proceeding."  (any FAIL present)
 
@@ -222,14 +188,8 @@ head -5 CLAUDE.md 2>/dev/null
 # Docs
 ls docs/ 2>/dev/null
 
-# BMAD output leftovers
-find _bmad-output -name "*.md" 2>/dev/null
-
 # Agents (should only be security-reviewer.md)
 ls .claude/agents/ 2>/dev/null
-
-# BMAD skill stubs
-ls .claude/skills/ 2>/dev/null | grep "^bmad-"
 
 # Hooks
 ls .claude/hooks/ 2>/dev/null

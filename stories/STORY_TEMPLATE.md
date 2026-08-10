@@ -3,7 +3,7 @@
 > Copy this file to `stories/draft/story-{NNN}-{slug}.md` and fill it in.
 > A story file is the complete context a developer agent needs — no other
 > files should be required to understand and implement this story.
-> Source: BMAD "story file = the context" principle.
+> Principle: the story file is the complete context.
 
 ---
 

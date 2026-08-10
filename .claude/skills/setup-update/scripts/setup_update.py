@@ -11,8 +11,6 @@ template-manifest.json (see scripts/generate_template_manifest.py):
 
 Special cases:
   - .gitignore is never overwritten — missing template lines are appended
-  - _bmad/ and .claude/skills/bmad-* are never copied — regenerate them with
-    `npx bmad-method install && make bmad-trim-apply`
 
 Run from the starter checkout against a target project:
 
@@ -239,8 +237,11 @@ def print_summary(
             print(f"       - {rel}")
 
     header("4 / MANUAL STEPS")
-    info("Regenerate BMAD (never copied by this script):")
-    print("       npx bmad-method install && make bmad-trim-apply")
+    info("Removed in template 1.1.0 — delete these from the target if present")
+    info("(the manifest only tracks existing files, so they are never auto-removed):")
+    print("       .claude/commands/plan.md, prd.md, architecture.md, gate-check.md")
+    print("       scripts/trim_bmad_skills.py")
+    print("       _bmad/, _bmad-output/, .claude/skills/bmad-*/")
     info("Update the global Superpowers plugin inside Claude Code:")
     print("       /plugin update superpowers@superpowers-marketplace")
     info("Then verify: run the setup-base skill (scan my project).")

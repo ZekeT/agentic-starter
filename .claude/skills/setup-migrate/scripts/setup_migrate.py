@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Agentic Engineering Migration Script
-Audits an existing Claude Code / BMAD project and scaffolds missing
-structure from the Agentic Engineering framework (BMAD + Superpowers +
-Claude Code Primitives).
+Audits an existing Claude Code project and scaffolds missing structure
+from the Agentic Engineering framework (Superpowers + Claude Code
+Primitives).
 
 Usage:
     python migrate.py [project_root]        # audit + scaffold
@@ -89,33 +89,17 @@ EXPECTED_HOOKS = {
 }
 
 # Slash commands in .claude/commands/ — the full template set.
-# Planning commands are thin triggers that invoke the BMAD skill stubs
-# in .claude/skills/ (bmad-prd, bmad-architecture, etc.).
+# Planning conversations happen via Superpowers (brainstorming /
+# writing-plans); /sprint-planning converts approved docs into stories.
 EXPECTED_COMMANDS = {
-    "plan.md": "/plan — BMAD Analyst: product brief",
-    "prd.md": "/prd — BMAD PM + bmad-prd: PRD generation",
-    "architecture.md": "/architecture — BMAD Architect + bmad-architecture",
-    "gate-check.md": "/gate-check — PRD ↔ architecture consistency",
-    "sprint-planning.md": "/sprint-planning — epics + stories → stories/draft/",
+    "sprint-planning.md": "/sprint-planning — break docs/prd.md into story files",
     "dev-story.md": "/dev-story — full story lifecycle (canonical)",
     "implement.md": "/implement — Superpowers TDD implementation",
     "review.md": "/review — Security reviewer: OWASP/CVE check",
     "commit-push-pr.md": "/commit-push-pr — Stage, commit, push, open PR",
 }
 
-# BMAD skill stubs that should exist in .claude/skills/ (after make bmad-trim-apply)
-EXPECTED_BMAD_STUBS = {
-    "bmad-agent-analyst",
-    "bmad-agent-pm",
-    "bmad-agent-architect",
-    "bmad-prd",  # replaces deprecated bmad-create-prd (BMAD 6.10)
-    "bmad-architecture",  # replaces deprecated bmad-create-architecture (BMAD 6.10)
-    "bmad-create-epics-and-stories",
-    "bmad-check-implementation-readiness",
-}
-
 # Agents in .claude/agents/ — only what our template owns
-# BMAD agents (Analyst, PM, Architect, SM) live in _bmad/ runtime — not here
 # Superpowers agents (Developer, Code Reviewer) installed globally to ~/.claude/ — not here
 EXPECTED_AGENTS = {
     "security-reviewer.md": "Security Reviewer (read-only, OWASP/CVE) — our only custom agent",
@@ -167,18 +151,6 @@ def audit_commands(root: Path) -> dict:
     return {k: k in existing for k in EXPECTED_COMMANDS}
 
 
-def audit_bmad_stubs(root: Path) -> dict:
-    """Audit BMAD skill stubs (.claude/skills/bmad-*/).
-    These come from npx bmad-method install + make bmad-trim-apply.
-    They are NOT in .claude/commands/.
-    """
-    skills_dir = root / ".claude" / "skills"
-    if not skills_dir.exists():
-        return {k: False for k in EXPECTED_BMAD_STUBS}
-    existing = {p.name for p in skills_dir.iterdir() if p.is_dir()}
-    return {k: k in existing for k in EXPECTED_BMAD_STUBS}
-
-
 def audit_agents(root: Path) -> dict:
     """Audit .claude/agents/. Only security-reviewer.md should be here."""
     agents_dir = root / ".claude" / "agents"
@@ -191,15 +163,16 @@ def audit_agents(root: Path) -> dict:
 def audit_stale_agents(root: Path) -> list[str]:
     """Find agent files that should NOT exist because other tools own them.
     - developer.md, code-reviewer.md → Superpowers owns these
-    - analyst.md, pm.md, architect.md, scrum-master.md → BMAD _bmad/ runtime owns these
+    - analyst.md, pm.md, architect.md, scrum-master.md → planning is
+      conversational (Superpowers brainstorming/writing-plans), not an agent
     """
     should_not_exist = {
         "developer.md": "Superpowers owns implementation (installed globally via /plugin install)",
         "code-reviewer.md": "Superpowers owns code review (installed globally via /plugin install)",
-        "analyst.md": "BMAD owns planning — agent lives in _bmad/, not .claude/agents/",
-        "pm.md": "BMAD owns planning — agent lives in _bmad/, not .claude/agents/",
-        "architect.md": "BMAD owns planning — agent lives in _bmad/, not .claude/agents/",
-        "scrum-master.md": "BMAD owns sprint planning — agent lives in _bmad/, not .claude/agents/",
+        "analyst.md": "Planning is conversational (Superpowers brainstorming) — no agent needed",
+        "pm.md": "Planning is conversational (Superpowers brainstorming) — no agent needed",
+        "architect.md": "Planning is conversational (Superpowers writing-plans) — no agent needed",
+        "scrum-master.md": "/sprint-planning owns story breakdown — no agent needed",
     }
     agents_dir = root / ".claude" / "agents"
     if not agents_dir.exists():
@@ -262,36 +235,16 @@ HOOK_TEMPLATES = {
 }
 
 
-# Command stubs to scaffold when missing. Planning commands are thin
-# triggers for the BMAD skill stubs (installed by npx bmad-method install
-# + make bmad-trim-apply into .claude/skills/bmad-*/).
+# Command stubs to scaffold when missing.
 COMMAND_TEMPLATES = {
-    "plan.md": (
-        "# /plan\n"
-        "Run the BMAD Analyst to conduct stakeholder interviews and produce a product brief.\n\n"
-        "Invoke the **`bmad-agent-analyst`** skill.\n"
-    ),
-    "prd.md": (
-        "# /prd\n"
-        "Run the BMAD PM to interview stakeholders and generate the PRD → `_bmad-output/prd.md`.\n\n"
-        "Invoke the **`bmad-agent-pm`** skill. Once the interview is complete,\n"
-        "invoke **`bmad-prd`** to write the PRD document.\n"
-    ),
-    "architecture.md": (
-        "# /architecture\n"
-        "Run the BMAD Architect to produce the system design → `_bmad-output/architecture.md`.\n\n"
-        "Invoke the **`bmad-agent-architect`** skill. Once the discussion is complete,\n"
-        "invoke **`bmad-architecture`** to write the architecture document.\n"
-    ),
-    "gate-check.md": (
-        "# /gate-check\n"
-        "Verify PRD ↔ architecture consistency before sprint planning.\n\n"
-        "Invoke the **`bmad-check-implementation-readiness`** skill.\n"
-    ),
+    # Keep in sync with .claude/commands/sprint-planning.md (full version).
     "sprint-planning.md": (
         "# /sprint-planning\n"
-        "Run the BMAD Scrum Master to break the PRD into epics and stories → `stories/draft/`.\n\n"
-        "Invoke the **`bmad-create-epics-and-stories`** skill.\n"
+        "Break the approved `docs/prd.md` + `docs/architecture.md` into story files\n"
+        "in `stories/draft/`, following `stories/STORY_TEMPLATE.md`.\n\n"
+        "Planning conversations happen before this command via the Superpowers\n"
+        "**`brainstorming`** / **`writing-plans`** skills. Never move stories to\n"
+        "`ready/` — that is the human gate.\n"
     ),
     "dev-story.md": (
         "# /dev-story\n"
@@ -320,9 +273,8 @@ COMMAND_TEMPLATES = {
     ),
 }
 
-# Only scaffold our custom agent — Superpowers and BMAD provide the rest.
+# Only scaffold our custom agent — Superpowers provides the rest.
 # Superpowers (global ~/.claude/): developer, code-reviewer
-# BMAD (_bmad/ runtime): analyst, pm, architect, scrum-master
 AGENT_TEMPLATES = {
     "security-reviewer.md": (
         "# Security Reviewer\n\n"
@@ -467,11 +419,13 @@ def scaffold(root: Path, audit: dict, dry: bool):
     # Placeholder docs
     make_file(
         "docs/prd.md",
-        "# Product Requirements Document\n\nTODO: Complete with `/prd` command.\n",
+        "# Product Requirements Document\n\n"
+        "TODO: Write during planning (Superpowers brainstorming / writing-plans).\n",
     )
     make_file(
         "docs/architecture.md",
-        "# Architecture\n\nTODO: Complete with `/architecture` command.\n",
+        "# Architecture\n\n"
+        "TODO: Write during planning (Superpowers brainstorming / writing-plans).\n",
     )
 
     return created, skipped
@@ -511,18 +465,9 @@ def print_audit(root: Path):
         desc = EXPECTED_COMMANDS[name]
         (ok if exists else missing)(f"{name}  —  {desc}")
 
-    header("5b / BMAD SKILL STUBS  (.claude/skills/bmad-*/)")
-    info("These come from: npx bmad-method install + make bmad-trim-apply")
-    stubs = audit_bmad_stubs(root)
-    for name, exists in stubs.items():
-        (ok if exists else missing)(f"{name}")
-    if not any(stubs.values()):
-        info("Run: npx bmad-method install && make bmad-trim-apply")
-
     header("6 / OUR AGENTS  (.claude/agents/)")
     info("Only security-reviewer.md should be here.")
     info("Superpowers owns: developer, code-reviewer (global ~/.claude/)")
-    info("BMAD owns: analyst, pm, architect, scrum-master (_bmad/ runtime)")
     agents = audit_agents(root)
     for name, exists in agents.items():
         desc = EXPECTED_AGENTS[name]
@@ -622,10 +567,11 @@ def main():
     print(f"{BOLD}Next steps:{RESET}")
     print("  1. Review CLAUDE.md and fill in the TODO sections")
     print(
-        "  2. Populate docs/prd.md and docs/architecture.md (or use /prd, /architecture)"
+        "  2. Populate docs/prd.md and docs/architecture.md"
+        " (Superpowers brainstorming / writing-plans)"
     )
-    print("  3. Run `/gate-check` to validate PRD ↔ architecture consistency")
-    print("  4. Move story files into stories/draft/ and review with /sprint-planning")
+    print("  3. Run `/sprint-planning` to break the docs into story files")
+    print("  4. Review stories/draft/ and move approved ones to stories/ready/")
     print(
         "  5. For the CLAUDE.md judgment work, use the migration SKILL.md in Claude Code\n"
     )
