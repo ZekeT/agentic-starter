@@ -1,11 +1,10 @@
 ---
 name: graphify
 description: >
-  Check graphify-out/GRAPH_REPORT.md BEFORE grepping or reading multiple files
-  for codebase context. Use for architecture questions, tracing connections between
-  components, or any broad code navigation. 71x fewer tokens than raw file reads.
+  Query the codebase knowledge graph for broad architecture questions spanning
+  many files. Prefer plain grep/read for anything scoped to one feature.
   Trigger on: /graphify, "build knowledge graph", "how does X connect to Y",
-  "show me the architecture", or when about to run multiple Grep/Read calls.
+  "show me the architecture".
 ---
 
 # Graphify Skill
@@ -13,9 +12,9 @@ description: >
 Turn the project into a queryable knowledge graph for token-efficient
 codebase navigation. 71x fewer tokens per query vs reading raw files.
 
-**Default behaviour:** If `graphify-out/GRAPH_REPORT.md` exists, always check
-it BEFORE reaching for Grep or Read for codebase exploration. Only fall back
-to grepping raw files if the graph doesn't answer your question.
+**Opt-in:** if `graphify-out/GRAPH_REPORT.md` exists, it's worth checking for
+broad architecture or cross-component questions. For anything scoped to one
+feature or file, plain Grep/Read is simpler and just as fast.
 
 Install: `pip install graphifyy && graphify .`
 Trigger: `/graphify` or "build knowledge graph"
@@ -24,10 +23,10 @@ Trigger: `/graphify` or "build knowledge graph"
 
 ## When to use this skill
 
-- **Always first:** before any broad codebase search (Grep across `.`, multi-file reads)
-- Before answering architecture or cross-component questions
-- When tracing how components connect or data flows through the system
-- When you've run more than 2 Grep calls without finding what you need — build the graph
+- Broad architecture or cross-component questions
+- Tracing how components connect or data flows through the system
+- After several Grep calls without finding what you need — the graph may
+  surface the connection faster
 
 ## Commands
 
@@ -66,8 +65,6 @@ graphify-out/
 
 ## Notes
 
-- A PreToolUse hook fires on broad Grep/Glob calls and reminds you to check
-  the graph first. It is wired into `.claude/settings.json` — no separate install.
 - Token savings compound: first run costs tokens to build, every
   subsequent query reads the compact graph instead of raw files.
 - Add `.graphifyignore` to exclude directories (same syntax as `.gitignore`).

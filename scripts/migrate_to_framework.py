@@ -38,7 +38,6 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
     ".claude/hooks/post_tool_lint.py": ".claude/hooks/post_tool_lint.py",
     ".claude/hooks/stop_story_lifecycle.py": ".claude/hooks/stop_story_lifecycle.py",
-    ".claude/hooks/pre_tool_graphify_remind.py": ".claude/hooks/pre_tool_graphify_remind.py",
     ".claude/agents/security-reviewer.md": ".claude/agents/security-reviewer.md",
     # Planning / implementation commands
     ".claude/commands/sprint-planning.md": ".claude/commands/sprint-planning.md",

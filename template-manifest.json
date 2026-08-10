@@ -1,6 +1,6 @@
 {
   "template_version": "1.1.0",
-  "generated_at": "2026-08-10T18:36:12+00:00",
+  "generated_at": "2026-08-10T18:41:52+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -44,23 +44,22 @@
       "sha256": "99d3669bfd603e67be8f34267fc9c122d1b167b16324e319c84f3b877f01af02",
       "previous": []
     },
-    ".claude/hooks/pre_tool_graphify_remind.py": {
-      "sha256": "db206234d141ad5114a1863f8b447f9ad4ee78fe500abcd079c56bd2668b0169",
-      "previous": []
-    },
     ".claude/hooks/stop_story_lifecycle.py": {
       "sha256": "bd0e961dd5be6b484e8ce7dbec6f2a7651b6fce728e2593718deec50a5db3ac5",
       "previous": []
     },
     ".claude/settings.json": {
-      "sha256": "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
+      "sha256": "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
       "previous": [
-        "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842"
+        "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
+        "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
-      "sha256": "887d686bf52b97cf3c02f53d3489239f3bf20f1154c0c42de9ff46b0661d2485",
-      "previous": []
+      "sha256": "660aa20220f53d6c0451e9e1da3c066c977c51b2e40c75f8371009aa64db5960",
+      "previous": [
+        "887d686bf52b97cf3c02f53d3489239f3bf20f1154c0c42de9ff46b0661d2485"
+      ]
     },
     ".claude/skills/rescan-docs/SKILL.md": {
       "sha256": "3f39d442fe3ac4c9e0cc2f3be554c5bb29eb8a4710bc8b4483a306b1dded298e",
@@ -113,12 +112,13 @@
       "previous": []
     },
     "CLAUDE.md": {
-      "sha256": "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6",
+      "sha256": "be64236d3b55d5835a3f62e863de46418e655329f8676777a00ba781153e8375",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
         "caf328337b8a6c09afa423c95d49c0f490d846c04fe5cd754a17ae37a17c7053",
-        "fb1ef765e1c7f3d03cdecf4937293c932bf5320bb020af1134ac1a3cfc493bdb"
+        "fb1ef765e1c7f3d03cdecf4937293c932bf5320bb020af1134ac1a3cfc493bdb",
+        "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6"
       ]
     },
     "Makefile": {

@@ -412,18 +412,6 @@ Skills trigger **automatically** based on context — you do not invoke them man
 
 ---
 
-## Knowledge Graph (Graphify)
-
-When `graphify-out/GRAPH_REPORT.md` exists, **check it before any broad codebase search**.
-It provides a token-compressed map of the codebase (71x fewer tokens than grepping raw files).
-Prefer `graphify query "<question>"` over multi-file Grep for context gathering.
-Only fall back to grepping raw files if the graph doesn't answer your question.
-
-To build/update: `graphify . --update`
-To query: `graphify query "what connects X to Y?"`
-
----
-
 ## Rules (add here when Claude makes a mistake)
 
 <!-- Add rules here as you encounter them. Example format:
@@ -431,12 +419,5 @@ To query: `graphify query "what connects X to Y?"`
 - Always use `pathlib.Path` not string concatenation for paths
 -->
 
-## graphify
-
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
-
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+For codebase knowledge-graph navigation, see the `graphify` skill (opt-in — offers
+itself for broad architecture questions, not a mandatory first step).

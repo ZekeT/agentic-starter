@@ -22,33 +22,6 @@
             "command": "python3 .claude/hooks/pre_tool_env_guard.py"
           }
         ]
-      },
-      {
-        "matcher": "Grep|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 .claude/hooks/pre_tool_graphify_remind.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash|Grep",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".venv/bin/graphify hook-guard search"
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".venv/bin/graphify hook-guard read"
-          }
-        ]
       }
     ],
     "PostToolUse": [
