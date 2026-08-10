@@ -1,6 +1,6 @@
 {
   "template_version": "1.1.0",
-  "generated_at": "2026-08-10T18:41:52+00:00",
+  "generated_at": "2026-08-10T18:54:15+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -61,6 +61,10 @@
         "887d686bf52b97cf3c02f53d3489239f3bf20f1154c0c42de9ff46b0661d2485"
       ]
     },
+    ".claude/skills/python-standards/SKILL.md": {
+      "sha256": "b25bc86e9d450bba9a78a7a449c2b4b8c00e871d50b2ded41c3064e8fd337df4",
+      "previous": []
+    },
     ".claude/skills/rescan-docs/SKILL.md": {
       "sha256": "3f39d442fe3ac4c9e0cc2f3be554c5bb29eb8a4710bc8b4483a306b1dded298e",
       "previous": [
@@ -111,14 +115,19 @@
       "sha256": "777c14d9dbc4ae5bfc1b9c799db4ae562ca5e64a5107164b1c25649a62f768e6",
       "previous": []
     },
+    "AGENTS.md": {
+      "sha256": "508cd417b4944101f644a33a9d9fdd7b960a971c06e6b5e615c16daf874dbedc",
+      "previous": []
+    },
     "CLAUDE.md": {
-      "sha256": "be64236d3b55d5835a3f62e863de46418e655329f8676777a00ba781153e8375",
+      "sha256": "c18337c5712fea6b68c3519f486fe292d05a9ab90767aa746f6645e1b61b573d",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
         "caf328337b8a6c09afa423c95d49c0f490d846c04fe5cd754a17ae37a17c7053",
         "fb1ef765e1c7f3d03cdecf4937293c932bf5320bb020af1134ac1a3cfc493bdb",
-        "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6"
+        "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6",
+        "be64236d3b55d5835a3f62e863de46418e655329f8676777a00ba781153e8375"
       ]
     },
     "Makefile": {
@@ -148,8 +157,10 @@
       ]
     },
     "docs/coding-standards.md": {
-      "sha256": "305de4c6ac8f31cd54f94d6f19463fd57b66ba23280c555f7dedfc76f684a7fa",
-      "previous": []
+      "sha256": "4b11b4b7cbafed4344a727eca152c19bd15d8b85d224c2103f9d1c3ae59910ef",
+      "previous": [
+        "305de4c6ac8f31cd54f94d6f19463fd57b66ba23280c555f7dedfc76f684a7fa"
+      ]
     },
     "docs/local-models.md": {
       "sha256": "e20e9c1fcf801409de5ed4d840d09e6491378b46bc0de91d42398557be9f516c",

@@ -36,7 +36,9 @@ stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ �
 (/sprint-planning)  🖐 human        (agent + worktree)        (PR open)        (merged)
 ```
 
-After `/sprint-planning` adds new stories: `graphify . --update` to refresh the codebase graph.
+Optional: after `/sprint-planning` adds new stories, `graphify . --update` refreshes
+the codebase knowledge graph — worth it for broad architecture questions spanning
+many files, not required otherwise (see the `graphify` skill).
 
 ---
 
@@ -51,5 +53,6 @@ make test    # pytest
 
 Model assignments live in `config/models.json`. After editing, run `make configure`.
 
-Coding standards: [`docs/coding-standards.md`](docs/coding-standards.md).
-Project rules and active model config: [`CLAUDE.md`](CLAUDE.md).
+Project facts and conventions: [`AGENTS.md`](AGENTS.md).
+Active model config: [`CLAUDE.md`](CLAUDE.md).
+Python style guide: `python-standards` skill (full reference: [`docs/coding-standards.md`](docs/coding-standards.md)).

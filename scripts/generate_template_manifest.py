@@ -38,6 +38,7 @@ VERSION_PATH = ROOT / "TEMPLATE_VERSION"
 # copied into a downstream project.
 MANIFEST_FILES = [
     "CLAUDE.md",
+    "AGENTS.md",
     "Makefile",
     "setup.sh",
     ".gitignore",
@@ -73,6 +74,7 @@ MANIFEST_SKILL_DIRS = [
     "setup-update",
     "rescan-docs",
     "graphify",
+    "python-standards",
 ]
 
 EXCLUDED_PARTS = {"__pycache__", ".pytest_cache"}

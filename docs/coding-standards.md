@@ -1,8 +1,10 @@
 # Coding Standards
 
-> Referenced by `CLAUDE.md`. This is the full reference for all agents and developers.
+> Referenced by the `python-standards` skill. This is the full reference for all
+> agents and developers.
 > Sources: Google Style Guide, PEP 8, PEP 257, project conventions.
-> CLAUDE.md carries the agent-facing summary; this document carries the reasoning.
+> The `python-standards` skill carries the agent-facing summary; this document
+> carries the reasoning.
 
 ---
 
