@@ -112,8 +112,10 @@ Run on every tool call. No LLM judgment — pure code.
 |------|---------|--------|
 | `post_tool_lint.py` | Write/Edit | Auto-lint after file changes |
 | `post_tool_secrets.py` | Write/Edit | Block committed credentials |
+| `post_tool_feature_claude_reminder.py` | Write/Edit (feature `CLAUDE.md`) | Nudge to add the AGENTS.md pointer |
 | `pre_tool_dangerous.py` | Bash | Block rm -rf, force push, etc. |
 | `pre_tool_env_guard.py` | Read/Glob/LS/Grep/Bash | Block Claude reading `.env` |
+| `stop_story_lifecycle.py` | Stop | Move story file `review/` → `done/` after merge |
 
 ---
 

@@ -55,7 +55,7 @@ a linter doesn't already enforce. Full reasoning/reference → `docs/coding-stan
   agents/                # security-reviewer.md — OWASP/CVE scan (read-only)
   commands/               # commit-push-pr, dev-story, implement, review, sprint-planning
   hooks/                  # Deterministic guardrails (lint, secrets, env guard, dangerous bash,
-                          # story lifecycle)
+                          # story lifecycle, feature CLAUDE.md reminder)
   skills/
     graphify/             # Knowledge graph — opt-in, not enforced (see skill for triggers)
     python-standards/      # Python conventions not already caught by linters
