@@ -85,9 +85,12 @@ docs/
   SETUP.md                 # End-to-end setup walkthrough
 ```
 
-Each feature directory under `src/` may carry its own `CLAUDE.md` describing
-stable facts only: purpose, key entry points, invariants, gotchas — never
-implementation status (`stories/` is the record of what's in flight).
+Each feature directory under `src/` carries its own `CLAUDE.md` describing
+stable facts only: purpose, key entry points, invariants, gotchas — max
+~30 lines. Never implementation status (`stories/` is the record of what's
+in flight/done). The root file links features with one-line pointers; never
+`@import` feature files from the root (imports load eagerly and defeat lazy
+loading).
 
 ---
 

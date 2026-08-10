@@ -28,6 +28,16 @@ As a ...
 
 ---
 
+## Feature context
+
+- [ ] If this story creates a new feature directory, scaffold `CLAUDE.md`
+      in it (purpose, entry points, invariants — max ~30 lines).
+- [ ] If this story changes a feature's invariants or entry points, update
+      that feature's `CLAUDE.md`.
+- [ ] Add/refresh the one-line pointer in root AGENTS.md structure section.
+
+---
+
 ## Acceptance criteria
 
 <!-- Each criterion must be independently testable. -->

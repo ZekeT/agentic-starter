@@ -71,15 +71,20 @@ After the preamble runs:
 
 1. Read the story file at the path printed above. It is the full context —
    do not ask the user for clarifications that the file already answers.
-2. Invoke the Superpowers **`subagent-driven-development`** skill to drive
+2. If the story's "Files to touch" names a primary feature directory under
+   `src/`, note it — work is scoped there. Claude Code loads that
+   directory's `CLAUDE.md` lazily on first file touch; when launching a
+   fresh session for a single-feature story, prefer starting Claude Code
+   from that subdirectory.
+3. Invoke the Superpowers **`subagent-driven-development`** skill to drive
    implementation: brainstorm → plan 2–5 min subtasks → tests-first →
    implement → `code-reviewer` after each task → `verification-before-completion`.
-3. Escalate to the `advisor_20260301` tool only on architectural ambiguity,
+4. Escalate to the `advisor_20260301` tool only on architectural ambiguity,
    contradictions between PRD and architecture, a bug attempted twice
    without success, or a non-obvious security tradeoff (max 3 uses).
-4. Before declaring done: run `make check` and confirm every acceptance
+5. Before declaring done: run `make check` and confirm every acceptance
    criterion in the story is satisfied.
-5. When the implementation is complete and verified, run `/commit-push-pr`
+6. When the implementation is complete and verified, run `/commit-push-pr`
    to open the PR, then move the story file from `stories/in-progress/` to
    `stories/review/` (use `git mv`).
-6. Print the PR URL and the new story path.
+7. Print the PR URL and the new story path.

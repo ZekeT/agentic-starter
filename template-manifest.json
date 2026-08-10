@@ -1,6 +1,6 @@
 {
-  "template_version": "1.1.0",
-  "generated_at": "2026-08-10T18:54:15+00:00",
+  "template_version": "1.2.0",
+  "generated_at": "2026-08-10T19:11:37+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -11,8 +11,10 @@
       "previous": []
     },
     ".claude/commands/dev-story.md": {
-      "sha256": "2e47cfa77a760938d24abce57147e704f1e4db337041b68b6aaa85f05c81223d",
-      "previous": []
+      "sha256": "ddfda04877b2c9e90901b8c729655c115f88d6a2cb0856ca1a589cda52a754bd",
+      "previous": [
+        "2e47cfa77a760938d24abce57147e704f1e4db337041b68b6aaa85f05c81223d"
+      ]
     },
     ".claude/commands/implement.md": {
       "sha256": "05f7a7eab5bfa2278bc87a8f62d3d6e0be88f9ec2a109c5b3b8309fe5c057f81",
@@ -27,6 +29,10 @@
       "previous": [
         "ab456810d5a1bba3a175373e770596356e27f7e8dfd6b482559b37e5c2f2bb5f"
       ]
+    },
+    ".claude/hooks/post_tool_feature_claude_reminder.py": {
+      "sha256": "b1d6a993d113e1598bd141a0dee1e91b874b0c89c75c011aab6ef8cf514d4cd6",
+      "previous": []
     },
     ".claude/hooks/post_tool_lint.py": {
       "sha256": "8e5058cdd34b9eb2ab8c253e9aaa22186e8b24d20e13359f3145f446a7c8fa77",
@@ -49,10 +55,11 @@
       "previous": []
     },
     ".claude/settings.json": {
-      "sha256": "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
+      "sha256": "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e",
       "previous": [
         "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
-        "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8"
+        "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
+        "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
@@ -116,8 +123,10 @@
       "previous": []
     },
     "AGENTS.md": {
-      "sha256": "508cd417b4944101f644a33a9d9fdd7b960a971c06e6b5e615c16daf874dbedc",
-      "previous": []
+      "sha256": "9856a25316689921cfd73f60587e3262eb1c13c90d8fa66c0570329158cb9962",
+      "previous": [
+        "508cd417b4944101f644a33a9d9fdd7b960a971c06e6b5e615c16daf874dbedc"
+      ]
     },
     "CLAUDE.md": {
       "sha256": "c18337c5712fea6b68c3519f486fe292d05a9ab90767aa746f6645e1b61b573d",
@@ -184,9 +193,10 @@
       ]
     },
     "stories/STORY_TEMPLATE.md": {
-      "sha256": "850e2a84182cd9de6ec47cd55550805d80524a134625b21e00aa0f66cfdf1800",
+      "sha256": "de75923488fc650972529bb01a9bdf6874fe76c7d309b5ffaeabb760cec08ac7",
       "previous": [
-        "e407695ab8e223cfca78d8220c857e17008352e72f179431ffd294992cd3aa50"
+        "e407695ab8e223cfca78d8220c857e17008352e72f179431ffd294992cd3aa50",
+        "850e2a84182cd9de6ec47cd55550805d80524a134625b21e00aa0f66cfdf1800"
       ]
     }
   }
