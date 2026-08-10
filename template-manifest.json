@@ -1,6 +1,6 @@
 {
   "template_version": "1.1.0",
-  "generated_at": "2026-08-10T18:26:17+00:00",
+  "generated_at": "2026-08-10T18:36:12+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
@@ -58,10 +58,6 @@
         "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842"
       ]
     },
-    ".claude/skills/caveman/SKILL.md": {
-      "sha256": "7619a06689d6415090f35d42caee8b4895a6715693550c7ed0d485947af5e432",
-      "previous": []
-    },
     ".claude/skills/graphify/SKILL.md": {
       "sha256": "887d686bf52b97cf3c02f53d3489239f3bf20f1154c0c42de9ff46b0661d2485",
       "previous": []
@@ -117,11 +113,12 @@
       "previous": []
     },
     "CLAUDE.md": {
-      "sha256": "fb1ef765e1c7f3d03cdecf4937293c932bf5320bb020af1134ac1a3cfc493bdb",
+      "sha256": "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
-        "caf328337b8a6c09afa423c95d49c0f490d846c04fe5cd754a17ae37a17c7053"
+        "caf328337b8a6c09afa423c95d49c0f490d846c04fe5cd754a17ae37a17c7053",
+        "fb1ef765e1c7f3d03cdecf4937293c932bf5320bb020af1134ac1a3cfc493bdb"
       ]
     },
     "Makefile": {
@@ -135,12 +132,13 @@
       "previous": []
     },
     "docs/SETUP.md": {
-      "sha256": "d8c9797effb3b7573f3ae4ae1d7cdeeb85ef92636ad03522af77a9c3b515609a",
+      "sha256": "3ca291b4bb962dee12d0828076af318bbdd476082f614b71f2f09c86e24ba5c2",
       "previous": [
         "2245cffbe365dbb4902a58b04260995a3893bff33d12ee71ab40cb0ab52373e2",
         "1bda4b21b753d5be6b4561f08bc8272cb0e01556da8aa62da546134f7ee54a4f",
         "073be2866026cef22ffd67f2880cfc539cb0dc16c69bf3e32d578dd6345ae85e",
-        "d080d7e8b979b65e744418ec17a19c88dd3fa7222cc6ff7d54171c50254b1f44"
+        "d080d7e8b979b65e744418ec17a19c88dd3fa7222cc6ff7d54171c50254b1f44",
+        "d8c9797effb3b7573f3ae4ae1d7cdeeb85ef92636ad03522af77a9c3b515609a"
       ]
     },
     "docs/architecture.md": {

@@ -65,7 +65,6 @@ SKILL_DIRS_TO_COPY: list[str] = [
     "setup-migrate",
     "setup-update",
     "graphify",
-    "caveman",
 ]
 
 _SKILL_COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store")
@@ -1074,7 +1073,7 @@ def run_migration(
     for f in report.skipped:
         _info(f"skipped: {f}  (exists — use --force to overwrite)")
 
-    _header("COPYING SKILLS  (rescan-docs, setup-*, graphify, caveman)")
+    _header("COPYING SKILLS  (rescan-docs, setup-*, graphify)")
     report.skill_dirs_copied, report.skill_dirs_skipped = copy_skill_dirs(
         target, starter, force, dry
     )

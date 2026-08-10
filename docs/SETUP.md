@@ -79,7 +79,6 @@ Then open Claude Code and run the planning pipeline:
 │   │   └── post_tool_lint.py            # Auto-lint after file writes
 │   └── skills/
 │       ├── graphify/SKILL.md            # Optional: knowledge graph
-│       ├── caveman/SKILL.md             # Optional: token-efficient comms
 │       ├── setup-base/                  # Scan project setup health
 │       ├── setup-migrate/               # Migrate existing projects to this framework
 │       ├── setup-update/                # Update a copied project to the latest template
@@ -128,13 +127,6 @@ graphify .   # builds knowledge graph
 Gives agents a 71x token-compressed map of the codebase to query
 instead of grepping raw files. Hooks tell Claude to consult it automatically.
 
-**Caveman** (for token-efficient inter-agent comms):
-```bash
-claude install-skill JuliusBrussee/caveman
-```
-Cuts ~75% of output tokens on internal agent messages. Use for
-agent-to-agent handoffs, not human-facing output.
-
 ---
 
 ## Migrating an existing project
@@ -149,7 +141,7 @@ python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/pr
 
 This copies hooks, commands, the security agent, config, scripts, docs, and
 our skills (`rescan-docs`, `setup-base`, `setup-migrate`, `setup-update`,
-`graphify`, `caveman`) into your project without overwriting anything that
+`graphify`) into your project without overwriting anything that
 already exists.
 
 Then open Claude Code in your project and generate planning docs from the existing code:

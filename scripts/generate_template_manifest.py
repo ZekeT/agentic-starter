@@ -73,7 +73,6 @@ MANIFEST_SKILL_DIRS = [
     "setup-update",
     "rescan-docs",
     "graphify",
-    "caveman",
 ]
 
 EXCLUDED_PARTS = {"__pycache__", ".pytest_cache"}
