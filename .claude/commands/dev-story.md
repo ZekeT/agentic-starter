@@ -1,13 +1,20 @@
 # /dev-story
 
 Develop a story end-to-end using the Superpowers `subagent-driven-development`
-skill. Handles the `ready/ → in-progress/ → review/` lifecycle automatically
-so you never have to `mv` story files by hand.
+skill, in an isolated git worktree per story. Handles the
+`ready/ → in-progress/ → review/` lifecycle automatically so you never have
+to `mv` story files by hand.
 
 Usage:
 - `/dev-story 001` — work on a specific story id
 - `/dev-story story-001-slug` — or pass the full slug
-- `/dev-story` — pick the lowest-numbered story in `stories/ready/`
+- `/dev-story` — pick the lowest-numbered unclaimed story in `stories/ready/`
+
+The mutex that stops two sessions from picking the same story is branch
+existence, not file location: claiming a story means successfully creating
+its `feat/story-{slug}` worktree/branch. The `ready/ → in-progress/` file
+move happens *inside* that worktree as its first commit, so it only becomes
+visible in the shared checkout once the PR merges.
 
 ---
 
@@ -16,14 +23,31 @@ set -e
 
 ARG="$ARGUMENTS"
 READY=stories/ready
-INPROG=stories/in-progress
 
-mkdir -p "$INPROG"
+# Sweep worktrees for already-merged stories before claiming a new one, so
+# they don't pile up on disk. Best-effort — never blocks story selection.
+if command -v git >/dev/null 2>&1 && command -v gh >/dev/null 2>&1; then
+  git worktree list --porcelain 2>/dev/null | awk '
+    /^worktree /  { path=$2 }
+    /^branch refs\/heads\/feat\/story-/ { branch=$2; sub("refs/heads/", "", branch); print path"\t"branch }
+  ' | while IFS=$'\t' read -r WT_PATH WT_BRANCH; do
+    # Merged is a PR-state fact, not "no commits diverged from main yet" —
+    # a freshly claimed, untouched branch is trivially an ancestor of main
+    # and must not be swept.
+    PR_STATE=$(gh pr view "$WT_BRANCH" --json state -q .state 2>/dev/null || true)
+    if [ "$PR_STATE" = "MERGED" ]; then
+      if git worktree remove "$WT_PATH" 2>/dev/null; then
+        git branch -d "$WT_BRANCH" 2>/dev/null || true
+        echo "swept merged worktree: $WT_PATH ($WT_BRANCH)"
+      fi
+    fi
+  done
+fi
 
-# Resolve which story to work on
+# Resolve candidate story file(s) to work on
 if [ -z "$ARG" ]; then
-  STORY_FILE=$(ls -1 "$READY"/*.md 2>/dev/null | sort | head -n 1 || true)
-  if [ -z "$STORY_FILE" ]; then
+  CANDIDATES=$(ls -1 "$READY"/*.md 2>/dev/null | sort || true)
+  if [ -z "$CANDIDATES" ]; then
     echo "ERROR: no stories in $READY/. Move one from draft/ first." >&2
     exit 1
   fi
@@ -43,48 +67,77 @@ else
     ls -1 "$READY" >&2 || true
     exit 1
   fi
+  CANDIDATES="$STORY_FILE"
 fi
 
-BASENAME=$(basename "$STORY_FILE" .md)
-SLUG=${BASENAME#story-}
-BRANCH="feat/story-${SLUG}"
+# Claim a story by winning the race to create its worktree/branch. First
+# successful `git worktree add` wins; a failure means another session
+# already claimed that slug.
+CLAIMED_PATH=""
+CLAIMED_SLUG=""
+CLAIMED_BRANCH=""
+CLAIMED_WT=""
+for STORY_FILE in $CANDIDATES; do
+  BASENAME=$(basename "$STORY_FILE" .md)
+  SLUG=${BASENAME#story-}
+  BRANCH="feat/story-${SLUG}"
+  WT_PATH="../wt-story-${SLUG}"
 
-# Move the file before any work starts so two sessions can't pick the same one
-git mv "$STORY_FILE" "$INPROG/" 2>/dev/null || mv "$STORY_FILE" "$INPROG/"
-NEW_PATH="$INPROG/$(basename "$STORY_FILE")"
+  if git worktree add "$WT_PATH" -b "$BRANCH" >/dev/null 2>&1; then
+    CLAIMED_PATH="$STORY_FILE"
+    CLAIMED_SLUG="$SLUG"
+    CLAIMED_BRANCH="$BRANCH"
+    CLAIMED_WT="$WT_PATH"
+    break
+  elif [ -n "$ARG" ]; then
+    echo "ERROR: '$BRANCH' already exists — story is already claimed." >&2
+    exit 1
+  fi
+done
 
-# Land on the right branch
-CURRENT=$(git branch --show-current)
-if [ "$CURRENT" != "$BRANCH" ]; then
-  git checkout -B "$BRANCH"
+if [ -z "$CLAIMED_PATH" ]; then
+  echo "ERROR: every story in $READY/ is already claimed by an existing feat/story-* branch." >&2
+  exit 1
 fi
 
-echo "=== Story selected ==="
-echo "$NEW_PATH"
+echo "=== Story claimed ==="
+echo "$CLAIMED_PATH"
 echo "=== Branch ==="
-git branch --show-current
+echo "$CLAIMED_BRANCH"
+echo "=== Worktree ==="
+echo "$CLAIMED_WT"
 echo "=== Story content ==="
-cat "$NEW_PATH"
+cat "$CLAIMED_PATH"
 ```
 
 After the preamble runs:
 
-1. Read the story file at the path printed above. It is the full context —
-   do not ask the user for clarifications that the file already answers.
-2. If the story's "Files to touch" names a primary feature directory under
+1. Call `EnterWorktree` with `path` set to the worktree path printed above
+   (`$CLAIMED_WT`) to durably switch the session into it — this also
+   refreshes cwd-dependent state (system prompt, feature `CLAUDE.md`, plans
+   dir) that a bare `cd` would not.
+2. Inside the worktree, `git mv` the claimed story file from
+   `stories/ready/` to `stories/in-progress/` and commit
+   (`chore(story): mark {slug} in-progress`). This is the first commit on
+   the branch and is what makes the claim visible once the PR merges.
+3. Read the story file. It is the full context — do not ask the user for
+   clarifications that the file already answers.
+4. If the story's "Files to touch" names a primary feature directory under
    `src/`, note it — work is scoped there. Claude Code loads that
-   directory's `CLAUDE.md` lazily on first file touch; when launching a
-   fresh session for a single-feature story, prefer starting Claude Code
-   from that subdirectory.
-3. Invoke the Superpowers **`subagent-driven-development`** skill to drive
+   directory's `CLAUDE.md` lazily on first file touch.
+5. Invoke the Superpowers **`subagent-driven-development`** skill to drive
    implementation: brainstorm → plan 2–5 min subtasks → tests-first →
    implement → `code-reviewer` after each task → `verification-before-completion`.
-4. Escalate to the `advisor_20260301` tool only on architectural ambiguity,
+6. Escalate to the `advisor_20260301` tool only on architectural ambiguity,
    contradictions between PRD and architecture, a bug attempted twice
    without success, or a non-obvious security tradeoff (max 3 uses).
-5. Before declaring done: run `make check` and confirm every acceptance
+7. Before declaring done: run `make check` and confirm every acceptance
    criterion in the story is satisfied.
-6. When the implementation is complete and verified, run `/commit-push-pr`
+8. When the implementation is complete and verified, run `/commit-push-pr`
    to open the PR, then move the story file from `stories/in-progress/` to
-   `stories/review/` (use `git mv`).
-7. Print the PR URL and the new story path.
+   `stories/review/` (use `git mv`) and commit.
+9. Call `ExitWorktree` with `action: "keep"` — the PR is only open at this
+   point, not merged, so the worktree must stay. It's cleaned up later by
+   the next `/dev-story` invocation's sweep, or by `stop_story_lifecycle.py`
+   once the PR merges.
+10. Print the PR URL and the new story path.

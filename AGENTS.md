@@ -102,15 +102,22 @@ draft → ready → in-progress → review → done
 
 - `/sprint-planning` writes new stories to `stories/draft/`.
 - A human moves a story to `stories/ready/` to unblock agents.
-- `/dev-story [id]` (no id: lowest-numbered file in `stories/ready/`) immediately
-  `git mv`s the story to `stories/in-progress/` *before* starting work — this is
-  what makes two sessions unable to pick the same story — then checks out
-  `feat/story-{slug}` (`git checkout -B`) and dispatches Superpowers
-  `subagent-driven-development`.
+- `/dev-story [id]` (no id: lowest-numbered unclaimed file in `stories/ready/`)
+  claims a story by creating its worktree: `git worktree add
+  ../wt-story-{slug} -b feat/story-{slug}`. Branch existence is the mutex —
+  the `git worktree add` fails if another session already claimed that slug,
+  so this is what makes two sessions unable to pick the same story. The
+  session then enters the worktree and, inside it, `git mv`s the story to
+  `stories/in-progress/` as the branch's first commit, before dispatching
+  Superpowers `subagent-driven-development`.
 - On completion, `/dev-story` runs `/commit-push-pr` to open the PR, then
-  `git mv`s the story file to `stories/review/`.
+  `git mv`s the story file to `stories/review/` — still inside the worktree.
 - After merge, the `stop_story_lifecycle.py` Stop hook moves the file to
-  `stories/done/` — no manual `mv` required at that point.
+  `stories/done/` and removes the worktree and its branch (releasing the
+  mutex) — no manual `mv` or cleanup required at that point. `/dev-story`
+  also sweeps merged worktrees/branches on its next invocation as a
+  fallback, since a merge can happen with no session open to catch the Stop
+  event.
 
 ---
 
