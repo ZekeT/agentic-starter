@@ -5,7 +5,7 @@ Superpowers + Claude Code Primitives, with Python tooling and deterministic guar
 
 > The bottleneck isn't model intelligence. It's the absence of engineering discipline.
 
-For one-time bootstrap, project structure, hooks, and optional skills, see [`docs/SETUP.md`](docs/SETUP.md).
+For one-time bootstrap, project structure, hooks, and optional skills, see [`docs/harness/setup.md`](docs/harness/setup.md).
 
 ---
 
@@ -57,6 +57,6 @@ make test    # pytest
 
 Model assignments live in `config/models.json`. After editing, run `make configure`.
 
-Project facts and conventions: [`AGENTS.md`](AGENTS.md).
+Project facts and conventions: [`CLAUDE.md`](CLAUDE.md).
 Active model config: [`CLAUDE.md`](CLAUDE.md).
-Python style guide: `python-standards` skill (full reference: [`docs/coding-standards.md`](docs/coding-standards.md)).
+Python style guide: `python-standards` skill (full reference: [`docs/harness/coding-standards.md`](docs/harness/coding-standards.md)).

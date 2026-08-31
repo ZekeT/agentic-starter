@@ -53,7 +53,7 @@ check: fmt lint test
 
 # ---- Model configuration ----------------------------------
 # Edit config/models.json then run one of these.
-# PROFILE= optional: make configure PROFILE=ollama-qwen
+# PROFILE= optional: make configure PROFILE=anthropic-budget
 
 configure:
 	uv run python scripts/configure.py $(if $(PROFILE),--profile $(PROFILE),)

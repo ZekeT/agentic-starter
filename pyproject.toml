@@ -6,6 +6,12 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
+# The harness depends on these, not just your local workflow. Trimming any of
+# black, isort, autoflake, mypy, or pytest breaks something concrete:
+#   black, isort, autoflake → post_tool_lint.py hook shells out to them
+#   mypy, pytest            → `make check`, the gate every agent must pass
+# Add whatever else your project needs; remove those five only if you also
+# rewire the hook and the Makefile.
 dev = [
     "black>=24.0.0",
     "isort>=5.13.0",

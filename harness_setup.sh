@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# setup.sh — bootstrap a new project from this template
-# Run once after cloning: bash setup.sh
+# harness_setup.sh — bootstrap a new project from this template
+# Run once after cloning: bash harness_setup.sh
 # Source: Agentic Engineering guide (Getting Started, slide 29)
 
 set -e

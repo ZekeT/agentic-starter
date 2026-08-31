@@ -10,7 +10,7 @@ description: >
 
 # Python Standards
 
-Full reference with rationale and examples: `docs/coding-standards.md`.
+Full reference with rationale and examples: `docs/harness/coding-standards.md`.
 This skill is the trimmed, agent-facing version — only the rules `make check`
 can't verify for you.
 
