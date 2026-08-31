@@ -100,6 +100,8 @@ make check    # fmt + lint + test — run before every commit
 make evals    # harness evals: skills, rules, and hook wiring still intact
 make configure  # after editing config/models.json
 make manifest   # after editing any template-owned file
+
+bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates nothing
 ```
 
 | Looking for | Read |

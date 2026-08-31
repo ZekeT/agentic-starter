@@ -269,13 +269,16 @@ def print_summary(
     print("         .claude/hooks/stop_story_lifecycle.py  (drop its Stop hook from")
     print("                                                 .claude/settings.json too)")
     print("       Port any in-flight stories into an OpenSpec change before deleting.")
+    print("       Removed in 1.4.0:")
+    print("         .claude/skills/setup-base/    — replaced by: bash harness_setup.sh --check")
+    print("         .claude/skills/setup-migrate/ — replaced by scripts/migrate_to_framework.py")
     print("       Renamed in 1.3.0 (new copy already written; delete the old path):")
     print("         setup.sh                 → harness_setup.sh")
     print("         docs/SETUP.md            → docs/harness/setup.md")
     print("         docs/coding-standards.md → docs/harness/coding-standards.md")
     info("Update the global Superpowers plugin inside Claude Code:")
     print("       /plugin update superpowers@superpowers-marketplace")
-    info("Then verify: run the setup-base skill (scan my project).")
+    info("Then verify: bash harness_setup.sh --check")
 
 
 def main() -> None:

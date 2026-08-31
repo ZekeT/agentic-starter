@@ -84,8 +84,6 @@ MANIFEST_GLOBS = [
 
 # Our skills, walked recursively.
 MANIFEST_SKILL_DIRS = [
-    "setup-base",
-    "setup-migrate",
     "setup-update",
     "rescan-docs",
     "crystallize",

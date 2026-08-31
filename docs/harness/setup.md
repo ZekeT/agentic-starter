@@ -108,8 +108,6 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 │   │   └── post_tool_lint.py            # Auto-lint after file writes
 │   └── skills/
 │       ├── graphify/SKILL.md            # Optional: knowledge graph
-│       ├── setup-base/                  # Scan project setup health
-│       ├── setup-migrate/               # Migrate existing projects to this framework
 │       ├── setup-update/                # Update a copied project to the latest template
 │       ├── crystallize/                 # Exploration → an OpenSpec change
 │       ├── rescan-docs/                 # Reverse-engineer specs + product doc from code
@@ -172,9 +170,8 @@ python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/pr
 ```
 
 This copies hooks, commands, the security agent, config, scripts, docs, and
-our skills (`rescan-docs`, `setup-base`, `setup-migrate`, `setup-update`,
-`graphify`) into your project without overwriting anything that
-already exists.
+our skills (`rescan-docs`, `setup-update`, `graphify`) into your project
+without overwriting anything that already exists.
 
 Then open Claude Code in your project and generate planning docs from the existing code:
 

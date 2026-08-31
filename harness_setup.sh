@@ -1,8 +1,99 @@
 #!/usr/bin/env bash
 # harness_setup.sh — bootstrap a new project from this template
 # Run once after cloning: bash harness_setup.sh
+# Verify an existing project without changing it: bash harness_setup.sh --check
 
 set -e
+
+# ── --check: verify an existing project, mutate nothing ──────────────────────
+# The structural half of what the retired setup-base skill did. Assertions only:
+# no file is created, copied, or edited on this path.
+if [ "${1:-}" = "--check" ]; then
+  fail=0
+  warn=0
+  ok()   { echo "  PASS  $1"; }
+  bad()  { echo "  FAIL  $1"; fail=1; }
+  soft() { echo "  WARN  $1"; warn=$((warn + 1)); }
+
+  echo "=== Harness check — $(pwd) ==="
+  echo ""
+
+  echo "Structure"
+  for d in openspec/specs openspec/changes/archive docs/decisions \
+           .claude/hooks .claude/agents .claude/commands .claude/skills; do
+    [ -d "$d" ] && ok "$d/" || bad "$d/ missing"
+  done
+
+  echo ""
+  echo "Required files"
+  for f in CLAUDE.md HARNESS.md REVIEW.md Makefile pyproject.toml \
+           .env.template config/models.json .claude/settings.json; do
+    [ -f "$f" ] && ok "$f" || bad "$f missing"
+  done
+
+  echo ""
+  echo "Hooks"
+  if [ -f .claude/settings.json ]; then
+    python3 - <<'EOF' || fail=1
+import json, pathlib, re, sys
+
+cfg = json.loads(pathlib.Path(".claude/settings.json").read_text())
+wired = set()
+for events in cfg.get("hooks", {}).values():
+    for matcher in events:
+        for hook in matcher.get("hooks", []):
+            m = re.search(r"\.claude/hooks/(\S+\.py)", hook.get("command", ""))
+            if m:
+                wired.add(m.group(1))
+on_disk = {p.name for p in pathlib.Path(".claude/hooks").glob("*.py")}
+bad = False
+for name in sorted(wired - on_disk):
+    print(f"  FAIL  {name} wired in settings.json but missing from disk")
+    bad = True
+for name in sorted(on_disk - wired):
+    print(f"  FAIL  {name} on disk but never wired — dead code that looks alive")
+    bad = True
+for name in sorted(wired & on_disk):
+    print(f"  PASS  {name}")
+sys.exit(1 if bad else 0)
+EOF
+  else
+    bad ".claude/settings.json missing — no hooks are wired"
+  fi
+
+  echo ""
+  echo "Template manifest"
+  if [ -f template-manifest.json ]; then
+    if python3 -c "import json,sys; d=json.load(open('template-manifest.json')); sys.exit(0 if d.get('files') else 1)" 2>/dev/null; then
+      ok "template-manifest.json valid ($(python3 -c "import json;print(len(json.load(open('template-manifest.json'))['files']))") files)"
+    else
+      bad "template-manifest.json is not valid JSON, or lists no files"
+    fi
+  else
+    soft "template-manifest.json absent — setup-update has nothing to diff against"
+  fi
+
+  echo ""
+  echo "Change loop"
+  if [ -d .git ]; then ok "git repo"; else soft "no .git — worktree isolation needs git"; fi
+  if command -v openspec >/dev/null 2>&1; then
+    if openspec validate --all >/dev/null 2>&1; then
+      ok "openspec validate --all"
+    else
+      bad "openspec validate --all fails — run it for the detail"
+    fi
+  else
+    soft "openspec CLI not on PATH — the change loop needs it"
+  fi
+
+  echo ""
+  if [ "$fail" -ne 0 ]; then
+    echo "FAILED — fix the FAILs above. WARNs are safe to defer."
+    exit 1
+  fi
+  echo "OK — structure, hooks, and manifest intact ($warn warning(s))."
+  exit 0
+fi
 
 echo "=== Agentic Base — Project Setup ==="
 echo ""

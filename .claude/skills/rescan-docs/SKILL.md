@@ -30,7 +30,7 @@ timestamped `*-rescan-{date}.md` siblings the human diffs and merges).
 - Migrating an existing project that has no PRD or architecture doc
 - Docs are stale and no longer reflect the codebase
 - Inheriting a codebase from another team
-- After running `setup-migrate` — that skill sets up structure; this skill fills in content
+- After running `scripts/migrate_to_framework.py` — that sets up structure; this skill fills in content
 
 ---
 

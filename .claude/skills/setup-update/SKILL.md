@@ -103,8 +103,8 @@ Inside Claude Code (global, once per machine):
 ## Step 5 — Verify
 
 1. `make check` in the target must pass.
-2. Run the **setup-base** skill ("scan my project") — it validates the
-   post-update structure end-to-end.
+2. `bash harness_setup.sh --check` in the target — it asserts the
+   post-update structure, hook wiring, and manifest without mutating anything.
 3. Tell the user what was auto-updated, what you merged, and anything
    you skipped with the reason.
 
