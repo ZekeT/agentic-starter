@@ -39,6 +39,23 @@ VERSION_STAMP = ".claude/template-version.json"
 # Never auto-copied even if listed in the manifest.
 APPEND_ONLY = {".gitignore"}
 
+# Owned by the OpenSpec CLI, not by this template. `openspec update` is what
+# keeps these current in a target project; copying the starter's copies over
+# them would pin downstream projects to whichever OpenSpec version the starter
+# happened to be initialised with. Belt-and-braces with the same exclusion in
+# scripts/generate_template_manifest.py — this one holds even against a manifest
+# generated before that filter existed.
+OPENSPEC_OWNED_PREFIXES = (
+    "openspec/",
+    ".claude/commands/opsx/",
+    ".claude/skills/openspec-",
+)
+
+
+def is_openspec_owned(rel: str) -> bool:
+    """Return True if a repo-relative path belongs to the OpenSpec CLI."""
+    return rel.startswith(OPENSPEC_OWNED_PREFIXES)
+
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 RED = "\033[91m"
@@ -189,7 +206,7 @@ def run_update(starter: Path, target: Path, dry: bool) -> dict[str, list[str]]:
 
     header("1 / TEMPLATE FILES")
     for rel, entry in sorted(manifest["files"].items()):
-        if rel in APPEND_ONLY:
+        if rel in APPEND_ONLY or is_openspec_owned(rel):
             continue
         src = starter / rel
         if not src.exists():

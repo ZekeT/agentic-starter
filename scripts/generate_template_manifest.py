@@ -78,6 +78,25 @@ MANIFEST_SKILL_DIRS = [
 EXCLUDED_PARTS = {"__pycache__", ".pytest_cache"}
 EXCLUDED_NAMES = {".DS_Store"}
 
+# Paths owned by `openspec init` / `openspec update`, never by this template.
+# Hashing them would make setup-update fight the OpenSpec CLI for ownership:
+# every OpenSpec release would land in downstream projects as "CUSTOMIZED".
+#
+# The collectors above are allowlists, so today nothing here would be picked up
+# anyway — .claude/commands/*.md is non-recursive and misses commands/opsx/, and
+# the skill dirs are named explicitly. This filter makes that a guarantee rather
+# than a side effect, so widening a glob later can't silently capture them.
+OPENSPEC_OWNED_PREFIXES = (
+    "openspec/",
+    ".claude/commands/opsx/",
+    ".claude/skills/openspec-",
+)
+
+
+def is_openspec_owned(rel: str) -> bool:
+    """Return True if a repo-relative path belongs to the OpenSpec CLI."""
+    return rel.startswith(OPENSPEC_OWNED_PREFIXES)
+
 
 def sha256_of(path: Path) -> str:
     """Return the sha256 hex digest of a file's bytes."""
@@ -103,7 +122,7 @@ def collect_files() -> list[Path]:
                 and not EXCLUDED_PARTS.intersection(p.parts)
                 and p.name not in EXCLUDED_NAMES
             )
-    return sorted(found)
+    return sorted(p for p in found if not is_openspec_owned(p.relative_to(ROOT).as_posix()))
 
 
 def load_previous_manifest() -> dict[str, Any]:

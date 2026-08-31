@@ -1,6 +1,6 @@
 {
   "template_version": "1.2.1",
-  "generated_at": "2026-08-31T03:15:12+00:00",
+  "generated_at": "2026-08-31T03:56:17+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b",
@@ -120,10 +120,11 @@
       ]
     },
     ".claude/skills/setup-update/scripts/setup_update.py": {
-      "sha256": "792fdc3d789bcd76b3069700d0f272c8728d897fad8dddb709f8b7248b885660",
+      "sha256": "407ad08a0b19622dee07559e75ef040cea3210325ad289d8620c13b026ab074d",
       "previous": [
         "cef321f0439a74c260a21434a5fc2debd8c4cefa0f3ca02db59f9dc9bd42a79e",
-        "2093449754cd3e61f48bd61368e6c4df90c3ef8bfbd4f7f95070f2a129f2f7ba"
+        "2093449754cd3e61f48bd61368e6c4df90c3ef8bfbd4f7f95070f2a129f2f7ba",
+        "792fdc3d789bcd76b3069700d0f272c8728d897fad8dddb709f8b7248b885660"
       ]
     },
     ".env.template": {
@@ -162,9 +163,10 @@
       ]
     },
     "docs/architecture.md": {
-      "sha256": "686e67936dda8a12817dcb80116034673e16ece99d872e472044184799b17bed",
+      "sha256": "68200524c7d502b989ad8005b5960a448b79bbcecfb37f386450c10f48defef8",
       "previous": [
-        "e65fe11d2ad3ae72be7413d25091ff6e12d9a908a41b1ecbf0ac8b99260c5961"
+        "e65fe11d2ad3ae72be7413d25091ff6e12d9a908a41b1ecbf0ac8b99260c5961",
+        "686e67936dda8a12817dcb80116034673e16ece99d872e472044184799b17bed"
       ]
     },
     "docs/harness/coding-standards.md": {
@@ -172,8 +174,10 @@
       "previous": []
     },
     "docs/harness/setup.md": {
-      "sha256": "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc",
-      "previous": []
+      "sha256": "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503",
+      "previous": [
+        "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc"
+      ]
     },
     "docs/prd.md": {
       "sha256": "db0922430005dbcb54b158770343f8dbb36deaf74f53c0647a0fbc7704bff764",
@@ -182,8 +186,10 @@
       ]
     },
     "harness_setup.sh": {
-      "sha256": "9a4887b9decd686f4b08155b2e50c969fbbc61799cdc812b24dda1d64be8c1fd",
-      "previous": []
+      "sha256": "667f5e02bcf45672e930c76a667e7f60afc884751072c3a65394dd0b9b2ba804",
+      "previous": [
+        "9a4887b9decd686f4b08155b2e50c969fbbc61799cdc812b24dda1d64be8c1fd"
+      ]
     },
     "scripts/configure.py": {
       "sha256": "23e6030d0595bf74456ca80e59a376e7acb319f0ba7f4f42e22d669a048b4ef0",

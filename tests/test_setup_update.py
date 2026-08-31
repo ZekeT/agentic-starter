@@ -235,3 +235,62 @@ def test_load_manifest_missing_exits(tmp_path: Path) -> None:
     starter.mkdir()
     with pytest.raises(SystemExit):
         u.load_manifest(starter)
+
+
+# ── OpenSpec ownership ───────────────────────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    "rel",
+    [
+        "openspec/config.yaml",
+        "openspec/specs/auth/spec.md",
+        "openspec/changes/add-thing/proposal.md",
+        ".claude/commands/opsx/propose.md",
+        ".claude/skills/openspec-propose/SKILL.md",
+    ],
+)
+def test_is_openspec_owned_true(rel: str) -> None:
+    assert u.is_openspec_owned(rel)
+
+
+@pytest.mark.parametrize(
+    "rel",
+    [
+        "CLAUDE.md",
+        ".claude/commands/review.md",
+        ".claude/skills/setup-update/SKILL.md",
+        ".claude/skills/python-standards/SKILL.md",
+        "docs/product.md",
+        # Near-misses that must NOT be treated as OpenSpec-owned.
+        "openspecs/thing.md",
+        ".claude/commands/opsx.md",
+    ],
+)
+def test_is_openspec_owned_false(rel: str) -> None:
+    assert not u.is_openspec_owned(rel)
+
+
+def test_run_update_never_copies_openspec_files(tmp_path: Path) -> None:
+    """A stale manifest listing OpenSpec paths must not overwrite the target's."""
+    starter = make_starter(
+        tmp_path,
+        {
+            "CLAUDE.md": "starter claude\n",
+            "openspec/config.yaml": "schema: starter-version\n",
+            ".claude/skills/openspec-propose/SKILL.md": "starter skill\n",
+        },
+    )
+    target = make_target(tmp_path)
+    (target / "openspec").mkdir()
+    (target / "openspec" / "config.yaml").write_text("schema: target-version\n")
+
+    u.run_update(starter, target, dry=False)
+
+    # CLAUDE.md is template-owned and should land.
+    assert (target / "CLAUDE.md").read_text() == "starter claude\n"
+    # OpenSpec files are owned by the CLI — left exactly as they were.
+    assert (
+        target / "openspec" / "config.yaml"
+    ).read_text() == "schema: target-version\n"
+    assert not (target / ".claude" / "skills" / "openspec-propose").exists()
