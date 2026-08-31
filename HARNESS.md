@@ -1,62 +1,115 @@
-# Agentic Base
+# The Harness
 
-Fork-ready template for structured AI-driven software delivery.
-Superpowers + Claude Code Primitives, with Python tooling and deterministic guardrails.
+How development works in this project. `README.md` is the project's own; this
+file describes the workflow it runs on.
 
-> The bottleneck isn't model intelligence. It's the absence of engineering discipline.
+> The bottleneck isn't model intelligence. It's the absence of engineering
+> discipline — and specifically, the absence of a durable record of what the
+> system currently does.
 
-For one-time bootstrap, project structure, hooks, and optional skills, see [`docs/harness/setup.md`](docs/harness/setup.md).
+The loop below exists to keep one thing true: **`openspec/specs/` always
+describes what the system does today.** It is the only artifact that updates
+automatically, and only at archive time. Everything else is scaffolding around
+protecting that.
+
+One-time bootstrap, project structure, and hooks: [`docs/harness/setup.md`](docs/harness/setup.md).
 
 ---
 
 ## Pipeline
 
 ```
-Requirements → Architecture → Stories → Implement → Review → Security → CI/CD → Deploy
-    🖐              🖐             🖐                                                🖐
+exploration → intent → spec → tasks → implement → review → archive
+                🖐       🖐              🖐 (PR merge)      🖐
 ```
 
 `🖐` = human gate. Everything else is an automated agent.
 
-| Phase | Command | Output |
-|-------|---------|--------|
-| Plan | `/plan` Superpowers `brainstorming` conversation | `docs/prd.md` |
-| Architecture | `/plan` Superpowers `writing-plans` conversation | `docs/architecture.md` |
-| Stories | `/sprint-planning` | `stories/draft/` |
-| Implement | `/dev-story NNN` | code on a worktree branch |
-| Review | `/review` | code-reviewer pass |
-| Ship | `/commit-push-pr` | PR opened |
+| Stage | Command | Output | Gate |
+|---|---|---|---|
+| Explore | conversation, or `/opsx:explore` | understanding | — |
+| Intent | `/crystallize "<idea>"` | `openspec/changes/<slug>/intent.md` | 🖐 accept the intent |
+| Spec | `/crystallize` continues | `proposal.md` + `specs/` + `design.md` + `tasks.md` | 🖐 accept the spec |
+| Implement | `/dev-change <slug> <group>` | code + tests on a worktree branch | — |
+| Review | `/review` | compliance against the delta specs | — |
+| Ship | `/commit-push-pr` | PR opened | 🖐 merge |
+| Archive | `/archive-change <slug>` | deltas merged into `openspec/specs/` | 🖐 review the spec diff |
 
 ---
 
-## Story lifecycle
+## Where truth lives
+
+| Question | Read |
+|---|---|
+| What does the system do **today**? | `openspec/specs/` — start with `openspec list --specs` |
+| What is changing **right now**? | `openspec/changes/<slug>/` |
+| **Why** was it built this way? | `docs/decisions/` |
+| What **shape** is the system? | `docs/architecture.md` |
+| What is this product **for**? | `docs/product.md` |
+
+`openspec/specs/` is the only thing that changes automatically, and only at
+archive time. That is what stops it drifting from the code the way a PRD does.
+
+---
+
+## The unit of work
+
+One `## N` task group in a change's `tasks.md` = one branch = one worktree = one
+PR. `/dev-change <slug> <group>` claims a group by creating `feat/<slug>-g<N>`;
+branch existence is the mutex, so two sessions cannot claim the same group.
+
+Walkthrough:
 
 ```
-stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
-(/sprint-planning)  🖐 human        (agent + worktree)        (PR open)        (merged)
+/crystallize "add rate limiting"   → review intent → review spec + tasks
+/dev-change add-rate-limiting 1    → PR → merge
+/dev-change add-rate-limiting 2    → PR → merge
+/archive-change add-rate-limiting  → review the spec diff
 ```
 
-Optional: after `/sprint-planning` adds new stories, `graphify . --update` refreshes
-the codebase knowledge graph — worth it for broad architecture questions spanning
-many files, not required otherwise (see the `graphify` skill).
+Optional: `graphify . --update` refreshes the codebase knowledge graph — worth it
+for broad architecture questions spanning many files, not required otherwise
+(see the `graphify` skill).
 
-E.g Walkthrough:
-```
-/plan → review docs → /sprint-planning → review stories, git mv approved ones to ready/ → /dev-story → review PR → merge.
-```
+---
+
+## How to start
+
+**Greenfield.** Run `bash harness_setup.sh`, write `docs/product.md` (what this
+is, who for, and the non-goals), then crystallize your first idea.
+
+**Brownfield — existing code, no docs.** Run the `rescan-docs` skill first. It
+reverse-engineers `openspec/specs/` and `docs/product.md` from the code, giving
+the loop a baseline. Review what it produces before trusting it: it describes
+what the code *does*, which is not always what it *should* do.
+
+**A project already using an older version of this harness.** Run
+`scripts/migrate_to_framework.py <path>`. It preflights the target, works on its
+own branch, and writes a `MIGRATION_REPORT.md` for review.
+
 ---
 
 ## Daily commands
 
 ```bash
-make check   # fmt + lint + test — run before every commit
-make fmt     # black + isort + autoflake
-make lint    # black --check, isort --check, interrogate, mypy
-make test    # pytest
+make check    # fmt + lint + test — run before every commit
+make evals    # harness evals: skills, rules, and hook wiring still intact
+make configure  # after editing config/models.json
+make manifest   # after editing any template-owned file
 ```
 
-Model assignments live in `config/models.json`. After editing, run `make configure`.
+| Looking for | Read |
+|---|---|
+| Project facts, conventions, model config | [`CLAUDE.md`](CLAUDE.md) |
+| What review checks, and what it skips | [`REVIEW.md`](REVIEW.md) |
+| Python style | `python-standards` skill ([full reference](docs/harness/coding-standards.md)) |
+| Why the loop is shaped this way | [`docs/decisions/0001-adopt-openspec-change-loop.md`](docs/decisions/0001-adopt-openspec-change-loop.md) |
 
-Project facts and conventions: [`CLAUDE.md`](CLAUDE.md).
-Active model config: [`CLAUDE.md`](CLAUDE.md).
-Python style guide: `python-standards` skill (full reference: [`docs/harness/coding-standards.md`](docs/harness/coding-standards.md)).
+## Guarantees
+
+- **Nothing reaches `main` without a human merging a PR.**
+- Every stage commits its artifact, so `git log` on a change folder is the audit
+  trail: intent, then spec, then implementation.
+- `openspec/specs/` is never hand-edited. If it changed, a change was archived.
+- Hooks are non-blocking guardrails, not lifecycle enforcement. They never move
+  or mutate project truth.

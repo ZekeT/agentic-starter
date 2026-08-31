@@ -27,8 +27,8 @@ context: |
 # Per-artifact rules.
 rules:
   proposal:
-    - State explicitly whether the change is architecture-affecting; /sprint-planning
-      successor commands load docs/architecture.md only when it is.
+    - State explicitly whether the change is architecture-affecting. /dev-change
+      loads docs/architecture.md only when the proposal says so.
   tasks:
     - Group tasks so that each `## N` group is independently shippable as one PR.
       /dev-change takes a group number and opens one PR per group.

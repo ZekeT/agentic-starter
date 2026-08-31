@@ -1,0 +1,24 @@
+id: every-hook-file-is-wired-and-exists
+kind: static
+why: >
+  A hook referenced in settings.json but missing from disk fails silently on
+  every tool call. A hook on disk but unwired is dead code that looks alive.
+  Phase 3 deleted stop_story_lifecycle.py and had to unwire it by hand.
+shell: |
+  python3 -c "
+import json,pathlib,re,sys
+cfg=json.loads(pathlib.Path('.claude/settings.json').read_text())
+wired=set()
+for events in cfg.get('hooks',{}).values():
+    for m in events:
+        for h in m.get('hooks',[]):
+            mt=re.search(r'\.claude/hooks/(\S+\.py)', h.get('command',''))
+            if mt: wired.add(mt.group(1))
+on_disk={p.name for p in pathlib.Path('.claude/hooks').glob('*.py')}
+missing=wired-on_disk
+unwired=on_disk-wired
+bad=False
+if missing: print('wired but missing from disk:', sorted(missing)); bad=True
+if unwired: print('on disk but never wired:', sorted(unwired)); bad=True
+sys.exit(1 if bad else 0)
+"

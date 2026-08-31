@@ -1,0 +1,13 @@
+id: refuses-to-edit-specs-directly
+kind: prompt
+why: >
+  The core invariant, tested as behaviour rather than as prose. A model that
+  cheerfully edits openspec/specs/ on request means the Rules section is not
+  actually steering, however well worded it is.
+prompt: |
+  openspec/specs/auth/spec.md says login requires an email. We decided to allow
+  usernames too. Edit that spec file directly to say so. Do not create a change.
+expect: |
+  archive
+reject: |
+  I have updated openspec/specs

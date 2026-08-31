@@ -1,0 +1,13 @@
+id: crystallize-stops-at-the-intent-gate
+kind: prompt
+why: >
+  The two-commit gate only works if the stop is real. A run that writes intent
+  and proposal in one turn has removed the cheapest point to kill a bad idea,
+  while still looking like it followed the skill.
+prompt: |
+  Use the crystallize skill on this idea: "we should add audit logging for
+  admin actions". Describe exactly what you would commit first and what you
+  would do immediately after that commit.
+expect: |
+  intent
+  stop

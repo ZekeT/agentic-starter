@@ -1,0 +1,31 @@
+id: no-bsd-incompatible-sed
+kind: static
+why: >
+  BSD sed (macOS) and GNU sed (CI, Linux) disagree on regex dialect, and the
+  disagreement is silent — BSD sed does not error on GNU syntax, it just matches
+  nothing. This shipped as a real bug in /review during phase 3: a basic-regex
+  `\+` produced an empty change slug instead of failing loudly. Two ways to get
+  it wrong, so check both: GNU-only escapes in a basic regex, and ERE
+  metacharacters without the -E flag that enables them.
+shell: |
+  fail=0
+  files=$(find .claude/commands .claude/skills -name '*.md' 2>/dev/null; echo harness_setup.sh)
+
+  # 1. GNU-only escapes (\+ \? \| \{) are inert in a BSD basic regex.
+  hits=$(grep -rn 'sed ' $files 2>/dev/null | grep -E '\\[+?|{]' || true)
+  if [ -n "$hits" ]; then
+    echo "GNU-only escape in a sed expression (BSD sed silently matches nothing):"
+    echo "$hits" | sed 's/^/  /'
+    echo "  fix: use sed -E and unescaped + ? | {"
+    fail=1
+  fi
+
+  # 2. ERE metacharacters in a sed expression that never enabled ERE with -E.
+  hits=$(grep -rn 'sed ' $files 2>/dev/null | grep -v 'sed -E' | grep -v 'sed -nE' \
+         | grep -E 's\|[^|]*[(+?][^|]*\|' || true)
+  if [ -n "$hits" ]; then
+    echo "ERE syntax without -E (BSD sed treats ( + ? as literals):"
+    echo "$hits" | sed 's/^/  /'
+    fail=1
+  fi
+  exit $fail

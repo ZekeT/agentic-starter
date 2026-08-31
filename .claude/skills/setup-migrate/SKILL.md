@@ -147,11 +147,9 @@ conventions, gotchas) where every agent will read them, then remove the file.
 If orphaned story files were found in the audit:
 
 1. Review each file to determine its kanban stage:
-   - No implementation started → `stories/draft/`
-   - Confirmed, ready to implement → `stories/ready/`
-   - Partially done → `stories/in-progress/`
-   - PR open → `stories/review/`
-   - Merged/done → `stories/done/`
+   - Not yet built → a new change under `openspec/changes/<slug>/`
+   - Already built and shipped → a capability under `openspec/specs/`
+   - Partially done → a change whose `tasks.md` has some groups ticked
 
 2. Check if stories have the required fields. A valid story file needs:
    - Feature description + user story
@@ -256,18 +254,18 @@ skill: "rescan-docs"
 The skill will:
 1. Build a graphify knowledge graph of the codebase (or fall back to reading key files)
 2. Interview the user (5 questions) to understand intent vs. current state
-3. Write `docs/prd.md` — reverse-engineered PRD
+3. Write `docs/product.md` — reverse-engineered product intent
 4. Write `docs/architecture.md` — component map and tech stack
-5. Create story stubs in `stories/draft/` for identified gaps, TODOs, and missing tests
+5. Create a change under `openspec/changes/` for identified gaps, TODOs, and missing tests
 
 **When to skip this step:**
-- The project already has up-to-date `docs/prd.md` and `docs/architecture.md`
+- The project already has up-to-date `openspec/specs/` and `docs/product.md`
 - The user explicitly says they will write docs themselves
 
 After Step 9 completes, tell the user:
-> "Migration complete. Review `docs/prd.md` and `docs/architecture.md`, then run
-> `/sprint-planning` to break them into stories. Move stories from
-> `stories/draft/` to `stories/ready/` when ready to implement."
+> "Migration complete. Review `docs/product.md` and `openspec/specs/`, then run
+> `/crystallize \"<idea>\"` to open your first change. Implement it one task
+> group at a time with `/dev-change <slug> <group>`."
 
 ---
 
@@ -275,9 +273,9 @@ After Step 9 completes, tell the user:
 
 The division is clean:
 - **Superpowers planning skills** (`brainstorming`, `writing-plans`) → planning
-  conversations that produce `docs/prd.md` and `docs/architecture.md`
-- **`/sprint-planning`** → converts approved docs into story files
-- **`/dev-story` + Superpowers implementation skills** → implementation
+  conversations, then **`crystallize`** turns them into an OpenSpec change
+- **`/dev-change <slug> <group>`** → one task group per worktree and PR
+- **`/archive-change <slug>`** → merges deltas into `openspec/specs/`
   discipline (TDD enforcement, subtask dispatch)
 
 Don't merge or collapse these — they serve different phases.

@@ -561,3 +561,134 @@ def test_full_migration_report_saved(tmp_path: Path) -> None:
     data = json.loads((tmp_path / ".claude" / "migration-report.json").read_text())
     for key in ("timestamp", "target", "tech_stacks", "copied", "skipped"):
         assert key in data, f"Missing key in report: {key}"
+
+
+# ── preflight ────────────────────────────────────────────────────────────────
+
+
+def _git_repo(path: Path, dirty: bool = False) -> Path:
+    """Create a committed git repo, optionally leaving an uncommitted file."""
+    import subprocess
+
+    def git(*args: str) -> None:
+        subprocess.run(["git", "-C", str(path), *args], check=True, capture_output=True)
+
+    subprocess.run(["git", "init", "-q", str(path)], check=True, capture_output=True)
+    git("config", "user.email", "t@example.com")
+    git("config", "user.name", "T")
+    (path / "README.md").write_text("x\n")
+    git("add", "-A")
+    git("commit", "-q", "-m", "initial")
+    if dirty:
+        (path / "uncommitted.txt").write_text("y\n")
+    return path
+
+
+def test_preflight_blocks_non_git_target(tmp_path: Path) -> None:
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert any("not a git repository" in b for b in pf.blockers)
+
+
+def test_preflight_blocks_dirty_tree(tmp_path: Path) -> None:
+    """A half-applied migration mixed with the user's own edits cannot be undone."""
+    _git_repo(tmp_path, dirty=True)
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert any("uncommitted change" in b for b in pf.blockers)
+
+
+def test_preflight_allows_clean_repo(tmp_path: Path) -> None:
+    _git_repo(tmp_path)
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert pf.blockers == []
+
+
+def test_preflight_blocks_when_migration_branch_exists(tmp_path: Path) -> None:
+    """An existing branch means a previous migration was never finished."""
+    import subprocess
+
+    _git_repo(tmp_path)
+    subprocess.run(
+        ["git", "-C", str(tmp_path), "branch", m.MIGRATION_BRANCH],
+        check=True,
+        capture_output=True,
+    )
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert any(m.MIGRATION_BRANCH in b for b in pf.blockers)
+
+
+def test_preflight_warns_but_does_not_block_on_missing_pyproject(
+    tmp_path: Path,
+) -> None:
+    """Warnings must never gate — only blockers do."""
+    _git_repo(tmp_path)
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert any("pyproject.toml" in w for w in pf.warnings)
+    assert pf.blockers == []
+
+
+def test_preflight_warns_on_missing_tests(tmp_path: Path) -> None:
+    _git_repo(tmp_path)
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert any("tests/" in w for w in pf.warnings)
+    assert pf.blockers == []
+
+
+def test_preflight_lists_files_that_would_be_overwritten(tmp_path: Path) -> None:
+    _git_repo(tmp_path)
+    victim = tmp_path / ".claude" / "commands" / "review.md"
+    victim.parent.mkdir(parents=True)
+    victim.write_text("mine\n")
+    pf = m.preflight_checks(tmp_path, m.STARTER_DIR, force=False)
+    assert ".claude/commands/review.md" in pf.overwrites
+
+
+def test_create_migration_branch_dry_writes_nothing(tmp_path: Path) -> None:
+    import subprocess
+
+    _git_repo(tmp_path)
+    assert m.create_migration_branch(tmp_path, dry=True) is True
+    branches = subprocess.run(
+        ["git", "-C", str(tmp_path), "branch", "--list", m.MIGRATION_BRANCH],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert branches.stdout.strip() == ""
+
+
+def test_create_migration_branch_checks_out(tmp_path: Path) -> None:
+    import subprocess
+
+    _git_repo(tmp_path)
+    assert m.create_migration_branch(tmp_path, dry=False) is True
+    current = subprocess.run(
+        ["git", "-C", str(tmp_path), "branch", "--show-current"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert current.stdout.strip() == m.MIGRATION_BRANCH
+
+
+def test_migration_report_dry_writes_nothing(tmp_path: Path) -> None:
+    pf = m.Preflight()
+    text = m.write_migration_report(tmp_path, pf, ["a"], ["b"], "1.3.0", dry=True)
+    assert "Migration Report" in text
+    assert not (tmp_path / "MIGRATION_REPORT.md").exists()
+
+
+def test_migration_report_records_created_and_skipped(tmp_path: Path) -> None:
+    pf = m.Preflight(warnings=["node missing"])
+    m.write_migration_report(
+        tmp_path,
+        pf,
+        ["docs/product.md"],
+        [".claude/commands/review.md"],
+        "1.3.0",
+        dry=False,
+    )
+    text = (tmp_path / "MIGRATION_REPORT.md").read_text()
+    assert "docs/product.md" in text
+    assert ".claude/commands/review.md" in text
+    assert "node missing" in text
+    assert "1.3.0" in text

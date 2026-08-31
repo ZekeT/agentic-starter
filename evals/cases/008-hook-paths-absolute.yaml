@@ -1,0 +1,26 @@
+id: hook-commands-use-absolute-paths
+kind: static
+why: >
+  Found the hard way. Hook commands using a bare relative path resolve against
+  the session's cwd, not the project root. The moment cwd moves into any
+  subdirectory, EVERY hook fails with "can't open file" — the env guard, the
+  secrets scanner, the dangerous-bash blocker, all of them, silently and at
+  once. The guardrails are gone exactly when nobody is looking. Claude Code
+  exports $CLAUDE_PROJECT_DIR for this; use it.
+shell: |
+  python3 -c "
+import json, pathlib, re, sys
+cfg = json.loads(pathlib.Path('.claude/settings.json').read_text())
+bad = []
+for events in cfg.get('hooks', {}).values():
+    for matcher in events:
+        for h in matcher.get('hooks', []):
+            cmd = h.get('command', '')
+            if '.claude/hooks/' in cmd and 'CLAUDE_PROJECT_DIR' not in cmd:
+                bad.append(cmd)
+if bad:
+    print('hook commands with cwd-relative paths:')
+    for c in bad: print('  ', c)
+    print('use: python3 \"\$CLAUDE_PROJECT_DIR\"/.claude/hooks/<name>.py')
+    sys.exit(1)
+"

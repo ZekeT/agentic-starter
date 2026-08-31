@@ -76,7 +76,7 @@ For each flagged file, apply the **template delta**, not the template file:
 - **CLAUDE.md** — merge section by section. New template sections get
   appended; changed template sections get updated only if the user never
   edited them. The user's Rules section always wins.
-- **docs/prd.md, docs/architecture.md** — if these hold real project
+- **docs/product.md, docs/architecture.md** — if these hold real project
   content (planning output), skip them entirely; template changes only matter
   for the placeholder versions.
 - **config/models.json** — keep the target's model assignments; merge only

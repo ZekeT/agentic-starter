@@ -1,0 +1,58 @@
+name: harness evals
+
+# This repo is agent configuration. A broken skill frontmatter or a stale rule
+# in CLAUDE.md changes how every downstream project behaves, and neither shows
+# up in `make check`. Gate on the static cases; they need no API key.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - "CLAUDE.md"
+      - "REVIEW.md"
+      - ".claude/**"
+      - "evals/**"
+      - "openspec/config.yaml"
+      - "template-manifest.json"
+  schedule:
+    # Weekly, to catch drift from merges that skipped the path filter.
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # The runner is Linux (GNU sed); the eval that checks BSD/GNU sed
+      # portability is a static grep, so it is dialect-independent.
+      - name: Run static evals
+        run: python3 evals/run_evals.py
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install
+        run: uv sync --all-extras
+
+      - name: make check
+        run: make check
+
+      - name: Manifest is current
+        run: |
+          uv run python scripts/generate_template_manifest.py
+          # generated_at always changes; only a real content change matters.
+          if ! git diff --quiet -I'"generated_at"' -- template-manifest.json; then
+            echo "template-manifest.json is stale — run 'make manifest' and commit."
+            git diff -I'"generated_at"' -- template-manifest.json
+            exit 1
+          fi

@@ -34,11 +34,10 @@ Run all checks below. Group results into PASS / WARN / FAIL.
 Required folders must all exist:
 
 ```
-stories/draft/
-stories/ready/
-stories/in-progress/
-stories/review/
-stories/done/
+openspec/specs/
+openspec/changes/
+openspec/changes/archive/
+docs/decisions/
 ```
 
 FAIL if any are missing.
@@ -57,7 +56,7 @@ PASS if all present (empty is fine).
 
 ### 3. docs/ artefacts
 
-Check for `docs/prd.md` and `docs/architecture.md`.
+Check for `docs/product.md`, `docs/architecture.md`, and `openspec/config.yaml`.
 
 - FAIL if neither exists (planning hasn't run yet)
 - WARN if only one exists
@@ -75,7 +74,7 @@ WARN if any of these are found — they belong to other tools:
 - `code-reviewer.md`, `reviewer.md` → Superpowers owns code review
 - `analyst.md`, `pm.md`, `architect.md`, `scrum-master.md`
   → planning is conversational (Superpowers brainstorming / writing-plans);
-  story breakdown is `/sprint-planning` — no agents needed
+  change breakdown is `/crystallize` — no agents needed
 
 ---
 
@@ -95,17 +94,18 @@ FAIL if any are missing — run the `setup-migrate` skill's scaffold
 
 ---
 
-### 6. Story file quality spot-check
+### 6. Change quality spot-check
 
-Pick up to 3 story files from `stories/draft/` or `stories/ready/` and check each for:
+Pick up to 3 active changes from `openspec/changes/` and check each for:
 
-- [ ] Acceptance criteria section present
-- [ ] File paths mentioned (not just vague feature description)
-- [ ] Test strategy mentioned
+- [ ] `proposal.md` names its capabilities under New/Modified
+- [ ] Delta specs use `#### Scenario:` blocks with WHEN/THEN, not prose
+- [ ] `tasks.md` groups are independently shippable (each `## N` = one PR)
+- [ ] `openspec validate <slug>` passes
 
-WARN (not FAIL) if stories are missing these — vague stories produce bad Superpowers output.
-PASS if stories look self-contained.
-SKIP if no stories exist yet (fine at setup time).
+WARN (not FAIL) on gaps — a vague change produces bad Superpowers output.
+PASS if `openspec validate --all` is clean.
+SKIP if no changes exist yet (fine at setup time).
 
 ---
 
@@ -158,7 +158,7 @@ Root: /path/to/project
   PASS  Kanban folders
   PASS  CLAUDE.md
   WARN  CLAUDE.md not customised — edit before starting implementation
-  FAIL  docs/prd.md missing — write it during planning (Superpowers brainstorming)
+  FAIL  docs/product.md missing — write it before crystallizing the first change
   WARN  .claude/agents/developer.md found — remove (Superpowers owns implementation)
   PASS  Python hooks present
   PASS  Git initialised
@@ -169,7 +169,7 @@ Fix the FAILs before starting. WARNs are safe to defer.
 
 Always end with a one-line verdict:
 - "Ready to plan — start a planning conversation (Superpowers brainstorming)."  (all PASS, no docs yet)
-- "Ready to implement — move stories to stories/ready/."  (docs exist, stories in draft)
+- "Ready to implement — run /dev-change <slug> <group>."  (a change has tasks)
 - "Fix the FAILs above before proceeding."  (any FAIL present)
 
 ---
@@ -180,7 +180,7 @@ Use bash tool to inspect the filesystem. Key commands:
 
 ```bash
 # Kanban
-ls stories/ 2>/dev/null
+ls openspec/changes/ 2>/dev/null
 
 # CLAUDE.md
 head -5 CLAUDE.md 2>/dev/null

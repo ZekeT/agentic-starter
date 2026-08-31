@@ -38,6 +38,7 @@ VERSION_PATH = ROOT / "TEMPLATE_VERSION"
 # copied into a downstream project.
 MANIFEST_FILES = [
     "CLAUDE.md",
+    "REVIEW.md",
     "Makefile",
     "harness_setup.sh",
     ".gitignore",
@@ -46,9 +47,9 @@ MANIFEST_FILES = [
     ".claude/settings.json",
     "docs/harness/setup.md",
     "docs/harness/coding-standards.md",
-    "docs/prd.md",
     "docs/architecture.md",
-    "stories/STORY_TEMPLATE.md",
+    "docs/product.md",
+    "docs/decisions/index.md",
 ]
 
 # Scripts copied into downstream projects (a curated list, not a glob —
@@ -71,6 +72,7 @@ MANIFEST_SKILL_DIRS = [
     "setup-migrate",
     "setup-update",
     "rescan-docs",
+    "crystallize",
     "graphify",
     "python-standards",
 ]

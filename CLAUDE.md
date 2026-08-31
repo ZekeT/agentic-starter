@@ -8,19 +8,10 @@ Project brain — loaded into every session, so keep it short. Add a rule under
 ## Build & Dev Commands
 
 ```bash
-make install    # install all deps (uv sync)
-make fmt        # format: black + isort + autoflake
-make lint       # check: black, isort, interrogate, mypy
-make test       # pytest
 make check      # fmt + lint + test — run before every commit
-make clean      # remove __pycache__, .pytest_cache, dist
-
-make configure                 # apply config/models.json to all agents
-make configure PROFILE=<name>  # switch profile (list: make configure-list)
-make configure-show            # print current model assignments
-
-make manifest   # regenerate template-manifest.json after editing any
-                # template-owned file, before bumping TEMPLATE_VERSION
+make fmt lint test clean          # the individual stages
+make configure [PROFILE=<name>]   # apply config/models.json to agents
+make manifest   # after editing any template-owned file, before a version bump
 ```
 
 Healthy `make check` ends `All done! ✨ 🍰 ✨` / `Success: no issues found` /
@@ -32,8 +23,8 @@ it. After editing `config/models.json`, run `make configure`.
 ## Tech Stack
 
 Python via `uv` + `pyproject.toml`. Formatting, import order, docstring coverage,
-and strict typing are all enforced by `make check` — don't hand-audit what it
-covers. Use the `python-standards` skill for what a linter can't catch (reference:
+and strict typing are enforced by `make check` — don't hand-audit what it covers.
+Use the `python-standards` skill for what a linter can't (full reference:
 `docs/harness/coding-standards.md`).
 
 ---
@@ -43,68 +34,67 @@ covers. Use the `python-standards` skill for what a linter can't catch (referenc
 | Path | What lives here |
 |---|---|
 | `.claude/` | Agents, commands, hooks, skills, `settings.json` |
-| `stories/` | Lifecycle folders: `draft → ready → in-progress → review → done` |
-| `docs/` | Project truth — PRD, architecture |
+| `openspec/specs/` | **Canonical**: what the system does today. Changes only at archive |
+| `openspec/changes/` | Work in flight, one folder per change |
+| `docs/` | `product.md`, `architecture.md` (shape only), `decisions/` (ADRs) |
 | `docs/harness/` | Template-owned docs: setup, coding standards |
 | `config/models.json` | Model assignments per tier |
 | `scripts/` | `configure.py` (shipped); manifest + migration tools (starter-only) |
 | `src/` | Your code. Each feature dir carries its own `CLAUDE.md` |
 
 Feature `CLAUDE.md` files hold stable facts only — purpose, entry points,
-invariants, gotchas; ~30 lines max. Never implementation status (`stories/` is that
-record), and never `@import` them here: imports load eagerly, defeating lazy loading.
+invariants, gotchas; ~30 lines max. Never implementation status (a change's
+`tasks.md` is that record), and never `@import` them here: imports load eagerly,
+defeating lazy loading.
 
 ---
 
-## Story Lifecycle
+## Change Lifecycle
 
-`draft → ready → in-progress → review → done`
+`/crystallize` → `/dev-change <slug> <group>` → PR → `/archive-change <slug>`.
+Four human gates: intent, spec+tasks, PR merge, archived spec diff.
 
-- `/sprint-planning` writes to `stories/draft/`; a human moves stories to
-  `stories/ready/` — that is the gate.
-- `/dev-story [id]` claims the lowest unclaimed story in `ready/` via
-  `git worktree add ../wt-story-{slug} -b feat/story-{slug}`. **Branch existence is
-  the mutex** — the add fails if another session claimed that slug. Inside the
-  worktree it `git mv`s the story to `in-progress/` as the branch's first commit,
-  then dispatches Superpowers `subagent-driven-development`.
-- On completion `/dev-story` runs `/commit-push-pr`, then `git mv`s the story to
-  `review/`. After merge, the `stop_story_lifecycle.py` Stop hook moves it to
-  `done/` and removes the worktree and branch; `/dev-story` sweeps merged
-  worktrees on its next run as a fallback.
+- One `## N` task group in `tasks.md` = one branch = one worktree = one PR.
+  `/dev-change` claims a group by winning the race to create
+  `feat/<slug>-g<N>`; **branch existence is the mutex**.
+- `tasks.md` is the durable plan of record, not scaffolding. If implementation
+  departs from it, update it in the same commit — PR review checks the diff
+  against it.
+- After every group merges, `/archive-change <slug>` merges the delta specs into
+  `openspec/specs/` and archives the change folder.
+
+---
+
+## Retrieval Protocol
+
+For "what does the system do today?", read `openspec list --specs` for the index,
+then open only the named capability files. Never bulk-read `openspec/` or `docs/`
+— the whole loop exists so context loads per-change, not per-project.
+
+The repo is the source of truth for every artifact. An external tracker holds a
+commit SHA and links back here, never the reverse.
 
 ---
 
 ## Git Strategy
 
-- Branches: `feat/story-{id}-{slug}`, `fix/{slug}`, `chore/{slug}`
-- Commits: `type(scope): description` (conventional commits)
-- One worktree per story. Nothing touches `main` until a human merges.
+- Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`
+- Commits: `type(scope): description`. Nothing touches `main` until a human merges.
 
 ---
 
 ## Environment Variables
 
 **Never read `.env`** — the `pre_tool_env_guard.py` hook blocks it across Read,
-Glob, LS, Grep, and Bash. Read `.env.template` instead, and reference variables by
-name via `os.environ` or pydantic `BaseSettings`.
-
----
-
-## PR Checklist
-
-Beyond what hooks and `make check` already enforce:
-
-- [ ] Acceptance criteria from the story file are met
-- [ ] Tests added for new behaviour
-- [ ] No bare `except:` clauses
-- [ ] External data validated via pydantic/marshmallow
+Glob, LS, Grep, and Bash. Read `.env.template` instead; reference variables by name
+via `os.environ` or pydantic `BaseSettings`.
 
 ---
 
 ## Claude Code specifics
 
-- Hooks are wired in `.claude/settings.json` (env guard, dangerous-bash, secrets,
-  lint, story lifecycle). Never bypass them.
+- Hooks in `.claude/settings.json` (env guard, dangerous-bash, secrets, lint,
+  feature-CLAUDE.md reminder). Never bypass them. Review policy: `REVIEW.md`.
 - Superpowers v6+ is installed globally and triggers automatically.
 - `graphify` is opt-in: it offers itself for broad architecture questions, but is
   never a mandatory first step.
@@ -129,6 +119,13 @@ Provider: `anthropic`
 
 ## Rules
 
-- When a story leaves a real ambiguity unresolved — architectural direction,
-  contradictory requirements, a non-obvious security tradeoff — stop and ask the
-  user. Do not guess, and do not widen scope to route around it.
+- **Never edit `openspec/specs/` directly.** All behaviour changes enter through
+  `openspec/changes/`, and land only via `/archive-change`.
+- If implementation shows an existing spec assumption is wrong, never silently
+  fix the code around it: amend the active change's delta if the correction is
+  small, open a new change if it is large. If which one is unclear, stop and ask.
+- When implementation departs from `tasks.md`, update it in the same commit. It
+  is an audit artifact PR review checks the diff against, not scaffolding.
+- When a change or spec leaves a real ambiguity unresolved — architectural
+  direction, contradictory requirements, a non-obvious security tradeoff — stop
+  and ask the user. Do not guess, and do not widen scope to route around it.

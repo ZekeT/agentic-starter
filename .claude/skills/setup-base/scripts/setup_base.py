@@ -12,13 +12,13 @@ Usage:
 import argparse
 from pathlib import Path
 
-# ── Folders the pipeline needs ───────────────────────────────────────────────
-KANBAN_DIRS = [
-    "stories/draft",
-    "stories/ready",
-    "stories/in-progress",
-    "stories/review",
-    "stories/done",
+# ── Folders the change loop needs ────────────────────────────────────────────
+# openspec/ itself is created by `openspec init`; these are the two dirs that
+# are empty on a fresh init and would otherwise be lost by git.
+LOOP_DIRS = [
+    "openspec/specs",
+    "openspec/changes/archive",
+    "docs/decisions",
 ]
 DOCS_DIR = "docs"
 
@@ -35,13 +35,15 @@ Edit it to reflect your actual conventions.
 - Tests: pytest, write tests before implementation (Superpowers TDD)
 
 ## Architecture references
-- Product requirements: [docs/prd.md](docs/prd.md)
-- System design:        [docs/architecture.md](docs/architecture.md)
+- What it does today:   [openspec/specs/](openspec/specs/)  (`openspec list --specs`)
+- Product intent:       [docs/product.md](docs/product.md)
+- System shape:         [docs/architecture.md](docs/architecture.md)
+- Decisions:            [docs/decisions/](docs/decisions/)
 
 ## Git strategy
-- Branch naming: `feature/<story-id>-<short-description>`
-- Commits: imperative mood, e.g. `add user auth endpoint`
-- PRs: one story per PR
+- Branch naming: `feat/<change-slug>-g<N>` (one task group per branch)
+- Commits: conventional commits, e.g. `feat(auth): add login endpoint`
+- PRs: one task group per PR
 
 ## Security policies
 - No secrets in code — use environment variables
@@ -61,7 +63,7 @@ def log(msg: str, dry_run: bool = False) -> None:
 
 def create_structure(root: Path, dry_run: bool) -> None:
     log("Creating kanban folders...", dry_run)
-    for d in KANBAN_DIRS:
+    for d in LOOP_DIRS:
         target = root / d
         if not target.exists():
             log(f"  mkdir {target.relative_to(root)}", dry_run)
