@@ -5,6 +5,10 @@ Copies hooks, commands, agents, config, and scripts from this starter
 repository into a target project, then merges Python toolchain configuration
 and Makefile targets.
 
+Refuses to write anything unless the target is a clean git repo, and works on a
+dedicated `chore/harness-migration` branch so the result is reviewable and
+undoable. Writes MIGRATION_REPORT.md as the review artifact.
+
 Run from anywhere — the starter root is derived from this file's location:
     python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target
     python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target --dry
@@ -19,14 +23,20 @@ import re
 import shutil
 import subprocess
 import sys
-import tomllib
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+# Checked before importing tomllib, not after: tomllib is 3.11+, so on an older
+# interpreter the import itself raises and the user gets a ModuleNotFoundError
+# traceback instead of this message. Many systems still ship python3 as 3.9.
 if sys.version_info < (3, 11):
     print("Error: Python 3.11+ required (tomllib is stdlib from 3.11).")
+    print(f"       Running under {sys.version.split()[0]} ({sys.executable}).")
+    print("       Try: uv run python scripts/migrate_to_framework.py ...")
     sys.exit(1)
+
+import tomllib  # noqa: E402  — must follow the version guard above
 
 # ── source root ───────────────────────────────────────────────────────────────
 STARTER_DIR = Path(__file__).parent.parent
@@ -307,6 +317,239 @@ def is_inside_starter(target: Path, starter: Path) -> bool:
         return True
     except ValueError:
         return False
+
+
+# ── preflight ─────────────────────────────────────────────────────────────────
+
+MIGRATION_BRANCH = "chore/harness-migration"
+
+
+@dataclass
+class Preflight:
+    """Result of the pre-write safety checks.
+
+    Attributes:
+        blockers: Conditions that make migrating unsafe. Any means refuse.
+        warnings: Conditions worth knowing about that do not block.
+        overwrites: Target files that already exist and would be replaced.
+    """
+
+    blockers: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+    overwrites: list[str] = field(default_factory=list)
+
+
+def _run_git(target: Path, *args: str) -> subprocess.CompletedProcess:
+    """Run a git command inside the target repo."""
+    return subprocess.run(
+        ["git", "-C", str(target), *args],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def preflight_checks(target: Path, starter: Path, force: bool) -> Preflight:
+    """Run every safety check before writing anything.
+
+    Reports all failures at once rather than exiting on the first, so a user
+    fixes their environment in one pass instead of rediscovering problems one
+    run at a time.
+
+    Args:
+        target: Resolved target project root.
+        starter: Starter repo root.
+        force: Whether existing files may be overwritten.
+
+    Returns:
+        The collected blockers, warnings, and would-be overwrites.
+    """
+    pf = Preflight()
+
+    # A dirty tree is the real hazard: a half-applied migration mixed with the
+    # user's own uncommitted work has no clean way to review or undo.
+    if not detect_git_repo(target):
+        pf.blockers.append(
+            "Target is not a git repository. Run `git init` first — the migration "
+            "needs a branch to isolate its writes and a way to undo them."
+        )
+    else:
+        status = _run_git(target, "status", "--porcelain")
+        if status.returncode != 0:
+            pf.blockers.append(f"`git status` failed in target: {status.stderr.strip()}")
+        elif status.stdout.strip():
+            n = len(status.stdout.strip().splitlines())
+            pf.blockers.append(
+                f"Working tree has {n} uncommitted change(s). Commit or stash them "
+                "first, so the migration diff is reviewable on its own."
+            )
+        existing = _run_git(
+            target, "rev-parse", "--verify", "--quiet", MIGRATION_BRANCH
+        )
+        if existing.returncode == 0:
+            pf.blockers.append(
+                f"Branch '{MIGRATION_BRANCH}' already exists — a previous migration "
+                "was not finished. Merge or delete it before re-running."
+            )
+
+    if sys.version_info < (3, 11):
+        pf.blockers.append(
+            f"Python {sys.version_info.major}.{sys.version_info.minor} — 3.11+ required."
+        )
+
+    if not (target / "pyproject.toml").exists():
+        pf.warnings.append(
+            "No pyproject.toml — Python tool config will be skipped. Create one "
+            "if this is a Python project."
+        )
+
+    if shutil.which("uv") is None:
+        pf.warnings.append(
+            "`uv` not found. Install it (https://astral.sh/uv) or `make check` "
+            "will not run in the target."
+        )
+
+    # OpenSpec is warn-only: everything but the change loop works without it.
+    node = shutil.which("node")
+    if node is None:
+        pf.warnings.append(
+            "Node not found. OpenSpec needs Node >= 20.19 — the change loop "
+            "will be unavailable until it is installed."
+        )
+    else:
+        ver = subprocess.run(
+            [node, "--version"], capture_output=True, text=True, check=False
+        )
+        raw = ver.stdout.strip().lstrip("v")
+        try:
+            if tuple(int(x) for x in raw.split(".")[:2]) < (20, 19):
+                pf.warnings.append(f"Node {raw} is older than 20.19 — OpenSpec needs >= 20.19.")
+        except ValueError:
+            pf.warnings.append(f"Could not parse node version {raw!r}.")
+    if shutil.which("openspec") is None:
+        pf.warnings.append(
+            "`openspec` CLI not found. Install with "
+            "`npm install -g @fission-ai/openspec@latest`, then `openspec init --tools claude`."
+        )
+
+    # The feedback loop the whole harness depends on.
+    if not (target / "tests").is_dir() and not list(target.glob("**/test_*.py")):
+        pf.warnings.append(
+            "No tests/ directory or test files found. The TDD workflow and "
+            "`make check` gate assume a test runner exists."
+        )
+
+    for rel in FILES_TO_COPY.values():
+        if (target / rel).exists():
+            pf.overwrites.append(rel)
+    if pf.overwrites and not force:
+        pf.warnings.append(
+            f"{len(pf.overwrites)} existing file(s) will be SKIPPED (use --force "
+            "to overwrite). Listed in the migration report."
+        )
+
+    return pf
+
+
+def print_preflight(pf: Preflight, force: bool) -> None:
+    """Print the preflight result."""
+    _header("PREFLIGHT")
+    for w in pf.warnings:
+        _warn(w)
+    if pf.overwrites:
+        verb = "OVERWRITTEN" if force else "skipped"
+        _info(f"{len(pf.overwrites)} existing file(s) will be {verb}:")
+        for rel in pf.overwrites[:10]:
+            print(f"       - {rel}")
+        if len(pf.overwrites) > 10:
+            print(f"       ... and {len(pf.overwrites) - 10} more")
+    for b in pf.blockers:
+        print(f"  {RED}✗{RESET}  {b}")
+    if not pf.blockers:
+        _ok("Safe to migrate.")
+
+
+def create_migration_branch(target: Path, dry: bool) -> bool:
+    """Check out the migration branch so writes never land on the user's branch.
+
+    Args:
+        target: Target project root.
+        dry: When True, report without creating anything.
+
+    Returns:
+        True if the branch is ready (or would be, under --dry).
+    """
+    if dry:
+        _info(f"would create and check out branch '{MIGRATION_BRANCH}'")
+        return True
+    result = _run_git(target, "checkout", "-b", MIGRATION_BRANCH)
+    if result.returncode != 0:
+        print(f"{RED}Error:{RESET} could not create {MIGRATION_BRANCH}: {result.stderr.strip()}")
+        return False
+    _ok(f"working on branch '{MIGRATION_BRANCH}'")
+    return True
+
+
+def write_migration_report(
+    target: Path,
+    pf: Preflight,
+    created: list[str],
+    skipped: list[str],
+    starter_version: str,
+    dry: bool,
+) -> str:
+    """Write MIGRATION_REPORT.md — the review artifact for the migration PR.
+
+    Args:
+        target: Target project root.
+        pf: The preflight result.
+        created: Paths written.
+        skipped: Paths left alone.
+        starter_version: Template version applied.
+        dry: When True, return the text without writing it.
+
+    Returns:
+        The report's markdown.
+    """
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+    lines = [
+        "# Migration Report",
+        "",
+        f"- **Template version**: {starter_version}",
+        f"- **Applied**: {ts}",
+        f"- **Branch**: `{MIGRATION_BRANCH}`",
+        "",
+        "Review this file, then the diff, then merge. Nothing was written to your",
+        "previous branch.",
+        "",
+        "## Follow-up steps (these are yours, not the script's)",
+        "",
+        "- [ ] Fill in `docs/product.md` — what this is, who for, and the non-goals",
+        "- [ ] Review the merged `pyproject.toml` tool sections for conflicts",
+        "- [ ] Install OpenSpec: `npm i -g @fission-ai/openspec@latest`,"
+        " then `openspec init --tools claude`",
+        "- [ ] Run the `rescan-docs` skill to derive `openspec/specs/` from existing code",
+        "- [ ] Review `CLAUDE.md` and replace every TODO",
+        "- [ ] Run `make check` and `make evals`",
+        "",
+    ]
+    if pf.warnings:
+        lines += ["## Preflight warnings", ""]
+        lines += [f"- {w}" for w in pf.warnings] + [""]
+    lines += [f"## Files added ({len(created)})", ""]
+    lines += [f"- `{c}`" for c in created] or ["_none_"]
+    lines += ["", f"## Left untouched ({len(skipped)})", ""]
+    lines += [f"- `{s}`" for s in skipped] or ["_none_"]
+    lines += [
+        "",
+        "Skipped files already existed. Re-run with `--force` to overwrite them,",
+        "or merge the wanted parts by hand.",
+        "",
+    ]
+    text = "\n".join(lines)
+    if not dry:
+        (target / "MIGRATION_REPORT.md").write_text(text)
+    return text
 
 
 # ── audit ─────────────────────────────────────────────────────────────────────
@@ -1170,12 +1413,41 @@ def main() -> None:
     audit = audit_target(target, STARTER_DIR)
     print_audit_summary(audit)
 
+    # Nothing is written until every blocker is clear.
+    pf = preflight_checks(target, STARTER_DIR, args.force)
+    print_preflight(pf, args.force)
+    if pf.blockers:
+        _header("REFUSED")
+        print(
+            f"  {RED}{len(pf.blockers)} blocker(s).{RESET} Nothing was written. "
+            "Fix the above and re-run."
+        )
+        sys.exit(1)
+
+    starter_version = get_starter_version(STARTER_DIR)
+
     if args.dry:
-        _header("DRY RUN COMPLETE")
+        report_text = write_migration_report(
+            target, pf, [], [], starter_version, dry=True
+        )
+        _header("DRY RUN COMPLETE — nothing written")
+        print(report_text)
         _info("Re-run without --dry to apply the changes shown above.")
         return
 
-    run_migration(target, STARTER_DIR, audit, args.force, dry=False)
+    if not create_migration_branch(target, dry=False):
+        sys.exit(1)
+
+    report = run_migration(target, STARTER_DIR, audit, args.force, dry=False)
+
+    created = list(report.dirs_created) + list(report.copied)
+    created += [f".claude/skills/{s}/" for s in report.skill_dirs_copied]
+    skipped = list(report.skipped)
+    skipped += [f".claude/skills/{s}/" for s in report.skill_dirs_skipped]
+
+    write_migration_report(target, pf, created, skipped, starter_version, dry=False)
+    _ok("MIGRATION_REPORT.md written — review it, then the diff, then merge.")
+
     print_next_steps(audit)
 
 

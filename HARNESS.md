@@ -1,11 +1,18 @@
-# Agentic Base
+# The Harness
 
-Fork-ready template for structured AI-driven software delivery.
-Superpowers + Claude Code Primitives, with Python tooling and deterministic guardrails.
+How development works in this project. `README.md` is the project's own; this
+file describes the workflow it runs on.
 
-> The bottleneck isn't model intelligence. It's the absence of engineering discipline.
+> The bottleneck isn't model intelligence. It's the absence of engineering
+> discipline — and specifically, the absence of a durable record of what the
+> system currently does.
 
-For one-time bootstrap, project structure, hooks, and optional skills, see [`docs/harness/setup.md`](docs/harness/setup.md).
+The loop below exists to keep one thing true: **`openspec/specs/` always
+describes what the system does today.** It is the only artifact that updates
+automatically, and only at archive time. Everything else is scaffolding around
+protecting that.
+
+One-time bootstrap, project structure, and hooks: [`docs/harness/setup.md`](docs/harness/setup.md).
 
 ---
 
@@ -66,17 +73,43 @@ for broad architecture questions spanning many files, not required otherwise
 
 ---
 
+## How to start
+
+**Greenfield.** Run `bash harness_setup.sh`, write `docs/product.md` (what this
+is, who for, and the non-goals), then crystallize your first idea.
+
+**Brownfield — existing code, no docs.** Run the `rescan-docs` skill first. It
+reverse-engineers `openspec/specs/` and `docs/product.md` from the code, giving
+the loop a baseline. Review what it produces before trusting it: it describes
+what the code *does*, which is not always what it *should* do.
+
+**A project already using an older version of this harness.** Run
+`scripts/migrate_to_framework.py <path>`. It preflights the target, works on its
+own branch, and writes a `MIGRATION_REPORT.md` for review.
+
+---
+
 ## Daily commands
 
 ```bash
-make check   # fmt + lint + test — run before every commit
-make fmt     # black + isort + autoflake
-make lint    # black --check, isort --check, interrogate, mypy
-make test    # pytest
+make check    # fmt + lint + test — run before every commit
+make evals    # harness evals: skills, rules, and hook wiring still intact
+make configure  # after editing config/models.json
+make manifest   # after editing any template-owned file
 ```
 
-Model assignments live in `config/models.json`. After editing, run `make configure`.
+| Looking for | Read |
+|---|---|
+| Project facts, conventions, model config | [`CLAUDE.md`](CLAUDE.md) |
+| What review checks, and what it skips | [`REVIEW.md`](REVIEW.md) |
+| Python style | `python-standards` skill ([full reference](docs/harness/coding-standards.md)) |
+| Why the loop is shaped this way | [`docs/decisions/0001-adopt-openspec-change-loop.md`](docs/decisions/0001-adopt-openspec-change-loop.md) |
 
-Project facts and conventions: [`CLAUDE.md`](CLAUDE.md).
-Active model config: [`CLAUDE.md`](CLAUDE.md).
-Python style guide: `python-standards` skill (full reference: [`docs/harness/coding-standards.md`](docs/harness/coding-standards.md)).
+## Guarantees
+
+- **Nothing reaches `main` without a human merging a PR.**
+- Every stage commits its artifact, so `git log` on a change folder is the audit
+  trail: intent, then spec, then implementation.
+- `openspec/specs/` is never hand-edited. If it changed, a change was archived.
+- Hooks are non-blocking guardrails, not lifecycle enforcement. They never move
+  or mutate project truth.
