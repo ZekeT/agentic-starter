@@ -1,6 +1,6 @@
 {
   "template_version": "1.3.0",
-  "generated_at": "2026-08-31T12:01:23+00:00",
+  "generated_at": "2026-08-31T12:02:45+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -150,9 +150,10 @@
       ]
     },
     "HARNESS.md": {
-      "sha256": "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
+      "sha256": "562aa27ec8bb5dd19bf311b41587de41e4244567efcbd06f38a536e032d72637",
       "previous": [
-        "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d"
+        "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
+        "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1"
       ]
     },
     "Makefile": {
@@ -277,11 +278,12 @@
       "previous": []
     },
     "harness_setup.sh": {
-      "sha256": "e9dc8ee00c817813176a7abdf9a665f8686b20ca7320d3272890f38d1313b052",
+      "sha256": "80af4184ee6b57cd1b816e3049395896836d2bb4aa61a2271fb7f01c5c8f8919",
       "previous": [
         "9a4887b9decd686f4b08155b2e50c969fbbc61799cdc812b24dda1d64be8c1fd",
         "667f5e02bcf45672e930c76a667e7f60afc884751072c3a65394dd0b9b2ba804",
-        "6dac1e99e8eae1b2bbf6004d75f65c6a85b97cc01593a638a6a6bbc69dfcf93b"
+        "6dac1e99e8eae1b2bbf6004d75f65c6a85b97cc01593a638a6a6bbc69dfcf93b",
+        "e9dc8ee00c817813176a7abdf9a665f8686b20ca7320d3272890f38d1313b052"
       ]
     },
     "scripts/configure.py": {

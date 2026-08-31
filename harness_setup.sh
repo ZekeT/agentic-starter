@@ -171,6 +171,30 @@ else
 fi
 echo
 
+# The archive ships one worked example so the artifact chain is readable before
+# you write your own. Offer to drop it — a setup script that silently deletes
+# things erodes exactly the trust the human gates exist to build.
+if [ -t 0 ] && ls -d openspec/changes/archive/2026-* >/dev/null 2>&1; then
+  echo ""
+  echo "The archive ships one example change (the starter's own history):"
+  for d in openspec/changes/archive/2026-*; do echo "  $d"; done
+  printf "Remove it? [y/N] "
+  read -r REPLY
+  case "$REPLY" in
+    [yY]*)
+      if git rm -r -q openspec/changes/archive/2026-* 2>/dev/null; then
+        echo "  Removed — commit the deletion when you make your first commit."
+      else
+        rm -rf openspec/changes/archive/2026-*
+        echo "  Removed."
+      fi
+      # git rm drops the directory once it is empty; the loop still needs it.
+      mkdir -p openspec/changes/archive && touch openspec/changes/archive/.gitkeep
+      ;;
+    *) echo "  Kept. Delete it whenever: git rm -r openspec/changes/archive/2026-*" ;;
+  esac
+fi
+
 echo ""
 echo "=== Setup complete ==="
 echo ""

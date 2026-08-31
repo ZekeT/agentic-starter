@@ -93,7 +93,6 @@ DIRS_TO_CREATE: list[str] = [
     "openspec/changes/archive",
     "config",
     "scripts",
-    "graphify-out",
 ]
 
 # Directories that get a .gitkeep so git tracks them
@@ -101,7 +100,6 @@ _GITKEEP_DIRS: frozenset[str] = frozenset(
     {
         "openspec/specs",
         "openspec/changes/archive",
-        "graphify-out",
     }
 )
 

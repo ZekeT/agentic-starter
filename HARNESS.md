@@ -81,6 +81,9 @@ for broad architecture questions spanning many files, not required otherwise
 
 **Greenfield.** Run `bash harness_setup.sh`, write `docs/product.md` (what this
 is, who for, and the non-goals), then crystallize your first idea.
+`openspec/changes/archive/` ships with one example change — intent, proposal,
+delta specs, tasks — so the artifact chain is readable before you write your
+own. Setup offers to delete it; it is the starter's history, not yours.
 
 **Brownfield — existing code, no docs.** Run the `rescan-docs` skill first. It
 reverse-engineers `openspec/specs/` and `docs/product.md` from the code, giving
