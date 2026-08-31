@@ -5,7 +5,7 @@ of times a day, so it pre-computes git context to avoid back-and-forth.
 
 Usage: `/commit-push-pr "feat(auth): add JWT validation"` (message optional)
 
-Conventions: `docs/harness/commits-and-prs.md`. PR body:
+Conventions: `.harness/docs/commits-and-prs.md`. PR body:
 `.github/pull_request_template.md`.
 
 ---
@@ -63,7 +63,7 @@ Then:
 
 1. `git add -A`
 2. Commit. Use `$ARGUMENTS` if given; otherwise write a Conventional Commits
-   message per `docs/harness/commits-and-prs.md` — imperative subject, and a body
+   message per `.harness/docs/commits-and-prs.md` — imperative subject, and a body
    explaining **why** rather than restating the diff.
 3. `git push -u origin HEAD`
 4. Open the PR with `.github/pull_request_template.md` as the body, filled in:

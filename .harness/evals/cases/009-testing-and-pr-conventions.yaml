@@ -31,7 +31,7 @@ shell: |
     || { echo "--strict-markers missing: a typo'd marker would select nothing"; fail=1; }
 
   # Reference docs the skill and commands point at must exist.
-  for doc in docs/harness/testing.md docs/harness/commits-and-prs.md; do
+  for doc in .harness/docs/testing.md .harness/docs/commits-and-prs.md; do
     [ -f "$doc" ] || { echo "missing $doc (referenced by skills/commands)"; fail=1; }
   done
 

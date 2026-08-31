@@ -14,7 +14,7 @@ from pathlib import Path
 import pytest
 
 # These exercise real filesystem, git, and subprocess behaviour — that IS the
-# unit under test here. Per docs/harness/testing.md they are integration tests.
+# unit under test here. Per .harness/docs/testing.md they are integration tests.
 pytestmark = pytest.mark.integration
 
 SCRIPTS = Path(__file__).parents[2] / "scripts"
@@ -47,7 +47,7 @@ def test_openspec_paths_are_excluded(rel: str) -> None:
         ".claude/commands/review.md",
         ".claude/hooks/post_tool_lint.py",
         ".claude/skills/python-standards/SKILL.md",
-        "docs/harness/setup.md",
+        ".harness/docs/setup.md",
         # Near-misses: similar prefixes that are ours, not OpenSpec's.
         "openspecs/notes.md",
         ".claude/commands/opsx.md",

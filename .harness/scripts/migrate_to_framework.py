@@ -55,11 +55,16 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/commands/archive-change.md": ".claude/commands/archive-change.md",
     ".claude/settings.json": ".claude/settings.json",
     "REVIEW.md": "REVIEW.md",
-    # Docs — product.md/architecture.md are placeholders the team fills in
-    "docs/harness/setup.md": "docs/harness/setup.md",
-    "docs/harness/coding-standards.md": "docs/harness/coding-standards.md",
-    "docs/harness/testing.md": "docs/harness/testing.md",
-    "docs/harness/commits-and-prs.md": "docs/harness/commits-and-prs.md",
+    # Docs — product.md/architecture.md are placeholders the team fills in.
+    # Source moved to .harness/docs/ in the starter; dest stays docs/harness/
+    # here deliberately — migrate never creates a .harness/ tree in the
+    # target (no evals/scripts/setup.sh copied), so these land at a visible
+    # path like everything else this dict copies, rather than alone in an
+    # otherwise-empty dotfolder.
+    ".harness/docs/setup.md": "docs/harness/setup.md",
+    ".harness/docs/coding-standards.md": "docs/harness/coding-standards.md",
+    ".harness/docs/testing.md": "docs/harness/testing.md",
+    ".harness/docs/commits-and-prs.md": "docs/harness/commits-and-prs.md",
     ".github/pull_request_template.md": ".github/pull_request_template.md",
     "docs/product.md": "docs/product.md",
     "docs/decisions/index.md": "docs/decisions/index.md",

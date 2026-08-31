@@ -23,4 +23,4 @@ shape it has is `docs/architecture.md`.
 |---|---|---|
 
 The log starts empty in a fresh fork. The template's own design decisions
-live in [`docs/harness/design.md`](../harness/design.md).
+live in [`.harness/docs/design.md`](../../.harness/docs/design.md).

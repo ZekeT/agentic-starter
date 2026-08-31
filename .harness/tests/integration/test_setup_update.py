@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 # These exercise real filesystem, git, and subprocess behaviour — that IS the
-# unit under test here. Per docs/harness/testing.md they are integration tests.
+# unit under test here. Per .harness/docs/testing.md they are integration tests.
 pytestmark = pytest.mark.integration
 
 # Add the skill's scripts/ dir to path so we can import without installing.

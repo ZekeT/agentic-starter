@@ -24,7 +24,7 @@ it.
 Python via `uv` + `pyproject.toml`. Formatting, import order, docstring coverage,
 and strict typing are enforced by `make check` — don't hand-audit what it covers.
 Use the `python-standards` skill for what a linter can't (full references:
-`docs/harness/coding-standards.md`, `docs/harness/testing.md`).
+`.harness/docs/coding-standards.md`, `.harness/docs/testing.md`).
 
 ---
 
@@ -36,7 +36,7 @@ Use the `python-standards` skill for what a linter can't (full references:
 | `openspec/specs/` | **Canonical**: what the system does today. Changes only at archive |
 | `openspec/changes/` | Work in flight, one folder per change |
 | `docs/` | `product.md`, `architecture.md` (shape only), `decisions/` (ADRs) |
-| `docs/harness/` | Template-owned docs: setup, coding standards |
+| `.harness/docs/` | Template-owned docs: setup, coding standards |
 | `scripts/` | Manifest + migration tools (starter-only) |
 | `src/` | Your code. Each feature dir carries its own `CLAUDE.md` |
 
@@ -81,7 +81,7 @@ commit SHA and links back here, never the reverse.
 
 - Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`
 - Commits: `type(scope): description`; PR body is `.github/pull_request_template.md`.
-  Conventions: `docs/harness/commits-and-prs.md`. Nothing reaches `main` unmerged.
+  Conventions: `.harness/docs/commits-and-prs.md`. Nothing reaches `main` unmerged.
 
 ---
 

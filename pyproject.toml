@@ -78,7 +78,7 @@ color = true
 # --cov-fail-under is intentionally omitted: with no src/ yet (template state),
 # coverage always collects 0% and the gate fails before any project code exists.
 # Add `--cov-fail-under=80` back to addopts once src/<your_package>/ exists.
-# See docs/harness/testing.md for why coverage is a signal, not a gate.
+# See .harness/docs/testing.md for why coverage is a signal, not a gate.
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=src --cov-report=term-missing --strict-markers"

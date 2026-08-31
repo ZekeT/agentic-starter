@@ -9,7 +9,7 @@
 > (mypy `strict`), docstring coverage (interrogate `fail-under = 80`). Those
 > live in `pyproject.toml`, which is the only place they should be stated —
 > a doc that repeats a tool setting is a doc that will contradict it.
-> Test layout and conventions: `docs/harness/testing.md`.
+> Test layout and conventions: `.harness/docs/testing.md`.
 >
 > Sources: Google Python Style Guide, PEP 8, PEP 257.
 

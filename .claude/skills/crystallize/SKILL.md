@@ -68,7 +68,7 @@ in there rather than opening a second one.
 
 ### Naming a new capability
 
-Run these before committing to a name — reasoning in `docs/harness/design.md`:
+Run these before committing to a name — reasoning in `.harness/docs/design.md`:
 
 1. **Naming test.** State the Purpose in one sentence. Needing "and" to join
    unrelated activities, or a container noun (`core`, `platform`, `utils`,

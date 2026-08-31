@@ -12,7 +12,7 @@ describes what the system does today.** It is the only artifact that updates
 automatically, and only at archive time. Everything else is scaffolding around
 protecting that.
 
-One-time bootstrap, project structure, and hooks: [`docs/harness/setup.md`](docs/harness/setup.md).
+One-time bootstrap, project structure, and hooks: [`.harness/docs/setup.md`](.harness/docs/setup.md).
 
 ---
 
@@ -110,8 +110,8 @@ bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates 
 |---|---|
 | Project facts and conventions | [`CLAUDE.md`](CLAUDE.md) |
 | What review checks, and what it skips | [`REVIEW.md`](REVIEW.md) |
-| Python style | `python-standards` skill ([full reference](docs/harness/coding-standards.md)) |
-| Why the loop is shaped this way | [`docs/harness/design.md`](docs/harness/design.md) |
+| Python style | `python-standards` skill ([full reference](.harness/docs/coding-standards.md)) |
+| Why the loop is shaped this way | [`.harness/docs/design.md`](.harness/docs/design.md) |
 
 ## Guarantees
 

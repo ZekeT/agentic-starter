@@ -3,7 +3,7 @@
 This is the one piece of genuinely pure logic in the harness's tooling: given a
 repo-relative path string, decide whether the OpenSpec CLI owns it. No
 filesystem, no subprocess — so it belongs in tests/unit/ per
-docs/harness/testing.md, while everything else in tests/ drives real files and
+.harness/docs/testing.md, while everything else in tests/ drives real files and
 lives in tests/integration/.
 
 The rule is duplicated deliberately in two places — the manifest generator and
@@ -44,7 +44,7 @@ NOT_OWNED = [
     ".claude/hooks/post_tool_lint.py",
     ".claude/skills/python-standards/SKILL.md",
     ".claude/skills/crystallize/SKILL.md",
-    "docs/harness/testing.md",
+    ".harness/docs/testing.md",
     # Near-misses: similar prefixes that are ours, not OpenSpec's. A substring
     # check instead of a prefix check would wrongly claim all three.
     "openspecs/notes.md",

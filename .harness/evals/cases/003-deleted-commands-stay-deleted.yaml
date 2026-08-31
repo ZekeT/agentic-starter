@@ -8,8 +8,8 @@ why: >
   that resurrects it teaches the pre-OpenSpec lifecycle all over again.
 shell: |
   hits=$(grep -rn -E "sprint-planning|dev-story|stories/(draft|ready|in-progress|review|done)" \
-    CLAUDE.md REVIEW.md HARNESS.md docs/ .claude/commands/ .claude/skills/crystallize/ \
-    2>/dev/null | grep -v "docs/harness/design.md" || true)
+    CLAUDE.md REVIEW.md HARNESS.md docs/ .harness/docs/ .claude/commands/ .claude/skills/crystallize/ \
+    2>/dev/null | grep -v "\.harness/docs/design\.md" || true)
   if [ -n "$hits" ]; then echo "stale references to removed workflow:"; echo "$hits"; exit 1; fi
   for p in stories .claude/commands/sprint-planning.md .claude/commands/dev-story.md \
            .claude/hooks/stop_story_lifecycle.py docs/prd.md \
