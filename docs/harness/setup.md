@@ -13,8 +13,7 @@ bash harness_setup.sh
 ```
 
 `harness_setup.sh` installs Python deps via `uv`, applies model assignments from
-`config/models.json`, bootstraps `.env`, sets up graphify, and checks for
-OpenSpec.
+`config/models.json`, bootstraps `.env`, and checks for OpenSpec.
 
 ### OpenSpec (required for the change loop)
 
@@ -88,7 +87,7 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 ├── pyproject.toml                       # Python deps + tool config
 ├── harness_setup.sh                     # One-command bootstrap
 ├── .env.template                        # Committed — documents all env vars, no real values
-├── .gitignore / .graphifyignore
+├── .gitignore
 │
 ├── .claude/
 │   ├── settings.json                    # Hook wiring
@@ -151,13 +150,14 @@ Run on every tool call. No LLM judgment — pure code.
 
 ## Optional skills
 
-**Graphify** (recommended for large codebases):
+**Graphify** (optional, worth it on large codebases):
 ```bash
-pip install graphifyy && graphify claude install
-graphify .   # builds knowledge graph
+uv pip install graphifyy && uv run graphify claude install
+uv run graphify .   # builds the knowledge graph → graphify-out/ (gitignored)
 ```
-Gives agents a 71x token-compressed map of the codebase to query
-instead of grepping raw files. Hooks tell Claude to consult it automatically.
+Gives agents a token-compressed map of the codebase to query instead of grepping
+raw files. Nothing in the harness requires it — see the `graphify` skill for when
+it earns its keep.
 
 ---
 
@@ -200,7 +200,7 @@ Upstream framework updates do not touch your customisations:
   `template-manifest.json`: files you never touched are auto-updated, files
   you customised are flagged for a guided merge instead of being overwritten.
 - **Your customisations** live in `.claude/agents/`, `.claude/commands/`, `.claude/hooks/`, and `CLAUDE.md` — protected by the same mechanism.
-- **Graphify** (`pip install graphifyy --upgrade`) — your `.graphifyignore` and CLAUDE.md hook survive upgrades.
+- **Graphify** (`uv pip install graphifyy --upgrade`) — optional; nothing else in the harness depends on it.
 
 Every project created from this template records the template version it
 started from in `.claude/template-version.json` (or `.claude/migration-report.json`
