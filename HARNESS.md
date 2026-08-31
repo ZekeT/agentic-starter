@@ -122,3 +122,12 @@ bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates 
 - `openspec/specs/` is never hand-edited. If it changed, a change was archived.
 - Hooks are non-blocking guardrails, not lifecycle enforcement. They never move
   or mutate project truth.
+
+## Not in scope
+
+- **No autonomous maintain loop.** Production monitoring does not write
+  `intent.md`, and nothing here closes the loop from a deployed system back to a
+  new change. Every entry point is a human: the loop starts when someone runs
+  `/crystallize`. This is a scope decision, not an oversight — a fork that wants
+  control bands and monitoring-driven intents can add them, and owns the
+  question of what happens when the trigger is wrong at 3am.
