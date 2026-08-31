@@ -20,10 +20,10 @@ Requirements → Architecture → Stories → Implement → Review → Security 
 
 | Phase | Command | Output |
 |-------|---------|--------|
-| Plan | Superpowers `brainstorming` conversation | `docs/prd.md` |
-| Architecture | Superpowers `writing-plans` conversation | `docs/architecture.md` |
+| Plan | `/plan` Superpowers `brainstorming` conversation | `docs/prd.md` |
+| Architecture | `/plan` Superpowers `writing-plans` conversation | `docs/architecture.md` |
 | Stories | `/sprint-planning` | `stories/draft/` |
-| Implement | `/implement story-NNN` | code on a worktree branch |
+| Implement | `/dev-story NNN` | code on a worktree branch |
 | Review | `/review` | code-reviewer pass |
 | Ship | `/commit-push-pr` | PR opened |
 
@@ -40,6 +40,10 @@ Optional: after `/sprint-planning` adds new stories, `graphify . --update` refre
 the codebase knowledge graph — worth it for broad architecture questions spanning
 many files, not required otherwise (see the `graphify` skill).
 
+E.g Walkthrough:
+```
+/plan → review docs → /sprint-planning → review stories, git mv approved ones to ready/ → /dev-story → review PR → merge.
+```
 ---
 
 ## Daily commands
