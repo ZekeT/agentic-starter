@@ -405,7 +405,7 @@ def test_patch_makefile_appends_missing(tmp_path: Path) -> None:
     m.patch_makefile(tmp_path, dry=False)
     content = mf.read_text()
     assert m.MAKEFILE_MARKER in content
-    assert "configure:" in content
+    assert "check:" in content
 
 
 def test_patch_makefile_idempotent(tmp_path: Path) -> None:

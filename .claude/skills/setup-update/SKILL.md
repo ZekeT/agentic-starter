@@ -79,8 +79,6 @@ For each flagged file, apply the **template delta**, not the template file:
 - **docs/product.md, docs/architecture.md** — if these hold real project
   content (planning output), skip them entirely; template changes only matter
   for the placeholder versions.
-- **config/models.json** — keep the target's model assignments; merge only
-  new structural keys (e.g. a new tier). Run `make configure` after.
 - **pyproject.toml** — merge missing `[tool.*]` sections only; never touch
   `[project]` or dependencies.
 - **.claude/settings.json** — merge new hook entries into the existing

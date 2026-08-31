@@ -101,7 +101,6 @@ own branch, and writes a `MIGRATION_REPORT.md` for review.
 ```bash
 make check    # fmt + lint + test — run before every commit
 make evals    # harness evals: skills, rules, and hook wiring still intact
-make configure  # after editing config/models.json
 make manifest   # after editing any template-owned file
 
 bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates nothing
@@ -109,7 +108,7 @@ bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates 
 
 | Looking for | Read |
 |---|---|
-| Project facts, conventions, model config | [`CLAUDE.md`](CLAUDE.md) |
+| Project facts and conventions | [`CLAUDE.md`](CLAUDE.md) |
 | What review checks, and what it skips | [`REVIEW.md`](REVIEW.md) |
 | Python style | `python-standards` skill ([full reference](docs/harness/coding-standards.md)) |
 | Why the loop is shaped this way | [`docs/decisions/0001-adopt-openspec-change-loop.md`](docs/decisions/0001-adopt-openspec-change-loop.md) |

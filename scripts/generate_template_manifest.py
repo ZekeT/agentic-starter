@@ -34,7 +34,7 @@ VERSION_PATH = ROOT / "TEMPLATE_VERSION"
 # copying the starter's verbatim; blind-copying would clobber a non-Python
 # target's project metadata entirely. Same reasoning excludes
 # scripts/migrate_to_framework.py and scripts/generate_template_manifest.py
-# below — both are starter-repo-only maintainer tools, never meant to be
+# — both are starter-repo-only maintainer tools, never meant to be
 # copied into a downstream project.
 MANIFEST_FILES = [
     "CLAUDE.md",
@@ -43,7 +43,6 @@ MANIFEST_FILES = [
     "harness_setup.sh",
     ".gitignore",
     ".env.template",
-    "config/models.json",
     ".claude/settings.json",
     "docs/harness/setup.md",
     "docs/harness/coding-standards.md",
@@ -57,13 +56,6 @@ MANIFEST_FILES = [
     "evals/README.md",
     "evals/run_evals.py",
     ".github/workflows/evals.yml",
-]
-
-# Scripts copied into downstream projects (a curated list, not a glob —
-# migrate_to_framework.py and generate_template_manifest.py are starter-only
-# and must never appear here).
-MANIFEST_SCRIPTS = [
-    "scripts/configure.py",
 ]
 
 # Glob patterns relative to the repo root (non-recursive).
@@ -122,7 +114,7 @@ def sha256_of(path: Path) -> str:
 def collect_files() -> list[Path]:
     """Collect all template-owned files that currently exist."""
     found: set[Path] = set()
-    for rel in MANIFEST_FILES + MANIFEST_SCRIPTS:
+    for rel in MANIFEST_FILES:
         p = ROOT / rel
         if p.is_file():
             found.add(p)

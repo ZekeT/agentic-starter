@@ -27,7 +27,7 @@ if [ "${1:-}" = "--check" ]; then
   echo ""
   echo "Required files"
   for f in CLAUDE.md HARNESS.md REVIEW.md Makefile pyproject.toml \
-           .env.template config/models.json .claude/settings.json; do
+           .env.template .claude/settings.json; do
     [ -f "$f" ] && ok "$f" || bad "$f missing"
   done
 
@@ -100,23 +100,19 @@ echo ""
 
 # 1. Install uv if not present
 if ! command -v uv &> /dev/null; then
-  echo "[1/7] Installing uv..."
+  echo "[1/6] Installing uv..."
   curl -LsSf https://astral.sh/uv/install.sh | sh
   source "$HOME/.cargo/env" 2>/dev/null || true
 else
-  echo "[1/7] uv already installed ($(uv --version))"
+  echo "[1/6] uv already installed ($(uv --version))"
 fi
 
 # 2. Install Python deps
-echo "[2/7] Installing Python dependencies..."
+echo "[2/6] Installing Python dependencies..."
 uv sync --all-extras
 
-# 3. Apply model config to .claude/agents/*.md frontmatter
-echo "[3/7] Applying model configuration to agents..."
-uv run python scripts/configure.py
-
-# 4. Bootstrap .env from the committed template if missing
-echo "[4/7] Bootstrapping .env from .env.template..."
+# 3. Bootstrap .env from the committed template if missing
+echo "[3/6] Bootstrapping .env from .env.template..."
 if [ -f .env ]; then
   echo "  .env already exists — leaving it alone."
 elif [ -f .env.template ]; then
@@ -126,10 +122,10 @@ else
   echo "  SKIP: .env.template not found."
 fi
 
-# 5. Superpowers — must be installed manually inside Claude Code.
+# 4. Superpowers — must be installed manually inside Claude Code.
 # /plugin is an interactive slash command, not a CLI argument.
 # There is no way to automate this from a shell script.
-echo "[5/7] Superpowers (manual step required)..."
+echo "[4/6] Superpowers (manual step required)..."
 echo ""
 echo "  Open Claude Code in this project directory, then run:"
 echo "    /plugin marketplace add obra/superpowers-marketplace"
@@ -142,17 +138,17 @@ echo "  This installs globally to ~/.claude/ — do it once,"
 echo "  and it works for all your projects."
 echo
 
-# 6. Verify make check works (no src yet, just confirm tooling)
-echo "[6/7] Verifying toolchain..."
+# 5. Verify make check works (no src yet, just confirm tooling)
+echo "[5/6] Verifying toolchain..."
 uv run black --version
 uv run isort --version-number
 uv run autoflake --version
 uv run interrogate --version
 uv run mypy --version
 uv run pytest --version
-# 7. OpenSpec — the change loop's document lifecycle.
+# 6. OpenSpec — the change loop's document lifecycle.
 # Warn only: every other part of the harness works without it.
-echo "[7/7] Checking OpenSpec (Node CLI)..."
+echo "[6/6] Checking OpenSpec (Node CLI)..."
 NODE_MIN="20.19.0"
 if ! command -v node &> /dev/null; then
   echo "  WARN: node not found. OpenSpec needs Node >= $NODE_MIN."

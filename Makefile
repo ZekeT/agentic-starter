@@ -3,7 +3,7 @@
 # Referenced in CLAUDE.md so agents always use these targets.
 # ============================================================
 
-.PHONY: install fmt lint test check clean configure configure-show configure-list evals evals-full manifest
+.PHONY: install fmt lint test check clean evals evals-full manifest
 
 # Source directory — override with: make fmt SRC=mypackage
 SRC ?= src
@@ -61,19 +61,6 @@ evals:
 
 evals-full:
 	python3 evals/run_evals.py --full
-
-# ---- Model configuration ----------------------------------
-# Edit config/models.json then run one of these.
-# PROFILE= optional: make configure PROFILE=anthropic-budget
-
-configure:
-	uv run python scripts/configure.py $(if $(PROFILE),--profile $(PROFILE),)
-
-configure-show:
-	uv run python scripts/configure.py --show
-
-configure-list:
-	uv run python scripts/configure.py --list
 
 # ---- Clean ------------------------------------------------
 

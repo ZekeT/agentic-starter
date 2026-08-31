@@ -55,8 +55,6 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/commands/archive-change.md": ".claude/commands/archive-change.md",
     ".claude/settings.json": ".claude/settings.json",
     "REVIEW.md": "REVIEW.md",
-    "config/models.json": "config/models.json",
-    "scripts/configure.py": "scripts/configure.py",
     # Docs — product.md/architecture.md are placeholders the team fills in
     "docs/harness/setup.md": "docs/harness/setup.md",
     "docs/harness/coding-standards.md": "docs/harness/coding-standards.md",
@@ -185,13 +183,6 @@ MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
     ),
     "test": "test:\n\tuv run pytest\n",
     "check": "check: fmt lint test\n",
-    "configure": (
-        "configure:\n"
-        "\tuv run python scripts/configure.py"
-        " $(if $(PROFILE),--profile $(PROFILE),)\n"
-    ),
-    "configure-show": "configure-show:\n\tuv run python scripts/configure.py --show\n",
-    "configure-list": "configure-list:\n\tuv run python scripts/configure.py --list\n",
     "setup-hooks": (
         "setup-hooks:\n"
         '\t@echo "Hooks live in .claude/hooks/ — Claude Code loads them automatically."\n'
@@ -1017,7 +1008,6 @@ make fmt              # format: black + isort + autoflake
 make lint             # check: black --check, isort --check, interrogate, mypy
 make test             # pytest
 make check            # fmt + lint + test (run before every commit)
-make configure        # apply config/models.json to all agents
 ```
 
 TODO: Add any project-specific commands here.
@@ -1053,13 +1043,6 @@ TODO: Add your architecture decisions, language conventions, and style rules.
 - [ ] No secrets in diff
 - [ ] Every task in the group is ticked in the change's `tasks.md`
 - [ ] Tests added for new behaviour
-
----
-
-## Active Model Config
-
-Run `make configure` after editing `config/models.json` to apply model assignments.
-See `config/models.json` for available profiles (anthropic-default, anthropic-budget).
 
 ---
 
@@ -1317,7 +1300,6 @@ def print_next_steps(audit: AuditResult) -> None:
     _header("NEXT STEPS")
     steps = [
         f"cd {audit.target}",
-        "make configure                # patch agents with model assignments",
         "cp .env.template .env         # then fill in real API keys",
     ]
     if "python" in audit.tech_stacks:

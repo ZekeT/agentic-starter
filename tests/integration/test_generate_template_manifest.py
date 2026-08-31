@@ -43,7 +43,7 @@ def test_openspec_paths_are_excluded(rel: str) -> None:
     "rel",
     [
         "CLAUDE.md",
-        "config/models.json",
+        ".env.template",
         ".claude/commands/review.md",
         ".claude/hooks/post_tool_lint.py",
         ".claude/skills/python-standards/SKILL.md",
@@ -69,5 +69,5 @@ def test_collect_files_still_finds_template_files() -> None:
     """Guard against the exclusion filter being too greedy."""
     rels = {p.relative_to(g.ROOT).as_posix() for p in g.collect_files()}
     assert "CLAUDE.md" in rels
-    assert "config/models.json" in rels
+    assert ".env.template" in rels
     assert any(r.startswith(".claude/skills/setup-update/") for r in rels)

@@ -38,7 +38,7 @@ OWNED = [
 NOT_OWNED = [
     "CLAUDE.md",
     "REVIEW.md",
-    "config/models.json",
+    ".env.template",
     ".claude/commands/review.md",
     ".claude/commands/dev-change.md",
     ".claude/hooks/post_tool_lint.py",

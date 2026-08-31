@@ -1,6 +1,6 @@
 {
   "template_version": "1.4.0",
-  "generated_at": "2026-08-31T12:07:24+00:00",
+  "generated_at": "2026-08-31T17:13:50+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -55,9 +55,10 @@
       "previous": []
     },
     ".claude/hooks/pre_tool_env_guard.py": {
-      "sha256": "e7598a040362b4a6548619e1b1b548d5415f36b1f1849c2ba11ffbe269a3cde0",
+      "sha256": "838a8eaa3ddabd25120c38923a62fb3c7ca9921ef0225c0a9aebf9bdba5aa63f",
       "previous": [
-        "99d3669bfd603e67be8f34267fc9c122d1b167b16324e319c84f3b877f01af02"
+        "99d3669bfd603e67be8f34267fc9c122d1b167b16324e319c84f3b877f01af02",
+        "e7598a040362b4a6548619e1b1b548d5415f36b1f1849c2ba11ffbe269a3cde0"
       ]
     },
     ".claude/settings.json": {
@@ -101,11 +102,12 @@
       ]
     },
     ".claude/skills/setup-update/SKILL.md": {
-      "sha256": "a22ceb4f56fa31aa4469e77d8dda17b66e57694fce24ff94055ea30769d8e6cb",
+      "sha256": "24fcb67125995e6ce4a894f84cccc9e853e19d913b36b7925548d23f41dc4e38",
       "previous": [
         "2770516410b3a012ad36fb84a4d96ff96fb6ee99c542a632a61946ef83c6a021",
         "52c0bf659fd56e0133a565b582922096b3cf87cd55f11938ae97a786aa43df63",
-        "8658a396cc64a7a3591a483fd4325fe182b2d6d46bdf94d92c2dba3f4ba53cb2"
+        "8658a396cc64a7a3591a483fd4325fe182b2d6d46bdf94d92c2dba3f4ba53cb2",
+        "a22ceb4f56fa31aa4469e77d8dda17b66e57694fce24ff94055ea30769d8e6cb"
       ]
     },
     ".claude/skills/setup-update/scripts/setup_update.py": {
@@ -120,9 +122,10 @@
       ]
     },
     ".env.template": {
-      "sha256": "561745e9abf520b54f7b1e8e0fb033266e00299f3bdc406e8943356598e203d6",
+      "sha256": "4c9f2856328db28cf40876d6a9e2a5cd00e429b099bbbacfc04f4d1fb41a58e5",
       "previous": [
-        "81ca6deada6ca650dc5b58244853a2bfcde46e36092938f0a3ff92ac584c40c4"
+        "81ca6deada6ca650dc5b58244853a2bfcde46e36092938f0a3ff92ac584c40c4",
+        "561745e9abf520b54f7b1e8e0fb033266e00299f3bdc406e8943356598e203d6"
       ]
     },
     ".github/pull_request_template.md": {
@@ -140,7 +143,7 @@
       ]
     },
     "CLAUDE.md": {
-      "sha256": "3203df2cae0697dde193aca833af4b97048a87cdb6ea1129966a67948d9dbb68",
+      "sha256": "ad8146c43c67286d95f23e19c51872169eeeef95e73ecea2b0f87bdbe41797ee",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -153,36 +156,33 @@
         "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb",
         "d658b403165ff06a02e354a45f872f9de8150bd0301620553bdd483d06369713",
         "a0f023b9156514faa1354331b57c55720af53b3e89e96fad427bea273420111d",
-        "53491df19752a2f51e9980bed6762d23e6d024aa24b461b3c8769b782a2fa194"
+        "53491df19752a2f51e9980bed6762d23e6d024aa24b461b3c8769b782a2fa194",
+        "3203df2cae0697dde193aca833af4b97048a87cdb6ea1129966a67948d9dbb68"
       ]
     },
     "HARNESS.md": {
-      "sha256": "29ed44636ee12feba3175e6c94a33264b797eeb0401e76308a755af1a18ed31e",
+      "sha256": "732eaa697e3d6da14acc06be0aad24dfb336f73d00dae3161b86865765bcaadc",
       "previous": [
         "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
         "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
-        "562aa27ec8bb5dd19bf311b41587de41e4244567efcbd06f38a536e032d72637"
+        "562aa27ec8bb5dd19bf311b41587de41e4244567efcbd06f38a536e032d72637",
+        "29ed44636ee12feba3175e6c94a33264b797eeb0401e76308a755af1a18ed31e"
       ]
     },
     "Makefile": {
-      "sha256": "0bb82810de3f8c22f2223fd7b48d6915ae6283d3f7fd5ca1812acd3e6b8d9176",
+      "sha256": "a0ceb1cccd232378302e547ef5bd3c2a53b6161dff774ebfa2d4ed2367136dba",
       "previous": [
         "dd03fdb0af9a0c26149a3cb5da2ad55e44daf5b99c9e5293e5dd7ce1b747a7b9",
         "8a02e6e63744b4a371303fb604af2c7c2ea4d7bd57a614e9d17e6bb266b54ad2",
         "db936773fa84b46595a03bd8b0833ee9a080ddba8104db81fa3dc4cc42328084",
-        "b98286fffbd69f6dbc4e8b12a858c3a3654dfe972281d25e077634527ff56fdb"
+        "b98286fffbd69f6dbc4e8b12a858c3a3654dfe972281d25e077634527ff56fdb",
+        "0bb82810de3f8c22f2223fd7b48d6915ae6283d3f7fd5ca1812acd3e6b8d9176"
       ]
     },
     "REVIEW.md": {
       "sha256": "991b56d712cd57c6a931a1eefbd22c4792656a62a19018f19f6abb69e4c20f84",
       "previous": [
         "48683d4fd1941d4530d9d71de36b2dbd2f8f34541ff5773f86dd11c412c9c5ee"
-      ]
-    },
-    "config/models.json": {
-      "sha256": "8f6e1f0e12b76a54f5e5521f9695d78e56e5d9b967c55338a5ad3c41b4192605",
-      "previous": [
-        "f3501cad90f43bfcb3957d11f15568be1e38c5159bc255920de0d65423a6456f"
       ]
     },
     "docs/architecture.md": {
@@ -210,13 +210,14 @@
       "previous": []
     },
     "docs/harness/setup.md": {
-      "sha256": "02f77dfcf5de344ba032252afd304550a0090004ec8a3b019c3f9b3a34c1a0eb",
+      "sha256": "3e64699ba5be7e4bdf13b439b3cbb35b8d00749706af58277f1a4c3bcb81d628",
       "previous": [
         "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc",
         "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503",
         "3f67a7c609934dd86a0801c15608a3b3bbd1e71d82b67d7b3e29f2e5f7800930",
         "d451a2a764b33e4e49b2fccd3dd2ff6b892d71bac66efcbb7f7a3f61edffa07b",
-        "f1b2af5a50de521b3b74181e8e951c9364baaa4a4acdbba63c19f85b2e7da768"
+        "f1b2af5a50de521b3b74181e8e951c9364baaa4a4acdbba63c19f85b2e7da768",
+        "02f77dfcf5de344ba032252afd304550a0090004ec8a3b019c3f9b3a34c1a0eb"
       ]
     },
     "docs/harness/testing.md": {
@@ -254,8 +255,10 @@
       "previous": []
     },
     "evals/cases/006-claude-md-budget.yaml": {
-      "sha256": "ae87049989f40bb717c2d366e584b3d977fe86747f79c2acb67593067dfa59b1",
-      "previous": []
+      "sha256": "64924ca6a818491e0377e4f732cfbd1e852b4a289662d6b58149f0153a65bda9",
+      "previous": [
+        "ae87049989f40bb717c2d366e584b3d977fe86747f79c2acb67593067dfa59b1"
+      ]
     },
     "evals/cases/007-shell-portability.yaml": {
       "sha256": "a2edf98f9adec90124d96d293a14110a95eb802f596dd96749e877093ac21392",
@@ -294,19 +297,13 @@
       "previous": []
     },
     "harness_setup.sh": {
-      "sha256": "80af4184ee6b57cd1b816e3049395896836d2bb4aa61a2271fb7f01c5c8f8919",
+      "sha256": "b28b8ed7b012af85648645a867ff9ef8604a6c9a0855b307e322af6275e00a7a",
       "previous": [
         "9a4887b9decd686f4b08155b2e50c969fbbc61799cdc812b24dda1d64be8c1fd",
         "667f5e02bcf45672e930c76a667e7f60afc884751072c3a65394dd0b9b2ba804",
         "6dac1e99e8eae1b2bbf6004d75f65c6a85b97cc01593a638a6a6bbc69dfcf93b",
-        "e9dc8ee00c817813176a7abdf9a665f8686b20ca7320d3272890f38d1313b052"
-      ]
-    },
-    "scripts/configure.py": {
-      "sha256": "3eb12796e36cb052d86d7d6117df384cc93e88a995e5e0a1c1b0ab500619d468",
-      "previous": [
-        "34ff0976423df097867e196108fb7351cfc29045aa7ea819798e604d00d50f7e",
-        "23e6030d0595bf74456ca80e59a376e7acb319f0ba7f4f42e22d669a048b4ef0"
+        "e9dc8ee00c817813176a7abdf9a665f8686b20ca7320d3272890f38d1313b052",
+        "80af4184ee6b57cd1b816e3049395896836d2bb4aa61a2271fb7f01c5c8f8919"
       ]
     }
   }

@@ -12,8 +12,8 @@ git clone <this-repo> my-project && cd my-project
 bash harness_setup.sh
 ```
 
-`harness_setup.sh` installs Python deps via `uv`, applies model assignments from
-`config/models.json`, bootstraps `.env`, and checks for OpenSpec.
+`harness_setup.sh` installs Python deps via `uv`, bootstraps `.env`, and checks
+for OpenSpec.
 
 ### OpenSpec (required for the change loop)
 
@@ -120,10 +120,6 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 │   └── changes/                         # Work in flight, one folder per change
 │       └── archive/                     # Archived changes, dated
 │
-├── config/
-│   └── models.json                      # Model assignments per tier
-├── scripts/
-│   └── configure.py                     # Patches agents with model assignments
 └── docs/
     ├── product.md                       # Durable product intent + non-goals
     ├── architecture.md                  # System shape only (behaviour lives in specs)
