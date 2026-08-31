@@ -1,0 +1,78 @@
+id: testing-and-pr-conventions-intact
+kind: static
+why: >
+  Conventions that live only in prose rot silently. If the PR template loses its
+  test-evidence section, PRs stop carrying it and REVIEW.md's Pass 4 has nothing
+  to check. If the pytest markers go unregistered, `-m "not integration"` selects
+  nothing and the fast loop quietly becomes a no-op that always passes. And a
+  unit suite that has crept into doing I/O stops being the thing you can trust
+  offline, which is the only reason to separate it.
+shell: |
+  fail=0
+
+  # The PR template must exist where GitHub actually looks for it, and keep the
+  # sections a reviewer depends on.
+  tpl=.github/pull_request_template.md
+  if [ ! -f "$tpl" ]; then
+    echo "missing $tpl — GitHub will not prefill PR bodies"; exit 1
+  fi
+  for section in "How this was tested" "Not covered" "Spec compliance" "Risk"; do
+    grep -qi "$section" "$tpl" || { echo "PR template lost section: $section"; fail=1; }
+  done
+  grep -qi "manual" "$tpl" || { echo "PR template must prompt for manual testing"; fail=1; }
+
+  # Markers must be registered: with --strict-markers an unregistered marker is
+  # an error, and without it a typo'd -m selection silently matches nothing.
+  for marker in integration e2e slow; do
+    grep -q "\"$marker:" pyproject.toml \
+      || { echo "pytest marker '$marker' not registered in pyproject.toml"; fail=1; }
+  done
+  grep -q -- "--strict-markers" pyproject.toml \
+    || { echo "--strict-markers missing: a typo'd marker would select nothing"; fail=1; }
+
+  # Reference docs the skill and commands point at must exist.
+  for doc in docs/harness/testing.md docs/harness/commits-and-prs.md; do
+    [ -f "$doc" ] || { echo "missing $doc (referenced by skills/commands)"; fail=1; }
+  done
+
+  # The harness must follow its own layout, or the convention is advice, not practice.
+  [ -d tests/unit ] || { echo "tests/unit/ missing — template violates its own layout"; fail=1; }
+  [ -d tests/integration ] || { echo "tests/integration/ missing"; fail=1; }
+
+  # Parse the unit tests rather than grepping them: a docstring that mentions
+  # "subprocess" is not the same as importing it, and a text search cannot tell
+  # the difference. This checks real imports and real fixture injection.
+  python3 - <<'PYCHECK' || fail=1
+  import ast, pathlib, sys
+
+  BANNED_MODULES = {"subprocess", "socket", "requests", "urllib", "httpx", "sqlite3"}
+  BANNED_FIXTURES = {"tmp_path", "tmp_path_factory", "tmpdir", "httpserver"}
+  problems = []
+
+  for path in sorted(pathlib.Path("tests/unit").rglob("*.py")):
+      if "__pycache__" in path.parts:
+          continue
+      tree = ast.parse(path.read_text())
+      for node in ast.walk(tree):
+          if isinstance(node, ast.Import):
+              for a in node.names:
+                  if a.name.split(".")[0] in BANNED_MODULES:
+                      problems.append(f"{path}: imports {a.name}")
+          elif isinstance(node, ast.ImportFrom):
+              if node.module and node.module.split(".")[0] in BANNED_MODULES:
+                  problems.append(f"{path}: imports from {node.module}")
+          elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+              if not node.name.startswith("test_"):
+                  continue
+              for arg in node.args.args:
+                  if arg.arg in BANNED_FIXTURES:
+                      problems.append(f"{path}::{node.name} uses fixture '{arg.arg}'")
+
+  if problems:
+      print("tests/unit/ must not do I/O or spawn processes — these belong in tests/integration/:")
+      for p in problems:
+          print(f"  {p}")
+      sys.exit(1)
+  PYCHECK
+
+  exit $fail

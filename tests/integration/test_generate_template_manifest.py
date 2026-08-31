@@ -13,7 +13,11 @@ from pathlib import Path
 
 import pytest
 
-SCRIPTS = Path(__file__).parent.parent / "scripts"
+# These exercise real filesystem, git, and subprocess behaviour — that IS the
+# unit under test here. Per docs/harness/testing.md they are integration tests.
+pytestmark = pytest.mark.integration
+
+SCRIPTS = Path(__file__).parents[2] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import generate_template_manifest as g  # noqa: E402
