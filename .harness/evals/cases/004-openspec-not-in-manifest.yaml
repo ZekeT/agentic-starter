@@ -1,0 +1,17 @@
+id: openspec-files-excluded-from-manifest
+kind: static
+why: >
+  Non-negotiable constraint 3. If OpenSpec-owned files enter the manifest, every
+  OpenSpec release lands downstream as "CUSTOMIZED" and setup-update fights
+  `openspec update` for ownership of the same paths. `.claude/commands/opsx/`
+  and `.claude/skills/openspec-*/` are now also gitignored (Phase 3), so this
+  manifest check is the second line of defence rather than the only one.
+shell: |
+  python3 -c "
+import json,sys,pathlib
+m=json.loads(pathlib.Path('.harness/template-manifest.json').read_text())['files']
+bad=[k for k in m if k.startswith(('openspec/','.claude/commands/opsx/','.claude/skills/openspec-'))]
+if bad: print('OpenSpec paths in manifest:', bad); sys.exit(1)
+"
+  git ls-files --error-unmatch .claude/commands/opsx >/dev/null 2>&1 \
+    && { echo "opsx commands are tracked — they must be gitignored"; exit 1; } || true

@@ -19,7 +19,9 @@ Reviewing these wastes attention that the passes below need:
 - Anything a hook already blocks — secrets in writes, `.env` reads, dangerous bash.
 - Generated files: `template-manifest.json`, `uv.lock`, `.claude/commands/opsx/`,
   `.claude/skills/openspec-*/`, `openspec/specs/` (only ever written by
-  `/archive-change`).
+  `/archive-change`). The opsx commands and openspec-* skills are gitignored,
+  so they should never appear in a diff at all — if they do, someone forced
+  them in.
 
 ## Pass 1 — Correctness
 
@@ -68,7 +70,7 @@ stated what they verified, so check that claim rather than reconstructing it.
 - The failure path is tested, not just the happy path
 - Tests are in the right suite: no I/O, network, or subprocess in `tests/unit/`,
   and anything crossing a real boundary carries `@pytest.mark.integration`
-  (see `docs/harness/testing.md`)
+  (see `.harness/docs/testing.md`)
 - Manual verification records the steps **and the observed result**. "Tested
   locally" is not evidence, and should be sent back.
 - The **Not covered** line is filled in. An empty one usually means unexamined,

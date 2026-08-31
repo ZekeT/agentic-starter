@@ -1,0 +1,19 @@
+id: harness-doc-is-template-owned
+kind: static
+why: >
+  HARNESS.md and the eval suite are template-owned. If they fall out of the
+  manifest, setup-update silently stops propagating workflow and eval fixes to
+  forks — the exact drift the manifest exists to prevent. Inverse of case 004:
+  that one keeps OpenSpec's files out, this one keeps ours in.
+shell: |
+  python3 -c "
+import json, sys, pathlib
+m = json.loads(pathlib.Path('.harness/template-manifest.json').read_text())['files']
+required = ('HARNESS.md', '.harness/evals/run_evals.py', '.harness/evals/README.md',
+            '.github/workflows/evals.yml')
+missing = [p for p in required if p not in m]
+if not any(k.startswith('.harness/evals/cases/') for k in m):
+    missing.append('.harness/evals/cases/*.yaml')
+if missing:
+    print('missing from manifest:', missing); sys.exit(1)
+"

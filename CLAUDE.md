@@ -10,13 +10,12 @@ Project brain — loaded into every session, so keep it short. Add a rule under
 ```bash
 make check      # fmt + lint + test — run before every commit
 make fmt lint test clean          # the individual stages
-make configure [PROFILE=<name>]   # apply config/models.json to agents
 make manifest   # after editing a template-owned file, and after a version bump
 ```
 
 Healthy `make check` ends `All done! ✨ 🍰 ✨` / `Success: no issues found` /
 `N passed`. Anything else is a failure to fix, not to work around — never bypass
-it. After editing `config/models.json`, run `make configure`.
+it.
 
 ---
 
@@ -25,7 +24,7 @@ it. After editing `config/models.json`, run `make configure`.
 Python via `uv` + `pyproject.toml`. Formatting, import order, docstring coverage,
 and strict typing are enforced by `make check` — don't hand-audit what it covers.
 Use the `python-standards` skill for what a linter can't (full references:
-`docs/harness/coding-standards.md`, `docs/harness/testing.md`).
+`.harness/docs/coding-standards.md`, `.harness/docs/testing.md`).
 
 ---
 
@@ -37,9 +36,8 @@ Use the `python-standards` skill for what a linter can't (full references:
 | `openspec/specs/` | **Canonical**: what the system does today. Changes only at archive |
 | `openspec/changes/` | Work in flight, one folder per change |
 | `docs/` | `product.md`, `architecture.md` (shape only), `decisions/` (ADRs) |
-| `docs/harness/` | Template-owned docs: setup, coding standards |
-| `config/models.json` | Model assignments per tier |
-| `scripts/` | `configure.py` (shipped); manifest + migration tools (starter-only) |
+| `.harness/docs/` | Template-owned docs: setup, coding standards |
+| `scripts/` | Manifest + migration tools (starter-only) |
 | `src/` | Your code. Each feature dir carries its own `CLAUDE.md` |
 
 Feature `CLAUDE.md` files hold stable facts only — purpose, entry points,
@@ -83,7 +81,7 @@ commit SHA and links back here, never the reverse.
 
 - Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`
 - Commits: `type(scope): description`; PR body is `.github/pull_request_template.md`.
-  Conventions: `docs/harness/commits-and-prs.md`. Nothing reaches `main` unmerged.
+  Conventions: `.harness/docs/commits-and-prs.md`. Nothing reaches `main` unmerged.
 
 ---
 
@@ -102,22 +100,6 @@ via `os.environ` or pydantic `BaseSettings`.
 - Superpowers v6+ is installed globally and triggers automatically.
 - `graphify` is opt-in: it offers itself for broad architecture questions, but is
   never a mandatory first step.
-
----
-
-## Active Model Config
-
-<!-- This section is auto-updated by scripts/configure.py — do not edit manually. -->
-<!-- Run `make configure-show` to see current assignments. -->
-
-Provider: `anthropic`
-
-| Tier | Model |
-|------|-------|
-| planning | `claude-opus-4-8` |
-| review | `claude-opus-4-8` |
-| implement | `claude-sonnet-5` |
-| fast | `claude-haiku-4-5-20251001` |
 
 ---
 

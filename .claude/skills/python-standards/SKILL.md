@@ -10,8 +10,8 @@ description: >
 
 # Python Standards
 
-Full reference with rationale and examples: `docs/harness/coding-standards.md`.
-Testing layout and conventions: `docs/harness/testing.md`.
+Full reference with rationale and examples: `.harness/docs/coding-standards.md`.
+Testing layout and conventions: `.harness/docs/testing.md`.
 This skill is the trimmed, agent-facing version — only the rules `make check`
 can't verify for you.
 
@@ -85,7 +85,7 @@ One-line docstrings are fine for trivial functions:
 
 ## Tests
 
-Layout — full reference in `docs/harness/testing.md`:
+Layout — full reference in `.harness/docs/testing.md`:
 
 ```
 tests/unit/          mirrors src/; no I/O, no network, no subprocess

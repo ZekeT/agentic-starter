@@ -27,6 +27,16 @@ set -e
 SLUG=$(echo "$ARGUMENTS" | awk '{print $1}')
 GROUP=$(echo "$ARGUMENTS" | awk '{print $2}')
 
+if [ -n "$GROUP" ]; then
+  case "$GROUP" in
+    *[!0-9]*|0)
+      echo "ERROR: group must be a positive integer, got '$GROUP'" >&2
+      echo "Omit it entirely to claim the lowest group with unchecked tasks." >&2
+      exit 1
+      ;;
+  esac
+fi
+
 if [ -z "$SLUG" ]; then
   echo "ERROR: usage is /dev-change <slug> [group]" >&2
   echo "" >&2

@@ -40,7 +40,7 @@ BLOCKED_FILENAMES = {
     ".env.development",
     ".env.test",
     ".env.secrets",
-    ".env.claude",  # legacy configure.py output; may hold API URL overrides
+    ".env.claude",  # legacy harness output; may hold API URL overrides
 }
 
 # Patterns in Bash commands that would read .env content into Claude's context.

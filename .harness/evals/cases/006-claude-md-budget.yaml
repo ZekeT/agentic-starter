@@ -1,0 +1,14 @@
+id: claude-md-stays-under-budget
+kind: static
+why: >
+  CLAUDE.md loads into every session. Left ungoverned it accretes until the
+  signal is buried. The budget is 120 lines for the whole file — there is no
+  longer a generated section to exclude, so every line counts against it.
+  Exceeding it means something must be cut, not that the budget should rise.
+shell: |
+  python3 -c "
+import pathlib,sys
+n=len(pathlib.Path('CLAUDE.md').read_text().splitlines())
+print(f'CLAUDE.md budget: {n}/120')
+sys.exit(0 if n<120 else 1)
+"

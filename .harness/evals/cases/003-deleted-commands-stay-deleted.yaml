@@ -1,0 +1,19 @@
+id: waterfall-commands-stay-deleted
+kind: static
+why: >
+  sprint-planning, dev-story and the stories/ tree were removed in template
+  1.3.0; the setup-base and setup-migrate skills in 1.4.0. A stale reference
+  sends an agent to a command that no longer exists, and the failure looks like
+  a bug in the loop rather than a stale doc. A deleted skill is worse: a merge
+  that resurrects it teaches the pre-OpenSpec lifecycle all over again.
+shell: |
+  hits=$(grep -rn -E "sprint-planning|dev-story|stories/(draft|ready|in-progress|review|done)" \
+    CLAUDE.md REVIEW.md HARNESS.md docs/ .harness/docs/ .claude/commands/ .claude/skills/crystallize/ \
+    2>/dev/null | grep -v "\.harness/docs/design\.md" || true)
+  if [ -n "$hits" ]; then echo "stale references to removed workflow:"; echo "$hits"; exit 1; fi
+  for p in stories .claude/commands/sprint-planning.md .claude/commands/dev-story.md \
+           .claude/hooks/stop_story_lifecycle.py docs/prd.md \
+           .claude/skills/setup-base .claude/skills/setup-migrate; do
+    [ -e "$p" ] && { echo "should not exist: $p"; exit 1; }
+  done
+  exit 0
