@@ -17,6 +17,12 @@ Two kinds of case, deliberately:
 Adding a case beats arguing about wording. When a session does the wrong thing
 and you fix the prose, add the case that would have caught it.
 
+**Review cadence.** Read through the suite whenever you bump `TEMPLATE_VERSION`.
+Delete any case whose `why` no longer describes a failure that could actually
+happen — a case guarding a deleted command is pure runtime. A case that has
+never failed is not automatically healthy: confirm it still fails when you break
+the thing it guards, or it is asserting nothing.
+
 ```bash
 make evals        # static only — CI default
 make evals-full   # + prompt cases (needs `claude` on PATH)
