@@ -9,8 +9,12 @@ from pathlib import Path
 
 import pytest
 
+# These exercise real filesystem, git, and subprocess behaviour — that IS the
+# unit under test here. Per docs/harness/testing.md they are integration tests.
+pytestmark = pytest.mark.integration
+
 # Add scripts/ to path so we can import without installing the package
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).parents[2] / "scripts"))
 
 import migrate_to_framework as m  # noqa: E402
 

@@ -11,6 +11,7 @@ description: >
 # Python Standards
 
 Full reference with rationale and examples: `docs/harness/coding-standards.md`.
+Testing layout and conventions: `docs/harness/testing.md`.
 This skill is the trimmed, agent-facing version — only the rules `make check`
 can't verify for you.
 
@@ -81,3 +82,37 @@ def fetch_user(user_id: int) -> User:
 
 One-line docstrings are fine for trivial functions:
 `"""Return the user's full name."""`
+
+## Tests
+
+Layout — full reference in `docs/harness/testing.md`:
+
+```
+tests/unit/          mirrors src/; no I/O, no network, no subprocess
+tests/integration/   crosses a real boundary; mark @pytest.mark.integration
+tests/e2e/           optional; whole system via its public entrypoint
+```
+
+Which folder is decided by **what the test touches**, not what it is named. If it
+can fail because something outside the process is unavailable, it is not a unit
+test — and that includes `tmp_path`, which is a real filesystem.
+
+Don't mock a real boundary to keep a test in `unit/`. That couples the test to
+the implementation and stops proving the boundary works; put it in
+`integration/` and use the real thing.
+
+- Name tests for the behaviour: `test_rejects_negative_amount`, never
+  `test_invoice_1`.
+- New behaviour needs a test that **fails without the change** — write it first
+  and watch it fail, or you haven't shown it tests anything.
+- Test the failure path and the boundaries (empty, one, many, one past the
+  limit), not just the happy path.
+- Assert on observable behaviour. A test that breaks when you rename a private
+  method is testing the wrong thing.
+- Fixtures go in the narrowest `conftest.py` that serves them; default to
+  function scope.
+
+```bash
+uv run pytest -m "not integration and not e2e"   # fast loop while working
+make check                                       # the commit gate
+```

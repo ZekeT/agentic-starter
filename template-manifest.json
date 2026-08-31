@@ -1,6 +1,6 @@
 {
   "template_version": "1.3.0",
-  "generated_at": "2026-08-31T04:43:22+00:00",
+  "generated_at": "2026-08-31T09:04:59+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -14,8 +14,10 @@
       "previous": []
     },
     ".claude/commands/commit-push-pr.md": {
-      "sha256": "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d",
-      "previous": []
+      "sha256": "700d10578dba3ab490046e87527c833640cfe4dcd6a8446c200b0fa6c036ab87",
+      "previous": [
+        "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d"
+      ]
     },
     ".claude/commands/dev-change.md": {
       "sha256": "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08",
@@ -73,9 +75,10 @@
       ]
     },
     ".claude/skills/python-standards/SKILL.md": {
-      "sha256": "5d11df7968764edbd5013afa022d87942e9ea660b5aa80182732eee68c0081bb",
+      "sha256": "4e329f5bd8e1370b374a6a6ea2e0a6ebfc41bb7e4e9d1daaba3dedf6e3754f0e",
       "previous": [
-        "b25bc86e9d450bba9a78a7a449c2b4b8c00e871d50b2ded41c3064e8fd337df4"
+        "b25bc86e9d450bba9a78a7a449c2b4b8c00e871d50b2ded41c3064e8fd337df4",
+        "5d11df7968764edbd5013afa022d87942e9ea660b5aa80182732eee68c0081bb"
       ]
     },
     ".claude/skills/rescan-docs/SKILL.md": {
@@ -135,12 +138,16 @@
         "81ca6deada6ca650dc5b58244853a2bfcde46e36092938f0a3ff92ac584c40c4"
       ]
     },
+    ".github/pull_request_template.md": {
+      "sha256": "473f27c391fa761101ceeae82f02ff3a714a1ffc78890314a880014c0d0c435e",
+      "previous": []
+    },
     ".gitignore": {
       "sha256": "777c14d9dbc4ae5bfc1b9c799db4ae562ca5e64a5107164b1c25649a62f768e6",
       "previous": []
     },
     "CLAUDE.md": {
-      "sha256": "d658b403165ff06a02e354a45f872f9de8150bd0301620553bdd483d06369713",
+      "sha256": "a0f023b9156514faa1354331b57c55720af53b3e89e96fad427bea273420111d",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -150,7 +157,8 @@
         "be64236d3b55d5835a3f62e863de46418e655329f8676777a00ba781153e8375",
         "c18337c5712fea6b68c3519f486fe292d05a9ab90767aa746f6645e1b61b573d",
         "fc8c63f5371ca4cfa489875c5c6812a165adac880a19fb1a834d352e72c0a580",
-        "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb"
+        "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb",
+        "d658b403165ff06a02e354a45f872f9de8150bd0301620553bdd483d06369713"
       ]
     },
     "Makefile": {
@@ -162,8 +170,10 @@
       ]
     },
     "REVIEW.md": {
-      "sha256": "48683d4fd1941d4530d9d71de36b2dbd2f8f34541ff5773f86dd11c412c9c5ee",
-      "previous": []
+      "sha256": "991b56d712cd57c6a931a1eefbd22c4792656a62a19018f19f6abb69e4c20f84",
+      "previous": [
+        "48683d4fd1941d4530d9d71de36b2dbd2f8f34541ff5773f86dd11c412c9c5ee"
+      ]
     },
     "config/models.json": {
       "sha256": "8f6e1f0e12b76a54f5e5521f9695d78e56e5d9b967c55338a5ad3c41b4192605",
@@ -186,12 +196,20 @@
       "sha256": "4b11b4b7cbafed4344a727eca152c19bd15d8b85d224c2103f9d1c3ae59910ef",
       "previous": []
     },
+    "docs/harness/commits-and-prs.md": {
+      "sha256": "ad9600f31d31ea029e19678acaef0b484c3a4f40303243f3cef93534aab63dcf",
+      "previous": []
+    },
     "docs/harness/setup.md": {
       "sha256": "3f67a7c609934dd86a0801c15608a3b3bbd1e71d82b67d7b3e29f2e5f7800930",
       "previous": [
         "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc",
         "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503"
       ]
+    },
+    "docs/harness/testing.md": {
+      "sha256": "122d13030a702c4a65336ed4f3496bbd724a8155603c4b987b3c12176698f7bb",
+      "previous": []
     },
     "docs/product.md": {
       "sha256": "c753c798bb89bd874c8aa5e0e278cbc9653eb8b08206e9177e8ffae0b66b2b92",

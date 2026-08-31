@@ -24,8 +24,8 @@ it. After editing `config/models.json`, run `make configure`.
 
 Python via `uv` + `pyproject.toml`. Formatting, import order, docstring coverage,
 and strict typing are enforced by `make check` — don't hand-audit what it covers.
-Use the `python-standards` skill for what a linter can't (full reference:
-`docs/harness/coding-standards.md`).
+Use the `python-standards` skill for what a linter can't (full references:
+`docs/harness/coding-standards.md`, `docs/harness/testing.md`).
 
 ---
 
@@ -79,7 +79,8 @@ commit SHA and links back here, never the reverse.
 ## Git Strategy
 
 - Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`
-- Commits: `type(scope): description`. Nothing touches `main` until a human merges.
+- Commits: `type(scope): description`; PR body is `.github/pull_request_template.md`.
+  Conventions: `docs/harness/commits-and-prs.md`. Nothing reaches `main` unmerged.
 
 ---
 
