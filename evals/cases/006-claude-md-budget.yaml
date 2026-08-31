@@ -1,0 +1,17 @@
+id: claude-md-stays-under-budget
+kind: static
+why: >
+  CLAUDE.md loads into every session. Left ungoverned it accretes until the
+  signal is buried. 120 lines excluding the generated model block is the budget
+  set when AGENTS.md was merged in; exceeding it means something must be cut,
+  not that the budget should rise.
+shell: |
+  python3 -c "
+import pathlib,sys
+lines=pathlib.Path('CLAUDE.md').read_text().splitlines()
+s=next(i for i,l in enumerate(lines) if l.startswith('## Active Model Config'))
+e=next(i for i,l in enumerate(lines) if l.startswith('## Rules'))
+b=len(lines)-(e-s)
+print(f'CLAUDE.md budget: {b}/120')
+sys.exit(0 if b<120 else 1)
+"

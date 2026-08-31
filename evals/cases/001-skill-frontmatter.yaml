@@ -1,0 +1,17 @@
+id: skill-frontmatter-parses
+kind: static
+why: >
+  A malformed skill frontmatter makes the skill silently invisible to Claude
+  Code — it does not error, it just never triggers. Nothing else catches this.
+shell: |
+  fail=0
+  for f in .claude/skills/*/SKILL.md; do
+    head -1 "$f" | grep -q '^---$' || { echo "no opening --- : $f"; fail=1; }
+    awk 'NR>1 && /^---$/{found=1; exit} END{exit !found}' "$f" \
+      || { echo "no closing --- : $f"; fail=1; }
+    awk 'NR>1 && /^---$/{exit} /^name:/{n=1} END{exit !n}' "$f" \
+      || { echo "no name: field : $f"; fail=1; }
+    awk 'NR>1 && /^---$/{exit} /^description:/{d=1} END{exit !d}' "$f" \
+      || { echo "no description: field : $f"; fail=1; }
+  done
+  exit $fail

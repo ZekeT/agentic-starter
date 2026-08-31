@@ -44,6 +44,7 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/commands/dev-change.md": ".claude/commands/dev-change.md",
     ".claude/commands/archive-change.md": ".claude/commands/archive-change.md",
     ".claude/settings.json": ".claude/settings.json",
+    "REVIEW.md": "REVIEW.md",
     "config/models.json": "config/models.json",
     "scripts/configure.py": "scripts/configure.py",
     # Docs — product.md/architecture.md are placeholders the team fills in

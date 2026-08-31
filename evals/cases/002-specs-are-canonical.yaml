@@ -1,0 +1,11 @@
+id: specs-never-edited-directly
+kind: static
+why: >
+  The single most important invariant of the change loop. If openspec/specs/ can
+  be edited outside /archive-change, it stops being a trustworthy record of
+  current behaviour and the whole migration was pointless.
+shell: |
+  grep -q "Never edit .openspec/specs/. directly" CLAUDE.md \
+    || { echo "CLAUDE.md Rules must forbid editing openspec/specs/ directly"; exit 1; }
+  grep -q "openspec/specs/" REVIEW.md \
+    || { echo "REVIEW.md compliance pass must check for direct spec edits"; exit 1; }

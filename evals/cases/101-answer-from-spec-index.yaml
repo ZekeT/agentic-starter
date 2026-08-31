@@ -1,0 +1,11 @@
+id: answers-current-behaviour-from-spec-index
+kind: prompt
+why: >
+  The retrieval protocol's whole purpose. The failure mode is bulk-reading
+  openspec/ or grepping the source, which is the eager-context problem the
+  migration was built to remove.
+prompt: |
+  What does this system currently do about rate limiting? Tell me the exact
+  first command you would run to find out, and nothing else.
+expect: |
+  openspec list --specs

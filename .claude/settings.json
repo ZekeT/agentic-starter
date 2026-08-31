@@ -6,11 +6,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/pre_tool_dangerous.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre_tool_dangerous.py"
           },
           {
             "type": "command",
-            "command": "python3 .claude/hooks/pre_tool_env_guard.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre_tool_env_guard.py"
           }
         ]
       },
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/pre_tool_env_guard.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre_tool_env_guard.py"
           }
         ]
       }
@@ -30,15 +30,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/post_tool_secrets.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_tool_secrets.py"
           },
           {
             "type": "command",
-            "command": "python3 .claude/hooks/post_tool_lint.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_tool_lint.py"
           },
           {
             "type": "command",
-            "command": "python3 .claude/hooks/post_tool_feature_claude_reminder.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_tool_feature_claude_reminder.py"
           }
         ]
       }

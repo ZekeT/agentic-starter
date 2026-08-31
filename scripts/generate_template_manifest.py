@@ -38,6 +38,7 @@ VERSION_PATH = ROOT / "TEMPLATE_VERSION"
 # copied into a downstream project.
 MANIFEST_FILES = [
     "CLAUDE.md",
+    "REVIEW.md",
     "Makefile",
     "harness_setup.sh",
     ".gitignore",

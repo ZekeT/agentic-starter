@@ -3,7 +3,7 @@
 # Referenced in CLAUDE.md so agents always use these targets.
 # ============================================================
 
-.PHONY: install fmt lint test check clean setup-hooks configure configure-show configure-list
+.PHONY: install fmt lint test check clean setup-hooks configure configure-show configure-list evals evals-full manifest
 
 # Source directory — override with: make fmt SRC=mypackage
 SRC ?= src
@@ -50,6 +50,17 @@ test:
 # Order matters: fmt first so lint sees clean code.
 
 check: fmt lint test
+
+# ---- Harness evals ----------------------------------------
+# This repo IS agent configuration; tests/ only covers the Python scripts.
+# `evals` is static-only (fast, free, CI default). `evals-full` also runs the
+# prompt cases through `claude -p`, which costs tokens and needs auth.
+
+evals:
+	python3 evals/run_evals.py
+
+evals-full:
+	python3 evals/run_evals.py --full
 
 # ---- Model configuration ----------------------------------
 # Edit config/models.json then run one of these.

@@ -8,19 +8,10 @@ Project brain — loaded into every session, so keep it short. Add a rule under
 ## Build & Dev Commands
 
 ```bash
-make install    # install all deps (uv sync)
-make fmt        # format: black + isort + autoflake
-make lint       # check: black, isort, interrogate, mypy
-make test       # pytest
 make check      # fmt + lint + test — run before every commit
-make clean      # remove __pycache__, .pytest_cache, dist
-
-make configure                 # apply config/models.json to all agents
-make configure PROFILE=<name>  # switch profile (list: make configure-list)
-make configure-show            # print current model assignments
-
-make manifest   # regenerate template-manifest.json after editing any
-                # template-owned file, before bumping TEMPLATE_VERSION
+make fmt lint test clean          # the individual stages
+make configure [PROFILE=<name>]   # apply config/models.json to agents
+make manifest   # after editing any template-owned file, before a version bump
 ```
 
 Healthy `make check` ends `All done! ✨ 🍰 ✨` / `Success: no issues found` /
@@ -74,6 +65,17 @@ Four human gates: intent, spec+tasks, PR merge, archived spec diff.
 
 ---
 
+## Retrieval Protocol
+
+For "what does the system do today?", read `openspec list --specs` for the index,
+then open only the named capability files. Never bulk-read `openspec/` or `docs/`
+— the whole loop exists so context loads per-change, not per-project.
+
+The repo is the source of truth for every artifact. An external tracker holds a
+commit SHA and links back here, never the reverse.
+
+---
+
 ## Git Strategy
 
 - Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`
@@ -89,21 +91,10 @@ via `os.environ` or pydantic `BaseSettings`.
 
 ---
 
-## PR Checklist
-
-Beyond what hooks and `make check` already enforce:
-
-- [ ] Every task in the group is ticked in the change's `tasks.md`
-- [ ] Tests added for new behaviour
-- [ ] No bare `except:` clauses
-- [ ] External data validated via pydantic/marshmallow
-
----
-
 ## Claude Code specifics
 
-- Hooks are wired in `.claude/settings.json` (env guard, dangerous-bash, secrets,
-  lint, feature-CLAUDE.md reminder). Never bypass them.
+- Hooks in `.claude/settings.json` (env guard, dangerous-bash, secrets, lint,
+  feature-CLAUDE.md reminder). Never bypass them. Review policy: `REVIEW.md`.
 - Superpowers v6+ is installed globally and triggers automatically.
 - `graphify` is opt-in: it offers itself for broad architecture questions, but is
   never a mandatory first step.
@@ -128,6 +119,13 @@ Provider: `anthropic`
 
 ## Rules
 
-- When a story leaves a real ambiguity unresolved — architectural direction,
-  contradictory requirements, a non-obvious security tradeoff — stop and ask the
-  user. Do not guess, and do not widen scope to route around it.
+- **Never edit `openspec/specs/` directly.** All behaviour changes enter through
+  `openspec/changes/`, and land only via `/archive-change`.
+- If implementation shows an existing spec assumption is wrong, never silently
+  fix the code around it: amend the active change's delta if the correction is
+  small, open a new change if it is large. If which one is unclear, stop and ask.
+- When implementation departs from `tasks.md`, update it in the same commit. It
+  is an audit artifact PR review checks the diff against, not scaffolding.
+- When a change or spec leaves a real ambiguity unresolved — architectural
+  direction, contradictory requirements, a non-obvious security tradeoff — stop
+  and ask the user. Do not guess, and do not widen scope to route around it.

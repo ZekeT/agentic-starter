@@ -1,11 +1,12 @@
 {
-  "template_version": "1.2.1",
-  "generated_at": "2026-08-31T04:32:14+00:00",
+  "template_version": "1.3.0",
+  "generated_at": "2026-08-31T04:37:44+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
-      "sha256": "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b",
+      "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
       "previous": [
-        "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177"
+        "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
+        "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b"
       ]
     },
     ".claude/commands/archive-change.md": {
@@ -52,12 +53,13 @@
       ]
     },
     ".claude/settings.json": {
-      "sha256": "35e2b7483ff6e8311718446f1b070523b133a8b739d66c3fed58e138b0ac1861",
+      "sha256": "63d8865eccd4dfe82fcd76e03e8976a577d564b392bb6f997e50c76def876629",
       "previous": [
         "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
         "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
         "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
-        "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e"
+        "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e",
+        "35e2b7483ff6e8311718446f1b070523b133a8b739d66c3fed58e138b0ac1861"
       ]
     },
     ".claude/skills/crystallize/SKILL.md": {
@@ -138,7 +140,7 @@
       "previous": []
     },
     "CLAUDE.md": {
-      "sha256": "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb",
+      "sha256": "d658b403165ff06a02e354a45f872f9de8150bd0301620553bdd483d06369713",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -147,15 +149,21 @@
         "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6",
         "be64236d3b55d5835a3f62e863de46418e655329f8676777a00ba781153e8375",
         "c18337c5712fea6b68c3519f486fe292d05a9ab90767aa746f6645e1b61b573d",
-        "fc8c63f5371ca4cfa489875c5c6812a165adac880a19fb1a834d352e72c0a580"
+        "fc8c63f5371ca4cfa489875c5c6812a165adac880a19fb1a834d352e72c0a580",
+        "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb"
       ]
     },
     "Makefile": {
-      "sha256": "db936773fa84b46595a03bd8b0833ee9a080ddba8104db81fa3dc4cc42328084",
+      "sha256": "b98286fffbd69f6dbc4e8b12a858c3a3654dfe972281d25e077634527ff56fdb",
       "previous": [
         "dd03fdb0af9a0c26149a3cb5da2ad55e44daf5b99c9e5293e5dd7ce1b747a7b9",
-        "8a02e6e63744b4a371303fb604af2c7c2ea4d7bd57a614e9d17e6bb266b54ad2"
+        "8a02e6e63744b4a371303fb604af2c7c2ea4d7bd57a614e9d17e6bb266b54ad2",
+        "db936773fa84b46595a03bd8b0833ee9a080ddba8104db81fa3dc4cc42328084"
       ]
+    },
+    "REVIEW.md": {
+      "sha256": "48683d4fd1941d4530d9d71de36b2dbd2f8f34541ff5773f86dd11c412c9c5ee",
+      "previous": []
     },
     "config/models.json": {
       "sha256": "8f6e1f0e12b76a54f5e5521f9695d78e56e5d9b967c55338a5ad3c41b4192605",
