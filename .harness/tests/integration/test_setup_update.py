@@ -14,7 +14,7 @@ pytestmark = pytest.mark.integration
 
 # Add the skill's scripts/ dir to path so we can import without installing.
 SKILL_SCRIPTS = (
-    Path(__file__).parents[2] / ".claude" / "skills" / "setup-update" / "scripts"
+    Path(__file__).parents[3] / ".claude" / "skills" / "setup-update" / "scripts"
 )
 sys.path.insert(0, str(SKILL_SCRIPTS))
 
@@ -239,6 +239,23 @@ def test_load_manifest_missing_exits(tmp_path: Path) -> None:
     starter.mkdir()
     with pytest.raises(SystemExit):
         u.load_manifest(starter)
+
+
+def test_load_manifest_finds_new_harness_location(tmp_path: Path) -> None:
+    """The .harness/ layout (current) is checked first."""
+    starter = make_starter(tmp_path, {"a.txt": "hello"})
+    manifest_body = json.loads((starter / u.MANIFEST_NAME).read_text())
+    (starter / u.MANIFEST_NAME).unlink()
+    (starter / ".harness").mkdir()
+    (starter / ".harness" / u.MANIFEST_NAME).write_text(json.dumps(manifest_body))
+    assert u.load_manifest(starter) == manifest_body
+
+
+def test_load_manifest_falls_back_to_old_root_location(tmp_path: Path) -> None:
+    """A pre-.harness/ starter (older template version) still works."""
+    starter = make_starter(tmp_path, {"a.txt": "hello"})
+    manifest = u.load_manifest(starter)
+    assert manifest["files"]["a.txt"]["sha256"] == u.sha256_of(starter / "a.txt")
 
 
 # ── OpenSpec ownership ───────────────────────────────────────────────────────

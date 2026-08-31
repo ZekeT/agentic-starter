@@ -8,12 +8,12 @@ why: >
 shell: |
   python3 -c "
 import json, sys, pathlib
-m = json.loads(pathlib.Path('template-manifest.json').read_text())['files']
-required = ('HARNESS.md', 'evals/run_evals.py', 'evals/README.md',
+m = json.loads(pathlib.Path('.harness/template-manifest.json').read_text())['files']
+required = ('HARNESS.md', '.harness/evals/run_evals.py', '.harness/evals/README.md',
             '.github/workflows/evals.yml')
 missing = [p for p in required if p not in m]
-if not any(k.startswith('evals/cases/') for k in m):
-    missing.append('evals/cases/*.yaml')
+if not any(k.startswith('.harness/evals/cases/') for k in m):
+    missing.append('.harness/evals/cases/*.yaml')
 if missing:
     print('missing from manifest:', missing); sys.exit(1)
 "

@@ -5,14 +5,14 @@ This repo *is* agent configuration, so the things most likely to regress are
 prose: CLAUDE.md's rules, a skill's frontmatter, a command's shell preamble.
 `tests/` covers the Python scripts; this covers everything that steers a model.
 
-Two kinds of case (see evals/README.md):
+Two kinds of case (see .harness/evals/README.md):
 
   static  — assert something about the repo. Fast, free, deterministic.
   prompt  — run `claude -p` and assert on the reply. Costs tokens, needs auth.
 
-    python evals/run_evals.py            # static only (CI default)
-    python evals/run_evals.py --full     # + prompt cases
-    python evals/run_evals.py --only 003 # single case by id prefix
+    make evals                                    # static only (CI default)
+    python3 .harness/evals/run_evals.py --full     # + prompt cases
+    python3 .harness/evals/run_evals.py --only 003 # single case by id prefix
 
 Stdlib-only on purpose: this must run in CI without installing the project.
 """
@@ -26,7 +26,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent
 CASES_DIR = Path(__file__).parent / "cases"
 PROMPT_TIMEOUT = 180
 

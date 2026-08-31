@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# harness_setup.sh — bootstrap a new project from this template
-# Run once after cloning: bash harness_setup.sh
-# Verify an existing project without changing it: bash harness_setup.sh --check
+# .harness/setup.sh — bootstrap a new project from this template
+# Run once after cloning: make setup
+# Verify an existing project without changing it: bash .harness/setup.sh --check
 
 set -e
 
@@ -63,14 +63,14 @@ EOF
 
   echo ""
   echo "Template manifest"
-  if [ -f template-manifest.json ]; then
-    if python3 -c "import json,sys; d=json.load(open('template-manifest.json')); sys.exit(0 if d.get('files') else 1)" 2>/dev/null; then
-      ok "template-manifest.json valid ($(python3 -c "import json;print(len(json.load(open('template-manifest.json'))['files']))") files)"
+  if [ -f .harness/template-manifest.json ]; then
+    if python3 -c "import json,sys; d=json.load(open('.harness/template-manifest.json')); sys.exit(0 if d.get('files') else 1)" 2>/dev/null; then
+      ok ".harness/template-manifest.json valid ($(python3 -c "import json;print(len(json.load(open('.harness/template-manifest.json'))['files']))") files)"
     else
-      bad "template-manifest.json is not valid JSON, or lists no files"
+      bad ".harness/template-manifest.json is not valid JSON, or lists no files"
     fi
   else
-    soft "template-manifest.json absent — setup-update has nothing to diff against"
+    soft ".harness/template-manifest.json absent — setup-update has nothing to diff against"
   fi
 
   echo ""

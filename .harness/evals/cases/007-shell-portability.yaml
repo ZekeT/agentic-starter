@@ -9,7 +9,7 @@ why: >
   metacharacters without the -E flag that enables them.
 shell: |
   fail=0
-  files=$(find .claude/commands .claude/skills -name '*.md' 2>/dev/null; echo harness_setup.sh)
+  files=$(find .claude/commands .claude/skills -name '*.md' 2>/dev/null; echo .harness/setup.sh)
 
   # 1. GNU-only escapes (\+ \? \| \{) are inert in a BSD basic regex.
   hits=$(grep -rn 'sed ' $files 2>/dev/null | grep -E '\\[+?|{]' || true)

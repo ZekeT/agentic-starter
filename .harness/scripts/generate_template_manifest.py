@@ -11,7 +11,7 @@ any previous hash is a pristine copy of an older release.
 
 Run after changing any template-owned file, before tagging a release:
 
-    make manifest        # or: uv run python scripts/generate_template_manifest.py
+    make manifest        # or: uv run python .harness/scripts/generate_template_manifest.py
 
 Maintainer tool for the starter repo only — never copied to target projects.
 """
@@ -24,9 +24,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).parent.parent
-MANIFEST_PATH = ROOT / "template-manifest.json"
-VERSION_PATH = ROOT / "TEMPLATE_VERSION"
+ROOT = Path(__file__).parent.parent.parent
+MANIFEST_PATH = ROOT / ".harness" / "template-manifest.json"
+VERSION_PATH = ROOT / ".harness" / "TEMPLATE_VERSION"
 
 # Exact template-owned files at fixed paths.
 # NOTE: pyproject.toml is deliberately excluded — migrate_to_framework.py
@@ -40,7 +40,7 @@ MANIFEST_FILES = [
     "CLAUDE.md",
     "REVIEW.md",
     "Makefile",
-    "harness_setup.sh",
+    ".harness/setup.sh",
     ".gitignore",
     ".env.template",
     ".claude/settings.json",
@@ -55,8 +55,8 @@ MANIFEST_FILES = [
     "docs/product.md",
     "docs/decisions/index.md",
     "HARNESS.md",
-    "evals/README.md",
-    "evals/run_evals.py",
+    ".harness/evals/README.md",
+    ".harness/evals/run_evals.py",
     ".github/workflows/evals.yml",
 ]
 
@@ -73,7 +73,7 @@ MANIFEST_GLOBS = [
     ".claude/hooks/*.py",
     ".claude/commands/*.md",
     ".claude/agents/*.md",
-    "evals/cases/*.yaml",
+    ".harness/evals/cases/*.yaml",
 ]
 
 # Our skills, walked recursively.
@@ -102,10 +102,22 @@ OPENSPEC_OWNED_PREFIXES = (
     ".claude/skills/openspec-",
 )
 
+# Starter-repo-only maintainer tooling — never shipped to a fork. Same
+# guarantee-not-accident reasoning as OPENSPEC_OWNED_PREFIXES above.
+STARTER_ONLY_PREFIXES = (
+    ".harness/tests/",
+    ".harness/scripts/",
+)
+
 
 def is_openspec_owned(rel: str) -> bool:
     """Return True if a repo-relative path belongs to the OpenSpec CLI."""
     return rel.startswith(OPENSPEC_OWNED_PREFIXES)
+
+
+def is_starter_only(rel: str) -> bool:
+    """Return True if a repo-relative path is starter-repo tooling, never shipped."""
+    return rel.startswith(STARTER_ONLY_PREFIXES)
 
 
 def sha256_of(path: Path) -> str:
@@ -132,7 +144,12 @@ def collect_files() -> list[Path]:
                 and not EXCLUDED_PARTS.intersection(p.parts)
                 and p.name not in EXCLUDED_NAMES
             )
-    return sorted(p for p in found if not is_openspec_owned(p.relative_to(ROOT).as_posix()))
+    return sorted(
+        p
+        for p in found
+        if not is_openspec_owned(p.relative_to(ROOT).as_posix())
+        and not is_starter_only(p.relative_to(ROOT).as_posix())
+    )
 
 
 def load_previous_manifest() -> dict[str, Any]:

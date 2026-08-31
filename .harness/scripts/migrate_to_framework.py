@@ -10,9 +10,9 @@ dedicated `chore/harness-migration` branch so the result is reviewable and
 undoable. Writes MIGRATION_REPORT.md as the review artifact.
 
 Run from anywhere — the starter root is derived from this file's location:
-    python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target
-    python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target --dry
-    python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/target --force
+    python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/target
+    python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/target --dry
+    python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/target --force
 """
 
 from __future__ import annotations
@@ -33,13 +33,13 @@ from pathlib import Path
 if sys.version_info < (3, 11):
     print("Error: Python 3.11+ required (tomllib is stdlib from 3.11).")
     print(f"       Running under {sys.version.split()[0]} ({sys.executable}).")
-    print("       Try: uv run python scripts/migrate_to_framework.py ...")
+    print("       Try: uv run python .harness/scripts/migrate_to_framework.py ...")
     sys.exit(1)
 
 import tomllib  # noqa: E402  — must follow the version guard above
 
 # ── source root ───────────────────────────────────────────────────────────────
-STARTER_DIR = Path(__file__).parent.parent
+STARTER_DIR = Path(__file__).parent.parent.parent
 
 # ── files to copy: starter-relative → target-relative ────────────────────────
 FILES_TO_COPY: dict[str, str] = {
@@ -1173,7 +1173,7 @@ def get_starter_version(starter: Path) -> str:
     Returns:
         The template version string, or "unknown" if neither is available.
     """
-    version_file = starter / "TEMPLATE_VERSION"
+    version_file = starter / ".harness" / "TEMPLATE_VERSION"
     if version_file.exists():
         version = version_file.read_text().strip()
         if version:
@@ -1423,9 +1423,9 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
-            "  python scripts/migrate_to_framework.py /path/to/my-project\n"
-            "  python scripts/migrate_to_framework.py /path/to/my-project --dry\n"
-            "  python scripts/migrate_to_framework.py /path/to/my-project --force\n"
+            "  python .harness/scripts/migrate_to_framework.py /path/to/my-project\n"
+            "  python .harness/scripts/migrate_to_framework.py /path/to/my-project --dry\n"
+            "  python .harness/scripts/migrate_to_framework.py /path/to/my-project --force\n"
         ),
     )
     parser.add_argument("target", help="Path to the target project directory")

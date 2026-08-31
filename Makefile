@@ -3,7 +3,7 @@
 # Referenced in CLAUDE.md so agents always use these targets.
 # ============================================================
 
-.PHONY: install fmt lint test check clean evals evals-full manifest
+.PHONY: install fmt lint test check clean evals evals-full manifest setup harness-test
 
 # Source directory — override with: make fmt SRC=mypackage
 SRC ?= src
@@ -41,9 +41,12 @@ else
 endif
 
 # ---- Test -------------------------------------------------
+# Exit 5 = pytest collected zero tests, which is the fork's own tests/ before
+# any product code exists — the same pre-setup state HAS_SRC_FILES skips above.
+# Any other nonzero exit (real failures, errors) still fails the gate.
 
 test:
-	uv run pytest
+	uv run pytest || test $$? -eq 5
 
 # ---- Combined gate (run before every commit) --------------
 # Mirrors the pre-commit hook logic so CI never surprises you.
@@ -57,10 +60,10 @@ check: fmt lint test
 # prompt cases through `claude -p`, which costs tokens and needs auth.
 
 evals:
-	python3 evals/run_evals.py
+	python3 .harness/evals/run_evals.py
 
 evals-full:
-	python3 evals/run_evals.py --full
+	python3 .harness/evals/run_evals.py --full
 
 # ---- Clean ------------------------------------------------
 
@@ -77,4 +80,12 @@ clean:
 # Powers the setup-update skill's staleness detection in downstream projects.
 
 manifest:
-	uv run python scripts/generate_template_manifest.py
+	uv run python .harness/scripts/generate_template_manifest.py
+
+setup:
+	bash .harness/setup.sh
+
+# Starter-repo only: tests of the maintainer scripts. Explicit path, and
+# addopts cleared because the shipped --cov=src does not apply here.
+harness-test:
+	uv run pytest .harness/tests -o addopts="" -q

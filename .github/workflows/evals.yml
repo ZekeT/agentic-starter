@@ -11,9 +11,10 @@ on:
       - "CLAUDE.md"
       - "REVIEW.md"
       - ".claude/**"
-      - "evals/**"
+      - ".harness/evals/**"
+      - ".harness/setup.sh"
       - "openspec/config.yaml"
-      - "template-manifest.json"
+      - ".harness/template-manifest.json"
   schedule:
     # Weekly, to catch drift from merges that skipped the path filter.
     - cron: "0 9 * * 1"
@@ -32,7 +33,7 @@ jobs:
       # The runner is Linux (GNU sed); the eval that checks BSD/GNU sed
       # portability is a static grep, so it is dialect-independent.
       - name: Run static evals
-        run: python3 evals/run_evals.py
+        run: python3 .harness/evals/run_evals.py
 
   tests:
     runs-on: ubuntu-latest
@@ -47,12 +48,15 @@ jobs:
       - name: make check
         run: make check
 
+      - name: make harness-test
+        run: make harness-test
+
       - name: Manifest is current
         run: |
-          uv run python scripts/generate_template_manifest.py
+          uv run python .harness/scripts/generate_template_manifest.py
           # generated_at always changes; only a real content change matters.
-          if ! git diff --quiet -I'"generated_at"' -- template-manifest.json; then
-            echo "template-manifest.json is stale — run 'make manifest' and commit."
-            git diff -I'"generated_at"' -- template-manifest.json
+          if ! git diff --quiet -I'"generated_at"' -- .harness/template-manifest.json; then
+            echo ".harness/template-manifest.json is stale — run 'make manifest' and commit."
+            git diff -I'"generated_at"' -- .harness/template-manifest.json
             exit 1
           fi

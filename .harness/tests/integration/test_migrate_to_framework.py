@@ -1,4 +1,4 @@
-"""Tests for scripts/migrate_to_framework.py."""
+"""Tests for .harness/scripts/migrate_to_framework.py."""
 
 from __future__ import annotations
 

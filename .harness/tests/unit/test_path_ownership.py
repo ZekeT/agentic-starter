@@ -18,8 +18,8 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).parents[2]
-sys.path.insert(0, str(ROOT / "scripts"))
+ROOT = Path(__file__).parents[3]
+sys.path.insert(0, str(ROOT / ".harness" / "scripts"))
 sys.path.insert(0, str(ROOT / ".claude" / "skills" / "setup-update" / "scripts"))
 
 import generate_template_manifest as gen  # noqa: E402

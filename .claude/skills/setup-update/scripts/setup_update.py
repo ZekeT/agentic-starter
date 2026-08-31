@@ -2,7 +2,7 @@
 """Update a project created from agentic-starter to the latest template.
 
 Compares every template-owned file in the target against the starter's
-template-manifest.json (see scripts/generate_template_manifest.py):
+template-manifest.json (see .harness/scripts/generate_template_manifest.py):
 
   - missing in target                → NEW: copied from the starter
   - matches the current hash         → up to date: skipped
@@ -96,12 +96,13 @@ def sha256_of(path: Path) -> str:
 
 def load_manifest(starter: Path) -> dict[str, Any]:
     """Load template-manifest.json from the starter, or exit with an error."""
-    manifest_path = starter / MANIFEST_NAME
-    if not manifest_path.exists():
-        fail(f"{MANIFEST_NAME} not found in starter: {starter}")
-        info("Regenerate it there first: make manifest")
-        sys.exit(1)
-    return json.loads(manifest_path.read_text())  # type: ignore[no-any-return]
+    for rel in (".harness/template-manifest.json", MANIFEST_NAME):
+        manifest_path = starter / rel
+        if manifest_path.exists():
+            return json.loads(manifest_path.read_text())  # type: ignore[no-any-return]
+    fail(f"{MANIFEST_NAME} not found in starter: {starter}")
+    info("Regenerate it there first: make manifest")
+    sys.exit(1)
 
 
 def read_target_version(target: Path) -> str:

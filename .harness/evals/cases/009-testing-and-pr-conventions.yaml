@@ -36,8 +36,8 @@ shell: |
   done
 
   # The harness must follow its own layout, or the convention is advice, not practice.
-  [ -d tests/unit ] || { echo "tests/unit/ missing — template violates its own layout"; fail=1; }
-  [ -d tests/integration ] || { echo "tests/integration/ missing"; fail=1; }
+  [ -d .harness/tests/unit ] || { echo ".harness/tests/unit/ missing — template violates its own layout"; fail=1; }
+  [ -d .harness/tests/integration ] || { echo ".harness/tests/integration/ missing"; fail=1; }
 
   # Parse the unit tests rather than grepping them: a docstring that mentions
   # "subprocess" is not the same as importing it, and a text search cannot tell
@@ -49,7 +49,7 @@ shell: |
   BANNED_FIXTURES = {"tmp_path", "tmp_path_factory", "tmpdir", "httpserver"}
   problems = []
 
-  for path in sorted(pathlib.Path("tests/unit").rglob("*.py")):
+  for path in sorted(pathlib.Path(".harness/tests/unit").rglob("*.py")):
       if "__pycache__" in path.parts:
           continue
       tree = ast.parse(path.read_text())
@@ -69,7 +69,7 @@ shell: |
                       problems.append(f"{path}::{node.name} uses fixture '{arg.arg}'")
 
   if problems:
-      print("tests/unit/ must not do I/O or spawn processes — these belong in tests/integration/:")
+      print(".harness/tests/unit/ must not do I/O or spawn processes — these belong in .harness/tests/integration/:")
       for p in problems:
           print(f"  {p}")
       sys.exit(1)

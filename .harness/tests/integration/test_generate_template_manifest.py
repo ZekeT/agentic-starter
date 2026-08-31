@@ -1,4 +1,4 @@
-"""Tests for scripts/generate_template_manifest.py.
+"""Tests for .harness/scripts/generate_template_manifest.py.
 
 Focused on the non-negotiable constraint: files owned by the OpenSpec CLI must
 never be hashed into template-manifest.json. If they were, every OpenSpec

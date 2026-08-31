@@ -49,7 +49,7 @@ Thumbs.db
 .superpowers/
 
 # OpenSpec-generated tool files — written by `openspec init` / `openspec update`,
-# version-stamped by the CLI that wrote them. harness_setup.sh generates them.
+# version-stamped by the CLI that wrote them. .harness/setup.sh generates them.
 # NOTE: openspec/ itself (specs, changes, config.yaml) IS committed.
 .claude/commands/opsx/
 .claude/skills/openspec-*/

@@ -1,6 +1,6 @@
 {
   "template_version": "1.4.0",
-  "generated_at": "2026-08-31T17:44:53+00:00",
+  "generated_at": "2026-08-31T17:59:26+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -115,14 +115,15 @@
       ]
     },
     ".claude/skills/setup-update/scripts/setup_update.py": {
-      "sha256": "9d33776ddb2f34704c7ba46a7255c1e18f245fa38dad88a025c70e948f85e8aa",
+      "sha256": "3545adb35e74318ced3c3f5a04a00c7ece0dd3f1cc6ab8f954aa44cdd8f7a12f",
       "previous": [
         "cef321f0439a74c260a21434a5fc2debd8c4cefa0f3ca02db59f9dc9bd42a79e",
         "2093449754cd3e61f48bd61368e6c4df90c3ef8bfbd4f7f95070f2a129f2f7ba",
         "792fdc3d789bcd76b3069700d0f272c8728d897fad8dddb709f8b7248b885660",
         "407ad08a0b19622dee07559e75ef040cea3210325ad289d8620c13b026ab074d",
         "c67ce4a58fb8c84004101e26ea6074f48ccacee25fa4cea59779b47d3498fa60",
-        "abdfc55fb5af3050e4594a0ec7325de169c10cd81ca0e5a38f836e18882183c5"
+        "abdfc55fb5af3050e4594a0ec7325de169c10cd81ca0e5a38f836e18882183c5",
+        "9d33776ddb2f34704c7ba46a7255c1e18f245fa38dad88a025c70e948f85e8aa"
       ]
     },
     ".claude/statusline.sh": {
@@ -141,15 +142,86 @@
       "previous": []
     },
     ".github/workflows/evals.yml": {
-      "sha256": "338694a8fd0557816e34cebb47516c800793fcaaf759444209e622d7e6e2f08a",
-      "previous": []
+      "sha256": "d17cd8dac93d408581b2892406579202ae417e054c989f3a459656d9ec8a7c11",
+      "previous": [
+        "338694a8fd0557816e34cebb47516c800793fcaaf759444209e622d7e6e2f08a"
+      ]
     },
     ".gitignore": {
-      "sha256": "29019a5f930451c8d70d21fcdf9bcb4164c2532d423909c320e76c4fd6aef294",
+      "sha256": "1947e6dd184fdc3f62bbf5926a89ca6a33c2daf250a479f3cabd07380806e058",
       "previous": [
         "777c14d9dbc4ae5bfc1b9c799db4ae562ca5e64a5107164b1c25649a62f768e6",
-        "0701c0ffd0c3fab3c7fc7388ac9b103bbe6a0f3a44a0dfc3cb0edb65cd3aec0c"
+        "0701c0ffd0c3fab3c7fc7388ac9b103bbe6a0f3a44a0dfc3cb0edb65cd3aec0c",
+        "29019a5f930451c8d70d21fcdf9bcb4164c2532d423909c320e76c4fd6aef294"
       ]
+    },
+    ".harness/evals/README.md": {
+      "sha256": "af1da9981a8450e204b531d80a3362015ce175f79f59546e87b1975932f5e295",
+      "previous": []
+    },
+    ".harness/evals/cases/001-skill-frontmatter.yaml": {
+      "sha256": "1a571a57fb9231695f8c0ba5281bc8106faaf10fc0bb6209ddc2577259f7fd9e",
+      "previous": []
+    },
+    ".harness/evals/cases/002-specs-are-canonical.yaml": {
+      "sha256": "c12d330d3476e278200e0b3e84255bee8e1f08f73fee2bb54719ed69b272dd4c",
+      "previous": []
+    },
+    ".harness/evals/cases/003-deleted-commands-stay-deleted.yaml": {
+      "sha256": "c6ba2f0a8f94d231a4c58da9bf82d1b6c665a35f7421ee27671edc184a2cda3e",
+      "previous": []
+    },
+    ".harness/evals/cases/004-openspec-not-in-manifest.yaml": {
+      "sha256": "2c0ffed432db843c79041a8c17f2d08a10ab251744ffb99bb82f8f12668c0e43",
+      "previous": []
+    },
+    ".harness/evals/cases/005-hooks-are-wired.yaml": {
+      "sha256": "4a53146758bc2a3f956b78eb0c06690d77597ca682ec1eeff4f6ead56e7fd783",
+      "previous": []
+    },
+    ".harness/evals/cases/006-claude-md-budget.yaml": {
+      "sha256": "64924ca6a818491e0377e4f732cfbd1e852b4a289662d6b58149f0153a65bda9",
+      "previous": []
+    },
+    ".harness/evals/cases/007-shell-portability.yaml": {
+      "sha256": "06db9d95df41f6680e485e21f7ec97ff05c3866f4cffeafcc0648cd611f89efd",
+      "previous": []
+    },
+    ".harness/evals/cases/008-hook-paths-absolute.yaml": {
+      "sha256": "4828b6a7c484de20f8bc478c04416ed30786439c567681561504e2188314af95",
+      "previous": []
+    },
+    ".harness/evals/cases/009-testing-and-pr-conventions.yaml": {
+      "sha256": "2dda2f92ce28772fe82b5c9ba262b2796b5d708e41e9caddb0dc04a537bdcfed",
+      "previous": []
+    },
+    ".harness/evals/cases/010-harness-md-in-manifest.yaml": {
+      "sha256": "7b48d53927c544e5bf20f7c9a2083e4c7db318abfecd1a82abbbde820cde1883",
+      "previous": []
+    },
+    ".harness/evals/cases/011-verifier-agent-exists.yaml": {
+      "sha256": "ac1ac5882ea4a772918e688cd2456541e791b55741f0c06b8fe17f9ddb5652fd",
+      "previous": []
+    },
+    ".harness/evals/cases/100-refuse-direct-spec-edit.yaml": {
+      "sha256": "496b672652b666cbdcbe3e7a6b17715b26bb73c6d529bd799ac67074d1f459c1",
+      "previous": []
+    },
+    ".harness/evals/cases/101-answer-from-spec-index.yaml": {
+      "sha256": "9bd1ffd3c024d61a6a4408202171abf3f65842651f9dd4aaa39e280b29655d43",
+      "previous": []
+    },
+    ".harness/evals/cases/102-stop-at-intent-gate.yaml": {
+      "sha256": "f8aca9344259ff9628bee99c6dd10e6566b61b2b7bf8b899277a26d38aa47938",
+      "previous": []
+    },
+    ".harness/evals/run_evals.py": {
+      "sha256": "4426baf38f0bf0ae7280cb4aac1844392572ba53c90c19624cf5931818656ed8",
+      "previous": []
+    },
+    ".harness/setup.sh": {
+      "sha256": "bcbd68f486752b32359f0f45cfde71c8a1d14bc3acc4a734d93e05d6ef7a9133",
+      "previous": []
     },
     "CLAUDE.md": {
       "sha256": "ad8146c43c67286d95f23e19c51872169eeeef95e73ecea2b0f87bdbe41797ee",
@@ -180,13 +252,14 @@
       ]
     },
     "Makefile": {
-      "sha256": "a0ceb1cccd232378302e547ef5bd3c2a53b6161dff774ebfa2d4ed2367136dba",
+      "sha256": "9359a0301d4cb6addb17713fe7fc63506163e64f96175f9be4022e784ca67e47",
       "previous": [
         "dd03fdb0af9a0c26149a3cb5da2ad55e44daf5b99c9e5293e5dd7ce1b747a7b9",
         "8a02e6e63744b4a371303fb604af2c7c2ea4d7bd57a614e9d17e6bb266b54ad2",
         "db936773fa84b46595a03bd8b0833ee9a080ddba8104db81fa3dc4cc42328084",
         "b98286fffbd69f6dbc4e8b12a858c3a3654dfe972281d25e077634527ff56fdb",
-        "0bb82810de3f8c22f2223fd7b48d6915ae6283d3f7fd5ca1812acd3e6b8d9176"
+        "0bb82810de3f8c22f2223fd7b48d6915ae6283d3f7fd5ca1812acd3e6b8d9176",
+        "a0ceb1cccd232378302e547ef5bd3c2a53b6161dff774ebfa2d4ed2367136dba"
       ]
     },
     "REVIEW.md": {
@@ -244,90 +317,6 @@
     "docs/product.md": {
       "sha256": "c753c798bb89bd874c8aa5e0e278cbc9653eb8b08206e9177e8ffae0b66b2b92",
       "previous": []
-    },
-    "evals/README.md": {
-      "sha256": "af1da9981a8450e204b531d80a3362015ce175f79f59546e87b1975932f5e295",
-      "previous": []
-    },
-    "evals/cases/001-skill-frontmatter.yaml": {
-      "sha256": "1a571a57fb9231695f8c0ba5281bc8106faaf10fc0bb6209ddc2577259f7fd9e",
-      "previous": []
-    },
-    "evals/cases/002-specs-are-canonical.yaml": {
-      "sha256": "c12d330d3476e278200e0b3e84255bee8e1f08f73fee2bb54719ed69b272dd4c",
-      "previous": []
-    },
-    "evals/cases/003-deleted-commands-stay-deleted.yaml": {
-      "sha256": "c6ba2f0a8f94d231a4c58da9bf82d1b6c665a35f7421ee27671edc184a2cda3e",
-      "previous": [
-        "17291948675a1aab2863de4bfddc47aa31354458dff06e83824d41060939dccd",
-        "60cbc2a82845792d30103fd1f247e011f14bf6382af636003b0618c56b38bc27"
-      ]
-    },
-    "evals/cases/004-openspec-not-in-manifest.yaml": {
-      "sha256": "9f2862af86d55f4a5bb5a858e00b7872b6dc0bba91c41cfa583143ca28db398b",
-      "previous": [
-        "ce50a5011758b181a24f0cdbd3b6b9fa35c5d9fd6fd4019fdfdaacbb4897e4ef"
-      ]
-    },
-    "evals/cases/005-hooks-are-wired.yaml": {
-      "sha256": "4a53146758bc2a3f956b78eb0c06690d77597ca682ec1eeff4f6ead56e7fd783",
-      "previous": []
-    },
-    "evals/cases/006-claude-md-budget.yaml": {
-      "sha256": "64924ca6a818491e0377e4f732cfbd1e852b4a289662d6b58149f0153a65bda9",
-      "previous": [
-        "ae87049989f40bb717c2d366e584b3d977fe86747f79c2acb67593067dfa59b1"
-      ]
-    },
-    "evals/cases/007-shell-portability.yaml": {
-      "sha256": "a2edf98f9adec90124d96d293a14110a95eb802f596dd96749e877093ac21392",
-      "previous": []
-    },
-    "evals/cases/008-hook-paths-absolute.yaml": {
-      "sha256": "4828b6a7c484de20f8bc478c04416ed30786439c567681561504e2188314af95",
-      "previous": [
-        "acb7405db7e2910f895b8318b5fb6ebfb01d604cdbf0d9b08f081ded166bb66b"
-      ]
-    },
-    "evals/cases/009-testing-and-pr-conventions.yaml": {
-      "sha256": "2dda2f92ce28772fe82b5c9ba262b2796b5d708e41e9caddb0dc04a537bdcfed",
-      "previous": []
-    },
-    "evals/cases/010-harness-md-in-manifest.yaml": {
-      "sha256": "6f756276c0765813f3fbd9c2dcfc4ea7f16a9e8bd5ba3837d72d1c5d51be6e83",
-      "previous": []
-    },
-    "evals/cases/011-verifier-agent-exists.yaml": {
-      "sha256": "ac1ac5882ea4a772918e688cd2456541e791b55741f0c06b8fe17f9ddb5652fd",
-      "previous": []
-    },
-    "evals/cases/100-refuse-direct-spec-edit.yaml": {
-      "sha256": "496b672652b666cbdcbe3e7a6b17715b26bb73c6d529bd799ac67074d1f459c1",
-      "previous": []
-    },
-    "evals/cases/101-answer-from-spec-index.yaml": {
-      "sha256": "9bd1ffd3c024d61a6a4408202171abf3f65842651f9dd4aaa39e280b29655d43",
-      "previous": []
-    },
-    "evals/cases/102-stop-at-intent-gate.yaml": {
-      "sha256": "f8aca9344259ff9628bee99c6dd10e6566b61b2b7bf8b899277a26d38aa47938",
-      "previous": []
-    },
-    "evals/run_evals.py": {
-      "sha256": "1f8ee169e8964e02e26bb2e090650ecdd0d6a093ff3d28315dedb05c2e5eadf1",
-      "previous": []
-    },
-    "harness_setup.sh": {
-      "sha256": "765f3fbe01477079478348d09555096ae542c37edc0b5715f7ae1cac96de6aae",
-      "previous": [
-        "9a4887b9decd686f4b08155b2e50c969fbbc61799cdc812b24dda1d64be8c1fd",
-        "667f5e02bcf45672e930c76a667e7f60afc884751072c3a65394dd0b9b2ba804",
-        "6dac1e99e8eae1b2bbf6004d75f65c6a85b97cc01593a638a6a6bbc69dfcf93b",
-        "e9dc8ee00c817813176a7abdf9a665f8686b20ca7320d3272890f38d1313b052",
-        "80af4184ee6b57cd1b816e3049395896836d2bb4aa61a2271fb7f01c5c8f8919",
-        "b28b8ed7b012af85648645a867ff9ef8604a6c9a0855b307e322af6275e00a7a"
-      ]
     }
   }
 }
