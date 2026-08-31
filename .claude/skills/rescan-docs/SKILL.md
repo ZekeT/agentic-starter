@@ -91,7 +91,7 @@ Ask the following questions in a single message. Do not ask them one at a time.
 > 2. **Who are the primary users?** (e.g. internal team, paying customers, API consumers)
 > 3. **What's missing or incomplete?** (Features you know aren't implemented yet)
 > 4. **What's tech debt or known problems?** (Things that work but shouldn't stay this way)
-> 5. **What's the next sprint goal?** (What should the team be working on next?)"
+> 5. **What should the next change be?** (The first thing you'd crystallize)"
 
 Wait for answers before proceeding. Their answers fill in the "why" — the code only shows the "what".
 
