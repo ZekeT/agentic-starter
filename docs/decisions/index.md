@@ -21,4 +21,5 @@ shape it has is `docs/architecture.md`.
 
 | # | Decision | Status |
 |---|---|---|
-| [0001](0001-adopt-openspec-change-loop.md) | Adopt the OpenSpec change loop | Accepted |
+| [0001](0001-adopt-openspec-change-loop.md) | Adopt the OpenSpec change loop | Accepted — capability-granularity rule superseded by 0002 |
+| [0002](0002-capability-granularity.md) | Capability granularity: three tests | Accepted |

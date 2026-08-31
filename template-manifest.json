@@ -1,6 +1,6 @@
 {
   "template_version": "1.3.0",
-  "generated_at": "2026-08-31T09:05:37+00:00",
+  "generated_at": "2026-08-31T10:23:13+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -65,8 +65,11 @@
       ]
     },
     ".claude/skills/crystallize/SKILL.md": {
-      "sha256": "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
-      "previous": []
+      "sha256": "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3",
+      "previous": [
+        "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
+        "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a"
+      ]
     },
     ".claude/skills/graphify/SKILL.md": {
       "sha256": "660aa20220f53d6c0451e9e1da3c066c977c51b2e40c75f8371009aa64db5960",
@@ -189,8 +192,10 @@
       ]
     },
     "docs/decisions/index.md": {
-      "sha256": "61ad4903c86f0b8eb688ee73f336736927f33ef4c9814854452bfb332c288411",
-      "previous": []
+      "sha256": "6b1bc08b103978fed5cc359d3942f7713a1608fc020ef17841cf23c8a7a7b92e",
+      "previous": [
+        "61ad4903c86f0b8eb688ee73f336736927f33ef4c9814854452bfb332c288411"
+      ]
     },
     "docs/harness/coding-standards.md": {
       "sha256": "4b11b4b7cbafed4344a727eca152c19bd15d8b85d224c2103f9d1c3ae59910ef",
