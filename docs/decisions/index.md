@@ -23,3 +23,4 @@ shape it has is `docs/architecture.md`.
 |---|---|---|
 | [0001](0001-adopt-openspec-change-loop.md) | Adopt the OpenSpec change loop | Accepted — capability-granularity rule superseded by 0002 |
 | [0002](0002-capability-granularity.md) | Capability granularity: three tests | Accepted |
+| [0003](0003-single-claude-md.md) | CLAUDE.md is the single agent-instruction file | Accepted |

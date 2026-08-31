@@ -53,6 +53,10 @@ MANIFEST_FILES = [
     "docs/architecture.md",
     "docs/product.md",
     "docs/decisions/index.md",
+    "HARNESS.md",
+    "evals/README.md",
+    "evals/run_evals.py",
+    ".github/workflows/evals.yml",
 ]
 
 # Scripts copied into downstream projects (a curated list, not a glob —
@@ -63,16 +67,23 @@ MANIFEST_SCRIPTS = [
 ]
 
 # Glob patterns relative to the repo root (non-recursive).
+#
+# evals/cases/*.yaml: the shipped cases are template-owned because they guard
+# template invariants — a fork that never updates them silently stops checking
+# that its hooks are wired or that CLAUDE.md still states its rules. A forker's
+# own cases are new files at new paths, which the manifest simply doesn't know
+# about, so setup-update leaves them alone. Numbering can overlap harmlessly:
+# manifest keys are full paths, and run_evals.py discovers cases by globbing the
+# directory, so `010-mine.yaml` and `010-harness-md-in-manifest.yaml` coexist.
 MANIFEST_GLOBS = [
     ".claude/hooks/*.py",
     ".claude/commands/*.md",
     ".claude/agents/*.md",
+    "evals/cases/*.yaml",
 ]
 
 # Our skills, walked recursively.
 MANIFEST_SKILL_DIRS = [
-    "setup-base",
-    "setup-migrate",
     "setup-update",
     "rescan-docs",
     "crystallize",

@@ -16,8 +16,23 @@ codebase navigation. 71x fewer tokens per query vs reading raw files.
 broad architecture or cross-component questions. For anything scoped to one
 feature or file, plain Grep/Read is simpler and just as fast.
 
-Install: `pip install graphifyy && graphify .`
 Trigger: `/graphify` or "build knowledge graph"
+
+---
+
+## Install
+
+Not installed by `harness_setup.sh` — graphify is opt-in, so you install it
+only if you want the graph.
+
+```bash
+uv pip install graphifyy      # into the project venv, not system Python
+uv run graphify claude install
+uv run graphify .             # build/refresh the graph → graphify-out/
+```
+
+`graphify-out/` is generated output. It is gitignored and should stay that way:
+rebuild it with `graphify . --update` rather than committing it.
 
 ---
 
