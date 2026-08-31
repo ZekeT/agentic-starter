@@ -1,12 +1,16 @@
 {
   "template_version": "1.2.1",
-  "generated_at": "2026-08-31T04:29:44+00:00",
+  "generated_at": "2026-08-31T04:32:14+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b",
       "previous": [
         "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177"
       ]
+    },
+    ".claude/commands/archive-change.md": {
+      "sha256": "c62cd4cf5b1fac2dc0c690dea2da7872d7d476eab9b525ccea8f1e76bdfd959f",
+      "previous": []
     },
     ".claude/commands/commit-push-pr.md": {
       "sha256": "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d",
@@ -55,6 +59,10 @@
         "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
         "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e"
       ]
+    },
+    ".claude/skills/crystallize/SKILL.md": {
+      "sha256": "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
+      "previous": []
     },
     ".claude/skills/graphify/SKILL.md": {
       "sha256": "660aa20220f53d6c0451e9e1da3c066c977c51b2e40c75f8371009aa64db5960",

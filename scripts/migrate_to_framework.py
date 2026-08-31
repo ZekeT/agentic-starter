@@ -42,6 +42,7 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/commands/review.md": ".claude/commands/review.md",
     ".claude/commands/commit-push-pr.md": ".claude/commands/commit-push-pr.md",
     ".claude/commands/dev-change.md": ".claude/commands/dev-change.md",
+    ".claude/commands/archive-change.md": ".claude/commands/archive-change.md",
     ".claude/settings.json": ".claude/settings.json",
     "config/models.json": "config/models.json",
     "scripts/configure.py": "scripts/configure.py",
@@ -55,6 +56,7 @@ FILES_TO_COPY: dict[str, str] = {
 
 # ── our skills to copy whole, starter-relative dir names ─────────────────────
 SKILL_DIRS_TO_COPY: list[str] = [
+    "crystallize",
     "rescan-docs",
     "setup-base",
     "setup-migrate",

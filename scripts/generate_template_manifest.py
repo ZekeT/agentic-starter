@@ -71,6 +71,7 @@ MANIFEST_SKILL_DIRS = [
     "setup-migrate",
     "setup-update",
     "rescan-docs",
+    "crystallize",
     "graphify",
     "python-standards",
 ]
