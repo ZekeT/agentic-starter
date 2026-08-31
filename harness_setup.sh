@@ -10,23 +10,23 @@ echo ""
 
 # 1. Install uv if not present
 if ! command -v uv &> /dev/null; then
-  echo "[1/7] Installing uv..."
+  echo "[1/8] Installing uv..."
   curl -LsSf https://astral.sh/uv/install.sh | sh
   source "$HOME/.cargo/env" 2>/dev/null || true
 else
-  echo "[1/7] uv already installed ($(uv --version))"
+  echo "[1/8] uv already installed ($(uv --version))"
 fi
 
 # 2. Install Python deps
-echo "[2/7] Installing Python dependencies..."
+echo "[2/8] Installing Python dependencies..."
 uv sync --all-extras
 
 # 3. Apply model config to .claude/agents/*.md frontmatter
-echo "[3/7] Applying model configuration to agents..."
+echo "[3/8] Applying model configuration to agents..."
 uv run python scripts/configure.py
 
 # 4. Bootstrap .env from the committed template if missing
-echo "[4/7] Bootstrapping .env from .env.template..."
+echo "[4/8] Bootstrapping .env from .env.template..."
 if [ -f .env ]; then
   echo "  .env already exists — leaving it alone."
 elif [ -f .env.template ]; then
@@ -39,7 +39,7 @@ fi
 # 5. Superpowers — must be installed manually inside Claude Code.
 # /plugin is an interactive slash command, not a CLI argument.
 # There is no way to automate this from a shell script.
-echo "[5/7] Superpowers (manual step required)..."
+echo "[5/8] Superpowers (manual step required)..."
 echo ""
 echo "  Open Claude Code in this project directory, then run:"
 echo "    /plugin marketplace add obra/superpowers-marketplace"
@@ -54,7 +54,7 @@ echo
 
 # 6. Install graphify (optional but recommended).
 # Use `uv pip` so it lands in the project venv rather than the system Python.
-echo "[6/7] Setting up graphify..."
+echo "[6/8] Setting up graphify..."
 if uv pip install graphifyy --quiet 2>/dev/null; then
   uv run graphify claude install || true
   echo "  graphify installed. Building initial knowledge graph..."
@@ -66,22 +66,47 @@ else
 fi
 
 # 7. Verify make check works (no src yet, just confirm tooling)
-echo "[7/7] Verifying toolchain..."
+echo "[7/8] Verifying toolchain..."
 uv run black --version
 uv run isort --version-number
 uv run autoflake --version
 uv run interrogate --version
 uv run mypy --version
 uv run pytest --version
+# 8. OpenSpec — the change loop's document lifecycle.
+# Warn only: every other part of the harness works without it.
+echo "[8/8] Checking OpenSpec (Node CLI)..."
+NODE_MIN="20.19.0"
+if ! command -v node &> /dev/null; then
+  echo "  WARN: node not found. OpenSpec needs Node >= $NODE_MIN."
+  echo "        Install Node, then: npm install -g @fission-ai/openspec@latest"
+elif [ "$(printf '%s\n' "$NODE_MIN" "$(node --version | tr -d v)" | sort -V | head -1)" != "$NODE_MIN" ]; then
+  echo "  WARN: node $(node --version) is older than v$NODE_MIN — OpenSpec needs >= v$NODE_MIN."
+elif ! command -v openspec &> /dev/null; then
+  echo "  node $(node --version) OK, but the openspec CLI is missing. Install it:"
+  echo "    npm install -g @fission-ai/openspec@latest"
+  echo "    openspec init --tools claude"
+else
+  echo "  openspec $(openspec --version) on node $(node --version)"
+  if [ ! -d openspec ]; then
+    echo "  No openspec/ directory yet — initialise it: openspec init --tools claude"
+  fi
+fi
+echo
+
 echo ""
 echo "=== Setup complete ==="
 echo ""
 echo "Next steps:"
 echo "  1. Edit pyproject.toml — set [project] name, description"
 echo "  2. Create src/<your_package>/__init__.py"
-echo "  3. Plan in Claude Code (Superpowers brainstorming → docs/prd.md,"
-echo "     docs/architecture.md), then /sprint-planning"
-echo "  4. Human gates: requirements → architecture → sprint planning → deploy"
+echo "  3. Write docs/product.md — what this is, who it is for, non-goals"
+echo "  4. In Claude Code, crystallize your first idea into a change:"
+echo "       /crystallize \"<your idea>\""
+echo "     then review the intent, review the proposal + specs + tasks,"
+echo "     and run /dev-change <slug> <group>"
+echo ""
+echo "  Human gates: intent → spec+tasks → PR merge → archived spec diff"
 echo ""
 echo "Quick reference:"
 echo "  make fmt    — format code"
