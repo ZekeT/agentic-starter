@@ -201,8 +201,16 @@ After the preamble runs:
    do not widen scope to route around it.
 8. Before declaring done: run `make check`, and confirm every task in the group
    is ticked and every scenario in the delta specs it covers actually holds.
-9. Run `/commit-push-pr` to open the PR.
-10. Call `ExitWorktree` with `action: "keep"` — the PR is open, not merged, so
+9. Dispatch the **`verifier`** subagent. It runs in a fresh context window, so
+   its verdict is not coloured by the assumptions that produced the code — this
+   session has already convinced itself. Give it the change slug and group
+   number; it runs the change and reports mismatches without fixing anything.
+   Paste its report into the PR's "How this was tested" section. If it reports
+   a mismatch, resolve it before opening the PR — either the code is wrong, or
+   the delta spec is (rule 6 above), and a FAIL verdict is not something to
+   explain away in the PR body.
+10. Run `/commit-push-pr` to open the PR.
+11. Call `ExitWorktree` with `action: "keep"` — the PR is open, not merged, so
     the worktree must stay. The next `/dev-change` sweeps it once the PR merges.
-11. Print the PR URL, and the remaining unchecked groups so the user knows
+12. Print the PR URL, and the remaining unchecked groups so the user knows
     what's left before `/archive-change`.

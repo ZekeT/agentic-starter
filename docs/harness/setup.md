@@ -13,8 +13,7 @@ bash harness_setup.sh
 ```
 
 `harness_setup.sh` installs Python deps via `uv`, applies model assignments from
-`config/models.json`, bootstraps `.env`, sets up graphify, and checks for
-OpenSpec.
+`config/models.json`, bootstraps `.env`, and checks for OpenSpec.
 
 ### OpenSpec (required for the change loop)
 
@@ -41,7 +40,7 @@ exclude these paths explicitly, so template updates and OpenSpec updates never
 fight over the same file.
 
 Then install Superpowers **once per machine** inside a Claude Code session
-(this template assumes Superpowers **v6.2+**, latest as of 2026-08-05):
+(this template assumes Superpowers **v6+**):
 
 ```
 /plugin marketplace add obra/superpowers-marketplace
@@ -58,8 +57,8 @@ This installs implementation skills (TDD, subagent dispatch, code review) global
 to `~/.claude/`. Required for `/dev-change` to use the full agentic TDD workflow.
 Superpowers v6 replaced the two-stage review with a unified single-pass task
 reviewer. SDD scratch files live in `.superpowers/sdd/<plan-basename>/`
-(gitignored here) — since 6.2.0 the workspace is scoped per plan, so a
-follow-up plan can't read a prior plan's progress ledger.
+(gitignored here), scoped per plan so a follow-up plan can't read a prior
+plan's progress ledger.
 
 Then open Claude Code and run the change loop:
 
@@ -88,12 +87,13 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 ├── pyproject.toml                       # Python deps + tool config
 ├── harness_setup.sh                     # One-command bootstrap
 ├── .env.template                        # Committed — documents all env vars, no real values
-├── .gitignore / .graphifyignore
+├── .gitignore
 │
 ├── .claude/
 │   ├── settings.json                    # Hook wiring
 │   ├── agents/                          # Project-specific agents only
-│   │   └── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
+│   │   ├── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
+│   │   └── verifier.md                  # Final check in a fresh context, read-only (Opus)
 │   │                                    # developer + code-reviewer live in Superpowers
 │   │                                    # (~/.claude/) — not committed here
 │   ├── commands/                        # Slash commands
@@ -109,8 +109,6 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 │   │   └── post_tool_lint.py            # Auto-lint after file writes
 │   └── skills/
 │       ├── graphify/SKILL.md            # Optional: knowledge graph
-│       ├── setup-base/                  # Scan project setup health
-│       ├── setup-migrate/               # Migrate existing projects to this framework
 │       ├── setup-update/                # Update a copied project to the latest template
 │       ├── crystallize/                 # Exploration → an OpenSpec change
 │       ├── rescan-docs/                 # Reverse-engineer specs + product doc from code
@@ -151,13 +149,14 @@ Run on every tool call. No LLM judgment — pure code.
 
 ## Optional skills
 
-**Graphify** (recommended for large codebases):
+**Graphify** (optional, worth it on large codebases):
 ```bash
-pip install graphifyy && graphify claude install
-graphify .   # builds knowledge graph
+uv pip install graphifyy && uv run graphify claude install
+uv run graphify .   # builds the knowledge graph → graphify-out/ (gitignored)
 ```
-Gives agents a 71x token-compressed map of the codebase to query
-instead of grepping raw files. Hooks tell Claude to consult it automatically.
+Gives agents a token-compressed map of the codebase to query instead of grepping
+raw files. Nothing in the harness requires it — see the `graphify` skill for when
+it earns its keep.
 
 ---
 
@@ -172,9 +171,8 @@ python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/pr
 ```
 
 This copies hooks, commands, the security agent, config, scripts, docs, and
-our skills (`rescan-docs`, `setup-base`, `setup-migrate`, `setup-update`,
-`graphify`) into your project without overwriting anything that
-already exists.
+our skills (`rescan-docs`, `setup-update`, `graphify`) into your project
+without overwriting anything that already exists.
 
 Then open Claude Code in your project and generate planning docs from the existing code:
 
@@ -200,7 +198,7 @@ Upstream framework updates do not touch your customisations:
   `template-manifest.json`: files you never touched are auto-updated, files
   you customised are flagged for a guided merge instead of being overwritten.
 - **Your customisations** live in `.claude/agents/`, `.claude/commands/`, `.claude/hooks/`, and `CLAUDE.md` — protected by the same mechanism.
-- **Graphify** (`pip install graphifyy --upgrade`) — your `.graphifyignore` and CLAUDE.md hook survive upgrades.
+- **Graphify** (`uv pip install graphifyy --upgrade`) — optional; nothing else in the harness depends on it.
 
 Every project created from this template records the template version it
 started from in `.claude/template-version.json` (or `.claude/migration-report.json`

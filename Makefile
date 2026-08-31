@@ -3,7 +3,7 @@
 # Referenced in CLAUDE.md so agents always use these targets.
 # ============================================================
 
-.PHONY: install fmt lint test check clean setup-hooks configure configure-show configure-list evals evals-full manifest
+.PHONY: install fmt lint test check clean configure configure-show configure-list evals evals-full manifest
 
 # Source directory — override with: make fmt SRC=mypackage
 SRC ?= src
@@ -74,14 +74,6 @@ configure-show:
 
 configure-list:
 	uv run python scripts/configure.py --list
-
-# ---- Hooks ------------------------------------------------
-# Install deterministic Claude Code hooks (from .claude/hooks/).
-# Run once after cloning.
-
-setup-hooks:
-	@echo "Hooks live in .claude/hooks/ — Claude Code loads them automatically."
-	@echo "To also set up graphify: pip install graphifyy && graphify claude install"
 
 # ---- Clean ------------------------------------------------
 

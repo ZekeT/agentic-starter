@@ -37,6 +37,7 @@ AGENT_TIER: dict[str, str] = {
     "developer.md": "implement",
     "code-reviewer.md": "review",
     "security-reviewer.md": "review",
+    "verifier.md": "review",
     "scrum-master.md": "planning",
     "analyst.md": "planning",
     "pm.md": "planning",

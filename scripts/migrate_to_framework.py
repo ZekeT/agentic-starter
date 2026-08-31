@@ -72,8 +72,6 @@ FILES_TO_COPY: dict[str, str] = {
 SKILL_DIRS_TO_COPY: list[str] = [
     "crystallize",
     "rescan-docs",
-    "setup-base",
-    "setup-migrate",
     "setup-update",
     "graphify",
 ]
@@ -95,7 +93,6 @@ DIRS_TO_CREATE: list[str] = [
     "openspec/changes/archive",
     "config",
     "scripts",
-    "graphify-out",
 ]
 
 # Directories that get a .gitkeep so git tracks them
@@ -103,7 +100,6 @@ _GITKEEP_DIRS: frozenset[str] = frozenset(
     {
         "openspec/specs",
         "openspec/changes/archive",
-        "graphify-out",
     }
 )
 
@@ -269,6 +265,8 @@ class AuditResult:
     files_to_skip: list[str]
     skill_dirs_to_copy: list[str]
     skill_dirs_to_skip: list[str]
+    stale_agents: list[str] = field(default_factory=list)
+    legacy_stories: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -607,6 +605,56 @@ def detect_existing_files(target: Path) -> set[str]:
     return existing
 
 
+# Agents another tool already owns. Leaving a project's own copy in place means
+# two definitions of the same role, and the globally-installed one wins silently.
+STALE_AGENTS: dict[str, str] = {
+    "developer.md": "Superpowers owns implementation (installed globally via /plugin install)",
+    "code-reviewer.md": "Superpowers owns code review (installed globally via /plugin install)",
+    "analyst.md": "planning is conversational (Superpowers brainstorming) — no agent needed",
+    "pm.md": "planning is conversational (Superpowers brainstorming) — no agent needed",
+    "architect.md": "planning is conversational (Superpowers writing-plans) — no agent needed",
+    "scrum-master.md": "the crystallize skill owns change breakdown — no agent needed",
+}
+
+
+def detect_stale_agents(target: Path) -> list[str]:
+    """Return agent files the target should drop because another tool owns them.
+
+    Args:
+        target: The project root.
+
+    Returns:
+        One "<filename>  (<reason>)" string per stale agent found.
+    """
+    agents_dir = target / ".claude" / "agents"
+    if not agents_dir.is_dir():
+        return []
+    return sorted(
+        f"{f.name}  ({STALE_AGENTS[f.name]})"
+        for f in agents_dir.iterdir()
+        if f.name in STALE_AGENTS
+    )
+
+
+def detect_legacy_stories(target: Path) -> list[str]:
+    """Return any story files left over from the pre-change-loop workflow.
+
+    A `stories/` tree means the project predates the change loop. Flag it for a
+    human to port into an OpenSpec change rather than silently ignoring work
+    that may still be in flight.
+
+    Args:
+        target: The project root.
+
+    Returns:
+        Relative paths of every `.md` file under `stories/`.
+    """
+    stories = target / "stories"
+    if not stories.is_dir():
+        return []
+    return sorted(str(f.relative_to(target)) for f in stories.rglob("*.md"))
+
+
 def audit_target(target: Path, starter: Path) -> AuditResult:
     """Run all audit checks and return a structured result.
 
@@ -658,6 +706,8 @@ def audit_target(target: Path, starter: Path) -> AuditResult:
         files_to_skip=files_to_skip,
         skill_dirs_to_copy=skill_dirs_to_copy,
         skill_dirs_to_skip=skill_dirs_to_skip,
+        stale_agents=detect_stale_agents(target),
+        legacy_stories=detect_legacy_stories(target),
     )
 
 
@@ -1208,6 +1258,20 @@ def print_audit_summary(audit: AuditResult) -> None:
             _ok("pyproject.toml found — will merge missing tool sections")
         else:
             _info("Python project without pyproject.toml — will create from template")
+
+    for agent in audit.stale_agents:
+        _warn(f"REMOVE .claude/agents/{agent}")
+
+    if audit.legacy_stories:
+        _warn(
+            f"{len(audit.legacy_stories)} legacy story file(s) in stories/ — "
+            "this project predates the change loop"
+        )
+        _info("Port anything still in flight into an OpenSpec change, then delete stories/:")
+        for rel in audit.legacy_stories[:5]:
+            _info(f"  {rel}")
+        if len(audit.legacy_stories) > 5:
+            _info(f"  ... and {len(audit.legacy_stories) - 5} more")
 
 
 def save_migration_report(target: Path, report: MigrationReport) -> None:

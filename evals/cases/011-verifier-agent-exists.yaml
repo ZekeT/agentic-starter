@@ -1,0 +1,21 @@
+id: verifier-agent-is-wired
+kind: static
+why: >
+  The verifier is the only check that runs outside the context window that wrote
+  the code. If the agent file is deleted, or /dev-change stops dispatching it,
+  the loop silently falls back to a session grading its own work — and the
+  failure is invisible, because that session will still report success.
+shell: |
+  fail=0
+  f=.claude/agents/verifier.md
+  [ -f "$f" ] || { echo "missing: $f"; exit 1; }
+  head -1 "$f" | grep -q '^---$' || { echo "no opening --- : $f"; fail=1; }
+  awk 'NR>1 && /^---$/{found=1; exit} END{exit !found}' "$f" \
+    || { echo "no closing --- : $f"; fail=1; }
+  for key in name description model; do
+    awk -v k="^$key:" 'NR>1 && /^---$/{exit} $0 ~ k {found=1} END{exit !found}' "$f" \
+      || { echo "no $key: field : $f"; fail=1; }
+  done
+  grep -q 'verifier' .claude/commands/dev-change.md \
+    || { echo "/dev-change never dispatches the verifier"; fail=1; }
+  exit $fail
