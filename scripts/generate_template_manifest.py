@@ -45,6 +45,7 @@ MANIFEST_FILES = [
     ".env.template",
     ".claude/settings.json",
     "docs/harness/setup.md",
+    "docs/harness/design.md",
     "docs/harness/coding-standards.md",
     "docs/harness/testing.md",
     "docs/harness/commits-and-prs.md",

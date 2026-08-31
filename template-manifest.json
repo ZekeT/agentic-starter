@@ -1,6 +1,6 @@
 {
   "template_version": "1.4.0",
-  "generated_at": "2026-08-31T17:13:50+00:00",
+  "generated_at": "2026-08-31T17:26:35+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -72,10 +72,11 @@
       ]
     },
     ".claude/skills/crystallize/SKILL.md": {
-      "sha256": "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3",
+      "sha256": "f6c12cab29617c3bd3b0a176dbff51d81121d7688fe6854eb5ec0fee17f3f6c5",
       "previous": [
         "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
-        "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a"
+        "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a",
+        "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
@@ -161,12 +162,13 @@
       ]
     },
     "HARNESS.md": {
-      "sha256": "732eaa697e3d6da14acc06be0aad24dfb336f73d00dae3161b86865765bcaadc",
+      "sha256": "3aaca243b3add1782f2bf2317d2dd64fd23a60a7fb5c957535607b2b9ae3c42b",
       "previous": [
         "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
         "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
         "562aa27ec8bb5dd19bf311b41587de41e4244567efcbd06f38a536e032d72637",
-        "29ed44636ee12feba3175e6c94a33264b797eeb0401e76308a755af1a18ed31e"
+        "29ed44636ee12feba3175e6c94a33264b797eeb0401e76308a755af1a18ed31e",
+        "732eaa697e3d6da14acc06be0aad24dfb336f73d00dae3161b86865765bcaadc"
       ]
     },
     "Makefile": {
@@ -193,10 +195,11 @@
       ]
     },
     "docs/decisions/index.md": {
-      "sha256": "91533af57898ce028dae646ae11dd8fd83a9975d2af76b634f3183e5784d32b5",
+      "sha256": "992a6eaa7147f724eb2a9ed4db51079dd5e56a3e1faac106a21383ce39398766",
       "previous": [
         "61ad4903c86f0b8eb688ee73f336736927f33ef4c9814854452bfb332c288411",
-        "6b1bc08b103978fed5cc359d3942f7713a1608fc020ef17841cf23c8a7a7b92e"
+        "6b1bc08b103978fed5cc359d3942f7713a1608fc020ef17841cf23c8a7a7b92e",
+        "91533af57898ce028dae646ae11dd8fd83a9975d2af76b634f3183e5784d32b5"
       ]
     },
     "docs/harness/coding-standards.md": {
@@ -207,6 +210,10 @@
     },
     "docs/harness/commits-and-prs.md": {
       "sha256": "ad9600f31d31ea029e19678acaef0b484c3a4f40303243f3cef93534aab63dcf",
+      "previous": []
+    },
+    "docs/harness/design.md": {
+      "sha256": "555d9b94007f489b2e6fc6eaea64199276293fd91c68b69dfad287823d856344",
       "previous": []
     },
     "docs/harness/setup.md": {
@@ -241,9 +248,10 @@
       "previous": []
     },
     "evals/cases/003-deleted-commands-stay-deleted.yaml": {
-      "sha256": "60cbc2a82845792d30103fd1f247e011f14bf6382af636003b0618c56b38bc27",
+      "sha256": "c6ba2f0a8f94d231a4c58da9bf82d1b6c665a35f7421ee27671edc184a2cda3e",
       "previous": [
-        "17291948675a1aab2863de4bfddc47aa31354458dff06e83824d41060939dccd"
+        "17291948675a1aab2863de4bfddc47aa31354458dff06e83824d41060939dccd",
+        "60cbc2a82845792d30103fd1f247e011f14bf6382af636003b0618c56b38bc27"
       ]
     },
     "evals/cases/004-openspec-not-in-manifest.yaml": {

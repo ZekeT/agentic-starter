@@ -111,7 +111,7 @@ bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates 
 | Project facts and conventions | [`CLAUDE.md`](CLAUDE.md) |
 | What review checks, and what it skips | [`REVIEW.md`](REVIEW.md) |
 | Python style | `python-standards` skill ([full reference](docs/harness/coding-standards.md)) |
-| Why the loop is shaped this way | [`docs/decisions/0001-adopt-openspec-change-loop.md`](docs/decisions/0001-adopt-openspec-change-loop.md) |
+| Why the loop is shaped this way | [`docs/harness/design.md`](docs/harness/design.md) |
 
 ## Guarantees
 
