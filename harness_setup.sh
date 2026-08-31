@@ -166,13 +166,14 @@ elif ! command -v openspec &> /dev/null; then
   echo "    openspec init --tools claude"
 else
   echo "  openspec $(openspec --version) on node $(node --version)"
-  if [ ! -d openspec ]; then
-    echo "  No openspec/ directory yet — running: openspec init --tools claude"
-    openspec init --tools claude
-  else
-    echo "  Regenerating tool files — running: openspec update"
-    openspec update
-  fi
+  # `openspec update` detects configured tools by scanning for
+  # .claude/commands/opsx/ and .claude/skills/openspec-*/ on disk — both are
+  # gitignored, so a fresh clone has none and `update` reports "no configured
+  # tools". `init --tools claude` is idempotent even against a populated
+  # openspec/specs + changes tree (it only ever writes the tool dirs), so
+  # always run it rather than branching on whether openspec/ already exists.
+  echo "  Generating tool files — running: openspec init --tools claude"
+  openspec init --tools claude
 fi
 echo
 
