@@ -128,9 +128,10 @@ After the preamble runs:
 5. Invoke the Superpowers **`subagent-driven-development`** skill to drive
    implementation: brainstorm → plan 2–5 min subtasks → tests-first →
    implement → `code-reviewer` after each task → `verification-before-completion`.
-6. Escalate to the `advisor_20260301` tool only on architectural ambiguity,
-   contradictions between PRD and architecture, a bug attempted twice
-   without success, or a non-obvious security tradeoff (max 3 uses).
+6. If the story leaves a real ambiguity unresolved — architectural direction,
+   contradictory requirements, a bug attempted twice without success, a
+   non-obvious security tradeoff — **stop and ask the user**. Do not guess
+   and do not widen scope to work around it.
 7. Before declaring done: run `make check` and confirm every acceptance
    criterion in the story is satisfied.
 8. When the implementation is complete and verified, run `/commit-push-pr`

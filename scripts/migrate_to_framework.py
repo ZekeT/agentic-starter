@@ -41,7 +41,6 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/agents/security-reviewer.md": ".claude/agents/security-reviewer.md",
     # Planning / implementation commands
     ".claude/commands/sprint-planning.md": ".claude/commands/sprint-planning.md",
-    ".claude/commands/implement.md": ".claude/commands/implement.md",
     ".claude/commands/review.md": ".claude/commands/review.md",
     ".claude/commands/commit-push-pr.md": ".claude/commands/commit-push-pr.md",
     ".claude/commands/dev-story.md": ".claude/commands/dev-story.md",
@@ -50,9 +49,8 @@ FILES_TO_COPY: dict[str, str] = {
     "scripts/configure.py": "scripts/configure.py",
     "stories/STORY_TEMPLATE.md": "stories/STORY_TEMPLATE.md",
     # Docs — prd.md/architecture.md are placeholders until planning fills them in
-    "docs/SETUP.md": "docs/SETUP.md",
-    "docs/coding-standards.md": "docs/coding-standards.md",
-    "docs/local-models.md": "docs/local-models.md",
+    "docs/harness/setup.md": "docs/harness/setup.md",
+    "docs/harness/coding-standards.md": "docs/harness/coding-standards.md",
     "docs/prd.md": "docs/prd.md",
     "docs/architecture.md": "docs/architecture.md",
 }
@@ -766,7 +764,7 @@ TODO: Add your architecture decisions, language conventions, and style rules.
 ## Active Model Config
 
 Run `make configure` after editing `config/models.json` to apply model assignments.
-See `config/models.json` for available profiles (anthropic-default, anthropic-budget, ollama-*).
+See `config/models.json` for available profiles (anthropic-default, anthropic-budget).
 
 ---
 

@@ -34,7 +34,7 @@ As a ...
       in it (purpose, entry points, invariants — max ~30 lines).
 - [ ] If this story changes a feature's invariants or entry points, update
       that feature's `CLAUDE.md`.
-- [ ] Add/refresh the one-line pointer in root AGENTS.md structure section.
+- [ ] Add/refresh the one-line pointer in the root CLAUDE.md structure table.
 
 ---
 

@@ -9,10 +9,10 @@ is up and running, you can ignore this file.
 
 ```bash
 git clone <this-repo> my-project && cd my-project
-bash setup.sh
+bash harness_setup.sh
 ```
 
-`setup.sh` installs Python deps via `uv`, applies model assignments from
+`harness_setup.sh` installs Python deps via `uv`, applies model assignments from
 `config/models.json`, bootstraps `.env`, and sets up graphify.
 
 Then install Superpowers **once per machine** inside a Claude Code session
@@ -56,7 +56,7 @@ Then open Claude Code and run the planning pipeline:
 ├── CLAUDE.md                            # Project brain — read every session
 ├── Makefile                             # Single entry point for all commands
 ├── pyproject.toml                       # Python deps + tool config
-├── setup.sh                             # One-command bootstrap
+├── harness_setup.sh                     # One-command bootstrap
 ├── .env.template                        # Committed — documents all env vars, no real values
 ├── .gitignore / .graphifyignore
 │
@@ -93,13 +93,12 @@ Then open Claude Code and run the planning pipeline:
 │   └── done/         ← merged
 │
 ├── config/
-│   └── models.json                      # Model assignments + advisor config
+│   └── models.json                      # Model assignments per tier
 ├── scripts/
 │   └── configure.py                     # Patches agents with model assignments
 └── docs/
     ├── prd.md / architecture.md         # Templates (planning fills these in)
-    ├── coding-standards.md
-    └── local-models.md
+    └── coding-standards.md
 ```
 
 ---
@@ -112,7 +111,7 @@ Run on every tool call. No LLM judgment — pure code.
 |------|---------|--------|
 | `post_tool_lint.py` | Write/Edit | Auto-lint after file changes |
 | `post_tool_secrets.py` | Write/Edit | Block committed credentials |
-| `post_tool_feature_claude_reminder.py` | Write/Edit (feature `CLAUDE.md`) | Nudge to add the AGENTS.md pointer |
+| `post_tool_feature_claude_reminder.py` | Write/Edit (feature `CLAUDE.md`) | Nudge to add the root CLAUDE.md pointer |
 | `pre_tool_dangerous.py` | Bash | Block rm -rf, force push, etc. |
 | `pre_tool_env_guard.py` | Read/Glob/LS/Grep/Bash | Block Claude reading `.env` |
 | `stop_story_lifecycle.py` | Stop | Move story file `review/` → `done/` after merge |

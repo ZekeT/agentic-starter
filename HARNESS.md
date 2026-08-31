@@ -5,7 +5,7 @@ Superpowers + Claude Code Primitives, with Python tooling and deterministic guar
 
 > The bottleneck isn't model intelligence. It's the absence of engineering discipline.
 
-For one-time bootstrap, project structure, hooks, and optional skills, see [`docs/SETUP.md`](docs/SETUP.md).
+For one-time bootstrap, project structure, hooks, and optional skills, see [`docs/harness/setup.md`](docs/harness/setup.md).
 
 ---
 
@@ -20,10 +20,10 @@ Requirements → Architecture → Stories → Implement → Review → Security 
 
 | Phase | Command | Output |
 |-------|---------|--------|
-| Plan | Superpowers `brainstorming` conversation | `docs/prd.md` |
-| Architecture | Superpowers `writing-plans` conversation | `docs/architecture.md` |
+| Plan | `/plan` Superpowers `brainstorming` conversation | `docs/prd.md` |
+| Architecture | `/plan` Superpowers `writing-plans` conversation | `docs/architecture.md` |
 | Stories | `/sprint-planning` | `stories/draft/` |
-| Implement | `/implement story-NNN` | code on a worktree branch |
+| Implement | `/dev-story NNN` | code on a worktree branch |
 | Review | `/review` | code-reviewer pass |
 | Ship | `/commit-push-pr` | PR opened |
 
@@ -40,6 +40,10 @@ Optional: after `/sprint-planning` adds new stories, `graphify . --update` refre
 the codebase knowledge graph — worth it for broad architecture questions spanning
 many files, not required otherwise (see the `graphify` skill).
 
+E.g Walkthrough:
+```
+/plan → review docs → /sprint-planning → review stories, git mv approved ones to ready/ → /dev-story → review PR → merge.
+```
 ---
 
 ## Daily commands
@@ -53,6 +57,6 @@ make test    # pytest
 
 Model assignments live in `config/models.json`. After editing, run `make configure`.
 
-Project facts and conventions: [`AGENTS.md`](AGENTS.md).
+Project facts and conventions: [`CLAUDE.md`](CLAUDE.md).
 Active model config: [`CLAUDE.md`](CLAUDE.md).
-Python style guide: `python-standards` skill (full reference: [`docs/coding-standards.md`](docs/coding-standards.md)).
+Python style guide: `python-standards` skill (full reference: [`docs/harness/coding-standards.md`](docs/harness/coding-standards.md)).

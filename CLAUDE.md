@@ -1,6 +1,113 @@
 # CLAUDE.md
 
-@AGENTS.md
+Project brain — loaded into every session, so keep it short. Add a rule under
+**Rules** whenever an agent gets something wrong.
+
+---
+
+## Build & Dev Commands
+
+```bash
+make install    # install all deps (uv sync)
+make fmt        # format: black + isort + autoflake
+make lint       # check: black, isort, interrogate, mypy
+make test       # pytest
+make check      # fmt + lint + test — run before every commit
+make clean      # remove __pycache__, .pytest_cache, dist
+
+make configure                 # apply config/models.json to all agents
+make configure PROFILE=<name>  # switch profile (list: make configure-list)
+make configure-show            # print current model assignments
+
+make manifest   # regenerate template-manifest.json after editing any
+                # template-owned file, before bumping TEMPLATE_VERSION
+```
+
+Healthy `make check` ends `All done! ✨ 🍰 ✨` / `Success: no issues found` /
+`N passed`. Anything else is a failure to fix, not to work around — never bypass
+it. After editing `config/models.json`, run `make configure`.
+
+---
+
+## Tech Stack
+
+Python via `uv` + `pyproject.toml`. Formatting, import order, docstring coverage,
+and strict typing are all enforced by `make check` — don't hand-audit what it
+covers. Use the `python-standards` skill for what a linter can't catch (reference:
+`docs/harness/coding-standards.md`).
+
+---
+
+## Project Structure
+
+| Path | What lives here |
+|---|---|
+| `.claude/` | Agents, commands, hooks, skills, `settings.json` |
+| `stories/` | Lifecycle folders: `draft → ready → in-progress → review → done` |
+| `docs/` | Project truth — PRD, architecture |
+| `docs/harness/` | Template-owned docs: setup, coding standards |
+| `config/models.json` | Model assignments per tier |
+| `scripts/` | `configure.py` (shipped); manifest + migration tools (starter-only) |
+| `src/` | Your code. Each feature dir carries its own `CLAUDE.md` |
+
+Feature `CLAUDE.md` files hold stable facts only — purpose, entry points,
+invariants, gotchas; ~30 lines max. Never implementation status (`stories/` is that
+record), and never `@import` them here: imports load eagerly, defeating lazy loading.
+
+---
+
+## Story Lifecycle
+
+`draft → ready → in-progress → review → done`
+
+- `/sprint-planning` writes to `stories/draft/`; a human moves stories to
+  `stories/ready/` — that is the gate.
+- `/dev-story [id]` claims the lowest unclaimed story in `ready/` via
+  `git worktree add ../wt-story-{slug} -b feat/story-{slug}`. **Branch existence is
+  the mutex** — the add fails if another session claimed that slug. Inside the
+  worktree it `git mv`s the story to `in-progress/` as the branch's first commit,
+  then dispatches Superpowers `subagent-driven-development`.
+- On completion `/dev-story` runs `/commit-push-pr`, then `git mv`s the story to
+  `review/`. After merge, the `stop_story_lifecycle.py` Stop hook moves it to
+  `done/` and removes the worktree and branch; `/dev-story` sweeps merged
+  worktrees on its next run as a fallback.
+
+---
+
+## Git Strategy
+
+- Branches: `feat/story-{id}-{slug}`, `fix/{slug}`, `chore/{slug}`
+- Commits: `type(scope): description` (conventional commits)
+- One worktree per story. Nothing touches `main` until a human merges.
+
+---
+
+## Environment Variables
+
+**Never read `.env`** — the `pre_tool_env_guard.py` hook blocks it across Read,
+Glob, LS, Grep, and Bash. Read `.env.template` instead, and reference variables by
+name via `os.environ` or pydantic `BaseSettings`.
+
+---
+
+## PR Checklist
+
+Beyond what hooks and `make check` already enforce:
+
+- [ ] Acceptance criteria from the story file are met
+- [ ] Tests added for new behaviour
+- [ ] No bare `except:` clauses
+- [ ] External data validated via pydantic/marshmallow
+
+---
+
+## Claude Code specifics
+
+- Hooks are wired in `.claude/settings.json` (env guard, dangerous-bash, secrets,
+  lint, story lifecycle). Never bypass them.
+- Superpowers v6+ is installed globally and triggers automatically.
+- `graphify` is opt-in: it offers itself for broad architecture questions, but is
+  never a mandatory first step.
 
 ---
 
@@ -18,35 +125,10 @@ Provider: `anthropic`
 | implement | `claude-sonnet-5` |
 | fast | `claude-haiku-4-5-20251001` |
 
-Advisor strategy: **enabled** — `claude-opus-4-8` advises executor agents (max 3 uses per request).
-Source: https://claude.com/blog/the-advisor-strategy
-
 ---
 
-## Advisor Strategy
+## Rules
 
-Sonnet/Haiku **drives the full task** and escalates to Opus only when stuck.
-This is the inverse of the usual orchestrator pattern — no decomposition,
-no worker pool. Frontier reasoning applies only when the executor needs it.
-
-When to invoke the advisor (executor agents should follow this):
-- Architectural ambiguity that the story file doesn't resolve
-- Conflicting requirements between PRD and architecture
-- A blocking bug that's been attempted twice without success
-- A security decision with non-obvious tradeoffs
-
-Do **not** invoke for routine decisions. `max_uses: 3` enforces this.
-
-The `advisor_20260301` tool is **Anthropic-only** — it won't be present in
-agent definitions when using local models (`make configure PROFILE=ollama-*`).
-
----
-
-## Claude Code specifics
-
-- Hooks are wired in `.claude/settings.json` (env guard, dangerous-bash, secrets,
-  lint, story lifecycle). Never bypass them.
-- Superpowers v6+ is installed globally and triggers automatically — see the
-  skill listing at session start for what's available.
-- Feature folders may carry their own `CLAUDE.md` — see AGENTS.md project
-  structure.
+- When a story leaves a real ambiguity unresolved — architectural direction,
+  contradictory requirements, a non-obvious security tradeoff — stop and ask the
+  user. Do not guess, and do not widen scope to route around it.

@@ -5,11 +5,11 @@ PostToolUse hook — remind the agent to link new feature CLAUDE.md files.
 Triggered by: Write, Edit, MultiEdit tool calls that touch a feature-level
               `src/<feature>/CLAUDE.md` (never the root CLAUDE.md).
 Purpose: Back the "Feature context" checklist in STORY_TEMPLATE.md — agents
-         forget to add the one-line pointer in root AGENTS.md, so nudge them
-         at write time instead of relying on the checklist alone.
+         forget to add the one-line pointer in the root CLAUDE.md, so nudge
+         them at write time instead of relying on the checklist alone.
 
 This is a nudge, not a gate: it does a loose substring check, not a strict
-parse of AGENTS.md's structure. PostToolUse can't undo a write anyway, so
+parse of the root CLAUDE.md's structure. PostToolUse can't undo a write anyway, so
 `exit 1` here surfaces a message to the agent (same pattern as post_tool_lint.py's
 "run `make fmt`" reminder) rather than reverting anything.
 
@@ -27,7 +27,7 @@ from pathlib import Path
 
 
 def main() -> None:
-    """Remind the agent to add a root AGENTS.md pointer for new feature CLAUDE.md files."""
+    """Remind the agent to add a root CLAUDE.md pointer for feature CLAUDE.md files."""
     payload = json.loads(sys.stdin.read())
     tool_name = payload.get("tool_name", "")
 
@@ -48,13 +48,13 @@ def main() -> None:
         return
     feature_name = rel[0]
 
-    agents_md = Path("AGENTS.md")
-    if not agents_md.exists():
+    root_md = Path("CLAUDE.md")
+    if not root_md.exists():
         return
 
-    if feature_name not in agents_md.read_text():
+    if feature_name not in root_md.read_text():
         print(
-            f"REMINDER: '{feature_name}' has no pointer in root AGENTS.md.",
+            f"REMINDER: '{feature_name}' has no pointer in the root CLAUDE.md.",
             file=sys.stderr,
         )
         print(

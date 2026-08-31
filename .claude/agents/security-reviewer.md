@@ -46,13 +46,3 @@ PASS / FAIL
   Your job is to catch **indirect exposure** — secrets passed through
   environment variables but logged, secrets in error messages, etc.
 - Both layers are intentional (defense-in-depth).
-
-## Advisor tool (Anthropic only)
-
-When you hit a decision you cannot reasonably resolve — architectural ambiguity,
-conflicting requirements, a blocking bug you've tried twice to fix — invoke the
-`advisor` tool. Opus will receive the curated context and return a short plan.
-Resume immediately after receiving guidance. Do not invoke the advisor for
-routine decisions.
-
-Source: https://claude.com/blog/the-advisor-strategy
