@@ -1,6 +1,6 @@
 {
   "template_version": "1.3.0",
-  "generated_at": "2026-08-31T12:03:15+00:00",
+  "generated_at": "2026-08-31T12:04:15+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -8,6 +8,10 @@
         "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
         "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b"
       ]
+    },
+    ".claude/agents/verifier.md": {
+      "sha256": "c3106702f2d92712b8acae83273d153ca687893f9658cc0ac242f490494eb93b",
+      "previous": []
     },
     ".claude/commands/archive-change.md": {
       "sha256": "c62cd4cf5b1fac2dc0c690dea2da7872d7d476eab9b525ccea8f1e76bdfd959f",
@@ -20,8 +24,10 @@
       ]
     },
     ".claude/commands/dev-change.md": {
-      "sha256": "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08",
-      "previous": []
+      "sha256": "46933bee6f02108c067b0819a079577b825dbb39ba11d95c88709b0340bdb956",
+      "previous": [
+        "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08"
+      ]
     },
     ".claude/commands/review.md": {
       "sha256": "4a5f8c2477ad9cf9adb557a667dfbae7b24f2dc68082968306bf5f6415adece3",
@@ -200,12 +206,13 @@
       "previous": []
     },
     "docs/harness/setup.md": {
-      "sha256": "f1b2af5a50de521b3b74181e8e951c9364baaa4a4acdbba63c19f85b2e7da768",
+      "sha256": "02f77dfcf5de344ba032252afd304550a0090004ec8a3b019c3f9b3a34c1a0eb",
       "previous": [
         "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc",
         "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503",
         "3f67a7c609934dd86a0801c15608a3b3bbd1e71d82b67d7b3e29f2e5f7800930",
-        "d451a2a764b33e4e49b2fccd3dd2ff6b892d71bac66efcbb7f7a3f61edffa07b"
+        "d451a2a764b33e4e49b2fccd3dd2ff6b892d71bac66efcbb7f7a3f61edffa07b",
+        "f1b2af5a50de521b3b74181e8e951c9364baaa4a4acdbba63c19f85b2e7da768"
       ]
     },
     "docs/harness/testing.md": {
@@ -262,6 +269,10 @@
       "sha256": "6f756276c0765813f3fbd9c2dcfc4ea7f16a9e8bd5ba3837d72d1c5d51be6e83",
       "previous": []
     },
+    "evals/cases/011-verifier-agent-exists.yaml": {
+      "sha256": "ac1ac5882ea4a772918e688cd2456541e791b55741f0c06b8fe17f9ddb5652fd",
+      "previous": []
+    },
     "evals/cases/100-refuse-direct-spec-edit.yaml": {
       "sha256": "496b672652b666cbdcbe3e7a6b17715b26bb73c6d529bd799ac67074d1f459c1",
       "previous": []
@@ -288,9 +299,10 @@
       ]
     },
     "scripts/configure.py": {
-      "sha256": "23e6030d0595bf74456ca80e59a376e7acb319f0ba7f4f42e22d669a048b4ef0",
+      "sha256": "3eb12796e36cb052d86d7d6117df384cc93e88a995e5e0a1c1b0ab500619d468",
       "previous": [
-        "34ff0976423df097867e196108fb7351cfc29045aa7ea819798e604d00d50f7e"
+        "34ff0976423df097867e196108fb7351cfc29045aa7ea819798e604d00d50f7e",
+        "23e6030d0595bf74456ca80e59a376e7acb319f0ba7f4f42e22d669a048b4ef0"
       ]
     }
   }

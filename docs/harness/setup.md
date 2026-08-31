@@ -92,7 +92,8 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 ├── .claude/
 │   ├── settings.json                    # Hook wiring
 │   ├── agents/                          # Project-specific agents only
-│   │   └── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
+│   │   ├── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
+│   │   └── verifier.md                  # Final check in a fresh context, read-only (Opus)
 │   │                                    # developer + code-reviewer live in Superpowers
 │   │                                    # (~/.claude/) — not committed here
 │   ├── commands/                        # Slash commands
