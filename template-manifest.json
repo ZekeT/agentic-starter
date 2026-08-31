@@ -1,6 +1,6 @@
 {
   "template_version": "1.2.1",
-  "generated_at": "2026-08-31T03:56:17+00:00",
+  "generated_at": "2026-08-31T04:29:44+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b",
@@ -12,31 +12,21 @@
       "sha256": "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d",
       "previous": []
     },
-    ".claude/commands/dev-story.md": {
-      "sha256": "06a5691c05b0b62410184e40bdb0179748ecc9f33b07d42f2bb727a575b6d67a",
-      "previous": [
-        "2e47cfa77a760938d24abce57147e704f1e4db337041b68b6aaa85f05c81223d",
-        "ddfda04877b2c9e90901b8c729655c115f88d6a2cb0856ca1a589cda52a754bd"
-      ]
-    },
-    ".claude/commands/plan.md": {
-      "sha256": "785992ed0aa062697d8f6bee1cf903149eaf4db3793f4b59fc1125a4bb482f92",
+    ".claude/commands/dev-change.md": {
+      "sha256": "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08",
       "previous": []
     },
     ".claude/commands/review.md": {
-      "sha256": "79f505f1e1b1cca385eeb085199cf77efe844b7be36f04adf5ae768cbb3098e7",
-      "previous": []
-    },
-    ".claude/commands/sprint-planning.md": {
-      "sha256": "cb7ee09dc9b5ac7b2af384abad897dc9cea0be8378209d71846e8e795da22646",
+      "sha256": "4a5f8c2477ad9cf9adb557a667dfbae7b24f2dc68082968306bf5f6415adece3",
       "previous": [
-        "ab456810d5a1bba3a175373e770596356e27f7e8dfd6b482559b37e5c2f2bb5f"
+        "79f505f1e1b1cca385eeb085199cf77efe844b7be36f04adf5ae768cbb3098e7"
       ]
     },
     ".claude/hooks/post_tool_feature_claude_reminder.py": {
-      "sha256": "61171b5f20029371b1c42b8c33f96de6a2e91e5b8adc85333bc060e0546dccdc",
+      "sha256": "d4788bb35b9b49f0aa5d407867b1c984eea674c14be8ab7fae69627f9182d808",
       "previous": [
-        "b1d6a993d113e1598bd141a0dee1e91b874b0c89c75c011aab6ef8cf514d4cd6"
+        "b1d6a993d113e1598bd141a0dee1e91b874b0c89c75c011aab6ef8cf514d4cd6",
+        "61171b5f20029371b1c42b8c33f96de6a2e91e5b8adc85333bc060e0546dccdc"
       ]
     },
     ".claude/hooks/post_tool_lint.py": {
@@ -57,18 +47,13 @@
         "99d3669bfd603e67be8f34267fc9c122d1b167b16324e319c84f3b877f01af02"
       ]
     },
-    ".claude/hooks/stop_story_lifecycle.py": {
-      "sha256": "119ee60187027af3fd98cf37c34d50bf1ce9100d57a4eaf95242601d74a6880c",
-      "previous": [
-        "bd0e961dd5be6b484e8ce7dbec6f2a7651b6fce728e2593718deec50a5db3ac5"
-      ]
-    },
     ".claude/settings.json": {
-      "sha256": "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e",
+      "sha256": "35e2b7483ff6e8311718446f1b070523b133a8b739d66c3fed58e138b0ac1861",
       "previous": [
         "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
         "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
-        "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8"
+        "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
+        "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
@@ -84,47 +69,54 @@
       ]
     },
     ".claude/skills/rescan-docs/SKILL.md": {
-      "sha256": "3f39d442fe3ac4c9e0cc2f3be554c5bb29eb8a4710bc8b4483a306b1dded298e",
+      "sha256": "ab3ac946d78e6431d7c8d3c6b493f5c3f98b72ae5d61da53d83ed8f95baa517f",
       "previous": [
-        "5f91b4379fb79d2b65986d60bc5f3f3143524a61ce860be3925c658dfc829120"
+        "5f91b4379fb79d2b65986d60bc5f3f3143524a61ce860be3925c658dfc829120",
+        "3f39d442fe3ac4c9e0cc2f3be554c5bb29eb8a4710bc8b4483a306b1dded298e"
       ]
     },
     ".claude/skills/setup-base/SKILL.md": {
-      "sha256": "36b46859d2ad60ddb9ece7f934d45db8052994047c6651840b4db6288c4d63e4",
+      "sha256": "29caaffa10cfb5584393df228d5390664b8393be997cc604a73731e3fc256f8e",
       "previous": [
-        "6317bb19ef1f8fb2b6fe8a4d4ec2c29668769dc9e05ee4e1dabbf21885f1cef9"
+        "6317bb19ef1f8fb2b6fe8a4d4ec2c29668769dc9e05ee4e1dabbf21885f1cef9",
+        "36b46859d2ad60ddb9ece7f934d45db8052994047c6651840b4db6288c4d63e4"
       ]
     },
     ".claude/skills/setup-base/scripts/setup_base.py": {
-      "sha256": "a90983fb3e10313669c169577b97f86ad95c9c5adeb5ecea2609f426b7e3b0f5",
+      "sha256": "8a24506dbf1ff232e694997573bcf22d6764a425a46383700128f49a693428a0",
       "previous": [
-        "7b6fa4e6398d2810853731ff4be7fc2a7a5d6cb42a6f4c0bcf6db9cdecc15508"
+        "7b6fa4e6398d2810853731ff4be7fc2a7a5d6cb42a6f4c0bcf6db9cdecc15508",
+        "a90983fb3e10313669c169577b97f86ad95c9c5adeb5ecea2609f426b7e3b0f5"
       ]
     },
     ".claude/skills/setup-migrate/SKILL.md": {
-      "sha256": "774b4a5a8c83108c686f34207a31a75e331670d65645c5cd993cb8a662e93a95",
+      "sha256": "76b81992de7a5b3e661a4a02e8e561c7fbaf92b75cba5c7a899e8620991c7b13",
       "previous": [
-        "5eb270dc3c1a0b594635b7816a00433de2229f3573d15ae872dfbf725e30cfa0"
+        "5eb270dc3c1a0b594635b7816a00433de2229f3573d15ae872dfbf725e30cfa0",
+        "774b4a5a8c83108c686f34207a31a75e331670d65645c5cd993cb8a662e93a95"
       ]
     },
     ".claude/skills/setup-migrate/scripts/setup_migrate.py": {
-      "sha256": "6092556e03d32bb635f02ce14bec8913d4f2abe58f6537017b367f541ac4ee68",
+      "sha256": "4c449dc20ca59a87976ea31034d4c98bd64007e9a360277d1b5019dc798cf722",
       "previous": [
-        "435fd4d557691fe2e84fd2a1b929ac4022ad389bea88eacca0ea1fec9a88bfa9"
+        "435fd4d557691fe2e84fd2a1b929ac4022ad389bea88eacca0ea1fec9a88bfa9",
+        "6092556e03d32bb635f02ce14bec8913d4f2abe58f6537017b367f541ac4ee68"
       ]
     },
     ".claude/skills/setup-update/SKILL.md": {
-      "sha256": "52c0bf659fd56e0133a565b582922096b3cf87cd55f11938ae97a786aa43df63",
+      "sha256": "8658a396cc64a7a3591a483fd4325fe182b2d6d46bdf94d92c2dba3f4ba53cb2",
       "previous": [
-        "2770516410b3a012ad36fb84a4d96ff96fb6ee99c542a632a61946ef83c6a021"
+        "2770516410b3a012ad36fb84a4d96ff96fb6ee99c542a632a61946ef83c6a021",
+        "52c0bf659fd56e0133a565b582922096b3cf87cd55f11938ae97a786aa43df63"
       ]
     },
     ".claude/skills/setup-update/scripts/setup_update.py": {
-      "sha256": "407ad08a0b19622dee07559e75ef040cea3210325ad289d8620c13b026ab074d",
+      "sha256": "c67ce4a58fb8c84004101e26ea6074f48ccacee25fa4cea59779b47d3498fa60",
       "previous": [
         "cef321f0439a74c260a21434a5fc2debd8c4cefa0f3ca02db59f9dc9bd42a79e",
         "2093449754cd3e61f48bd61368e6c4df90c3ef8bfbd4f7f95070f2a129f2f7ba",
-        "792fdc3d789bcd76b3069700d0f272c8728d897fad8dddb709f8b7248b885660"
+        "792fdc3d789bcd76b3069700d0f272c8728d897fad8dddb709f8b7248b885660",
+        "407ad08a0b19622dee07559e75ef040cea3210325ad289d8620c13b026ab074d"
       ]
     },
     ".env.template": {
@@ -138,7 +130,7 @@
       "previous": []
     },
     "CLAUDE.md": {
-      "sha256": "fc8c63f5371ca4cfa489875c5c6812a165adac880a19fb1a834d352e72c0a580",
+      "sha256": "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -146,7 +138,8 @@
         "fb1ef765e1c7f3d03cdecf4937293c932bf5320bb020af1134ac1a3cfc493bdb",
         "aa68f1ddd8714b005fd46197e52ffb24ce380044138aa3692938d6ca5472eeb6",
         "be64236d3b55d5835a3f62e863de46418e655329f8676777a00ba781153e8375",
-        "c18337c5712fea6b68c3519f486fe292d05a9ab90767aa746f6645e1b61b573d"
+        "c18337c5712fea6b68c3519f486fe292d05a9ab90767aa746f6645e1b61b573d",
+        "fc8c63f5371ca4cfa489875c5c6812a165adac880a19fb1a834d352e72c0a580"
       ]
     },
     "Makefile": {
@@ -169,21 +162,24 @@
         "686e67936dda8a12817dcb80116034673e16ece99d872e472044184799b17bed"
       ]
     },
+    "docs/decisions/index.md": {
+      "sha256": "61ad4903c86f0b8eb688ee73f336736927f33ef4c9814854452bfb332c288411",
+      "previous": []
+    },
     "docs/harness/coding-standards.md": {
       "sha256": "4b11b4b7cbafed4344a727eca152c19bd15d8b85d224c2103f9d1c3ae59910ef",
       "previous": []
     },
     "docs/harness/setup.md": {
-      "sha256": "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503",
+      "sha256": "3f67a7c609934dd86a0801c15608a3b3bbd1e71d82b67d7b3e29f2e5f7800930",
       "previous": [
-        "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc"
+        "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc",
+        "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503"
       ]
     },
-    "docs/prd.md": {
-      "sha256": "db0922430005dbcb54b158770343f8dbb36deaf74f53c0647a0fbc7704bff764",
-      "previous": [
-        "509534abf687d45e08003ecfe1a7b51efdbcfe68992394e586cf8d3a274407b1"
-      ]
+    "docs/product.md": {
+      "sha256": "c753c798bb89bd874c8aa5e0e278cbc9653eb8b08206e9177e8ffae0b66b2b92",
+      "previous": []
     },
     "harness_setup.sh": {
       "sha256": "667f5e02bcf45672e930c76a667e7f60afc884751072c3a65394dd0b9b2ba804",
@@ -195,14 +191,6 @@
       "sha256": "23e6030d0595bf74456ca80e59a376e7acb319f0ba7f4f42e22d669a048b4ef0",
       "previous": [
         "34ff0976423df097867e196108fb7351cfc29045aa7ea819798e604d00d50f7e"
-      ]
-    },
-    "stories/STORY_TEMPLATE.md": {
-      "sha256": "d1293f070d3dd15f7b4ec791406503f88025fc27488e4b170ad96b70d00ffd36",
-      "previous": [
-        "e407695ab8e223cfca78d8220c857e17008352e72f179431ffd294992cd3aa50",
-        "850e2a84182cd9de6ec47cd55550805d80524a134625b21e00aa0f66cfdf1800",
-        "de75923488fc650972529bb01a9bdf6874fe76c7d309b5ffaeabb760cec08ac7"
       ]
     }
   }

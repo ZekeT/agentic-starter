@@ -46,9 +46,9 @@ MANIFEST_FILES = [
     ".claude/settings.json",
     "docs/harness/setup.md",
     "docs/harness/coding-standards.md",
-    "docs/prd.md",
     "docs/architecture.md",
-    "stories/STORY_TEMPLATE.md",
+    "docs/product.md",
+    "docs/decisions/index.md",
 ]
 
 # Scripts copied into downstream projects (a curated list, not a glob —

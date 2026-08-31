@@ -55,22 +55,27 @@ Already installed on this machine? Update instead:
 ```
 
 This installs implementation skills (TDD, subagent dispatch, code review) globally
-to `~/.claude/`. Required for `/dev-story` to use the full agentic TDD workflow.
+to `~/.claude/`. Required for `/dev-change` to use the full agentic TDD workflow.
 Superpowers v6 replaced the two-stage review with a unified single-pass task
 reviewer. SDD scratch files live in `.superpowers/sdd/<plan-basename>/`
 (gitignored here) — since 6.2.0 the workspace is scoped per plan, so a
 follow-up plan can't read a prior plan's progress ledger.
 
-Then open Claude Code and run the planning pipeline:
+Then open Claude Code and run the change loop:
 
 ```
-(plan)            # Superpowers brainstorming/writing-plans conversations
-                  #   → docs/prd.md + docs/architecture.md
-                  # ← HUMAN GATE: review and approve both docs
-/sprint-planning  # Break the approved docs into stories → stories/draft/
-                  # ← HUMAN GATE: move stories to stories/ready/
-/dev-story [id]   # Implement a story end-to-end (omit id to pick lowest-numbered)
+/crystallize "<idea>"        # Exploration → an OpenSpec change folder
+                             #   commit 1: intent.md
+                             #   ← HUMAN GATE: accept the intent
+                             #   commit 2: proposal + delta specs + design + tasks
+                             #   ← HUMAN GATE: accept the spec
+/dev-change <slug> <group>   # Implement one task group in its own worktree + PR
+                             #   ← HUMAN GATE: merge the PR
+/archive-change <slug>       # Merge deltas into openspec/specs/
+                             #   ← HUMAN GATE: review the spec diff
 ```
+
+Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 
 ---
 
@@ -92,9 +97,9 @@ Then open Claude Code and run the planning pipeline:
 │   │                                    # developer + code-reviewer live in Superpowers
 │   │                                    # (~/.claude/) — not committed here
 │   ├── commands/                        # Slash commands
-│   │   ├── sprint-planning.md           # /sprint-planning — break approved docs into stories
-│   │   ├── dev-story.md                 # /dev-story [id] — full story lifecycle (canonical)
-│   │   ├── implement.md                 # /implement story-NNN — thin alias for dev-story
+│   │   ├── dev-change.md                # /dev-change <slug> <group> — implement one task group
+│   │   ├── archive-change.md            # /archive-change <slug> — merge deltas into specs
+│   │   ├── opsx/                        # OpenSpec's own commands (CLI-owned)
 │   │   ├── review.md                    # /review
 │   │   └── commit-push-pr.md            # /commit-push-pr
 │   ├── hooks/
@@ -107,23 +112,25 @@ Then open Claude Code and run the planning pipeline:
 │       ├── setup-base/                  # Scan project setup health
 │       ├── setup-migrate/               # Migrate existing projects to this framework
 │       ├── setup-update/                # Update a copied project to the latest template
-│       └── rescan-docs/                 # Reverse-engineer PRD + architecture + stories from code
+│       ├── crystallize/                 # Exploration → an OpenSpec change
+│       ├── rescan-docs/                 # Reverse-engineer specs + product doc from code
+│       └── openspec-*/                  # OpenSpec's own skills (CLI-owned)
 │
-├── stories/
-│   ├── STORY_TEMPLATE.md
-│   ├── draft/        ← /sprint-planning writes here
-│   ├── ready/        ← human moves stories here to unblock agents
-│   ├── in-progress/  ← agent working (git worktree)
-│   ├── review/       ← PR open
-│   └── done/         ← merged
+├── openspec/                            # CLI-owned — use `openspec update`, never hand-edit
+│   ├── config.yaml                      # Schema + project context + artifact rules
+│   ├── specs/                           # CANONICAL: what the system does today
+│   └── changes/                         # Work in flight, one folder per change
+│       └── archive/                     # Archived changes, dated
 │
 ├── config/
 │   └── models.json                      # Model assignments per tier
 ├── scripts/
 │   └── configure.py                     # Patches agents with model assignments
 └── docs/
-    ├── prd.md / architecture.md         # Templates (planning fills these in)
-    └── coding-standards.md
+    ├── product.md                       # Durable product intent + non-goals
+    ├── architecture.md                  # System shape only (behaviour lives in specs)
+    ├── decisions/                       # ADRs, append-only
+    └── harness/                         # This file + coding standards
 ```
 
 ---
@@ -139,7 +146,6 @@ Run on every tool call. No LLM judgment — pure code.
 | `post_tool_feature_claude_reminder.py` | Write/Edit (feature `CLAUDE.md`) | Nudge to add the root CLAUDE.md pointer |
 | `pre_tool_dangerous.py` | Bash | Block rm -rf, force push, etc. |
 | `pre_tool_env_guard.py` | Read/Glob/LS/Grep/Bash | Block Claude reading `.env` |
-| `stop_story_lifecycle.py` | Stop | Move story file `review/` → `done/` after merge |
 
 ---
 
@@ -173,11 +179,12 @@ already exists.
 Then open Claude Code in your project and generate planning docs from the existing code:
 
 ```
-/rescan-docs      # Analyses codebase → PRD + architecture in docs/ + story stubs
-/sprint-planning  # Breaks the reviewed docs into further stories
+/rescan-docs           # Analyses the codebase → openspec/specs/ + docs/product.md
+/crystallize "<idea>"  # Then start the loop on your first real change
 ```
 
-Move stories from `stories/draft/` to `stories/ready/` when you're ready to implement.
+Review the reverse-engineered specs before trusting them — they describe what the
+code *does*, which is not always what it *should* do.
 
 ---
 

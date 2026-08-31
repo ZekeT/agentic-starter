@@ -4,9 +4,9 @@ PostToolUse hook — remind the agent to link new feature CLAUDE.md files.
 
 Triggered by: Write, Edit, MultiEdit tool calls that touch a feature-level
               `src/<feature>/CLAUDE.md` (never the root CLAUDE.md).
-Purpose: Back the "Feature context" checklist in STORY_TEMPLATE.md — agents
-         forget to add the one-line pointer in the root CLAUDE.md, so nudge
-         them at write time instead of relying on the checklist alone.
+Purpose: Agents add a feature CLAUDE.md and forget the one-line pointer in the
+         root CLAUDE.md, leaving the new file undiscoverable. Nudge at write
+         time, when the fix is one line, rather than at review time.
 
 This is a nudge, not a gate: it does a loose substring check, not a strict
 parse of the root CLAUDE.md's structure. PostToolUse can't undo a write anyway, so

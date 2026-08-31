@@ -55,18 +55,16 @@ REQUIRED_DIRS = [
     ".claude/commands",
     ".claude/hooks",
     ".claude/skills",
-    "stories/draft",
-    "stories/ready",
-    "stories/in-progress",
-    "stories/review",
-    "stories/done",
+    "openspec/specs",
+    "openspec/changes/archive",
     "docs",
+    "docs/decisions",
 ]
 
 # Files checked for existence (not created — content is project-specific)
 REQUIRED_FILES = [
     "CLAUDE.md",
-    "docs/prd.md",
+    "docs/product.md",
     "docs/architecture.md",
 ]
 
@@ -89,13 +87,12 @@ EXPECTED_HOOKS = {
 }
 
 # Slash commands in .claude/commands/ — the full template set.
-# Planning conversations happen via Superpowers (brainstorming /
-# writing-plans); /sprint-planning converts approved docs into stories.
+# Exploration and spec work happen via the crystallize skill; these are the
+# commands that drive implementation and closing the loop.
 EXPECTED_COMMANDS = {
-    "sprint-planning.md": "/sprint-planning — break docs/prd.md into story files",
-    "dev-story.md": "/dev-story — full story lifecycle (canonical)",
-    "implement.md": "/implement — Superpowers TDD implementation",
-    "review.md": "/review — Security reviewer: OWASP/CVE check",
+    "dev-change.md": "/dev-change <slug> <group> — implement one task group",
+    "archive-change.md": "/archive-change <slug> — merge deltas into openspec/specs/",
+    "review.md": "/review — compliance against the change's delta specs",
     "commit-push-pr.md": "/commit-push-pr — Stage, commit, push, open PR",
 }
 
@@ -172,7 +169,7 @@ def audit_stale_agents(root: Path) -> list[str]:
         "analyst.md": "Planning is conversational (Superpowers brainstorming) — no agent needed",
         "pm.md": "Planning is conversational (Superpowers brainstorming) — no agent needed",
         "architect.md": "Planning is conversational (Superpowers writing-plans) — no agent needed",
-        "scrum-master.md": "/sprint-planning owns story breakdown — no agent needed",
+        "scrum-master.md": "the crystallize skill owns change breakdown — no agent needed",
     }
     agents_dir = root / ".claude" / "agents"
     if not agents_dir.exists():
@@ -184,25 +181,26 @@ def audit_stale_agents(root: Path) -> list[str]:
     return found
 
 
-def audit_stories(root: Path) -> dict:
-    """Find story files outside the kanban structure."""
-    results = {"kanban_dirs": {}, "orphaned_stories": []}
-    for stage in ["draft", "ready", "in-progress", "review", "done"]:
-        d = root / "stories" / stage
-        results["kanban_dirs"][stage] = d.exists()
+def audit_change_loop(root: Path) -> dict:
+    """Report on the OpenSpec change loop's structure and any legacy leftovers."""
+    results: dict = {"loop_dirs": {}, "legacy_stories": [], "active_changes": []}
 
-    # look for .md files that look like stories outside stories/
-    for p in root.rglob("*.md"):
-        parts = p.relative_to(root).parts
-        if parts[0] == "stories":
-            continue  # already in kanban
-        if parts[0] in (".claude", "docs", "node_modules", ".git"):
-            continue
-        name = p.stem.lower()
-        if any(
-            kw in name for kw in ["story", "ticket", "task", "feature", "us-", "story-"]
-        ):
-            results["orphaned_stories"].append(str(p.relative_to(root)))
+    for rel in ["openspec/specs", "openspec/changes", "openspec/changes/archive"]:
+        results["loop_dirs"][rel] = (root / rel).exists()
+
+    changes = root / "openspec" / "changes"
+    if changes.is_dir():
+        results["active_changes"] = sorted(
+            d.name for d in changes.iterdir() if d.is_dir() and d.name != "archive"
+        )
+
+    # A stories/ tree means the project predates the change loop. Flag it for a
+    # human to port, rather than silently ignoring work that is still in flight.
+    stories = root / "stories"
+    if stories.is_dir():
+        results["legacy_stories"] = sorted(
+            str(f.relative_to(root)) for f in stories.rglob("*.md")
+        )
 
     return results
 
@@ -237,27 +235,21 @@ HOOK_TEMPLATES = {
 
 # Command stubs to scaffold when missing.
 COMMAND_TEMPLATES = {
-    # Keep in sync with .claude/commands/sprint-planning.md (full version).
-    "sprint-planning.md": (
-        "# /sprint-planning\n"
-        "Break the approved `docs/prd.md` + `docs/architecture.md` into story files\n"
-        "in `stories/draft/`, following `stories/STORY_TEMPLATE.md`.\n\n"
-        "Planning conversations happen before this command via the Superpowers\n"
-        "**`brainstorming`** / **`writing-plans`** skills. Never move stories to\n"
-        "`ready/` — that is the human gate.\n"
+    # Keep in sync with .claude/commands/dev-change.md (full version).
+    "dev-change.md": (
+        "# /dev-change\n"
+        "Implement one task group from an OpenSpec change, in its own git worktree,\n"
+        "using the Superpowers `subagent-driven-development` skill.\n\n"
+        "Usage: `/dev-change <slug> <group>` — omit the group to take the lowest\n"
+        "one with unchecked tasks. One `## N` group in tasks.md = one branch\n"
+        "(`feat/<slug>-g<N>`) = one PR. Branch existence is the mutex.\n"
     ),
-    "dev-story.md": (
-        "# /dev-story\n"
-        "Develop a story end-to-end using the Superpowers `subagent-driven-development`\n"
-        "skill. Handles the `ready/ → in-progress/ → review/` lifecycle automatically.\n\n"
-        "Usage: `/dev-story [id]` — omit id to pick the lowest-numbered story in `stories/ready/`.\n"
-    ),
-    "implement.md": (
-        "# /implement\n"
-        "Activate Superpowers TDD for the given story file.\n\n"
-        "Usage: `/implement <story-file>`\n\n"
-        "Superpowers handles the full workflow automatically:\n"
-        "brainstorm → git worktree → write plan → test-first → implement → review\n"
+    "archive-change.md": (
+        "# /archive-change\n"
+        "Merge a completed change's delta specs into `openspec/specs/` and archive\n"
+        "the change folder.\n\n"
+        "Usage: `/archive-change <slug>`. Refuses while any task is unchecked, and\n"
+        "prints the spec diff for review before applying it.\n"
     ),
     "review.md": (
         "# /review\n"
@@ -355,9 +347,10 @@ What every reviewer (human or agent) checks on every PR:
 
 ## Doc Links
 
-- PRD: [docs/prd.md](docs/prd.md)
+- What it does today: [openspec/specs/](openspec/specs/) (`openspec list --specs`)
+- Product intent: [docs/product.md](docs/product.md)
 - Architecture: [docs/architecture.md](docs/architecture.md)
-- Stories: [stories/](stories/)
+- Decisions: [docs/decisions/](docs/decisions/)
 """
 
 
@@ -418,9 +411,11 @@ def scaffold(root: Path, audit: dict, dry: bool):
 
     # Placeholder docs
     make_file(
-        "docs/prd.md",
-        "# Product Requirements Document\n\n"
-        "TODO: Write during planning (Superpowers brainstorming / writing-plans).\n",
+        "docs/product.md",
+        "# Product\n\n"
+        "TODO: what this is, who it is for, and the non-goals.\n"
+        "Per-change intent lives in openspec/changes/<slug>/intent.md;\n"
+        "current behaviour lives in openspec/specs/.\n",
     )
     make_file(
         "docs/architecture.md",
@@ -476,14 +471,24 @@ def print_audit(root: Path):
     for item in stale:
         warn(f"REMOVE: {item}")
 
-    header("7 / STORY FILES")
-    stories = audit_stories(root)
-    for stage, exists in stories["kanban_dirs"].items():
-        (ok if exists else missing)(f"stories/{stage}/")
-    if stories["orphaned_stories"]:
-        warn("Story files found outside kanban structure:")
-        for p in stories["orphaned_stories"]:
-            info(f"  Consider moving: {p}  →  stories/draft/")
+    header("7 / CHANGE LOOP")
+    loop = audit_change_loop(root)
+    for rel, exists in loop["loop_dirs"].items():
+        (ok if exists else missing)(f"{rel}/")
+    if loop["active_changes"]:
+        info(f"active changes: {', '.join(loop['active_changes'])}")
+    else:
+        info("no active changes — start one with /crystallize")
+    if loop["legacy_stories"]:
+        warn(
+            f"{len(loop['legacy_stories'])} legacy story file(s) in stories/ — "
+            "this project predates the change loop."
+        )
+        info("Port anything still in flight into an OpenSpec change, then delete stories/:")
+        for s in loop["legacy_stories"][:5]:
+            info(f"  {s}")
+        if len(loop["legacy_stories"]) > 5:
+            info(f"  ... and {len(loop['legacy_stories']) - 5} more")
 
     header("8 / CONFLICT CHECKS")
     if check_superpowers_conflict(root):
@@ -566,12 +571,10 @@ def main():
 
     print(f"{BOLD}Next steps:{RESET}")
     print("  1. Review CLAUDE.md and fill in the TODO sections")
-    print(
-        "  2. Populate docs/prd.md and docs/architecture.md"
-        " (Superpowers brainstorming / writing-plans)"
-    )
-    print("  3. Run `/sprint-planning` to break the docs into story files")
-    print("  4. Review stories/draft/ and move approved ones to stories/ready/")
+    print("  2. Populate docs/product.md and docs/architecture.md")
+    print("  3. Install OpenSpec: npm i -g @fission-ai/openspec@latest")
+    print("     then: openspec init --tools claude")
+    print("  4. Run /rescan-docs to derive openspec/specs/ from existing code")
     print(
         "  5. For the CLAUDE.md judgment work, use the migration SKILL.md in Claude Code\n"
     )

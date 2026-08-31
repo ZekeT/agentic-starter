@@ -1,17 +1,22 @@
 ---
 name: rescan-docs
 description: >
-  Reverse-engineer planning documents (PRD, architecture, story stubs) from
-  an existing codebase. Use when migrating a project to the Agentic Engineering
-  framework, when docs are missing or stale, or after inheriting a codebase with
-  no planning artefacts. Trigger on: "rescan docs", "generate PRD from code",
-  "reverse-engineer architecture", "create docs from codebase", "rescan to generate stories".
+  Reverse-engineer behaviour specs and product intent from an existing codebase,
+  so the change loop has a documented baseline to work from. Use when adopting
+  this harness on a brownfield project, when openspec/specs/ is empty or stale,
+  or after inheriting a codebase with no planning artefacts. Trigger on:
+  "rescan docs", "generate specs from code", "reverse-engineer architecture",
+  "create docs from codebase", "what does this system currently do".
 ---
 
 # Rescan-Docs Skill
 
-Analyse an existing codebase and produce planning documents so the
-full agentic pipeline can resume from a documented baseline.
+Analyse an existing codebase and produce the loop's durable truth: behaviour
+specs in `openspec/specs/`, plus `docs/product.md` and `docs/architecture.md`.
+
+The output is **what the code does**, which is not always what it *should* do.
+Every artefact this skill writes is a draft for a human to correct, never an
+authority.
 
 **Announce at start:** "I'm using the rescan-docs skill to generate planning documents from the existing codebase."
 
@@ -92,17 +97,19 @@ Wait for answers before proceeding. Their answers fill in the "why" — the code
 
 ---
 
-## Step 3 — Generate the PRD
+## Step 3 — Generate product intent
 
-Write `docs/prd.md` using this structure. Fill every section from your
-analysis and the user's answers. Do not leave any section as a placeholder.
+Write `docs/product.md`: what the product is, who it's for, why it exists, and
+its non-goals. Fill every section from your analysis and the user's answers.
+Do not leave placeholders.
 
-If `docs/prd.md` already exists with real (non-placeholder) content, create
-`docs/prd-rescan-{date}.md` instead and tell the user to diff them.
+If `docs/product.md` already exists with real (non-placeholder) content, write
+`docs/product-rescan-{date}.md` instead and tell the user to diff them. Never
+overwrite.
 
 ```markdown
-# Product Requirements Document
-> Reverse-engineered from codebase on {date}. Review and edit before treating as authoritative.
+# Product
+> Reverse-engineered from the codebase on {date}. Review and edit before treating as authoritative.
 
 ## Problem Statement
 {what problem this system solves — from user interview}
@@ -196,26 +203,62 @@ cat package.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdi
 
 ---
 
-## Step 5 — Generate story stubs for gaps
+## Step 5 — Generate behaviour specs
 
-Create one story file per identified gap in `stories/draft/`. Find the next
-available story number:
+This is the important output. `openspec/specs/` is what makes "what does this
+system currently do?" answerable without reading code.
 
-```bash
-ls stories/draft/ stories/ready/ stories/in-progress/ stories/review/ stories/done/ \
-  2>/dev/null | grep "^story-" | sed 's/story-//' | cut -d- -f1 | sort -n | tail -1
+**Slice into capabilities.** A capability is *something you would plausibly
+rewrite or delete as a unit* — not one per file, and not one per layer. Derive
+them from the code's actual seams: an auth module, a payment integration, a CLI
+surface. Aim for a handful, not dozens.
+
+For each capability write `openspec/specs/<capability-path>/spec.md`:
+
+```markdown
+# <capability> Specification
+
+## Purpose
+One or two sentences (50+ chars) on what this capability is for.
+
+## Requirements
+
+### Requirement: <name>
+The system SHALL <observable behaviour>.
+
+#### Scenario: <name>
+- **WHEN** <condition>
+- **THEN** <expected outcome>
 ```
 
-Start numbering from that value + 1 (or 001 if no stories exist).
+Rules that keep specs useful:
 
-**Sources for stories (in priority order):**
+- Describe **observable behaviour only** — inputs, outputs, error conditions,
+  external constraints. If the implementation could change without changing
+  what a caller sees, it does not belong here.
+- Never name internal classes, functions, or libraries.
+- Every requirement needs at least one `#### Scenario:` block, or
+  `openspec validate` rejects it.
+- Only write a requirement you can point at real code for. A spec that
+  describes intentions rather than behaviour is worse than no spec.
 
-1. Planned features from the PRD "Planned Functionality" section
-2. TODO/FIXME items from the grep in Step 3
-3. Tech debt from user interview answer 4
-4. Files with no test coverage:
+Never write into `openspec/changes/` here — that is for work in flight, and
+nothing is in flight during a rescan.
+
+Verify before reporting:
 
 ```bash
+openspec validate --all
+openspec list --specs
+```
+
+**Gaps go in the report, not into specs.** TODO/FIXME items, untested files,
+and missing features describe what the system *doesn't* do. Collect them for
+Step 6 so the user can crystallize them into real changes:
+
+```bash
+grep -rn "TODO\|FIXME\|XXX\|HACK" --include="*.py" . 2>/dev/null | head -20
+
 find . -name "*.py" -not -path "*/test*" -not -path "*__pycache__*" \
   -not -name "setup.py" -not -name "conftest.py" \
   -not -path "*/.git/*" 2>/dev/null | while read f; do
@@ -226,16 +269,6 @@ find . -name "*.py" -not -path "*/test*" -not -path "*__pycache__*" \
 done | head -10
 ```
 
-**Story file format** — write to `stories/draft/story-{NNN}-{slug}.md`,
-following `stories/STORY_TEMPLATE.md` exactly (Status / What to build / Files
-to touch / Acceptance criteria / Test strategy / Architectural constraints /
-Out of scope / Dependencies / Notes for agent). Status stays `draft`.
-
-Quality over quantity: generate 3–8 well-specified stories. Flag thin story
-candidates to the user rather than writing vague stubs.
-
----
-
 ## Step 6 — Final report
 
 Print a summary:
@@ -243,24 +276,33 @@ Print a summary:
 ```
 Rescan complete
 ===============
-PRD:           docs/prd.md                       ({N} features documented)
-Architecture:  docs/architecture.md              ({N} components mapped)
-Stories:       stories/draft/story-{NNN}-*.md    ({N} stories created)
+Specs:         openspec/specs/<capability>/spec.md   ({N} capabilities, {M} requirements)
+Product:       docs/product.md
+Architecture:  docs/architecture.md                  ({N} components mapped)
 
-Review docs/prd.md and docs/architecture.md — they are reverse-engineered;
-edit before treating as authoritative.
-Move stories from stories/draft/ to stories/ready/ when ready to implement.
+Everything above is reverse-engineered from code — it describes what the system
+DOES, not what it SHOULD do. Review before treating any of it as authoritative.
 
-Next: /sprint-planning — breaks the reviewed docs into further stories
+Gaps found (not written to specs — specs describe current behaviour only):
+  - {N} TODO/FIXME markers
+  - {N} source files with no test
+  - {N} features the interview named as planned but unbuilt
+
+Next: /crystallize "<one of the gaps above>" to open your first change.
 ```
 
 ---
 
 ## Guardrails
 
-- **Do not overwrite** existing files in `docs/` — timestamp the
-  new file and tell the user to diff them
-- **Flag uncertainty** — if a section can't be inferred from code, say so explicitly
-  in the doc with `<!-- UNKNOWN: explain what's missing -->` rather than guessing
-- **Do not generate stories for things that are clearly done** — only gaps and debt
-- **Quality over quantity** for stories — 5 well-specified stories beat 20 vague ones
+- **Never overwrite** an existing file in `docs/` or `openspec/specs/` — write a
+  timestamped `*-rescan-{date}.md` sibling and tell the user to diff them.
+- **Never write to `openspec/changes/`.** Nothing is in flight during a rescan.
+  Gaps belong in the report so a human can crystallize them deliberately.
+- **Specs describe behaviour that exists.** A gap is the absence of behaviour, so
+  it is never a spec. Writing aspirational specs is the exact failure mode —
+  a PRD wearing a spec's clothes — that this harness exists to prevent.
+- **Flag uncertainty** — if something can't be inferred from code, write
+  `<!-- UNKNOWN: what's missing -->` rather than guessing.
+- **Quality over quantity** — a handful of accurate capabilities beats twenty
+  speculative ones. Say so when the codebase is too thin to spec confidently.

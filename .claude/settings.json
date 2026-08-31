@@ -42,16 +42,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 .claude/hooks/stop_story_lifecycle.py"
-          }
-        ]
-      }
     ]
   },
   "statusLine": {

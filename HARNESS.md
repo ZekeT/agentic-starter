@@ -12,38 +12,58 @@ For one-time bootstrap, project structure, hooks, and optional skills, see [`doc
 ## Pipeline
 
 ```
-Requirements → Architecture → Stories → Implement → Review → Security → CI/CD → Deploy
-    🖐              🖐             🖐                                                🖐
+exploration → intent → spec → tasks → implement → review → archive
+                🖐       🖐              🖐 (PR merge)      🖐
 ```
 
 `🖐` = human gate. Everything else is an automated agent.
 
-| Phase | Command | Output |
-|-------|---------|--------|
-| Plan | `/plan` Superpowers `brainstorming` conversation | `docs/prd.md` |
-| Architecture | `/plan` Superpowers `writing-plans` conversation | `docs/architecture.md` |
-| Stories | `/sprint-planning` | `stories/draft/` |
-| Implement | `/dev-story NNN` | code on a worktree branch |
-| Review | `/review` | code-reviewer pass |
-| Ship | `/commit-push-pr` | PR opened |
+| Stage | Command | Output | Gate |
+|---|---|---|---|
+| Explore | conversation, or `/opsx:explore` | understanding | — |
+| Intent | `/crystallize "<idea>"` | `openspec/changes/<slug>/intent.md` | 🖐 accept the intent |
+| Spec | `/crystallize` continues | `proposal.md` + `specs/` + `design.md` + `tasks.md` | 🖐 accept the spec |
+| Implement | `/dev-change <slug> <group>` | code + tests on a worktree branch | — |
+| Review | `/review` | compliance against the delta specs | — |
+| Ship | `/commit-push-pr` | PR opened | 🖐 merge |
+| Archive | `/archive-change <slug>` | deltas merged into `openspec/specs/` | 🖐 review the spec diff |
 
 ---
 
-## Story lifecycle
+## Where truth lives
+
+| Question | Read |
+|---|---|
+| What does the system do **today**? | `openspec/specs/` — start with `openspec list --specs` |
+| What is changing **right now**? | `openspec/changes/<slug>/` |
+| **Why** was it built this way? | `docs/decisions/` |
+| What **shape** is the system? | `docs/architecture.md` |
+| What is this product **for**? | `docs/product.md` |
+
+`openspec/specs/` is the only thing that changes automatically, and only at
+archive time. That is what stops it drifting from the code the way a PRD does.
+
+---
+
+## The unit of work
+
+One `## N` task group in a change's `tasks.md` = one branch = one worktree = one
+PR. `/dev-change <slug> <group>` claims a group by creating `feat/<slug>-g<N>`;
+branch existence is the mutex, so two sessions cannot claim the same group.
+
+Walkthrough:
 
 ```
-stories/draft/ → stories/ready/ → stories/in-progress/ → stories/review/ → stories/done/
-(/sprint-planning)  🖐 human        (agent + worktree)        (PR open)        (merged)
+/crystallize "add rate limiting"   → review intent → review spec + tasks
+/dev-change add-rate-limiting 1    → PR → merge
+/dev-change add-rate-limiting 2    → PR → merge
+/archive-change add-rate-limiting  → review the spec diff
 ```
 
-Optional: after `/sprint-planning` adds new stories, `graphify . --update` refreshes
-the codebase knowledge graph — worth it for broad architecture questions spanning
-many files, not required otherwise (see the `graphify` skill).
+Optional: `graphify . --update` refreshes the codebase knowledge graph — worth it
+for broad architecture questions spanning many files, not required otherwise
+(see the `graphify` skill).
 
-E.g Walkthrough:
-```
-/plan → review docs → /sprint-planning → review stories, git mv approved ones to ready/ → /dev-story → review PR → merge.
-```
 ---
 
 ## Daily commands

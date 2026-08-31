@@ -37,21 +37,19 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/hooks/pre_tool_env_guard.py": ".claude/hooks/pre_tool_env_guard.py",
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
     ".claude/hooks/post_tool_lint.py": ".claude/hooks/post_tool_lint.py",
-    ".claude/hooks/stop_story_lifecycle.py": ".claude/hooks/stop_story_lifecycle.py",
     ".claude/agents/security-reviewer.md": ".claude/agents/security-reviewer.md",
     # Planning / implementation commands
-    ".claude/commands/sprint-planning.md": ".claude/commands/sprint-planning.md",
     ".claude/commands/review.md": ".claude/commands/review.md",
     ".claude/commands/commit-push-pr.md": ".claude/commands/commit-push-pr.md",
-    ".claude/commands/dev-story.md": ".claude/commands/dev-story.md",
+    ".claude/commands/dev-change.md": ".claude/commands/dev-change.md",
     ".claude/settings.json": ".claude/settings.json",
     "config/models.json": "config/models.json",
     "scripts/configure.py": "scripts/configure.py",
-    "stories/STORY_TEMPLATE.md": "stories/STORY_TEMPLATE.md",
-    # Docs — prd.md/architecture.md are placeholders until planning fills them in
+    # Docs — product.md/architecture.md are placeholders the team fills in
     "docs/harness/setup.md": "docs/harness/setup.md",
     "docs/harness/coding-standards.md": "docs/harness/coding-standards.md",
-    "docs/prd.md": "docs/prd.md",
+    "docs/product.md": "docs/product.md",
+    "docs/decisions/index.md": "docs/decisions/index.md",
     "docs/architecture.md": "docs/architecture.md",
 }
 
@@ -72,12 +70,10 @@ DIRS_TO_CREATE: list[str] = [
     ".claude/commands",
     ".claude/hooks",
     ".claude/skills",
-    "stories/draft",
-    "stories/ready",
-    "stories/in-progress",
-    "stories/review",
-    "stories/done",
     "docs",
+    "docs/decisions",
+    "openspec/specs",
+    "openspec/changes/archive",
     "config",
     "scripts",
     "graphify-out",
@@ -86,11 +82,8 @@ DIRS_TO_CREATE: list[str] = [
 # Directories that get a .gitkeep so git tracks them
 _GITKEEP_DIRS: frozenset[str] = frozenset(
     {
-        "stories/draft",
-        "stories/ready",
-        "stories/in-progress",
-        "stories/review",
-        "stories/done",
+        "openspec/specs",
+        "openspec/changes/archive",
         "graphify-out",
     }
 )
@@ -746,7 +739,7 @@ TODO: Add your architecture decisions, language conventions, and style rules.
 
 ## Git Strategy
 
-- Branch naming: `feat/story-<id>-<slug>`, `fix/<slug>`, `chore/<slug>`
+- Branch naming: `feat/<change-slug>-g<N>`, `fix/<slug>`, `chore/<slug>`
 - Commit format: `type(scope): description` (conventional commits)
 - Never force-push to main
 
@@ -756,7 +749,7 @@ TODO: Add your architecture decisions, language conventions, and style rules.
 
 - [ ] `make check` passes (fmt + lint + test)
 - [ ] No secrets in diff
-- [ ] Acceptance criteria from story file met
+- [ ] Every task in the group is ticked in the change's `tasks.md`
 - [ ] Tests added for new behaviour
 
 ---
@@ -1016,9 +1009,10 @@ def print_next_steps(audit: AuditResult) -> None:
             "uv sync --all-extras          # install dev dependencies",
             "make check                    # verify toolchain passes",
         ]
-    steps.append(
-        "Plan in Claude Code (Superpowers brainstorming), then /sprint-planning"
-    )
+    steps += [
+        "npm install -g @fission-ai/openspec@latest && openspec init --tools claude",
+        "Write docs/product.md, then /crystallize \"<your idea>\" in Claude Code",
+    ]
     for i, step in enumerate(steps, 1):
         print(f"  {i}. {step}")
     print()
