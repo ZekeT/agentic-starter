@@ -6,7 +6,8 @@ why: >
   subdirectory, EVERY hook fails with "can't open file" — the env guard, the
   secrets scanner, the dangerous-bash blocker, all of them, silently and at
   once. The guardrails are gone exactly when nobody is looking. Claude Code
-  exports $CLAUDE_PROJECT_DIR for this; use it.
+  exports $CLAUDE_PROJECT_DIR for this; use it. The statusLine entry is the
+  same shape and slipped through once already, so it's checked here too.
 shell: |
   python3 -c "
 import json, pathlib, re, sys
@@ -18,8 +19,11 @@ for events in cfg.get('hooks', {}).values():
             cmd = h.get('command', '')
             if '.claude/hooks/' in cmd and 'CLAUDE_PROJECT_DIR' not in cmd:
                 bad.append(cmd)
+status_cmd = cfg.get('statusLine', {}).get('command', '')
+if '.claude/' in status_cmd and 'CLAUDE_PROJECT_DIR' not in status_cmd:
+    bad.append(status_cmd)
 if bad:
-    print('hook commands with cwd-relative paths:')
+    print('commands with cwd-relative paths:')
     for c in bad: print('  ', c)
     print('use: python3 \"\$CLAUDE_PROJECT_DIR\"/.claude/hooks/<name>.py')
     sys.exit(1)

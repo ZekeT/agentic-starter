@@ -13,6 +13,16 @@ description: >
 
 Announce at start: **"Using crystallize to turn this into an OpenSpec change."**
 
+## Resuming
+
+Before anything else, if `openspec/changes/<slug>/` already exists:
+
+| On disk | Do |
+|---|---|
+| `intent.md`, no `proposal.md` | Announce "resuming at spec" and go straight to §5. Do not rewrite the intent. |
+| both present | The change is already specced. Say so, name its task groups, and stop. |
+| neither | Treat as a slug collision — see Collisions below. |
+
 Exploration is cheap and unstructured. Specs are expensive and precise. This
 skill is the translation layer between them — and the point where a bad idea is
 cheapest to kill.
@@ -144,7 +154,7 @@ git commit -m "feat(<slug>): intent"
 turn. This gate is the cheapest possible point to kill or redirect a bad idea,
 and it only works if it's a real stop.
 
-## 5. Commit 2 — spec (only after intent is accepted)
+## 5. Commit 2 — spec (only after intent is accepted, or when resuming here)
 
 Delegate the artifact generation to OpenSpec rather than hand-rolling it:
 

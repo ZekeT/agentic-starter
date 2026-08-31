@@ -44,6 +44,7 @@ MANIFEST_FILES = [
     ".gitignore",
     ".env.template",
     ".claude/settings.json",
+    ".claude/statusline.sh",
     "docs/harness/setup.md",
     "docs/harness/design.md",
     "docs/harness/coding-standards.md",

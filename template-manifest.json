@@ -1,6 +1,6 @@
 {
   "template_version": "1.4.0",
-  "generated_at": "2026-08-31T17:26:35+00:00",
+  "generated_at": "2026-08-31T17:44:53+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -24,9 +24,10 @@
       ]
     },
     ".claude/commands/dev-change.md": {
-      "sha256": "46933bee6f02108c067b0819a079577b825dbb39ba11d95c88709b0340bdb956",
+      "sha256": "4e201db954b75d4b204881d86846157d96292d856a12f5e45ad92c14cd683fa5",
       "previous": [
-        "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08"
+        "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08",
+        "46933bee6f02108c067b0819a079577b825dbb39ba11d95c88709b0340bdb956"
       ]
     },
     ".claude/commands/review.md": {
@@ -62,21 +63,23 @@
       ]
     },
     ".claude/settings.json": {
-      "sha256": "63d8865eccd4dfe82fcd76e03e8976a577d564b392bb6f997e50c76def876629",
+      "sha256": "c5e6df18c4672b0f53bd386b6cb3a6bc1c35a554ac0f567b64f7e7c2482fd13c",
       "previous": [
         "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
         "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
         "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
         "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e",
-        "35e2b7483ff6e8311718446f1b070523b133a8b739d66c3fed58e138b0ac1861"
+        "35e2b7483ff6e8311718446f1b070523b133a8b739d66c3fed58e138b0ac1861",
+        "63d8865eccd4dfe82fcd76e03e8976a577d564b392bb6f997e50c76def876629"
       ]
     },
     ".claude/skills/crystallize/SKILL.md": {
-      "sha256": "f6c12cab29617c3bd3b0a176dbff51d81121d7688fe6854eb5ec0fee17f3f6c5",
+      "sha256": "de2ab97e73024fab8600dd2acde736d19ff28fccf796dbb61fa007a53070332b",
       "previous": [
         "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
         "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a",
-        "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3"
+        "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3",
+        "f6c12cab29617c3bd3b0a176dbff51d81121d7688fe6854eb5ec0fee17f3f6c5"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
@@ -122,6 +125,10 @@
         "abdfc55fb5af3050e4594a0ec7325de169c10cd81ca0e5a38f836e18882183c5"
       ]
     },
+    ".claude/statusline.sh": {
+      "sha256": "b6fe088919ebd5d74a801ffdce15c66d24cb9391c64fb822e1538c3802636234",
+      "previous": []
+    },
     ".env.template": {
       "sha256": "4c9f2856328db28cf40876d6a9e2a5cd00e429b099bbbacfc04f4d1fb41a58e5",
       "previous": [
@@ -138,9 +145,10 @@
       "previous": []
     },
     ".gitignore": {
-      "sha256": "0701c0ffd0c3fab3c7fc7388ac9b103bbe6a0f3a44a0dfc3cb0edb65cd3aec0c",
+      "sha256": "29019a5f930451c8d70d21fcdf9bcb4164c2532d423909c320e76c4fd6aef294",
       "previous": [
-        "777c14d9dbc4ae5bfc1b9c799db4ae562ca5e64a5107164b1c25649a62f768e6"
+        "777c14d9dbc4ae5bfc1b9c799db4ae562ca5e64a5107164b1c25649a62f768e6",
+        "0701c0ffd0c3fab3c7fc7388ac9b103bbe6a0f3a44a0dfc3cb0edb65cd3aec0c"
       ]
     },
     "CLAUDE.md": {
@@ -182,9 +190,10 @@
       ]
     },
     "REVIEW.md": {
-      "sha256": "991b56d712cd57c6a931a1eefbd22c4792656a62a19018f19f6abb69e4c20f84",
+      "sha256": "18fd2fe77b0b70120d656138d347197b20409724117017997113e8c48618ce23",
       "previous": [
-        "48683d4fd1941d4530d9d71de36b2dbd2f8f34541ff5773f86dd11c412c9c5ee"
+        "48683d4fd1941d4530d9d71de36b2dbd2f8f34541ff5773f86dd11c412c9c5ee",
+        "991b56d712cd57c6a931a1eefbd22c4792656a62a19018f19f6abb69e4c20f84"
       ]
     },
     "docs/architecture.md": {
@@ -217,14 +226,15 @@
       "previous": []
     },
     "docs/harness/setup.md": {
-      "sha256": "3e64699ba5be7e4bdf13b439b3cbb35b8d00749706af58277f1a4c3bcb81d628",
+      "sha256": "b75890baf439148500ba24ec4d327ef920308383b760e3bf22a644ca5c76786e",
       "previous": [
         "52015639f9162651494c09e3a3f3764c22c719a0b4849a17937959fbd10d8dbc",
         "b4f7221ab75ea2953ec0665e7a69fd9d9139406c4177de9c5acb80b425dae503",
         "3f67a7c609934dd86a0801c15608a3b3bbd1e71d82b67d7b3e29f2e5f7800930",
         "d451a2a764b33e4e49b2fccd3dd2ff6b892d71bac66efcbb7f7a3f61edffa07b",
         "f1b2af5a50de521b3b74181e8e951c9364baaa4a4acdbba63c19f85b2e7da768",
-        "02f77dfcf5de344ba032252afd304550a0090004ec8a3b019c3f9b3a34c1a0eb"
+        "02f77dfcf5de344ba032252afd304550a0090004ec8a3b019c3f9b3a34c1a0eb",
+        "3e64699ba5be7e4bdf13b439b3cbb35b8d00749706af58277f1a4c3bcb81d628"
       ]
     },
     "docs/harness/testing.md": {
@@ -255,8 +265,10 @@
       ]
     },
     "evals/cases/004-openspec-not-in-manifest.yaml": {
-      "sha256": "ce50a5011758b181a24f0cdbd3b6b9fa35c5d9fd6fd4019fdfdaacbb4897e4ef",
-      "previous": []
+      "sha256": "9f2862af86d55f4a5bb5a858e00b7872b6dc0bba91c41cfa583143ca28db398b",
+      "previous": [
+        "ce50a5011758b181a24f0cdbd3b6b9fa35c5d9fd6fd4019fdfdaacbb4897e4ef"
+      ]
     },
     "evals/cases/005-hooks-are-wired.yaml": {
       "sha256": "4a53146758bc2a3f956b78eb0c06690d77597ca682ec1eeff4f6ead56e7fd783",
@@ -273,8 +285,10 @@
       "previous": []
     },
     "evals/cases/008-hook-paths-absolute.yaml": {
-      "sha256": "acb7405db7e2910f895b8318b5fb6ebfb01d604cdbf0d9b08f081ded166bb66b",
-      "previous": []
+      "sha256": "4828b6a7c484de20f8bc478c04416ed30786439c567681561504e2188314af95",
+      "previous": [
+        "acb7405db7e2910f895b8318b5fb6ebfb01d604cdbf0d9b08f081ded166bb66b"
+      ]
     },
     "evals/cases/009-testing-and-pr-conventions.yaml": {
       "sha256": "2dda2f92ce28772fe82b5c9ba262b2796b5d708e41e9caddb0dc04a537bdcfed",
@@ -305,13 +319,14 @@
       "previous": []
     },
     "harness_setup.sh": {
-      "sha256": "b28b8ed7b012af85648645a867ff9ef8604a6c9a0855b307e322af6275e00a7a",
+      "sha256": "765f3fbe01477079478348d09555096ae542c37edc0b5715f7ae1cac96de6aae",
       "previous": [
         "9a4887b9decd686f4b08155b2e50c969fbbc61799cdc812b24dda1d64be8c1fd",
         "667f5e02bcf45672e930c76a667e7f60afc884751072c3a65394dd0b9b2ba804",
         "6dac1e99e8eae1b2bbf6004d75f65c6a85b97cc01593a638a6a6bbc69dfcf93b",
         "e9dc8ee00c817813176a7abdf9a665f8686b20ca7320d3272890f38d1313b052",
-        "80af4184ee6b57cd1b816e3049395896836d2bb4aa61a2271fb7f01c5c8f8919"
+        "80af4184ee6b57cd1b816e3049395896836d2bb4aa61a2271fb7f01c5c8f8919",
+        "b28b8ed7b012af85648645a867ff9ef8604a6c9a0855b307e322af6275e00a7a"
       ]
     }
   }
