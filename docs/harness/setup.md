@@ -13,7 +13,32 @@ bash harness_setup.sh
 ```
 
 `harness_setup.sh` installs Python deps via `uv`, applies model assignments from
-`config/models.json`, bootstraps `.env`, and sets up graphify.
+`config/models.json`, bootstraps `.env`, sets up graphify, and checks for
+OpenSpec.
+
+### OpenSpec (required for the change loop)
+
+OpenSpec owns the document lifecycle: `openspec/specs/` is the living statement
+of what the system currently does, and `openspec/changes/<slug>/` holds work in
+flight. It is a **Node** CLI, the one non-Python dependency in an otherwise
+uv-managed harness.
+
+```bash
+node --version                              # must be >= 20.19.0
+npm install -g @fission-ai/openspec@latest
+openspec init --tools claude                # only in a fresh project
+```
+
+`harness_setup.sh` **warns** rather than fails when Node or `openspec` is
+missing — formatting, linting, tests, hooks, and every other command work
+without it. Only the change loop needs it.
+
+`openspec init` writes three things, all owned by the CLI and none of them by
+this template: `openspec/`, `.claude/commands/opsx/`, and
+`.claude/skills/openspec-*/`. Keep them current with `openspec update`, never by
+hand. Both `scripts/generate_template_manifest.py` and the `setup-update` skill
+exclude these paths explicitly, so template updates and OpenSpec updates never
+fight over the same file.
 
 Then install Superpowers **once per machine** inside a Claude Code session
 (this template assumes Superpowers **v6.2+**, latest as of 2026-08-05):

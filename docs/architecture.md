@@ -1,92 +1,54 @@
 # Architecture
 
-> Written during planning (Superpowers brainstorming / writing-plans) or by `/rescan-docs`.
-> Human gate required before sprint planning.
+> **System shape only** — containers, boundaries, and constraints that cut across
+> every change. Behaviour does not belong here: it lives in `openspec/specs/`,
+> which the archive step keeps current automatically. This file is hand-maintained,
+> so anything duplicated from the specs will go stale and start lying.
+>
+> Load this only when a change is marked architecture-affecting in its proposal.
 
 ---
 
-## Overview
+## Containers
 
-<!-- One paragraph: what is this system and how does it work at a high level? -->
-
----
-
-## System components
-
-<!-- What are the major pieces? How do they relate? -->
+<!-- The major deployable/runnable pieces and how they talk. One diagram beats
+     three paragraphs. Keep it to things that would survive a rewrite. -->
 
 ```
 [component A] → [component B] → [component C]
 ```
 
----
+| Container | Responsibility | Talks to |
+|---|---|---|
+| <!-- name --> | <!-- one line --> | <!-- neighbours --> |
 
-## Directory structure
+## Boundaries
 
-```
-src/
-  module_a/
-    __init__.py
-    service.py     # business logic
-    models.py      # data models
-    api.py         # API layer (if applicable)
-  module_b/
-    ...
-tests/
-  unit/
-  integration/
-```
+<!-- Where the seams are, and what may not cross them. These are the rules that
+     make a diff reviewable without reading the whole system. -->
 
----
+- <!-- e.g. the API layer never touches the database directly -->
 
-## Key decisions
+## Cross-cutting constraints
 
-<!-- Architectural decisions that every agent must respect. -->
+Hard rules every change must respect, regardless of what it touches.
 
-| Decision | Choice | Reason |
-|----------|--------|--------|
-| Package manager | uv | Fast, lockfile-based |
-| Test runner | pytest | Standard, well-supported |
-| ... | ... | ... |
-
----
-
-## Data models
-
-<!-- Key entities and their relationships. -->
-
----
-
-## API contracts
-
-<!-- If applicable: endpoints, request/response shapes. -->
-
----
+- Python ≥ 3.11
+- Line length 88 (black); `make check` is the gate
+- All public APIs carry docstrings (interrogate, 80% floor)
+- External data is validated at the boundary (pydantic/marshmallow), never trusted inward
 
 ## External dependencies
 
-<!-- Third-party services, APIs, databases. -->
+<!-- Third-party services, APIs, datastores — and the blast radius if each one
+     is unavailable. -->
+
+| Dependency | Used for | If it's down |
+|---|---|---|
+| <!-- name --> | <!-- purpose --> | <!-- degradation --> |
 
 ---
 
-## Security considerations
-
-<!-- Auth patterns, data handling, OWASP concerns relevant to this system. -->
-
----
-
-## Constraints
-
-<!-- Hard constraints every story must respect. -->
-- Python ≥ 3.11
-- Line length 88 (black)
-- All public APIs must have docstrings
-- No direct database access from API layer
-
----
-
-## Revision history
-
-| Version | Date | Change |
-|---------|------|--------|
-| 0.1 | {date} | Initial draft |
+Architectural decisions and their rationale are **not** recorded here — one file
+per decision in `docs/decisions/`, append-only. This file describes the shape that
+results from those decisions.

@@ -1,0 +1,41 @@
+schema: spec-driven
+
+# Project context shown to AI when creating artifacts.
+# Keep this short — CLAUDE.md is the full agent brief, this is the slice
+# that matters when writing proposals, specs, and tasks.
+context: |
+  agentic-starter is a project template (a "harness"), not an application.
+  What it ships is agent configuration: Claude Code skills, commands, hooks,
+  and CLAUDE.md, plus a Python toolchain. Downstream projects are created by
+  copying it, and stay current via template-manifest.json + the setup-update
+  skill.
+
+  Stack: Python 3.11+ managed with uv. black / isort / autoflake / interrogate
+  / mypy (strict) / pytest, all gated behind `make check`. Hooks and scripts
+  are stdlib-only so they run before the venv exists.
+
+  Conventions:
+  - Conventional commits: type(scope): description
+  - Nothing reaches main without a human merging a PR
+  - Hooks are non-blocking guardrails, never spec-lifecycle enforcement
+  - Specs describe behaviour of the harness itself — a capability is
+    something you would plausibly rewrite or delete as a unit
+
+  Capability granularity is a working heuristic, not settled. Pressure-test
+  it on the first two real changes before treating it as fixed.
+
+# Per-artifact rules.
+rules:
+  proposal:
+    - State explicitly whether the change is architecture-affecting; /sprint-planning
+      successor commands load docs/architecture.md only when it is.
+  tasks:
+    - Group tasks so that each `## N` group is independently shippable as one PR.
+      /dev-change takes a group number and opens one PR per group.
+
+# Per-operation guidance.
+operations:
+  archive:
+    guidance:
+      - Print the openspec/specs/ diff before applying it. The reviewable spec
+        diff is the point of the whole loop.
