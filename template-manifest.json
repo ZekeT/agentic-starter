@@ -1,6 +1,6 @@
 {
-  "template_version": "1.3.0",
-  "generated_at": "2026-08-31T12:07:01+00:00",
+  "template_version": "1.4.0",
+  "generated_at": "2026-08-31T12:07:24+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -140,7 +140,7 @@
       ]
     },
     "CLAUDE.md": {
-      "sha256": "53491df19752a2f51e9980bed6762d23e6d024aa24b461b3c8769b782a2fa194",
+      "sha256": "3203df2cae0697dde193aca833af4b97048a87cdb6ea1129966a67948d9dbb68",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -152,7 +152,8 @@
         "fc8c63f5371ca4cfa489875c5c6812a165adac880a19fb1a834d352e72c0a580",
         "7a287f5b8cae74415bc8cbba2a64e5dd826d15b2051c81a867c1525e2c1c96bb",
         "d658b403165ff06a02e354a45f872f9de8150bd0301620553bdd483d06369713",
-        "a0f023b9156514faa1354331b57c55720af53b3e89e96fad427bea273420111d"
+        "a0f023b9156514faa1354331b57c55720af53b3e89e96fad427bea273420111d",
+        "53491df19752a2f51e9980bed6762d23e6d024aa24b461b3c8769b782a2fa194"
       ]
     },
     "HARNESS.md": {

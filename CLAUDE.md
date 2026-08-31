@@ -11,7 +11,7 @@ Project brain — loaded into every session, so keep it short. Add a rule under
 make check      # fmt + lint + test — run before every commit
 make fmt lint test clean          # the individual stages
 make configure [PROFILE=<name>]   # apply config/models.json to agents
-make manifest   # after editing any template-owned file, before a version bump
+make manifest   # after editing a template-owned file, and after a version bump
 ```
 
 Healthy `make check` ends `All done! ✨ 🍰 ✨` / `Success: no issues found` /
