@@ -56,6 +56,27 @@ Decide which of these the input is, and say so out loud before writing anything:
 Also check `openspec list`: if an in-flight change already covers this, fold it
 in there rather than opening a second one.
 
+### Naming a new capability
+
+Run these before committing to a name — reasoning in `docs/decisions/0002`:
+
+1. **Naming test.** State the Purpose in one sentence. Needing "and" to join
+   unrelated activities, or a container noun (`core`, `platform`, `utils`,
+   `management`), means it is too coarse. Split before writing.
+2. **Independent-change test.** Name a realistic change touching only some of
+   the requirements. If you can, that subset is its own capability.
+3. **Not modules.** A capability may span modules and a module may serve several.
+   A capability list mirroring the directory tree specs the implementation, and
+   will churn on every refactor.
+
+Prefer coarse to fine: too-coarse announces itself in the purpose sentence,
+too-fine is quietly wrong forever and multiplies. Nest (`domain/capability`) only
+once the flat list stops scanning, ~8–10 entries, and by domain never by layer.
+
+Retiring a capability is not a delta: `openspec archive` refuses a spec with zero
+requirements, so a split is an ADD for the new capabilities plus a `git rm` of the
+old spec directory.
+
 ## 3. Separate the input
 
 This is the work that makes exploration reviewable. Sort everything in the input
