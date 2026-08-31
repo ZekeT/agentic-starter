@@ -85,6 +85,11 @@ EOF
   else
     soft "openspec CLI not on PATH — the change loop needs it"
   fi
+  if [ -d .claude/skills/openspec-propose ]; then
+    ok ".claude/skills/openspec-propose/ (generated)"
+  else
+    bad ".claude/skills/openspec-propose/ missing — run: openspec update"
+  fi
 
   echo ""
   if [ "$fail" -ne 0 ]; then
@@ -162,7 +167,11 @@ elif ! command -v openspec &> /dev/null; then
 else
   echo "  openspec $(openspec --version) on node $(node --version)"
   if [ ! -d openspec ]; then
-    echo "  No openspec/ directory yet — initialise it: openspec init --tools claude"
+    echo "  No openspec/ directory yet — running: openspec init --tools claude"
+    openspec init --tools claude
+  else
+    echo "  Regenerating tool files — running: openspec update"
+    openspec update
   fi
 fi
 echo
