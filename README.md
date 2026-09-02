@@ -5,7 +5,7 @@
 ## Getting started
 
 ```bash
-bash harness_setup.sh
+bash . .harness/setup.sh
 make check
 ```
 
