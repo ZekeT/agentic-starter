@@ -122,17 +122,22 @@ _STACK_INDICATORS: list[tuple[str, str]] = [
 
 # ── pyproject.toml tool sections to append if missing ─────────────────────────
 PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
-    "tool.black": (
-        "# --- Formatter ---\n"
-        "[tool.black]\n"
+    "tool.ruff": (
+        "# --- Formatter + linter (format, imports, unused code, docstrings) ---\n"
+        "[tool.ruff]\n"
         "line-length = 88\n"
-        'target-version = ["py311"]\n'
-    ),
-    "tool.isort": (
-        "# --- Import sorter (black-compatible) ---\n"
-        "[tool.isort]\n"
-        'profile = "black"\n'
-        "line_length = 88\n"
+        'target-version = "py311"\n'
+        "\n"
+        "[tool.ruff.lint]\n"
+        '# E501 is deliberately absent: the formatter owns line length.\n'
+        'select = ["E4", "E7", "E9", "F", "W", "I", "UP", "B", "D"]\n'
+        'ignore = ["D104", "D105", "D107"]\n'
+        "\n"
+        "[tool.ruff.lint.pydocstyle]\n"
+        'convention = "google"\n'
+        "\n"
+        "[tool.ruff.lint.per-file-ignores]\n"
+        '"**/tests/**" = ["D"]\n'
     ),
     "tool.mypy": (
         "# --- Type checker ---\n"
@@ -140,19 +145,6 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
         'python_version = "3.11"\n'
         "strict = true\n"
         "ignore_missing_imports = true\n"
-    ),
-    "tool.interrogate": (
-        "# --- Docstring coverage ---\n"
-        "[tool.interrogate]\n"
-        "ignore-init-method = true\n"
-        "ignore-init-module = true\n"
-        "ignore-magic = true\n"
-        "ignore-semiprivate = false\n"
-        "ignore-private = false\n"
-        "fail-under = 80\n"
-        "verbose = 1\n"
-        "quiet = false\n"
-        "color = true\n"
     ),
     "tool.pytest": (
         "# --- Test runner ---\n"
@@ -173,17 +165,13 @@ MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
     "install": "install:\n\tuv sync --all-extras\n",
     "fmt": (
         "fmt:\n"
-        "\tuv run autoflake --remove-all-unused-imports"
-        " --remove-unused-variables \\\n"
-        "\t\t--in-place --recursive $(SRC) tests\n"
-        "\tuv run isort $(SRC) tests\n"
-        "\tuv run black $(SRC) tests\n"
+        "\tuv run ruff check --fix --exit-zero $(SRC) tests\n"
+        "\tuv run ruff format $(SRC) tests\n"
     ),
     "lint": (
         "lint:\n"
-        "\tuv run black --check $(SRC) tests\n"
-        "\tuv run isort --check-only $(SRC) tests\n"
-        "\tuv run interrogate $(SRC)\n"
+        "\tuv run ruff format --check $(SRC) tests\n"
+        "\tuv run ruff check $(SRC) tests\n"
         "\tuv run mypy $(SRC)\n"
     ),
     "test": "test:\n\tuv run pytest\n",
@@ -202,10 +190,7 @@ MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
 }
 
 _REQUIRED_DEV_DEPS: list[str] = [
-    "black>=24.0.0",
-    "isort>=5.13.0",
-    "autoflake>=2.3.0",
-    "interrogate>=1.7.0",
+    "ruff>=0.14.0",
     "mypy>=1.10.0",
     "pytest>=8.0.0",
     "pytest-cov>=5.0.0",
@@ -339,7 +324,7 @@ class Preflight:
     overwrites: list[str] = field(default_factory=list)
 
 
-def _run_git(target: Path, *args: str) -> subprocess.CompletedProcess:
+def _run_git(target: Path, *args: str) -> subprocess.CompletedProcess[str]:
     """Run a git command inside the target repo."""
     return subprocess.run(
         ["git", "-C", str(target), *args],
@@ -376,7 +361,9 @@ def preflight_checks(target: Path, starter: Path, force: bool) -> Preflight:
     else:
         status = _run_git(target, "status", "--porcelain")
         if status.returncode != 0:
-            pf.blockers.append(f"`git status` failed in target: {status.stderr.strip()}")
+            pf.blockers.append(
+                f"`git status` failed in target: {status.stderr.strip()}"
+            )
         elif status.stdout.strip():
             n = len(status.stdout.strip().splitlines())
             pf.blockers.append(
@@ -423,7 +410,9 @@ def preflight_checks(target: Path, starter: Path, force: bool) -> Preflight:
         raw = ver.stdout.strip().lstrip("v")
         try:
             if tuple(int(x) for x in raw.split(".")[:2]) < (20, 19):
-                pf.warnings.append(f"Node {raw} is older than 20.19 — OpenSpec needs >= 20.19.")
+                pf.warnings.append(
+                    f"Node {raw} is older than 20.19 — OpenSpec needs >= 20.19."
+                )
         except ValueError:
             pf.warnings.append(f"Could not parse node version {raw!r}.")
     if shutil.which("openspec") is None:
@@ -484,7 +473,9 @@ def create_migration_branch(target: Path, dry: bool) -> bool:
         return True
     result = _run_git(target, "checkout", "-b", MIGRATION_BRANCH)
     if result.returncode != 0:
-        print(f"{RED}Error:{RESET} could not create {MIGRATION_BRANCH}: {result.stderr.strip()}")
+        print(
+            f"{RED}Error:{RESET} could not create {MIGRATION_BRANCH}: {result.stderr.strip()}"
+        )
         return False
     _ok(f"working on branch '{MIGRATION_BRANCH}'")
     return True
@@ -839,7 +830,7 @@ def read_pyproject_tool_keys(pyproject_path: Path) -> set[str]:
         pyproject_path: Absolute path to the target's pyproject.toml.
 
     Returns:
-        Set of dotted keys like {"tool.black", "tool.mypy"}.
+        Set of dotted keys like {"tool.ruff", "tool.mypy"}.
     """
     data = tomllib.loads(pyproject_path.read_bytes().decode())
     return {f"tool.{k}" for k in data.get("tool", {})}
@@ -849,7 +840,7 @@ def build_missing_toml_text(existing: set[str]) -> str:
     """Build TOML text for sections not yet present.
 
     Args:
-        existing: Section keys already in pyproject.toml (e.g. {"tool.black"}).
+        existing: Section keys already in pyproject.toml (e.g. {"tool.ruff"}).
 
     Returns:
         TOML string to append, empty if nothing to add.
@@ -1009,8 +1000,8 @@ _CLAUDE_MD_TEMPLATE = """\
 
 ```bash
 make install          # install all deps (uv sync)
-make fmt              # format: black + isort + autoflake
-make lint             # check: black --check, isort --check, interrogate, mypy
+make fmt              # format + autofix: ruff
+make lint             # check: ruff format --check, ruff check, mypy
 make test             # pytest
 make check            # fmt + lint + test (run before every commit)
 ```
@@ -1061,10 +1052,9 @@ _PYTHON_BLOCK = """\
 ### Python
 
 - **uv** for dependency management (`uv sync --all-extras`)
-- **black** for formatting (line length 88)
-- **isort** for import ordering (black-compatible profile)
+- **ruff** for formatting (line length 88), import ordering, and unused code
 - **mypy** strict mode — all public functions need type hints
-- **interrogate** — 80%+ docstring coverage (Google style)
+- **ruff `D` rules** — docstrings on public API (Google style)
 - **pytest** with 80%+ line coverage (`--cov=src`)
 - No bare `except:` — catch the most specific exception type
 - Use `pathlib.Path` for file paths, not string concatenation
@@ -1255,7 +1245,9 @@ def print_audit_summary(audit: AuditResult) -> None:
             f"{len(audit.legacy_stories)} legacy story file(s) in stories/ — "
             "this project predates the change loop"
         )
-        _info("Port anything still in flight into an OpenSpec change, then delete stories/:")
+        _info(
+            "Port anything still in flight into an OpenSpec change, then delete stories/:"
+        )
         for rel in audit.legacy_stories[:5]:
             _info(f"  {rel}")
         if len(audit.legacy_stories) > 5:
@@ -1314,7 +1306,7 @@ def print_next_steps(audit: AuditResult) -> None:
         ]
     steps += [
         "npm install -g @fission-ai/openspec@latest && openspec init --tools claude",
-        "Write docs/product.md, then /crystallize \"<your idea>\" in Claude Code",
+        'Write docs/product.md, then /crystallize "<your idea>" in Claude Code',
     ]
     for i, step in enumerate(steps, 1):
         print(f"  {i}. {step}")

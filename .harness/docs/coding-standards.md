@@ -4,10 +4,10 @@
 > agent-facing summary; this document carries the reasoning, and only the
 > reasoning a tool cannot supply.
 >
-> **What is not here.** Anything `make check` decides: formatting and line
-> length (black), import order (isort), annotation coverage and strictness
-> (mypy `strict`), docstring coverage (interrogate `fail-under = 80`). Those
-> live in `pyproject.toml`, which is the only place they should be stated —
+> **What is not here.** Anything `make check` decides: formatting, line length,
+> import order, unused code, and docstring presence (all `ruff`), plus
+> annotation coverage and strictness (mypy `strict`). Those live in
+> `pyproject.toml`, which is the only place they should be stated —
 > a doc that repeats a tool setting is a doc that will contradict it.
 > Test layout and conventions: `.harness/docs/testing.md`.
 >
@@ -109,22 +109,22 @@ def process(obj: HeavyClass) -> None: ...
 
 ## Docstrings
 
-Google style; the skill carries the worked example. interrogate enforces the
-*coverage* percentage and nothing about the content — so what matters here is
+Google style; the skill carries the worked example. ruff's `D` rules enforce
+*presence and shape* and nothing about the content — so what matters here is
 what a docstring is for: **why and what, never how.** The code shows how, and a
 docstring restating it is a second thing to keep true.
 
 Document `Raises:` whenever a caller must handle the exception. That is the part
 a reader cannot get from the signature.
 
-Exempt from coverage (interrogate config): `__init__`, dunder methods, and
-`tests/`.
+Exempt (`ignore` / `per-file-ignores` in `pyproject.toml`): `__init__`, dunder
+methods, package `__init__.py`, and `tests/`.
 
 ---
 
 ## Imports
 
-isort owns the grouping and order. It does not catch:
+ruff's `I` rules own the grouping and order. They do not catch:
 
 - **Never `from module import *`.** It hides the origin of every name and
   defeats static analysis.

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -184,7 +184,7 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
         version = VERSION_PATH.read_text().strip()
     return {
         "template_version": version,
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "files": files,
     }
 

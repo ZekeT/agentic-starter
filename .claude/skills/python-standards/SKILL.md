@@ -4,8 +4,7 @@ description: >
   Project Python conventions to apply when writing or reviewing Python code in
   this repo. Covers only what a linter doesn't already catch — layering,
   validation, exception handling, naming, docstring style. `make check`
-  (black/isort/mypy/interrogate/pytest) enforces everything else; this skill
-  doesn't repeat it.
+  (ruff/mypy/pytest) enforces everything else; this skill doesn't repeat it.
 ---
 
 # Python Standards

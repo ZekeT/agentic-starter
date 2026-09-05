@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PreToolUse hook — block Claude from reading .env files.
+"""PreToolUse hook — block Claude from reading .env files.
 
 Triggered by: Read, Glob, Grep, LS, Bash tool calls.
 Purpose: Prevent Claude from ingesting real secrets during agentic sessions.

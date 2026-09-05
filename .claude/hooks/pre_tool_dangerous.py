@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PreToolUse hook — block dangerous bash commands before execution.
+"""PreToolUse hook — block dangerous bash commands before execution.
 
 Triggered by: Bash tool calls.
 Purpose: Deterministic guardrail. No LLM judgment — pure pattern matching.

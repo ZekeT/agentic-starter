@@ -6,17 +6,14 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
-# The harness depends on these, not just your local workflow. Trimming any of
-# black, isort, autoflake, mypy, or pytest breaks something concrete:
-#   black, isort, autoflake → post_tool_lint.py hook shells out to them
-#   mypy, pytest            → `make check`, the gate every agent must pass
-# Add whatever else your project needs; remove those five only if you also
-# rewire the hook and the Makefile.
+# The harness depends on these, not just your local workflow:
+#   ruff          → post_tool_lint.py hook shells out to it; `make fmt`/`make lint`
+#   mypy, pytest  → `make check`, the gate every agent must pass
+# ruff replaced black + isort + autoflake + interrogate in one binary. Add
+# whatever else your project needs; remove these three only if you also rewire
+# the hook and the Makefile.
 dev = [
-    "black>=24.0.0",
-    "isort>=5.13.0",
-    "autoflake>=2.3.0",
-    "interrogate>=1.7.0",
+    "ruff>=0.14.0",
     "mypy>=1.10.0",
     "pytest>=8.0.0",
     "pytest-cov>=5.0.0",
@@ -35,15 +32,36 @@ dev = [
 [tool.uv]
 package = false
 
-# --- Formatter ---
-[tool.black]
+# --- Formatter + linter (one tool: format, imports, unused code, docstrings) ---
+[tool.ruff]
 line-length = 88
-target-version = ["py311"]
+target-version = "py311"
 
-# --- Import sorter (black-compatible) ---
-[tool.isort]
-profile = "black"
-line_length = 88
+[tool.ruff.lint]
+# E4/E7/E9 + F is ruff's default. E501 is deliberately absent: the formatter
+# owns line length, and E501 only ever fires on strings and comments it cannot
+# split, where the wrap is a judgement call.
+#   I  → import order (was isort)
+#   F401/F841 → unused imports and variables (was autoflake), auto-fixed
+#   D  → docstring presence and shape (was interrogate)
+#   B  → bugbear: mutable defaults, silent except, loop-variable capture
+#   UP → syntax that is obsolete on the project's target-version
+select = ["E4", "E7", "E9", "F", "W", "I", "UP", "B", "D"]
+# The docstring exemptions the old interrogate config carried, kept verbatim:
+# package __init__.py, dunder methods, and __init__ itself.
+ignore = ["D104", "D105", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# A test's name is its docstring. Requiring both produces restatement, not
+# documentation.
+"**/tests/**" = ["D"]
+# migrate_to_framework.py is run standalone against *other* projects, often with
+# whatever `python3` is on PATH rather than this project's 3.11 venv. Its
+# sys.version_info fallbacks are load-bearing there, not dead code.
+".harness/scripts/migrate_to_framework.py" = ["UP036"]
 
 # --- Type checker ---
 [tool.mypy]
@@ -57,22 +75,6 @@ ignore_missing_imports = true
 # [[tool.mypy.overrides]]
 # module = "some_untyped_library.*"
 # ignore_missing_imports = true
-
-# --- Unused import cleaner ---
-# Run via: autoflake --remove-all-unused-imports --in-place --recursive src/
-# (configured in Makefile, not natively supported in pyproject.toml)
-
-# --- Docstring coverage ---
-[tool.interrogate]
-ignore-init-method = true
-ignore-init-module = true
-ignore-magic = true
-ignore-semiprivate = false
-ignore-private = false
-fail-under = 80
-verbose = 1
-quiet = false
-color = true
 
 # --- Test runner ---
 # --cov-fail-under is intentionally omitted: with no src/ yet (template state),

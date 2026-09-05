@@ -34,8 +34,8 @@
 Hard rules every change must respect, regardless of what it touches.
 
 - Python ≥ 3.11
-- Line length 88 (black); `make check` is the gate
-- All public APIs carry docstrings (interrogate, 80% floor)
+- Line length 88 (ruff format); `make check` is the gate
+- All public APIs carry docstrings (ruff `D` rules; `__init__` and dunders exempt)
 - External data is validated at the boundary (pydantic/marshmallow), never trusted inward
 
 ## External dependencies
