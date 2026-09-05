@@ -80,7 +80,9 @@ For each flagged file, apply the **template delta**, not the template file:
   content (planning output), skip them entirely; template changes only matter
   for the placeholder versions.
 - **pyproject.toml** — merge missing `[tool.*]` sections only; never touch
-  `[project]` or dependencies.
+  `[project]` or dependencies. **Exception, updating to 1.5.0:** the toolchain
+  moved to ruff, which is a replacement rather than an addition. The script only
+  ever adds, so you must remove by hand — see "Toolchain migration" below.
 - **.claude/settings.json** — merge new hook entries into the existing
   arrays; preserve the user's own hooks and permissions.
 - **Hooks/commands/scripts (.py/.md)** — if the user's edit and the
@@ -101,12 +103,30 @@ Inside Claude Code (global, once per machine):
 ## Step 5 — Verify
 
 1. `make check` in the target must pass.
-2. `bash harness_setup.sh --check` in the target — it asserts the
+2. `bash .harness/setup.sh --check` in the target — it asserts the
    post-update structure, hook wiring, and manifest without mutating anything.
 3. Tell the user what was auto-updated, what you merged, and anything
    you skipped with the reason.
 
 ---
+
+## Toolchain migration (1.4.x → 1.5.0)
+
+1.5.0 replaced black, isort, autoflake, and interrogate with ruff. The Makefile
+is template-owned and will auto-update to call ruff, so a target left holding the
+old config ends up with a Makefile that calls a tool its dependencies do not
+install. Finish the swap by hand in the target's `pyproject.toml`:
+
+1. Delete `[tool.black]`, `[tool.isort]`, and `[tool.interrogate]`.
+2. Delete `black`, `isort`, `autoflake`, and `interrogate` from
+   `[project.optional-dependencies].dev`, and add `ruff>=0.14.0`.
+3. Copy `[tool.ruff]`, `[tool.ruff.lint]`, `[tool.ruff.lint.pydocstyle]`, and
+   `[tool.ruff.lint.per-file-ignores]` from the starter's `pyproject.toml`.
+4. `uv sync --all-extras`, then `make fmt` once — ruff's formatter is
+   black-compatible, so the diff should be small, but it is not always empty.
+5. `make check`. Docstrings are the one place the rules got stricter: ruff's `D`
+   rules fail on a *missing* docstring on public API, where interrogate only
+   failed below 80% overall. Expect to write some, or widen `ignore`.
 
 ## Guardrails
 
