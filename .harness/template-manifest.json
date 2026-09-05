@@ -1,6 +1,6 @@
 {
   "template_version": "1.5.0",
-  "generated_at": "2026-09-05T17:14:24+00:00",
+  "generated_at": "2026-09-05T18:16:07+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -44,6 +44,10 @@
         "a246f3dc20bad857197968c916ac5451ba9cc0573e30566f55984d59672d20e3",
         "1f9e7fd72bc6d6c970a2f734f7223c76928f8ed93a030f07d150e51fbf4227bb"
       ]
+    },
+    ".claude/commands/spike.md": {
+      "sha256": "8b1b0ed1fadd25a450440516f4882b0fe7aa89f59d3a8222744d53ce3da4b224",
+      "previous": []
     },
     ".claude/hooks/post_tool_feature_claude_reminder.py": {
       "sha256": "c81200f0e66ae53fb5604105530ba5015ba3ccdcb0053f8e9978ed60cb51392b",
@@ -92,13 +96,14 @@
       ]
     },
     ".claude/skills/crystallize/SKILL.md": {
-      "sha256": "315fe1880666066a2fadde43ae56be9a07147e7edaee584a1b2f602bfc34ab48",
+      "sha256": "49f15b81c28d41e9839457ed04342b7d5910a007bc18d4fe67d05b675b7624d8",
       "previous": [
         "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
         "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a",
         "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3",
         "f6c12cab29617c3bd3b0a176dbff51d81121d7688fe6854eb5ec0fee17f3f6c5",
-        "de2ab97e73024fab8600dd2acde736d19ff28fccf796dbb61fa007a53070332b"
+        "de2ab97e73024fab8600dd2acde736d19ff28fccf796dbb61fa007a53070332b",
+        "315fe1880666066a2fadde43ae56be9a07147e7edaee584a1b2f602bfc34ab48"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
@@ -280,7 +285,7 @@
       ]
     },
     "CLAUDE.md": {
-      "sha256": "8033b1227bd733c045281d3f5aad1d9f1b5dd53f367b1e6af3b21328639f21bf",
+      "sha256": "db0c0acd4bf5d50d1424e64a18bf5b8d19e73ba5be79499faa08afa8f52e531c",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -297,11 +302,12 @@
         "3203df2cae0697dde193aca833af4b97048a87cdb6ea1129966a67948d9dbb68",
         "ad8146c43c67286d95f23e19c51872169eeeef95e73ecea2b0f87bdbe41797ee",
         "ca50b6b49e337b5d4f7b408c74bc987340d6164b8ea1462493b30cf00179256f",
-        "ae5a390952278fbea28aab29d1c24f2d5cb70da6f68e59790edee1696e78ba23"
+        "ae5a390952278fbea28aab29d1c24f2d5cb70da6f68e59790edee1696e78ba23",
+        "8033b1227bd733c045281d3f5aad1d9f1b5dd53f367b1e6af3b21328639f21bf"
       ]
     },
     "HARNESS.md": {
-      "sha256": "33aac66378b0ffe674ca64dd109e01687de6a571a9de3dd0b064cabdeb2fb4a2",
+      "sha256": "727522ab783f3b3a6f6d89cec0474dda57523a9a4f7f7b8d7c400e9fafa72211",
       "previous": [
         "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
         "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
@@ -310,7 +316,8 @@
         "732eaa697e3d6da14acc06be0aad24dfb336f73d00dae3161b86865765bcaadc",
         "3aaca243b3add1782f2bf2317d2dd64fd23a60a7fb5c957535607b2b9ae3c42b",
         "837e6d1e9c3856cacf5acd9a43dbbbcb28b1159e4c8a755118f0d9fbdb63a88a",
-        "45ddfacbaf268603eb56a65a148e71425ffdc8707b3a3d59150c9b40d3b09bd6"
+        "45ddfacbaf268603eb56a65a148e71425ffdc8707b3a3d59150c9b40d3b09bd6",
+        "33aac66378b0ffe674ca64dd109e01687de6a571a9de3dd0b064cabdeb2fb4a2"
       ]
     },
     "Makefile": {

@@ -27,6 +27,11 @@ Exploration is cheap and unstructured. Specs are expensive and precise. This
 skill is the translation layer between them — and the point where a bad idea is
 cheapest to kill.
 
+If the *how* is the unresolved part — the approach needs an experiment, not a
+decision you can make on paper — stop and say so: `/spike <slug> <question>`
+settles it into an ADR first. Speccing an approach nobody has tested yet
+produces tasks that dissolve on contact with the code.
+
 It does **not** reimplement OpenSpec. `openspec new change` and the
 `openspec-propose` skill create and populate change folders; this skill adds the
 five things they don't: classification against existing truth, the separation

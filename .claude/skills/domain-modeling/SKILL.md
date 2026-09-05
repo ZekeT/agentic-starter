@@ -7,18 +7,28 @@ description: Build and sharpen a project's domain model. Use when discussing cod
 
 Actively build and sharpen the project's domain model as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `CONTEXT.md` for vocabulary is not this skill: that's a one-line habit any skill can do. This skill is for when you're changing the model, not just consuming it.)
 
+> **Adapted for this repo.** ADRs live in `docs/decisions/`, not `docs/adr/`,
+> and follow that directory's own convention — see [ADR-FORMAT.md](./ADR-FORMAT.md).
+> `CONTEXT.md` is the **glossary** and nothing else. A feature's `CLAUDE.md` is
+> a different artifact with a different job: how that module works — entry
+> points, invariants, gotchas. Vocabulary never goes in `CLAUDE.md`; mechanics
+> never go in `CONTEXT.md`.
+
 ## File structure
 
 Most repos have a single context:
 
 ```
 /
-├── CONTEXT.md
+├── CONTEXT.md                        ← glossary
 ├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
+│   └── decisions/                    ← ADRs, append-only, with an index.md
+│       ├── index.md
+│       └── 0001-event-sourced-orders.md
 └── src/
+    └── ordering/
+        ├── CLAUDE.md                 ← how this module works
+        └── ...
 ```
 
 If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
@@ -30,14 +40,18 @@ If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The ma
 │   └── adr/                          ← system-wide decisions
 ├── src/
 │   ├── ordering/
-│   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← context-specific decisions
+│   │   ├── CONTEXT.md                ← this context's glossary
+│   │   ├── CLAUDE.md                 ← how this module works
+│   │   └── ...
 │   └── billing/
 │       ├── CONTEXT.md
-│       └── docs/adr/
+│       └── ...
 ```
 
-Create files lazily: only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
+Per-context ADRs are not a thing here: `docs/decisions/` is flat and
+system-wide, because its numbering is allocated in merge order.
+
+Create files lazily: only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. `docs/decisions/` already exists in this repo, with an `index.md` you must update when you add an ADR.
 
 ## During the session
 

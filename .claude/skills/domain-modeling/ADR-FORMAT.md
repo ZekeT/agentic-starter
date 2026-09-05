@@ -1,30 +1,25 @@
 # ADR Format
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
+**This repo's ADRs live in `docs/decisions/`.** That directory's `index.md`
+holds the convention and is the authority — read it before writing one. In
+summary:
 
-Create the `docs/adr/` directory lazily: only when the first ADR is needed.
+- Filename `NNNN-slug.md`, zero-padded, numbered in merge order. Scan
+  `docs/decisions/` for the highest number and increment.
+- Sections: **Context** (the forces, including what you did not know) →
+  **Decision** (what was chosen, active voice) → **Consequences** (what this
+  costs, not only what it buys).
+- Status: `Accepted` · `Superseded by NNNN` · `Deprecated`.
+- **Append-only.** Never edit a merged ADR. A decision that turns out wrong gets
+  a new ADR superseding it — the record of having been wrong is the point.
+- Add a row to the `index.md` table in the same commit.
 
-## Template
+The three sections are required here, unlike the upstream version of this skill
+which allows a single paragraph. Consequences is the one people skip and the one
+future readers need.
 
-```md
-# {Short title of the decision}
-
-{1-3 sentences: what's the context, what did we decide, and why.}
-```
-
-That's it. An ADR can be a single paragraph. The value is in recording *that* a decision was made and *why*, not in filling out sections.
-
-## Optional sections
-
-Only include these when they add genuine value. Most ADRs won't need them.
-
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`): useful when decisions are revisited
-- **Considered Options**: only when the rejected alternatives are worth remembering
-- **Consequences**: only when non-obvious downstream effects need to be called out
-
-## Numbering
-
-Scan `docs/adr/` for the highest existing number and increment by one.
+An ADR records *why*. What the system currently does is `openspec/specs/`; what
+shape it has is `docs/architecture.md`; what a term means is `CONTEXT.md`.
 
 ## When to offer an ADR
 
