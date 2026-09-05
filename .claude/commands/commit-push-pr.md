@@ -11,56 +11,7 @@ Conventions: `.harness/docs/commits-and-prs.md`. PR body:
 ---
 
 ```bash
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-# Three-dot base: what this branch added, not main's own commits inverted.
-BASE=$(git merge-base main HEAD)
-
-echo "=== Branch ===" && echo "$BRANCH"
-echo "=== Status ===" && git status --short
-echo "=== Diff stat since $(git rev-parse --short "$BASE") ===" && git diff "$BASE" --stat
-
-SLUG=$(echo "$BRANCH" | sed -nE 's|^feat/(.*)-g[0-9]+$|\1|p')
-GROUP=$(echo "$BRANCH" | sed -nE 's|^feat/.*-g([0-9]+)$|\1|p')
-
-if [ -n "$SLUG" ] && [ -d "openspec/changes/$SLUG" ]; then
-  echo "=== Change: $SLUG (task group ${GROUP:-?}) ==="
-  # Scenario headings only, not the spec bodies. This command runs in the
-  # session that just implemented against those specs — they are already in
-  # context, and re-printing them buys nothing. The headings are enough to fill
-  # the PR's Spec compliance boxes honestly; open the file if one is unclear.
-  echo "--- scenarios this diff must satisfy (openspec/changes/$SLUG/specs/) ---"
-  grep -rn '^#### Scenario:' "openspec/changes/$SLUG/specs" 2>/dev/null \
-    || echo "(no delta specs)"
-  echo "--- task group $GROUP ---"
-  awk -v g="$GROUP" '
-    /^##[[:space:]]+[0-9]+\./ {
-      match($0, /^##[[:space:]]+[0-9]+/); n = substr($0, RSTART+2, RLENGTH-2); gsub(/[[:space:]]/, "", n)
-      inblock = (n == g)
-    }
-    inblock
-  ' "openspec/changes/$SLUG/tasks.md" 2>/dev/null
-
-  UNCHECKED=$(awk -v g="$GROUP" '
-    /^##[[:space:]]+[0-9]+\./ {
-      match($0, /^##[[:space:]]+[0-9]+/); n = substr($0, RSTART+2, RLENGTH-2); gsub(/[[:space:]]/, "", n)
-      inblock = (n == g)
-    }
-    inblock && /^[[:space:]]*-[[:space:]]*\[[[:space:]]\]/
-  ' "openspec/changes/$SLUG/tasks.md" 2>/dev/null)
-  if [ -n "$UNCHECKED" ]; then
-    echo "!!! Tasks in group $GROUP still unchecked:"
-    echo "$UNCHECKED"
-    echo "!!! Tick them if done, or finish them. tasks.md is the plan of record."
-  fi
-else
-  echo "=== No change folder resolved from branch name ==="
-  echo "(fine for a hotfix or chore — say so in the PR's Change line)"
-fi
-
-echo "=== Tests touched by this diff ==="
-git diff "$BASE" --name-only | grep -E '^tests/' || echo "(none — is that right for this change?)"
-
-echo "=== make check ===" && make check 2>&1 | tail -15
+bash .harness/scripts/cmd_commit_push_pr.sh
 ```
 
 `make check` above is **the** gate for this branch — deterministic, and run

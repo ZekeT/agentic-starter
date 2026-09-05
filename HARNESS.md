@@ -29,7 +29,7 @@ exploration → intent → spec → tasks → implement → review → ship → 
 | Stage | Command | Output | Gate |
 |---|---|---|---|
 | Explore | conversation, or `/opsx:explore` | understanding | — |
-| Spike *(only if the how is unknown)* | `/spike <slug> <question>` | an ADR in `docs/decisions/` | 🖐 accept the ADR |
+| Spike *(only if the how is unknown)* | `/spike <slug> <question>` | an ADR + `design.md` | 🖐 accept both |
 | Intent | `/crystallize "<idea>"` | `openspec/changes/<slug>/intent.md` | 🖐 accept the intent |
 | Spec | `/crystallize` continues | `proposal.md` + `specs/` + `design.md` + `tasks.md` | 🖐 accept the spec |
 | Implement | `/dev-change <slug> <group>` | code + tests on `feat/<slug>-g<N>`, uncommitted | — |
@@ -46,9 +46,12 @@ approach is derivable once intent is accepted. When it is not, the experiment
 otherwise happens inside an implementation branch and becomes production code
 because it was there and it worked. `/spike` makes the throwaway explicit: it
 interviews (`grilling`), settles vocabulary (`domain-modeling`), prototypes only
-what an interview cannot answer (`prototype`), and lands **one ADR**. Prototype
-code stays on `spike/<slug>`, unmerged, as a primary source. `openspec/specs/`
-is never touched by experimentation — that is the whole point of the split.
+what an interview cannot answer (`prototype`), and lands two documents: an **ADR**
+(why, forever) and the change's **`design.md`** (how, concrete enough to build
+from). `/crystallize` then builds intent, proposal, specs and tasks around that
+design rather than re-deriving it. Prototype code stays on `spike/<slug>`,
+unmerged, as a primary source. `openspec/specs/` is never touched by
+experimentation — that is the whole point of the split.
 
 ---
 

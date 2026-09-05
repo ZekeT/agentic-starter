@@ -19,6 +19,7 @@ Before anything else, if `openspec/changes/<slug>/` already exists:
 
 | On disk | Do |
 |---|---|
+| `design.md` only | A `/spike` settled the *how* first. Start at §1 and treat `design.md` as authored: read it, build the intent and spec around it, extend it if the spec reveals more — never rewrite it. Its "Still unknown" section seeds `intent.md`'s open questions. |
 | `intent.md`, no `proposal.md` | Announce "resuming at spec" and go straight to §5. Do not rewrite the intent. |
 | both present | The change is already specced. Say so, name its task groups, and stop. |
 | neither | Treat as a slug collision — see Collisions below. |
@@ -37,12 +38,9 @@ It does **not** reimplement OpenSpec. `openspec new change` and the
 five things they don't: classification against existing truth, the separation
 pass, the intent gate, ADR drafting, and conflict surfacing.
 
-Never write to `openspec/specs/` — that only ever changes at archive time.
-
 ## 1. Read cheaply first
 
-Never bulk-read `openspec/` or `docs/`. Read in this order and stop as soon as
-you can classify:
+Read in this order and stop as soon as you can classify:
 
 ```bash
 openspec list --specs                 # the spec index — names only
@@ -116,32 +114,8 @@ Derive a kebab-case slug, then:
 openspec new change <slug>
 ```
 
-Write `openspec/changes/<slug>/intent.md`:
-
-```markdown
-# Intent: <slug>
-
-## Problem
-What is wrong today. Observable, not aspirational. If you can't state the
-problem without naming the solution, you don't have one yet.
-
-## Proposed outcome
-What is true after this ships. Still no implementation.
-
-## Affected users and systems
-Who notices, and what else this touches.
-
-## Constraints
-Budget, compatibility, deadline, regulatory — anything that bounds the solution.
-
-## Open questions
-The unknowns from step 3. Empty is a red flag on anything non-trivial.
-
-## Areas of concern
-Conflicts with existing ADRs, specs, or policies encoded in skills. State them
-here even if you think they're acceptable — this is the section a reviewer
-reads first.
-```
+Write `openspec/changes/<slug>/intent.md` to the shape in
+[INTENT-FORMAT.md](./INTENT-FORMAT.md).
 
 `intent.md` is harness-owned, not an OpenSpec artifact. `openspec status` and
 `openspec validate` will ignore it. That's fine: its value is the gate and the
@@ -177,7 +151,7 @@ Follow those instructions, carrying across the buckets from step 3:
   keys off that to decide whether to load `docs/architecture.md`.
 - **Delta specs** — requirements as observable behaviour, each with at least one
   `#### Scenario:` block using WHEN/THEN. No internal class or library names.
-- **`design.md`** — the unknowns and rejected alternatives from step 3, plus how.
+- **`design.md`** — the unknowns and rejected alternatives from step 3, plus how. If a spike already wrote this file, extend it rather than replacing it.
 - **`tasks.md`** — each `## N` group must be **independently shippable**: one
   group = one branch = one PR under `/dev-change`. If a group can't ship alone,
   regroup until it can.

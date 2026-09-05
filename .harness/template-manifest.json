@@ -1,6 +1,6 @@
 {
   "template_version": "1.5.0",
-  "generated_at": "2026-09-05T18:16:07+00:00",
+  "generated_at": "2026-09-05T19:15:36+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
@@ -14,48 +14,58 @@
       "previous": []
     },
     ".claude/commands/archive-change.md": {
-      "sha256": "c62cd4cf5b1fac2dc0c690dea2da7872d7d476eab9b525ccea8f1e76bdfd959f",
-      "previous": []
+      "sha256": "1ed11b299be9cad111c3a334497417abcf7382192ec6b30e38914f25dc941613",
+      "previous": [
+        "c62cd4cf5b1fac2dc0c690dea2da7872d7d476eab9b525ccea8f1e76bdfd959f"
+      ]
     },
     ".claude/commands/commit-push-pr.md": {
-      "sha256": "7987112dfd4377e80b85575f5de06181c930d3cd923df35c0168568364813df7",
+      "sha256": "9b67b0ef48937e2b7ba3e824cb483229e6df44175ec81e20b501723f3ae3d001",
       "previous": [
         "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d",
         "700d10578dba3ab490046e87527c833640cfe4dcd6a8446c200b0fa6c036ab87",
         "8f9b827f827aacd9f59fb3d42dcc1d7e13eb3876d8a81c4eb3da0126b49068ac",
-        "35775bce1bfcc9b999c9d10545c9cd4430958e35d3277a1046ceeab34f943714"
+        "35775bce1bfcc9b999c9d10545c9cd4430958e35d3277a1046ceeab34f943714",
+        "7987112dfd4377e80b85575f5de06181c930d3cd923df35c0168568364813df7"
       ]
     },
     ".claude/commands/dev-change.md": {
-      "sha256": "ffb30689c773d298c9ebf2c62ad151964005d8853ddd192516ae42932b2b80ee",
+      "sha256": "14f6dd20ca53d630976035429fc30e96bbd4f3b05eb2dc2d94a8e5e4013ba9b1",
       "previous": [
         "9f8840b8a4f3165374205417ea762bbeff21476ccb5cadac9422f15d1994ee08",
         "46933bee6f02108c067b0819a079577b825dbb39ba11d95c88709b0340bdb956",
         "4e201db954b75d4b204881d86846157d96292d856a12f5e45ad92c14cd683fa5",
         "113e8a4d8142bae9fbe41ae1162693abdf0ac53482a55030741bc076aa957307",
-        "369a9b55fbbe66b2072674d64ab1e65edb5be0b0c8645c65e0e8574c8b551d93"
+        "369a9b55fbbe66b2072674d64ab1e65edb5be0b0c8645c65e0e8574c8b551d93",
+        "ffb30689c773d298c9ebf2c62ad151964005d8853ddd192516ae42932b2b80ee",
+        "061bce0d66e255366dfaddab5dfa15f015611ff862906c389d20be09a8b15770"
       ]
     },
     ".claude/commands/review.md": {
-      "sha256": "e72267ca2b4b24ca633455aca5e1057f232f93e9560a71006033538be94d64f7",
+      "sha256": "11862f0f086c42d1de36d258ab6155421c4cd5801301ebff9538d58445985e5d",
       "previous": [
         "79f505f1e1b1cca385eeb085199cf77efe844b7be36f04adf5ae768cbb3098e7",
         "4a5f8c2477ad9cf9adb557a667dfbae7b24f2dc68082968306bf5f6415adece3",
         "a246f3dc20bad857197968c916ac5451ba9cc0573e30566f55984d59672d20e3",
-        "1f9e7fd72bc6d6c970a2f734f7223c76928f8ed93a030f07d150e51fbf4227bb"
+        "1f9e7fd72bc6d6c970a2f734f7223c76928f8ed93a030f07d150e51fbf4227bb",
+        "e72267ca2b4b24ca633455aca5e1057f232f93e9560a71006033538be94d64f7"
       ]
     },
     ".claude/commands/spike.md": {
-      "sha256": "8b1b0ed1fadd25a450440516f4882b0fe7aa89f59d3a8222744d53ce3da4b224",
-      "previous": []
+      "sha256": "10860ee6f8dbdf21e19fdd23d7cb64d21778ee690c167be69ee81df402ad79d0",
+      "previous": [
+        "8b1b0ed1fadd25a450440516f4882b0fe7aa89f59d3a8222744d53ce3da4b224",
+        "9e3701fbd7c5df9b2d112ee4879456db330ba787a50dc18b74ed965a276b2297"
+      ]
     },
     ".claude/hooks/post_tool_feature_claude_reminder.py": {
-      "sha256": "c81200f0e66ae53fb5604105530ba5015ba3ccdcb0053f8e9978ed60cb51392b",
+      "sha256": "36092dad0e73c858d11fb49d49f47a0722f739e8f7fde028c4a1646b4ad6db5a",
       "previous": [
         "b1d6a993d113e1598bd141a0dee1e91b874b0c89c75c011aab6ef8cf514d4cd6",
         "61171b5f20029371b1c42b8c33f96de6a2e91e5b8adc85333bc060e0546dccdc",
         "d4788bb35b9b49f0aa5d407867b1c984eea674c14be8ab7fae69627f9182d808",
-        "b233b649748a77bb577859837e01f003aefdfc317ffd06e3b1db83b26a765dfc"
+        "b233b649748a77bb577859837e01f003aefdfc317ffd06e3b1db83b26a765dfc",
+        "c81200f0e66ae53fb5604105530ba5015ba3ccdcb0053f8e9978ed60cb51392b"
       ]
     },
     ".claude/hooks/post_tool_lint.py": {
@@ -95,15 +105,20 @@
         "63d8865eccd4dfe82fcd76e03e8976a577d564b392bb6f997e50c76def876629"
       ]
     },
+    ".claude/skills/crystallize/INTENT-FORMAT.md": {
+      "sha256": "1f6e2678538da2016393df9b33ae576e271f5c5981b0f7dd36534279b6c1523c",
+      "previous": []
+    },
     ".claude/skills/crystallize/SKILL.md": {
-      "sha256": "49f15b81c28d41e9839457ed04342b7d5910a007bc18d4fe67d05b675b7624d8",
+      "sha256": "cc25ccb05a4838638f2f36157c348f5cad4281463377adf67411171d7c5bd536",
       "previous": [
         "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
         "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a",
         "6dc6150bb40f0ce32ec30a947c3b8fa47cae1acf95c2fd93fb2a958923803be3",
         "f6c12cab29617c3bd3b0a176dbff51d81121d7688fe6854eb5ec0fee17f3f6c5",
         "de2ab97e73024fab8600dd2acde736d19ff28fccf796dbb61fa007a53070332b",
-        "315fe1880666066a2fadde43ae56be9a07147e7edaee584a1b2f602bfc34ab48"
+        "315fe1880666066a2fadde43ae56be9a07147e7edaee584a1b2f602bfc34ab48",
+        "49f15b81c28d41e9839457ed04342b7d5910a007bc18d4fe67d05b675b7624d8"
       ]
     },
     ".claude/skills/graphify/SKILL.md": {
@@ -122,13 +137,18 @@
         "6356dc384eb77ba8dd956ddf8186015d5f69c72c16e3dbfd85d8f380e655f746"
       ]
     },
+    ".claude/skills/rescan-docs/OUTPUT-FORMATS.md": {
+      "sha256": "57931382e7aa55a9460785595b46bf52cfa8c9010ea97cf118d629197a4d57b0",
+      "previous": []
+    },
     ".claude/skills/rescan-docs/SKILL.md": {
-      "sha256": "63af28027098c18d75f8cdff94ec01a3eb753b5bdc4da407b967d933e343a291",
+      "sha256": "73e87cad79a2fe12359386428a5c65bcf5e74330c8f6e0e69ada3619f4466413",
       "previous": [
         "5f91b4379fb79d2b65986d60bc5f3f3143524a61ce860be3925c658dfc829120",
         "3f39d442fe3ac4c9e0cc2f3be554c5bb29eb8a4710bc8b4483a306b1dded298e",
         "ab3ac946d78e6431d7c8d3c6b493f5c3f98b72ae5d61da53d83ed8f95baa517f",
-        "924bb8055f76ad2057a758369543ceb902f532d07929edd3a5e3915e5c117c06"
+        "924bb8055f76ad2057a758369543ceb902f532d07929edd3a5e3915e5c117c06",
+        "63af28027098c18d75f8cdff94ec01a3eb753b5bdc4da407b967d933e343a291"
       ]
     },
     ".claude/skills/setup-update/SKILL.md": {
@@ -235,12 +255,16 @@
       "previous": []
     },
     ".harness/evals/cases/006-claude-md-budget.yaml": {
-      "sha256": "64924ca6a818491e0377e4f732cfbd1e852b4a289662d6b58149f0153a65bda9",
-      "previous": []
+      "sha256": "0e2565c15562733f0c42c735bac66bbca8ebddb61b97a532ae090f103a1e94b8",
+      "previous": [
+        "64924ca6a818491e0377e4f732cfbd1e852b4a289662d6b58149f0153a65bda9"
+      ]
     },
     ".harness/evals/cases/007-shell-portability.yaml": {
-      "sha256": "06db9d95df41f6680e485e21f7ec97ff05c3866f4cffeafcc0648cd611f89efd",
-      "previous": []
+      "sha256": "866118af554382687420d67d3f3e41d9958fa4fe028b2c15aeb837d2a9e7e3b0",
+      "previous": [
+        "06db9d95df41f6680e485e21f7ec97ff05c3866f4cffeafcc0648cd611f89efd"
+      ]
     },
     ".harness/evals/cases/008-hook-paths-absolute.yaml": {
       "sha256": "4828b6a7c484de20f8bc478c04416ed30786439c567681561504e2188314af95",
@@ -278,6 +302,32 @@
         "4426baf38f0bf0ae7280cb4aac1844392572ba53c90c19624cf5931818656ed8"
       ]
     },
+    ".harness/scripts/cmd_archive_change.sh": {
+      "sha256": "63c9242d6a55bed11ede182496224c4be981e2f945591c1f8459a57808f0058f",
+      "previous": []
+    },
+    ".harness/scripts/cmd_commit_push_pr.sh": {
+      "sha256": "6696bfd6744840be672542ba569cac9e3579a6c07a0726cd64fd21a2ef1ab6b5",
+      "previous": []
+    },
+    ".harness/scripts/cmd_dev_change.sh": {
+      "sha256": "7e4bbeb16633fe40391e726b3e55e8f72e4592a06997e819bfb5ff431bbd5ed3",
+      "previous": []
+    },
+    ".harness/scripts/cmd_review.sh": {
+      "sha256": "50e2b255f41944c863de7b96b5ed8bd3861b1f791435510dc6f9141050fee1ef",
+      "previous": []
+    },
+    ".harness/scripts/cmd_spike.sh": {
+      "sha256": "c619572b83d98af83f179f29fd93a4e0c408f0f88d265dd33d6db4525db65ee2",
+      "previous": [
+        "cfb5f2257cadbd51135778322aae2bddea1a836c62b5f16d5d89f4fbaacd7c90"
+      ]
+    },
+    ".harness/scripts/lib/change.sh": {
+      "sha256": "28dd8980b895b128489d6bfb0366977f53128ac61d195179ecdb0999c86dd99e",
+      "previous": []
+    },
     ".harness/setup.sh": {
       "sha256": "2ca87944047f926399c05edf86857c8f636f3b4783a94b55f184a63bc39bb132",
       "previous": [
@@ -285,7 +335,7 @@
       ]
     },
     "CLAUDE.md": {
-      "sha256": "db0c0acd4bf5d50d1424e64a18bf5b8d19e73ba5be79499faa08afa8f52e531c",
+      "sha256": "0e6270c242e8ea20cd0b4da1a5e35a61f02cc7ce4dd95714ff373e37c26cf46b",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -303,11 +353,12 @@
         "ad8146c43c67286d95f23e19c51872169eeeef95e73ecea2b0f87bdbe41797ee",
         "ca50b6b49e337b5d4f7b408c74bc987340d6164b8ea1462493b30cf00179256f",
         "ae5a390952278fbea28aab29d1c24f2d5cb70da6f68e59790edee1696e78ba23",
-        "8033b1227bd733c045281d3f5aad1d9f1b5dd53f367b1e6af3b21328639f21bf"
+        "8033b1227bd733c045281d3f5aad1d9f1b5dd53f367b1e6af3b21328639f21bf",
+        "db0c0acd4bf5d50d1424e64a18bf5b8d19e73ba5be79499faa08afa8f52e531c"
       ]
     },
     "HARNESS.md": {
-      "sha256": "727522ab783f3b3a6f6d89cec0474dda57523a9a4f7f7b8d7c400e9fafa72211",
+      "sha256": "d65f0a79598ff813364c1506967f95718ab8229fe7b22fa5acca36c19fe03421",
       "previous": [
         "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
         "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
@@ -317,7 +368,8 @@
         "3aaca243b3add1782f2bf2317d2dd64fd23a60a7fb5c957535607b2b9ae3c42b",
         "837e6d1e9c3856cacf5acd9a43dbbbcb28b1159e4c8a755118f0d9fbdb63a88a",
         "45ddfacbaf268603eb56a65a148e71425ffdc8707b3a3d59150c9b40d3b09bd6",
-        "33aac66378b0ffe674ca64dd109e01687de6a571a9de3dd0b064cabdeb2fb4a2"
+        "33aac66378b0ffe674ca64dd109e01687de6a571a9de3dd0b064cabdeb2fb4a2",
+        "727522ab783f3b3a6f6d89cec0474dda57523a9a4f7f7b8d7c400e9fafa72211"
       ]
     },
     "Makefile": {

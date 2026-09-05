@@ -69,11 +69,16 @@ MANIFEST_FILES = [
 # about, so setup-update leaves them alone. Numbering can overlap harmlessly:
 # manifest keys are full paths, and run_evals.py discovers cases by globbing the
 # directory, so `010-mine.yaml` and `010-harness-md-in-manifest.yaml` coexist.
+# The cmd_*.sh preambles are template-owned even though the two maintainer
+# scripts beside them are not: every shipped command calls one, so a downstream
+# project that took the commands without the scripts would have a broken loop.
 MANIFEST_GLOBS = [
     ".claude/hooks/*.py",
     ".claude/commands/*.md",
     ".claude/agents/*.md",
     ".harness/evals/cases/*.yaml",
+    ".harness/scripts/cmd_*.sh",
+    ".harness/scripts/lib/*.sh",
 ]
 
 # Our skills, walked recursively.
@@ -104,9 +109,13 @@ OPENSPEC_OWNED_PREFIXES = (
 
 # Starter-repo-only maintainer tooling — never shipped to a fork. Same
 # guarantee-not-accident reasoning as OPENSPEC_OWNED_PREFIXES above.
+# Named file by file, not by directory: .harness/scripts/ also holds the
+# cmd_*.sh command preambles, which every shipped command calls and which a
+# fork therefore needs.
 STARTER_ONLY_PREFIXES = (
     ".harness/tests/",
-    ".harness/scripts/",
+    ".harness/scripts/generate_template_manifest.py",
+    ".harness/scripts/migrate_to_framework.py",
 )
 
 

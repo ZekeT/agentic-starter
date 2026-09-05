@@ -26,6 +26,23 @@ The `python-standards` skill holds what a linter can't.
 
 ---
 
+## Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes,
+simplify. The rest of the `karpathy-guidelines` skill covers the neighbouring
+failure modes — surgical edits, surfacing assumptions, verifiable success
+criteria — and is worth invoking on a large refactor.
+
+---
+
 ## Project Structure
 
 What the directory names don't tell you:
@@ -75,7 +92,7 @@ then open only the named capability files. Never bulk-read `openspec/` or `docs/
 
 ## Git Strategy
 
-- Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`,
+- Branches: `feat/{change-slug}-g{N}`, `fix/{slug}`, `chore/{slug}`, `docs/{slug}`,
   `spike/{slug}` (never merged — see `/spike`)
 - Commits: `type(scope): description`; PR body is `.github/pull_request_template.md`.
   Conventions: `.harness/docs/commits-and-prs.md`. Nothing reaches `main` unmerged.

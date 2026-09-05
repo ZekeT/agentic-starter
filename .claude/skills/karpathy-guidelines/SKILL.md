@@ -1,6 +1,6 @@
 ---
 name: karpathy-guidelines
-description: Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
+description: Behavioral guidelines for the LLM coding failure modes that need more than a one-line rule. Use on a large refactor, when a request arrives underspecified or with several readings, when asked to make something flexible or configurable, or when starting a module from scratch. Routine edits do not need it — CLAUDE.md's Simplicity First carries the everyday rule.
 license: MIT
 ---
 
@@ -22,15 +22,8 @@ Before implementing:
 
 ## 2. Simplicity First
 
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+Lives in `CLAUDE.md` under **Simplicity First**, because it applies to every
+line written and is therefore not worth a skill invocation to reach.
 
 ## 3. Surgical Changes
 
