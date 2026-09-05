@@ -1,18 +1,22 @@
 # /dev-change
 
-Implement one task group from an OpenSpec change, in an isolated git worktree,
-using the Superpowers `subagent-driven-development` skill. One task group = one
-branch = one worktree = one PR.
+Implement one task group from an OpenSpec change, on its own branch. One task
+group = one branch = one PR.
 
 Usage:
 - `/dev-change <slug> <group>` — work on task group `<group>` of that change
 - `/dev-change <slug>` — claim the lowest-numbered group with unchecked tasks
+- `--worktree` — claim into `.worktrees/<slug>-g<N>` instead of switching this
+  checkout. Worth it **only** when running several sessions at once, which is
+  what the isolation is for. A single session pays for it in editor visibility
+  and a system-prompt refresh on `EnterWorktree`, and gains nothing.
 
 The mutex that stops two sessions implementing the same group is **branch
-existence**: claiming a group means winning the race to create its
-`feat/<slug>-g<N>` worktree/branch. Nothing about the claim is recorded in a
-file, so there is no state to reconcile if a session dies — the branch either
-exists or it does not.
+existence**: claiming a group means winning the race to create
+`feat/<slug>-g<N>`. `git switch -c` and `git worktree add` both fail on an
+existing branch, so the mutex holds either way. Nothing about the claim is
+recorded in a file, so there is no state to reconcile if a session dies — the
+branch either exists or it does not.
 
 Task groups come from `openspec/changes/<slug>/tasks.md`, whose `## N.` headings
 are written to be independently shippable (enforced by the `tasks` rule in
@@ -24,8 +28,18 @@ change's planning, not something to work around here.
 ```bash
 set -e
 
-SLUG=$(echo "$ARGUMENTS" | awk '{print $1}')
-GROUP=$(echo "$ARGUMENTS" | awk '{print $2}')
+# Flags first, so `--worktree` never lands in the positional slots.
+WORKTREE=0
+POSITIONAL=""
+for arg in $ARGUMENTS; do
+  case "$arg" in
+    --worktree) WORKTREE=1 ;;
+    *)          POSITIONAL="$POSITIONAL $arg" ;;
+  esac
+done
+
+SLUG=$(echo "$POSITIONAL" | awk '{print $1}')
+GROUP=$(echo "$POSITIONAL" | awk '{print $2}')
 
 if [ -n "$GROUP" ]; then
   case "$GROUP" in
@@ -74,10 +88,15 @@ fi
 # Best-effort: never blocks claiming. Merged is a PR-state fact, not "no commits
 # diverged from main" — a freshly claimed, untouched branch is trivially an
 # ancestor of main and must not be swept.
+# The primary worktree is always the first entry, and is never sweepable — in
+# branch mode this session is usually sitting on a feat/ branch itself.
 if command -v gh >/dev/null 2>&1; then
   git worktree list --porcelain 2>/dev/null | awk '
-    /^worktree /                { path=$2 }
-    /^branch refs\/heads\/feat\// { branch=$2; sub("refs/heads/", "", branch); print path"\t"branch }
+    /^worktree /                { path=$2; primary = (++seen == 1) }
+    /^branch refs\/heads\/feat\// {
+      if (primary) next
+      branch=$2; sub("refs/heads/", "", branch); print path"\t"branch
+    }
   ' | while IFS=$'\t' read -r WT_PATH WT_BRANCH; do
     PR_STATE=$(gh pr view "$WT_BRANCH" --json state -q .state 2>/dev/null || true)
     if [ "$PR_STATE" = "MERGED" ]; then
@@ -140,11 +159,17 @@ if ! echo "$GROUP_BODY" | grep -qE '^[[:space:]]*-[[:space:]]*\[[[:space:]]\]'; 
   exit 1
 fi
 
-# Claim by winning the race to create the worktree/branch.
+# Claim by winning the race to create the branch.
 BRANCH="feat/${SLUG}-g${GROUP}"
-WT_PATH="../wt-${SLUG}-g${GROUP}"
+WT_PATH=""
 
-if ! git worktree add "$WT_PATH" -b "$BRANCH" >/dev/null 2>&1; then
+if [ "$WORKTREE" = "1" ]; then
+  WT_PATH=".worktrees/${SLUG}-g${GROUP}"
+  if ! git worktree add "$WT_PATH" -b "$BRANCH" >/dev/null 2>&1; then
+    echo "ERROR: '$BRANCH' already exists — group $GROUP is already claimed." >&2
+    exit 1
+  fi
+elif ! git switch -c "$BRANCH" >/dev/null 2>&1; then
   echo "ERROR: '$BRANCH' already exists — group $GROUP is already claimed." >&2
   exit 1
 fi
@@ -154,7 +179,7 @@ echo "=== Claimed ==="
 echo "change:   $SLUG"
 echo "group:    $GROUP"
 echo "branch:   $BRANCH"
-echo "worktree: $WT_PATH"
+echo "worktree: ${WT_PATH:-(none — switched this checkout)}"
 
 echo ""
 echo "=== Tasks for group $GROUP ==="
@@ -185,42 +210,52 @@ fi
 
 After the preamble runs:
 
-1. Call `EnterWorktree` with `path` set to the worktree path printed above to
-   durably switch the session into it — this also refreshes cwd-dependent state
-   (system prompt, feature `CLAUDE.md`, plans dir) that a bare `cd` would not.
+1. If a worktree path was printed, call `EnterWorktree` with it. Otherwise this
+   checkout is already on the branch — do not create a worktree.
 2. Work **only** the tasks in the claimed group. The other groups belong to
    other branches; touching them here creates the merge conflicts this
    one-group-per-PR split exists to prevent.
-3. The proposal, delta specs, and design printed above are the full context. Do
-   not bulk-read `openspec/specs/` — if you need current behaviour for a
-   capability, read that capability's spec file by name.
-4. Invoke the Superpowers **`subagent-driven-development`** skill to drive
-   implementation: brainstorm → plan 2–5 min subtasks → tests-first → implement
-   → `code-reviewer` after each task → `verification-before-completion`.
+3. The proposal, delta specs, and design printed above are the full context.
+   Do not bulk-read `openspec/specs/`; if you need current behaviour for a
+   capability, read that spec file by name.
+4. **The task group is the plan. Do not re-plan it.** It was written by
+   `/crystallize` and accepted at a human gate, and it is already on screen.
+   Implement it directly in this session, driving each task with the Superpowers
+   **`test-driven-development`** skill: failing test, minimal code, refactor.
+   Do **not** invoke `subagent-driven-development` here — it dispatches a fresh
+   implementer and a fresh reviewer per task, each re-reading this context cold,
+   to re-derive a plan you already have.
 5. As each task completes, tick its checkbox in `openspec/changes/<slug>/tasks.md`
-   (`- [ ]` → `- [x]`). This file is the durable plan of record: **if
-   implementation departs from it, update it in the same commit**, because PR
-   review checks the diff against it.
-6. If implementation shows a delta spec is wrong, never silently fix the code
-   around it. Amend the change's delta if the correction is small; open a new
-   change if it is large. Never edit `openspec/specs/` directly — that only ever
-   changes at archive time.
-7. If a real ambiguity remains unresolved — architectural direction,
-   contradictory requirements, a bug attempted twice without success, a
-   non-obvious security tradeoff — **stop and ask the user**. Do not guess, and
-   do not widen scope to route around it.
-8. Before declaring done: run `make check`, and confirm every task in the group
-   is ticked and every scenario in the delta specs it covers actually holds.
-9. Dispatch the **`verifier`** subagent. It runs in a fresh context window, so
-   its verdict is not coloured by the assumptions that produced the code — this
-   session has already convinced itself. Give it the change slug and group
-   number; it runs the change and reports mismatches without fixing anything.
-   Paste its report into the PR's "How this was tested" section. If it reports
-   a mismatch, resolve it before opening the PR — either the code is wrong, or
-   the delta spec is (rule 6 above), and a FAIL verdict is not something to
-   explain away in the PR body.
-10. Run `/commit-push-pr` to open the PR.
-11. Call `ExitWorktree` with `action: "keep"` — the PR is open, not merged, so
-    the worktree must stay. The next `/dev-change` sweeps it once the PR merges.
-12. Print the PR URL, and the remaining unchecked groups so the user knows
-    what's left before `/archive-change`.
+   (`- [ ]` → `- [x]`), and update the task text in the same commit if
+   implementation departed from it (see CLAUDE.md **Rules**).
+6. If this group adds a feature directory under `src/`, or changes what an
+   existing one is for, write or update that directory's own `CLAUDE.md` in the
+   same commit — purpose, entry points, invariants, gotchas; ~30 lines. This is
+   what stops the next session re-deriving the feature from its source. Stable
+   facts only: never implementation status, which is `tasks.md`'s job.
+7. CLAUDE.md's **Rules** govern here and are already loaded — in particular,
+   what to do when a delta spec turns out to be wrong, and when to stop and ask
+   rather than guess. A bug attempted twice without success is one of those
+   stopping points.
+8. Run `make check`. It must pass before you hand anything to a human, and its
+   result is what you hand over — nothing downstream runs it again until
+   `/commit-push-pr`.
+9. Dispatch the **`verifier`** subagent. Fresh context, so its verdict is not
+   coloured by the assumptions that produced the code — this session has
+   already convinced itself. Give it the change slug and group number; it runs
+   the change and reports mismatches without fixing anything. A FAIL is yours
+   to resolve now: either the code is wrong or the delta spec is (step 7).
+10. Worktree mode only: call `ExitWorktree` with `action: "keep"`.
+11. **Stop here. Do not commit, and do not open a PR.** Print, for the user:
+    the branch name, the `make check` result, the verifier's report verbatim,
+    the tasks now ticked, the remaining unchecked groups, and the two commands
+    that come next —
+
+    ```
+    /review           # verify the implementation against the spec
+    /commit-push-pr   # commit and open the PR, once satisfied
+    ```
+
+    The human gate sits *before* the commit. Nothing this session wrote reaches
+    git history or GitHub until a person has read `/review`'s verdict and chosen
+    to run `/commit-push-pr` themselves.

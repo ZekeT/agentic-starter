@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PostToolUse hook — remind the agent to link new feature CLAUDE.md files.
+"""PostToolUse hook — remind the agent to link new feature CLAUDE.md files.
 
 Triggered by: Write, Edit, MultiEdit tool calls that touch a feature-level
               `src/<feature>/CLAUDE.md` (never the root CLAUDE.md).
@@ -58,10 +57,10 @@ def main() -> None:
             file=sys.stderr,
         )
         print(
-            "Add a one-line entry under Project Structure, e.g.:",
+            "Add a one-line pointer under Project Structure, e.g.:",
             file=sys.stderr,
         )
-        print(f"  {feature_name}/  # <one-line purpose>", file=sys.stderr)
+        print(f"  - `src/{feature_name}/` — <one-line purpose>", file=sys.stderr)
         sys.exit(1)
 
 

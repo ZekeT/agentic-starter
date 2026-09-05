@@ -11,19 +11,26 @@ Conventions: `.harness/docs/commits-and-prs.md`. PR body:
 ---
 
 ```bash
-echo "=== Branch ===" && git branch --show-current
-echo "=== Status ===" && git status --short
-echo "=== Diff stat vs main ===" && git diff main --stat
-
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
+# Three-dot base: what this branch added, not main's own commits inverted.
+BASE=$(git merge-base main HEAD)
+
+echo "=== Branch ===" && echo "$BRANCH"
+echo "=== Status ===" && git status --short
+echo "=== Diff stat since $(git rev-parse --short "$BASE") ===" && git diff "$BASE" --stat
+
 SLUG=$(echo "$BRANCH" | sed -nE 's|^feat/(.*)-g[0-9]+$|\1|p')
 GROUP=$(echo "$BRANCH" | sed -nE 's|^feat/.*-g([0-9]+)$|\1|p')
 
 if [ -n "$SLUG" ] && [ -d "openspec/changes/$SLUG" ]; then
   echo "=== Change: $SLUG (task group ${GROUP:-?}) ==="
-  echo "--- delta specs this diff must satisfy ---"
-  find "openspec/changes/$SLUG/specs" -name '*.md' \
-    -exec echo '### {}' \; -exec cat {} \; 2>/dev/null
+  # Scenario headings only, not the spec bodies. This command runs in the
+  # session that just implemented against those specs — they are already in
+  # context, and re-printing them buys nothing. The headings are enough to fill
+  # the PR's Spec compliance boxes honestly; open the file if one is unclear.
+  echo "--- scenarios this diff must satisfy (openspec/changes/$SLUG/specs/) ---"
+  grep -rn '^#### Scenario:' "openspec/changes/$SLUG/specs" 2>/dev/null \
+    || echo "(no delta specs)"
   echo "--- task group $GROUP ---"
   awk -v g="$GROUP" '
     /^##[[:space:]]+[0-9]+\./ {
@@ -51,10 +58,13 @@ else
 fi
 
 echo "=== Tests touched by this diff ==="
-git diff main --name-only | grep -E '^tests/' || echo "(none — is that right for this change?)"
+git diff "$BASE" --name-only | grep -E '^tests/' || echo "(none — is that right for this change?)"
 
 echo "=== make check ===" && make check 2>&1 | tail -15
 ```
+
+`make check` above is **the** gate for this branch — deterministic, and run
+once. `/dev-change` does not run it separately.
 
 Only proceed if `make check` passes. If it fails, stop and report the failures —
 never commit past a red gate.
@@ -74,14 +84,16 @@ Then:
 
    - **What & why** — the problem solved, plus the change slug and task group
      printed above (or "none" with a reason).
-   - **How this was tested** — name the actual tests covering the new behaviour.
-     Use the tests-touched list above. If nothing under `tests/` changed, say why
-     that's correct. For manual verification, record the steps *and the observed
+   - **How this was tested** — name the actual tests covering the new behaviour,
+     using the tests-touched list above, and paste the `verifier` agent's report
+     from `/dev-change`. If nothing under `tests/` changed, say why that's
+     correct. For manual verification, record the steps *and the observed
      result*; "tested locally" is not evidence.
    - **Not covered** — state honestly what this change does not verify. Do not
      leave it blank to look thorough; it is the line reviewers rely on most.
-   - **Spec compliance** — tick only boxes you actually checked against the delta
-     specs printed above.
+   - **Spec compliance** — tick only boxes you actually checked against the
+     scenarios listed above. If a scenario's wording matters, open its file
+     rather than guessing.
    - **Risk** — what breaks if this is wrong, and how it rolls back.
 
 5. Print the PR URL.

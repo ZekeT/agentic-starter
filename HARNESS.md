@@ -19,8 +19,9 @@ One-time bootstrap, project structure, and hooks: [`.harness/docs/setup.md`](.ha
 ## Pipeline
 
 ```
-exploration → intent → spec → tasks → implement → review → archive
-                🖐       🖐              🖐 (PR merge)      🖐
+exploration → intent → spec → tasks → implement → review → ship → archive
+                🖐       🖐                           🖐       🖐        🖐
+                                                            (PR merge)
 ```
 
 `🖐` = human gate. Everything else is an automated agent.
@@ -30,9 +31,9 @@ exploration → intent → spec → tasks → implement → review → archive
 | Explore | conversation, or `/opsx:explore` | understanding | — |
 | Intent | `/crystallize "<idea>"` | `openspec/changes/<slug>/intent.md` | 🖐 accept the intent |
 | Spec | `/crystallize` continues | `proposal.md` + `specs/` + `design.md` + `tasks.md` | 🖐 accept the spec |
-| Implement | `/dev-change <slug> <group>` | code + tests on a worktree branch | — |
-| Review | `/review` | compliance against the delta specs | — |
-| Ship | `/commit-push-pr` | PR opened | 🖐 merge |
+| Implement | `/dev-change <slug> <group>` | code + tests on `feat/<slug>-g<N>`, uncommitted | — |
+| Review | `/review` | verdict against the delta specs | 🖐 approve before committing |
+| Ship | `/commit-push-pr` | commit + PR | 🖐 merge |
 | Archive | `/archive-change <slug>` | deltas merged into `openspec/specs/` | 🖐 review the spec diff |
 
 `/opsx:*` and the `openspec-*` skills are OpenSpec's own low-level tooling,
@@ -54,20 +55,62 @@ wraps `openspec-propose` and adds the intent gate that `/opsx:propose` skips.
 `openspec/specs/` is the only thing that changes automatically, and only at
 archive time. That is what stops it drifting from the code the way a PRD does.
 
+The repo is the source of truth for every artifact. An external tracker holds a
+commit SHA and links back here, never the reverse.
+
 ---
 
 ## The unit of work
 
-One `## N` task group in a change's `tasks.md` = one branch = one worktree = one
-PR. `/dev-change <slug> <group>` claims a group by creating `feat/<slug>-g<N>`;
+One `## N` task group in a change's `tasks.md` = one branch = one PR.
+`/dev-change <slug> <group>` claims a group by creating `feat/<slug>-g<N>`;
 branch existence is the mutex, so two sessions cannot claim the same group.
+
+The group **is** the plan — it was accepted at a human gate, so `/dev-change`
+implements it (Superpowers `test-driven-development`) rather than re-planning
+it. It then runs `make check`, dispatches the `verifier` agent for a
+fresh-context behavioural check, and **stops with the work uncommitted**.
+
+You run `/review`, read the verdict, and run `/commit-push-pr` yourself. That
+ordering is deliberate: the gate sits before the commit, so a bad group is
+fixed on a dirty working tree rather than argued about on an open PR. No agent
+in this harness commits or opens a PR on its own.
+
+### Worktrees (opt-in)
+
+The default claim is `git switch -c` in this checkout. Add `--worktree` only
+when you are running **several sessions at once** and they would otherwise fight
+over one working tree. One session at a time gains nothing and loses editor
+visibility and a warm prompt cache.
+
+```bash
+/dev-change add-rate-limiting 1 --worktree   # session A → .worktrees/add-rate-limiting-g1
+/dev-change add-rate-limiting 2 --worktree   # session B → .worktrees/add-rate-limiting-g2
+```
+
+- Each lands in `.worktrees/<slug>-g<N>` — inside the repo, so your editor sees
+  it, and gitignored so `git status` and `make check` do not.
+- The session calls `EnterWorktree` itself; open the path directly if you want a
+  second editor window on it.
+- **Cleanup is automatic.** A later `/dev-change` removes any worktree whose PR
+  has merged, and deletes its branch. Nothing to remember.
+- Removing one by hand, if you abandon the work:
+
+  ```bash
+  git worktree remove .worktrees/<slug>-g<N> && git branch -D feat/<slug>-g<N>
+  ```
+
+The branch is the mutex in both modes, so mixing them across sessions is safe:
+whichever session creates `feat/<slug>-g<N>` first owns the group.
 
 Walkthrough:
 
 ```
-/crystallize "add rate limiting"   → review intent → review spec + tasks
-/dev-change add-rate-limiting 1    → PR → merge
-/dev-change add-rate-limiting 2    → PR → merge
+/crystallize "add rate limiting"   → accept intent → accept spec + tasks
+/dev-change add-rate-limiting 1    → stops, uncommitted
+/review                            → verdict
+/commit-push-pr                    → PR → merge
+/dev-change add-rate-limiting 2    → ... same three steps
 /archive-change add-rate-limiting  → review the spec diff
 ```
 
@@ -79,8 +122,8 @@ for broad architecture questions spanning many files, not required otherwise
 
 ## How to start
 
-**Greenfield.** Run `bash harness_setup.sh`, write `docs/product.md` (what this
-is, who for, and the non-goals), then crystallize your first idea.
+**Greenfield.** Run `make setup`, write `docs/product.md` (what this is, who
+for, and the non-goals), then crystallize your first idea.
 `openspec/changes/archive/` ships with one example change — intent, proposal,
 delta specs, tasks — so the artifact chain is readable before you write your
 own. Setup offers to delete it; it is the starter's history, not yours.
@@ -91,8 +134,8 @@ the loop a baseline. Review what it produces before trusting it: it describes
 what the code *does*, which is not always what it *should* do.
 
 **A project already using an older version of this harness.** Run
-`scripts/migrate_to_framework.py <path>`. It preflights the target, works on its
-own branch, and writes a `MIGRATION_REPORT.md` for review.
+`.harness/scripts/migrate_to_framework.py <path>`. It preflights the target,
+works on its own branch, and writes a `MIGRATION_REPORT.md` for review.
 
 ---
 
@@ -103,7 +146,7 @@ make check    # fmt + lint + test — run before every commit
 make evals    # harness evals: skills, rules, and hook wiring still intact
 make manifest   # after editing any template-owned file
 
-bash harness_setup.sh --check   # assert structure, hooks, manifest — mutates nothing
+bash .harness/setup.sh --check  # assert structure, hooks, manifest — mutates nothing
 ```
 
 | Looking for | Read |
