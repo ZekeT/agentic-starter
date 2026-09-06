@@ -173,9 +173,7 @@ def main() -> int:
             skipped.append(case)
             continue
 
-        ok, detail = (
-            run_static(case) if case.kind == "static" else run_prompt(case)
-        )
+        ok, detail = run_static(case) if case.kind == "static" else run_prompt(case)
         if ok:
             passed.append(case)
             print(f"  {GREEN}PASS{RESET}  {case.id}")
@@ -198,8 +196,10 @@ def main() -> int:
         summary += f", {len(skipped)} prompt case(s) skipped (use --full)"
     print(f"{BOLD}{summary}{RESET}")
     if skipped and not failed:
-        print(f"{YELLOW}Static cases only — prompt cases test whether the "
-              f"instructions actually steer the model.{RESET}")
+        print(
+            f"{YELLOW}Static cases only — prompt cases test whether the "
+            f"instructions actually steer the model.{RESET}"
+        )
     return 1 if failed else 0
 
 

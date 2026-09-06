@@ -1,52 +1,34 @@
 # /review
 
-Review the current branch's diff against the change it implements.
+Verify an implementation against the change it claims to implement. This is
+the **human's gate**: `/dev-change` stops without committing and hands the
+branch over, and this is what you run before deciding to `/commit-push-pr`.
 
-Usage: `/review` — infers the change slug and task group from the branch name
-(`feat/<slug>-g<N>`), or `/review <slug>` to name one explicitly.
+No agent calls this command. Running it is the decision to look.
+
+Usage:
+- `/review` — review the checked-out branch, uncommitted work included
+- `/review <branch>` — review that branch (e.g. `feat/add-auth-g2`)
+- `/review <slug>` — review the checked-out branch against that change slug
 
 ---
 
 ```bash
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-SLUG="$ARGUMENTS"
-
-# feat/<slug>-g<N>  →  slug, group
-if [ -z "$SLUG" ]; then
-  SLUG=$(echo "$BRANCH" | sed -nE 's|^feat/(.*)-g[0-9]+$|\1|p')
-fi
-GROUP=$(echo "$BRANCH" | sed -nE 's|^feat/.*-g([0-9]+)$|\1|p')
-
-echo "=== Branch ===" && echo "$BRANCH (change: ${SLUG:-unknown}, group: ${GROUP:-n/a})"
-echo "=== Changed files ===" && git diff main --name-only
-echo "=== Diff ===" && git diff main
-
-CHANGE_DIR="openspec/changes/$SLUG"
-if [ -n "$SLUG" ] && [ -d "$CHANGE_DIR" ]; then
-  echo "=== Proposal ===" && cat "$CHANGE_DIR/proposal.md" 2>/dev/null
-  echo "=== Delta specs (the behaviour contract this diff must satisfy) ==="
-  find "$CHANGE_DIR/specs" -name '*.md' -exec echo '--- {} ---' \; -exec cat {} \; 2>/dev/null
-  if [ -n "$GROUP" ]; then
-    echo "=== Task group $GROUP (the plan this diff must match) ==="
-    awk -v g="$GROUP" '
-      /^##[[:space:]]+[0-9]+\./ {
-        match($0, /^##[[:space:]]+[0-9]+/); n = substr($0, RSTART+2, RLENGTH-2); gsub(/[[:space:]]/, "", n)
-        inblock = (n == g)
-      }
-      inblock
-    ' "$CHANGE_DIR/tasks.md" 2>/dev/null
-  fi
-else
-  echo "(no change folder resolved — reviewing the diff on its own)"
-fi
-
-echo "=== make check ===" && make check 2>&1 | tail -30
+bash .harness/scripts/cmd_review.sh $ARGUMENTS
 ```
 
 Run the passes defined in `REVIEW.md`. The compliance pass is the one this
 harness exists to enable: check the diff against the delta specs and the task
 group above, not just against general good taste.
 
+`make check` is not run here — `REVIEW.md`'s **Skip entirely** section says not
+to relitigate what the gate decides. If you have no hand-off result for this
+branch, run `make check` yourself before trusting the diff.
+
 Produce: Summary / Must Fix / Should Fix / Notes / Verdict.
 
 For security-sensitive changes, also dispatch the `security-reviewer` agent.
+
+End by telling the user what the verdict means for the next command: nothing
+is committed yet, so **REQUEST CHANGES** means fix the branch and re-run this,
+and **APPROVE** means they can run `/commit-push-pr`.

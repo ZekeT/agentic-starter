@@ -63,12 +63,15 @@ plan's progress ledger.
 Then open Claude Code and run the change loop:
 
 ```
-/crystallize "<idea>"        # Exploration → an OpenSpec change folder
-                             #   commit 1: intent.md
+/explore "<idea>"            # → intent.md
                              #   ← HUMAN GATE: accept the intent
-                             #   commit 2: proposal + delta specs + design + tasks
+/crystallize <slug>          # → proposal + delta specs + design + tasks
                              #   ← HUMAN GATE: accept the spec
-/dev-change <slug> <group>   # Implement one task group in its own worktree + PR
+/dev-change <slug> <group>   # Implement one task group on feat/<slug>-g<N>,
+                             #   then stop without committing
+/review                      # → verdict against the delta specs
+                             #   ← HUMAN GATE: approve before anything is committed
+/commit-push-pr              # → commit + PR
                              #   ← HUMAN GATE: merge the PR
 /archive-change <slug>       # Merge deltas into openspec/specs/
                              #   ← HUMAN GATE: review the spec diff
@@ -151,8 +154,12 @@ uv pip install graphifyy && uv run graphify claude install
 uv run graphify .   # builds the knowledge graph → graphify-out/ (gitignored)
 ```
 Gives agents a token-compressed map of the codebase to query instead of grepping
-raw files. Nothing in the harness requires it — see the `graphify` skill for when
-it earns its keep.
+raw files. Nothing in the harness requires it, and the harness deliberately ships
+no graphify skill of its own: `graphify claude install` writes one into
+`~/.claude/skills/`, and a second copy here would collide with it by name and
+give skill routing two entries to choose between. It earns its keep on questions
+that span many files at once; for anything scoped to one feature, Grep is
+simpler and just as fast.
 
 ---
 
@@ -162,19 +169,19 @@ To adopt this framework on an existing codebase (instead of starting fresh),
 run the migration script from wherever you cloned this repo:
 
 ```bash
-python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/project --dry
-python /path/to/agentic-starter/scripts/migrate_to_framework.py /path/to/your/project
+python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/your/project --dry
+python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/your/project
 ```
 
 This copies hooks, commands, the security agent, config, scripts, docs, and
-our skills (`rescan-docs`, `setup-update`, `graphify`) into your project
+our skills (`rescan-docs`, `setup-update`, `crystallize`, `python-standards`) into your project
 without overwriting anything that already exists.
 
 Then open Claude Code in your project and generate planning docs from the existing code:
 
 ```
 /rescan-docs           # Analyses the codebase → openspec/specs/ + docs/product.md
-/crystallize "<idea>"  # Then start the loop on your first real change
+/explore "<idea>"      # Then start the loop on your first real change
 ```
 
 Review the reverse-engineered specs before trusting them — they describe what the

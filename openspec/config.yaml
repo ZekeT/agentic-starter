@@ -10,9 +10,9 @@ context: |
   copying it, and stay current via template-manifest.json + the setup-update
   skill.
 
-  Stack: Python 3.11+ managed with uv. black / isort / autoflake / interrogate
-  / mypy (strict) / pytest, all gated behind `make check`. Hooks and scripts
-  are stdlib-only so they run before the venv exists.
+  Stack: Python 3.11+ managed with uv. ruff (format, imports, unused code,
+  docstrings) / mypy (strict) / pytest, all gated behind `make check`. Hooks
+  and scripts are stdlib-only so they run before the venv exists.
 
   Conventions:
   - Conventional commits: type(scope): description

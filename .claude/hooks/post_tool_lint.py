@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PostToolUse hook — auto-lint after every file write or edit.
+"""PostToolUse hook — auto-lint after every file write or edit.
 
 Triggered by: Write, Edit, MultiEdit tool calls.
 Purpose: Catch formatting issues immediately, not at commit time.
@@ -42,8 +41,8 @@ def main() -> None:
     # We do NOT auto-fix here — that's make fmt's job (mutating).
     # The agent should call `make fmt` if these fail.
     checks = [
-        ["uv", "run", "black", "--check", str(path)],
-        ["uv", "run", "isort", "--check-only", str(path)],
+        ["uv", "run", "ruff", "format", "--check", str(path)],
+        ["uv", "run", "ruff", "check", str(path)],
     ]
 
     failed = []

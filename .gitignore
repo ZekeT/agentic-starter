@@ -48,6 +48,11 @@ Thumbs.db
 # Superpowers v6 SDD scratch files
 .superpowers/
 
+# Opt-in worktrees from `/dev-change --worktree`. In-repo so the editor can see
+# them; nothing in `make check` walks here (pyproject testpaths and the Makefile
+# both scope to src/ and tests/).
+.worktrees/
+
 # OpenSpec-generated tool files — written by `openspec init` / `openspec update`,
 # version-stamped by the CLI that wrote them. .harness/setup.sh generates them.
 # NOTE: openspec/ itself (specs, changes, config.yaml) IS committed.

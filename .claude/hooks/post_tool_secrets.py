@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PostToolUse hook — block secrets from being written to any file.
+"""PostToolUse hook — block secrets from being written to any file.
 
 Triggered by: Write, Edit, MultiEdit tool calls.
 Purpose: Defense-in-depth first layer. The Security Reviewer agent

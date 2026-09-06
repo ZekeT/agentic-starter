@@ -9,8 +9,8 @@
 SRC ?= src
 
 # True once $(SRC) contains at least one .py file. Empty/missing $(SRC) is the
-# template's pre-setup state (see pyproject.toml) — interrogate and mypy both
-# error out on an empty directory, so skip them until there's real code.
+# template's pre-setup state (see pyproject.toml) — mypy errors out on an empty
+# directory, so skip it until there's real code. ruff does not, so it always runs.
 HAS_SRC_FILES := $(shell test -d $(SRC) && find $(SRC) -name '*.py' -print -quit)
 
 # ---- Setup ------------------------------------------------
@@ -20,24 +20,23 @@ install:
 
 # ---- Format (mutating — fixes code in place) --------------
 
+# --exit-zero keeps fmt purely mutating: anything ruff cannot auto-fix is
+# printed here and *failed* by lint, one target down.
 fmt:
 	@mkdir -p $(SRC)
-	uv run autoflake --remove-all-unused-imports --remove-unused-variables \
-		--in-place --recursive $(SRC) tests
-	uv run isort $(SRC) tests
-	uv run black $(SRC) tests
+	uv run ruff check --fix --exit-zero $(SRC) tests
+	uv run ruff format $(SRC) tests
 
 # ---- Lint (non-mutating — fails if issues found) ----------
 
 lint:
 	@mkdir -p $(SRC)
-	uv run black --check $(SRC) tests
-	uv run isort --check-only $(SRC) tests
+	uv run ruff format --check $(SRC) tests
+	uv run ruff check $(SRC) tests
 ifneq ($(strip $(HAS_SRC_FILES)),)
-	uv run interrogate $(SRC)
 	uv run mypy $(SRC)
 else
-	@echo "  (skipping interrogate/mypy — no .py files in $(SRC) yet)"
+	@echo "  (skipping mypy — no .py files in $(SRC) yet)"
 endif
 
 # ---- Test -------------------------------------------------

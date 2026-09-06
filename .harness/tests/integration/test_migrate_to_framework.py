@@ -35,9 +35,9 @@ def make_python_project(tmp_path: Path) -> Path:
 
 
 def make_python_project_with_tools(tmp_path: Path) -> Path:
-    """Create a Python project that already has [tool.black]."""
+    """Create a Python project that already has [tool.ruff]."""
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "test"\n\n[tool.black]\nline-length = 100\n'
+        '[project]\nname = "test"\n\n[tool.ruff]\nline-length = 100\n'
     )
     return tmp_path
 
@@ -149,11 +149,11 @@ def test_audit_target_empty(tmp_path: Path) -> None:
 
 def test_audit_target_existing_skill_dir(tmp_path: Path) -> None:
     """A skill directory already present should appear in skill_dirs_to_skip."""
-    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst = tmp_path / ".claude" / "skills" / "rescan-docs"
     dst.mkdir(parents=True)
     audit = m.audit_target(tmp_path, STARTER)
-    assert "graphify" in audit.skill_dirs_to_skip
-    assert "graphify" not in audit.skill_dirs_to_copy
+    assert "rescan-docs" in audit.skill_dirs_to_skip
+    assert "rescan-docs" not in audit.skill_dirs_to_copy
 
 
 def test_audit_target_existing_file(tmp_path: Path) -> None:
@@ -263,22 +263,22 @@ def test_copy_skill_dirs_dry_run_writes_nothing(tmp_path: Path) -> None:
 
 def test_copy_skill_dirs_skip_existing(tmp_path: Path) -> None:
     """An existing skill directory should be skipped without --force."""
-    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst = tmp_path / ".claude" / "skills" / "rescan-docs"
     dst.mkdir(parents=True)
     (dst / "SKILL.md").write_text("custom content")
     _, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=False)
-    assert "graphify" in skipped
+    assert "rescan-docs" in skipped
     assert (dst / "SKILL.md").read_text() == "custom content"
 
 
 def test_copy_skill_dirs_force_overwrites(tmp_path: Path) -> None:
     """--force should overwrite an existing skill directory."""
-    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst = tmp_path / ".claude" / "skills" / "rescan-docs"
     dst.mkdir(parents=True)
     (dst / "SKILL.md").write_text("custom content")
     copied, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=True, dry=False)
-    assert "graphify" in copied
-    assert "graphify" not in skipped
+    assert "rescan-docs" in copied
+    assert "rescan-docs" not in skipped
     assert (dst / "SKILL.md").read_text() != "custom content"
 
 
@@ -297,7 +297,7 @@ def test_copy_skill_dirs_excludes_junk_files(tmp_path: Path) -> None:
 def test_hooks_are_executable(tmp_path: Path) -> None:
     """Python hook files should have the executable bit set after copying."""
     m.copy_framework_files(tmp_path, STARTER, force=False, dry=False)
-    for src_rel, dst_rel in m.FILES_TO_COPY.items():
+    for _src_rel, dst_rel in m.FILES_TO_COPY.items():
         if dst_rel.endswith(".py") and "hooks" in dst_rel:
             mode = (tmp_path / dst_rel).stat().st_mode
             assert mode & 0o111, f"Not executable: {dst_rel}"
@@ -309,28 +309,27 @@ def test_hooks_are_executable(tmp_path: Path) -> None:
 def test_read_pyproject_tool_keys_detects_sections(tmp_path: Path) -> None:
     """Should detect existing [tool.*] keys."""
     (tmp_path / "pyproject.toml").write_text(
-        "[project]\nname = 'x'\n\n[tool.black]\nline-length = 88\n"
+        "[project]\nname = 'x'\n\n[tool.ruff]\nline-length = 88\n"
     )
     keys = m.read_pyproject_tool_keys(tmp_path / "pyproject.toml")
-    assert "tool.black" in keys
+    assert "tool.ruff" in keys
     assert "tool.mypy" not in keys
 
 
 def test_build_missing_toml_text_omits_existing(tmp_path: Path) -> None:
     """Should not include sections already present."""
-    existing = {"tool.black", "tool.isort"}
+    existing = {"tool.ruff"}
     text = m.build_missing_toml_text(existing)
-    assert "[tool.black]" not in text
+    assert "[tool.ruff]" not in text
     assert "[tool.mypy]" in text
 
 
 def test_build_missing_toml_text_all_missing() -> None:
     """Should include all sections when nothing is present."""
     text = m.build_missing_toml_text(set())
-    assert "[tool.black]" in text
-    assert "[tool.isort]" in text
+    assert "[tool.ruff]" in text
+    assert "[tool.ruff.lint]" in text
     assert "[tool.mypy]" in text
-    assert "[tool.interrogate]" in text
     assert "[tool.pytest.ini_options]" in text
 
 
@@ -339,7 +338,7 @@ def test_patch_pyproject_appends_missing_sections(tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text("[project]\nname = 'x'\n")
     sections, _ = m.patch_pyproject(tmp_path, dry=False)
     content = (tmp_path / "pyproject.toml").read_text()
-    assert "[tool.black]" in content
+    assert "[tool.ruff]" in content
     assert "[tool.mypy]" in content
     assert len(sections) > 0
 
@@ -347,11 +346,11 @@ def test_patch_pyproject_appends_missing_sections(tmp_path: Path) -> None:
 def test_patch_pyproject_skips_existing_sections(tmp_path: Path) -> None:
     """Sections already present should not be duplicated."""
     (tmp_path / "pyproject.toml").write_text(
-        "[project]\nname = 'x'\n\n[tool.black]\nline-length = 100\n"
+        "[project]\nname = 'x'\n\n[tool.ruff]\nline-length = 100\n"
     )
     _, _ = m.patch_pyproject(tmp_path, dry=False)
     content = (tmp_path / "pyproject.toml").read_text()
-    assert content.count("[tool.black]") == 1
+    assert content.count("[tool.ruff]") == 1
 
 
 def test_patch_pyproject_creates_if_missing(tmp_path: Path) -> None:
@@ -367,7 +366,7 @@ def test_patch_pyproject_reports_missing_deps(tmp_path: Path) -> None:
         "[project.optional-dependencies]\ndev = ['pytest>=8.0.0']\n"
     )
     _, missing = m.patch_pyproject(tmp_path, dry=False)
-    assert any("black" in dep for dep in missing)
+    assert any("ruff" in dep for dep in missing)
     # pytest itself is present; pytest-cov is not — assert pytest>= not in missing
     assert not any(dep.startswith("pytest>=") for dep in missing)
 
@@ -445,7 +444,7 @@ def test_generate_claude_md_contains_todo(tmp_path: Path) -> None:
 def test_generate_claude_md_python_includes_block(tmp_path: Path) -> None:
     """Python stack should add Python-specific coding block."""
     content = m.generate_claude_md_content("My Project", ["python"])
-    assert "mypy" in content or "black" in content
+    assert "mypy" in content or "ruff" in content
 
 
 def test_generate_claude_md_no_unresolved_format_keys(tmp_path: Path) -> None:
@@ -555,7 +554,7 @@ def test_full_migration_python_patches_pyproject(tmp_path: Path) -> None:
     report = m.run_migration(tmp_path, STARTER, audit, force=False, dry=False)
     assert len(report.pyproject_sections_added) > 0
     content = (tmp_path / "pyproject.toml").read_text()
-    assert "[tool.black]" in content
+    assert "[tool.ruff]" in content
 
 
 def test_full_migration_report_saved(tmp_path: Path) -> None:

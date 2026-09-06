@@ -145,10 +145,7 @@ echo
 
 # 5. Verify make check works (no src yet, just confirm tooling)
 echo "[5/6] Verifying toolchain..."
-uv run black --version
-uv run isort --version-number
-uv run autoflake --version
-uv run interrogate --version
+uv run ruff --version
 uv run mypy --version
 uv run pytest --version
 # 6. OpenSpec — the change loop's document lifecycle.
