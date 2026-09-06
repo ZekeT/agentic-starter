@@ -85,8 +85,8 @@ MANIFEST_GLOBS = [
 MANIFEST_SKILL_DIRS = [
     "setup-update",
     "rescan-docs",
+    "explore",
     "crystallize",
-    "graphify",
     "python-standards",
 ]
 

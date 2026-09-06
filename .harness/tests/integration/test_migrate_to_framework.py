@@ -149,11 +149,11 @@ def test_audit_target_empty(tmp_path: Path) -> None:
 
 def test_audit_target_existing_skill_dir(tmp_path: Path) -> None:
     """A skill directory already present should appear in skill_dirs_to_skip."""
-    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst = tmp_path / ".claude" / "skills" / "rescan-docs"
     dst.mkdir(parents=True)
     audit = m.audit_target(tmp_path, STARTER)
-    assert "graphify" in audit.skill_dirs_to_skip
-    assert "graphify" not in audit.skill_dirs_to_copy
+    assert "rescan-docs" in audit.skill_dirs_to_skip
+    assert "rescan-docs" not in audit.skill_dirs_to_copy
 
 
 def test_audit_target_existing_file(tmp_path: Path) -> None:
@@ -263,22 +263,22 @@ def test_copy_skill_dirs_dry_run_writes_nothing(tmp_path: Path) -> None:
 
 def test_copy_skill_dirs_skip_existing(tmp_path: Path) -> None:
     """An existing skill directory should be skipped without --force."""
-    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst = tmp_path / ".claude" / "skills" / "rescan-docs"
     dst.mkdir(parents=True)
     (dst / "SKILL.md").write_text("custom content")
     _, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=False, dry=False)
-    assert "graphify" in skipped
+    assert "rescan-docs" in skipped
     assert (dst / "SKILL.md").read_text() == "custom content"
 
 
 def test_copy_skill_dirs_force_overwrites(tmp_path: Path) -> None:
     """--force should overwrite an existing skill directory."""
-    dst = tmp_path / ".claude" / "skills" / "graphify"
+    dst = tmp_path / ".claude" / "skills" / "rescan-docs"
     dst.mkdir(parents=True)
     (dst / "SKILL.md").write_text("custom content")
     copied, skipped = m.copy_skill_dirs(tmp_path, STARTER, force=True, dry=False)
-    assert "graphify" in copied
-    assert "graphify" not in skipped
+    assert "rescan-docs" in copied
+    assert "rescan-docs" not in skipped
     assert (dst / "SKILL.md").read_text() != "custom content"
 
 

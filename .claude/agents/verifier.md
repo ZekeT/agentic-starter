@@ -4,7 +4,6 @@ description: >
   Runs the change and checks observed behaviour against the claimed task group
   before the session reports done. Fresh context, report-only — never fixes.
 tools: Bash, Read, Grep
-model: claude-opus-4-8
 readonly: true
 ---
 

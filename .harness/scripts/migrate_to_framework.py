@@ -73,10 +73,10 @@ FILES_TO_COPY: dict[str, str] = {
 
 # ── our skills to copy whole, starter-relative dir names ─────────────────────
 SKILL_DIRS_TO_COPY: list[str] = [
+    "explore",
     "crystallize",
     "rescan-docs",
     "setup-update",
-    "graphify",
 ]
 
 _SKILL_COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".DS_Store")
@@ -1359,7 +1359,7 @@ def run_migration(
     for f in report.skipped:
         _info(f"skipped: {f}  (exists — use --force to overwrite)")
 
-    _header("COPYING SKILLS  (rescan-docs, setup-*, graphify)")
+    _header("COPYING SKILLS  (explore, crystallize, rescan-docs, setup-update)")
     report.skill_dirs_copied, report.skill_dirs_skipped = copy_skill_dirs(
         target, starter, force, dry
     )

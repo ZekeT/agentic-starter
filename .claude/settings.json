@@ -47,5 +47,12 @@
   "statusLine": {
     "type": "command",
     "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/statusline.sh"
+  },
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "skillOverrides": {
+    "gauntlet-loop": "user-invocable-only",
+    "handoff": "user-invocable-only"
   }
 }

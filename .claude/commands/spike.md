@@ -10,12 +10,17 @@ Usage:
   `/spike event-ordering can we keep ordering guarantees without a broker?`
 - `/spike <slug>` — resume one already in progress
 
-Two durable outputs, and only two:
+Three durable outputs, and only three:
 
 | Artifact | Holds | Read by |
 |---|---|---|
+| `openspec/changes/<slug>/intent.md` | the *what* and why, as `/explore` would have written it | `/crystallize` |
 | ADR in `docs/decisions/` | the decision and what lost | forever, by anyone |
 | `openspec/changes/<slug>/design.md` | the approach, in enough detail to build from | `/crystallize`, then `/dev-change` |
+
+A spike is the exploratory stage, so it hands over the same artifact `/explore`
+does, plus the two the experiment earned. If `intent.md` already exists because
+`/explore` ran first, extend its **Open questions** rather than rewriting it.
 
 The ADR is *why*; `design.md` is *how*. A decision on its own does not survive
 the trip to implementation — `design.md` is OpenSpec's own artifact for the
@@ -52,11 +57,14 @@ After the preamble runs:
 4. **Time-box it and say so.** State up front how long you expect to spend and
    what would make you stop. A spike that cannot answer its question is a
    result: record what you ruled out.
-5. **Write the ADR** in `docs/decisions/`, following that directory's
+5. **Write or extend `intent.md`** to the shape in the `explore` skill's
+   `INTENT-FORMAT.md`. A spike answers *how*, but the change still needs its
+   *what* on record, and `/crystallize` reads the Classification line from here.
+6. **Write the ADR** in `docs/decisions/`, following that directory's
    `index.md` convention, and add its index row in the same commit. Record what
    lost and why — the rejected option is what stops the question being reopened
    in six months. Name this branch, so the prototype stays findable.
-6. **Write `openspec/changes/<slug>/design.md`.** This is the handover, and it
+7. **Write `openspec/changes/<slug>/design.md`.** This is the handover, and it
    is the artifact that decides whether the spike was worth running:
 
    - **Approach** — the shape that won, concrete enough to build from: the
@@ -68,14 +76,14 @@ After the preamble runs:
      one becomes a task that dissolves in week three.
    - **Prototype** — `spike/<slug>`, and which commit demonstrates what.
 
-7. **Stop at the gate.** Show the user both files and wait. An unaccepted ADR is
-   not a decision, and the change loop must not consume one.
-8. Once accepted, move the two documents onto a mergeable branch — the
-   prototypes stay behind:
+8. **Stop at the gate.** Show the user all three files and wait. An unaccepted
+   ADR is not a decision, and the change loop must not consume one.
+9. Once accepted, move the documents onto a mergeable branch — the prototypes
+   stay behind:
 
    ```bash
    git switch -c docs/<slug> main
-   git checkout spike/<slug> -- docs/decisions openspec/changes/<slug>/design.md
+   git checkout spike/<slug> -- docs/decisions openspec/changes/<slug>
    ```
 
    Then `/commit-push-pr`, and once that merges:
@@ -84,8 +92,9 @@ After the preamble runs:
    /crystallize <slug>
    ```
 
-   `/crystallize` finds `design.md` already written and builds intent, proposal,
-   delta specs and tasks around it. Do not write any of those here.
+   `/crystallize` finds `intent.md` and `design.md` already written, and builds
+   the proposal, delta specs and tasks around them. Do not write any of those
+   here.
 
 **Leave `spike/<slug>` unmerged.** It is a primary source, not work in flight:
 the decision reaches `main` as two reviewed documents, and the throwaway code

@@ -1,17 +1,20 @@
 {
   "template_version": "1.5.0",
-  "generated_at": "2026-09-05T19:15:36+00:00",
+  "generated_at": "2026-09-06T19:01:37+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
-      "sha256": "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073",
+      "sha256": "5058abcd39f77dad19cda05ff7be89cd2dd82e297ef59dedc1dda2750f91dc1d",
       "previous": [
         "576325e87ad1bf962302921bba8f03f6762bc1c1ec1ee8a76bd8e0935c597177",
-        "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b"
+        "103edd7888ab69914709d1d752f20f4018d1361c0b123af0a7007a64e65b425b",
+        "e54ce459ae9352631be25f35e24c199e05c7394dbfd275f4585603e904fb9073"
       ]
     },
     ".claude/agents/verifier.md": {
-      "sha256": "c3106702f2d92712b8acae83273d153ca687893f9658cc0ac242f490494eb93b",
-      "previous": []
+      "sha256": "c217e0d233bd4e43835693903a77610089f7431dd1e1c0ab9e749a47eb6001e2",
+      "previous": [
+        "c3106702f2d92712b8acae83273d153ca687893f9658cc0ac242f490494eb93b"
+      ]
     },
     ".claude/commands/archive-change.md": {
       "sha256": "1ed11b299be9cad111c3a334497417abcf7382192ec6b30e38914f25dc941613",
@@ -52,10 +55,11 @@
       ]
     },
     ".claude/commands/spike.md": {
-      "sha256": "10860ee6f8dbdf21e19fdd23d7cb64d21778ee690c167be69ee81df402ad79d0",
+      "sha256": "824e1ed4c06a022247aebce50156268d415954a23d7c4ce61b22a937cc63994c",
       "previous": [
         "8b1b0ed1fadd25a450440516f4882b0fe7aa89f59d3a8222744d53ce3da4b224",
-        "9e3701fbd7c5df9b2d112ee4879456db330ba787a50dc18b74ed965a276b2297"
+        "9e3701fbd7c5df9b2d112ee4879456db330ba787a50dc18b74ed965a276b2297",
+        "10860ee6f8dbdf21e19fdd23d7cb64d21778ee690c167be69ee81df402ad79d0"
       ]
     },
     ".claude/hooks/post_tool_feature_claude_reminder.py": {
@@ -95,22 +99,19 @@
       ]
     },
     ".claude/settings.json": {
-      "sha256": "c5e6df18c4672b0f53bd386b6cb3a6bc1c35a554ac0f567b64f7e7c2482fd13c",
+      "sha256": "1a300b4143cbf51965176197d8eea1e87377543e550946c888c8acba81600ba4",
       "previous": [
         "a71a2ac4b0f525a013e278a04d9ecbe63c13a8f0445cb4df45571d9cb46ab842",
         "2fc9b6092d16cf5f87e3937f584d06d6f0caa5c04571b350c27dc99671282fb8",
         "fa68dbe92b21b24b313bf5271a4b61cf2d8546110a521fa9a74eb856eba367a8",
         "03a39393f392604f46a6f7b9c0c265729acc95bac8b17031651ed56250bd7b2e",
         "35e2b7483ff6e8311718446f1b070523b133a8b739d66c3fed58e138b0ac1861",
-        "63d8865eccd4dfe82fcd76e03e8976a577d564b392bb6f997e50c76def876629"
+        "63d8865eccd4dfe82fcd76e03e8976a577d564b392bb6f997e50c76def876629",
+        "c5e6df18c4672b0f53bd386b6cb3a6bc1c35a554ac0f567b64f7e7c2482fd13c"
       ]
     },
-    ".claude/skills/crystallize/INTENT-FORMAT.md": {
-      "sha256": "1f6e2678538da2016393df9b33ae576e271f5c5981b0f7dd36534279b6c1523c",
-      "previous": []
-    },
     ".claude/skills/crystallize/SKILL.md": {
-      "sha256": "cc25ccb05a4838638f2f36157c348f5cad4281463377adf67411171d7c5bd536",
+      "sha256": "e218f416c8ec0fb446882536a2f8e7d9fab7dfe0d5797f58d23dbc5e261395db",
       "previous": [
         "6614c36bee3c8238e4765abc9910b80d58c2408fc66fe462697d92d9ad0464f4",
         "a8fcc443c3190cd23583079734a583f4ca4ddff0dbb185280f8affd16953847a",
@@ -118,15 +119,17 @@
         "f6c12cab29617c3bd3b0a176dbff51d81121d7688fe6854eb5ec0fee17f3f6c5",
         "de2ab97e73024fab8600dd2acde736d19ff28fccf796dbb61fa007a53070332b",
         "315fe1880666066a2fadde43ae56be9a07147e7edaee584a1b2f602bfc34ab48",
-        "49f15b81c28d41e9839457ed04342b7d5910a007bc18d4fe67d05b675b7624d8"
+        "49f15b81c28d41e9839457ed04342b7d5910a007bc18d4fe67d05b675b7624d8",
+        "cc25ccb05a4838638f2f36157c348f5cad4281463377adf67411171d7c5bd536"
       ]
     },
-    ".claude/skills/graphify/SKILL.md": {
-      "sha256": "947e3fca743ef4db847cc510789a000069b34ffff2a4ea8106fad19a5faf21a5",
-      "previous": [
-        "887d686bf52b97cf3c02f53d3489239f3bf20f1154c0c42de9ff46b0661d2485",
-        "660aa20220f53d6c0451e9e1da3c066c977c51b2e40c75f8371009aa64db5960"
-      ]
+    ".claude/skills/explore/INTENT-FORMAT.md": {
+      "sha256": "e377c4cbca44822f69a181b1c78d217d592b89f0c55c8b9efcb4a795dde2a96e",
+      "previous": []
+    },
+    ".claude/skills/explore/SKILL.md": {
+      "sha256": "24a87d3ed125a4128a29913254322f6fb23c60ae36be73bf6df813ef72a81416",
+      "previous": []
     },
     ".claude/skills/python-standards/SKILL.md": {
       "sha256": "0829da1a01ab2bc4ff5983d4881a41dc102a0eb29fd4779c791bcdcd859b8dc6",
@@ -221,8 +224,12 @@
       "previous": []
     },
     ".harness/docs/setup.md": {
-      "sha256": "b75890baf439148500ba24ec4d327ef920308383b760e3bf22a644ca5c76786e",
-      "previous": []
+      "sha256": "00249e050142d88f53e7a94d3acd4117f94eb8fcbf1d2b93e8b944732a0c0967",
+      "previous": [
+        "b75890baf439148500ba24ec4d327ef920308383b760e3bf22a644ca5c76786e",
+        "7407ba582aac51fd9a02ca41a6a1eb5fe4e44067283c7fc39e113bd5e2cbea4f",
+        "cf225c41e99e075f3b88abc2608c3fe1d73ba611b54410fe52bfd3d36bfe7f7c"
+      ]
     },
     ".harness/docs/testing.md": {
       "sha256": "122d13030a702c4a65336ed4f3496bbd724a8155603c4b987b3c12176698f7bb",
@@ -281,8 +288,10 @@
       "previous": []
     },
     ".harness/evals/cases/011-verifier-agent-exists.yaml": {
-      "sha256": "ac1ac5882ea4a772918e688cd2456541e791b55741f0c06b8fe17f9ddb5652fd",
-      "previous": []
+      "sha256": "1f243829d1d7756046387ec9a3d4839cd273878d12e9396e1df7149d79426dd3",
+      "previous": [
+        "ac1ac5882ea4a772918e688cd2456541e791b55741f0c06b8fe17f9ddb5652fd"
+      ]
     },
     ".harness/evals/cases/100-refuse-direct-spec-edit.yaml": {
       "sha256": "496b672652b666cbdcbe3e7a6b17715b26bb73c6d529bd799ac67074d1f459c1",
@@ -335,7 +344,7 @@
       ]
     },
     "CLAUDE.md": {
-      "sha256": "0e6270c242e8ea20cd0b4da1a5e35a61f02cc7ce4dd95714ff373e37c26cf46b",
+      "sha256": "aabe8f01a0a47ae35c044c6ef47a129f341d946cbad52fb7831a0ebc19cf0a09",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -354,11 +363,12 @@
         "ca50b6b49e337b5d4f7b408c74bc987340d6164b8ea1462493b30cf00179256f",
         "ae5a390952278fbea28aab29d1c24f2d5cb70da6f68e59790edee1696e78ba23",
         "8033b1227bd733c045281d3f5aad1d9f1b5dd53f367b1e6af3b21328639f21bf",
-        "db0c0acd4bf5d50d1424e64a18bf5b8d19e73ba5be79499faa08afa8f52e531c"
+        "db0c0acd4bf5d50d1424e64a18bf5b8d19e73ba5be79499faa08afa8f52e531c",
+        "0e6270c242e8ea20cd0b4da1a5e35a61f02cc7ce4dd95714ff373e37c26cf46b"
       ]
     },
     "HARNESS.md": {
-      "sha256": "d65f0a79598ff813364c1506967f95718ab8229fe7b22fa5acca36c19fe03421",
+      "sha256": "e618d96c125fe946442389e9fcd3c4b2c09c7b588239a82976218d8079c9dee4",
       "previous": [
         "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
         "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
@@ -369,7 +379,8 @@
         "837e6d1e9c3856cacf5acd9a43dbbbcb28b1159e4c8a755118f0d9fbdb63a88a",
         "45ddfacbaf268603eb56a65a148e71425ffdc8707b3a3d59150c9b40d3b09bd6",
         "33aac66378b0ffe674ca64dd109e01687de6a571a9de3dd0b064cabdeb2fb4a2",
-        "727522ab783f3b3a6f6d89cec0474dda57523a9a4f7f7b8d7c400e9fafa72211"
+        "727522ab783f3b3a6f6d89cec0474dda57523a9a4f7f7b8d7c400e9fafa72211",
+        "d65f0a79598ff813364c1506967f95718ab8229fe7b22fa5acca36c19fe03421"
       ]
     },
     "Makefile": {
