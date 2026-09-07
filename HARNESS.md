@@ -36,7 +36,7 @@ command runs two stages, and none starts the next.
 | Spec | `/crystallize <slug>` | `proposal.md` + `specs/` + `design.md` + `tasks.md` | 🖐 accept the spec |
 | Implement | `/dev-change <slug> <group>` | code + tests on `feat/<slug>-g<N>`, uncommitted | — |
 | Review | `/review` | verdict against the delta specs | 🖐 approve before committing |
-| Ship | `/commit-push-pr` | commit + PR | 🖐 merge |
+| Ship | `/commit-push-pr [--base <branch>]` | commit + PR | 🖐 merge |
 | Archive | `/archive-change <slug>` | deltas merged into `openspec/specs/` | 🖐 review the spec diff |
 
 `/opsx:*` and the `openspec-*` skills are OpenSpec's own low-level tooling,
@@ -91,6 +91,29 @@ You run `/review`, read the verdict, and run `/commit-push-pr` yourself. That
 ordering is deliberate: the gate sits before the commit, so a bad group is
 fixed on a dirty working tree rather than argued about on an open PR. No agent
 in this harness commits or opens a PR on its own.
+
+### Where the PR goes
+
+`/commit-push-pr` does not assume `main`. It resolves the PR target in order —
+first hit wins — and prints which one it picked before doing anything:
+
+| # | Source | Set it with |
+|---|---|---|
+| 1 | The `--base` flag | `/commit-push-pr --base develop "fix(x): …"` |
+| 2 | This project's configured default | `git config harness.baseBranch develop` |
+| 3 | The remote's default branch (`origin/HEAD`) | whatever GitHub calls the default |
+| 4 | `main` | last resort |
+
+Set (2) once if your team merges to anything but its remote default — a release
+train, a long-lived `develop`, a stacked feature branch. Use (1) for the
+one-off. `gh pr create --base` is always passed explicitly, so the target is
+visible in the command rather than inherited from `gh`'s own default.
+
+The same resolved branch is what everything **diffs** against, so `/review` and
+`/spike` show a branch relative to the trunk it will actually merge into. The
+diff uses `origin/<branch>` in preference to your local copy — a trunk you never
+check out goes stale, and a stale base makes already-merged work reappear in the
+diff. So `/review` shows what the forge will show.
 
 ### Worktrees (opt-in)
 
@@ -232,7 +255,8 @@ subagents it dispatches always inherit.
 
 ## Guarantees
 
-- **Nothing reaches `main` without a human merging a PR.**
+- **Nothing reaches the trunk without a human merging a PR** — whichever branch
+  the project targets (see *Where the PR goes*).
 - Every stage commits its artifact, so `git log` on a change folder is the audit
   trail: intent, then spec, then implementation.
 - `openspec/specs/` is never hand-edited. If it changed, a change was archived.

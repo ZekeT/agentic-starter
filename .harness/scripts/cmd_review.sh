@@ -21,7 +21,7 @@ fi
 [ -n "$SLUG" ] || SLUG=$(slug_from_branch "$BRANCH")
 GROUP=$(group_from_branch "$BRANCH")
 
-if [ "$BRANCH" = "main" ]; then
+if [ "$BRANCH" = "$(base_branch)" ]; then
   echo "ERROR: nothing to review — '$BRANCH' is the trunk." >&2
   echo "Name a branch:  /review <branch>" >&2
   git branch --list 'feat/*' 'fix/*' 'chore/*' >&2
@@ -31,7 +31,7 @@ fi
 BASE=$(merge_base_of "$BRANCH")
 
 echo "=== Branch ==="
-echo "$BRANCH (change: ${SLUG:-unknown}, group: ${GROUP:-n/a}, base: $(git rev-parse --short "$BASE"))"
+echo "$BRANCH (change: ${SLUG:-unknown}, group: ${GROUP:-n/a}, base: $(base_branch)@$(git rev-parse --short "$BASE"))"
 
 if [ "$BRANCH" = "$HERE" ]; then
   # Checked out: diff the base against the working tree, so uncommitted work

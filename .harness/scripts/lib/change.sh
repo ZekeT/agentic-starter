@@ -28,10 +28,53 @@ group_from_branch() {
   echo "$1" | sed -nE 's|^feat/.*-g([0-9]+)$|\1|p'
 }
 
-# The commit a branch diverged from main at. Diffing against this instead of
-# `main` is what stops a moved main showing up inverted as noise.
+# The branch this work merges into. Not every team merges to main, so it is
+# resolved rather than assumed, first hit winning:
+#   1. HARNESS_BASE_BRANCH            — one invocation (what `--base` sets)
+#   2. git config harness.baseBranch  — the project's (or the user's) default
+#   3. origin/HEAD                    — whatever the remote calls its trunk
+#   4. main
+# Sets BASE_BRANCH and BASE_BRANCH_SOURCE; the source is worth printing, because
+# a PR opened against the wrong trunk is expensive to notice late.
+resolve_base_branch() {
+  if [ -n "${HARNESS_BASE_BRANCH:-}" ]; then
+    BASE_BRANCH="$HARNESS_BASE_BRANCH"
+    BASE_BRANCH_SOURCE="--base"
+  elif BASE_BRANCH=$(git config --get harness.baseBranch) && [ -n "$BASE_BRANCH" ]; then
+    BASE_BRANCH_SOURCE="git config harness.baseBranch"
+  elif BASE_BRANCH=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed -E 's|^origin/||') && [ -n "$BASE_BRANCH" ]; then
+    BASE_BRANCH_SOURCE="origin/HEAD"
+  else
+    BASE_BRANCH="main"
+    BASE_BRANCH_SOURCE="fallback"
+  fi
+}
+
+base_branch() {
+  resolve_base_branch
+  echo "$BASE_BRANCH"
+}
+
+# The base as something git can resolve. `origin/<base>` is preferred over the
+# local branch on purpose: the local one is often days stale (nobody pulls a
+# trunk they never check out), and a stale base makes every diff show work that
+# already merged. The remote ref is also the one the forge computes the PR's
+# merge base against, so the diff you review matches the diff GitHub shows.
+base_ref() {
+  b=$(base_branch)
+  if git rev-parse --verify --quiet "refs/remotes/origin/$b" >/dev/null; then
+    echo "origin/$b"
+  elif git rev-parse --verify --quiet "refs/heads/$b" >/dev/null; then
+    echo "$b"
+  else
+    echo "$b"
+  fi
+}
+
+# The commit a branch diverged from the base at. Diffing against this instead of
+# the base tip is what stops a moved trunk showing up inverted as noise.
 merge_base_of() {
-  git merge-base main "$1"
+  git merge-base "$(base_ref)" "$1"
 }
 
 # Every `## N.` heading in tasks.md with its checkbox counts.

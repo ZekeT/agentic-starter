@@ -1,16 +1,52 @@
 #!/usr/bin/env bash
 # Preamble for /commit-push-pr. Pre-computes git context and runs the gate.
+# Usage: cmd_commit_push_pr.sh [--base <branch>]
 set -e
 . "$(cd "$(dirname "$0")" && pwd)/lib/change.sh"
 
+# --base names the branch the PR targets, for this invocation only. Everything
+# downstream — the diff base and `gh pr create --base` — follows it, so a team
+# that merges to develop is not fighting a hardcoded main.
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --base)
+      [ -n "${2:-}" ] || die "--base needs a branch name." "Usage: /commit-push-pr --base <branch> [\"message\"]"
+      HARNESS_BASE_BRANCH="$2"; shift 2 ;;
+    --base=*)
+      HARNESS_BASE_BRANCH="${1#--base=}"; shift ;;
+    *) shift ;;
+  esac
+done
+export HARNESS_BASE_BRANCH
+
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
+resolve_base_branch
+BASE_REF=$(base_ref)
+
+# Validate the base before anything tries to diff against it — git's own
+# "Not a valid object name" says nothing about where the branch name came from.
+if [ "$BASE_BRANCH" = "$BRANCH" ]; then
+  die "The PR base and the current branch are both '$BRANCH'." \
+      "Check out the feature branch, or pass: /commit-push-pr --base <branch>"
+fi
+if ! git rev-parse --verify --quiet "$BASE_REF" >/dev/null; then
+  die "PR base '$BASE_BRANCH' is not a branch here or on origin (source: $BASE_BRANCH_SOURCE)." \
+      "Pass one:  /commit-push-pr --base <branch>" \
+      "Or set the default once:  git config harness.baseBranch <branch>"
+fi
+
 BASE=$(merge_base_of HEAD)
 SLUG=$(slug_from_branch "$BRANCH")
 GROUP=$(group_from_branch "$BRANCH")
 
 echo "=== Branch ===" && echo "$BRANCH"
+echo "=== PR base ===" && echo "$BASE_BRANCH  (source: $BASE_BRANCH_SOURCE)"
+if [ "$BASE_BRANCH_SOURCE" != "--base" ]; then
+  echo "  override for this PR:  /commit-push-pr --base <branch>"
+  echo "  set the default once:  git config harness.baseBranch <branch>"
+fi
 echo "=== Status ===" && git status --short
-echo "=== Diff stat since $(git rev-parse --short "$BASE") ===" && git diff "$BASE" --stat
+echo "=== Diff stat since $(git rev-parse --short "$BASE") on $BASE_BRANCH ===" && git diff "$BASE" --stat
 
 if [ -n "$SLUG" ] && [ -d "openspec/changes/$SLUG" ]; then
   echo "=== Change: $SLUG (task group ${GROUP:-?}) ==="
