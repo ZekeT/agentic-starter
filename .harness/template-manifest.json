@@ -1,6 +1,6 @@
 {
   "template_version": "1.5.0",
-  "generated_at": "2026-09-06T19:01:37+00:00",
+  "generated_at": "2026-09-07T03:24:38+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "5058abcd39f77dad19cda05ff7be89cd2dd82e297ef59dedc1dda2750f91dc1d",
@@ -23,13 +23,14 @@
       ]
     },
     ".claude/commands/commit-push-pr.md": {
-      "sha256": "9b67b0ef48937e2b7ba3e824cb483229e6df44175ec81e20b501723f3ae3d001",
+      "sha256": "cecfd4de9a016db726952027021b51756388b7d4eef3a8bd804441a48081e627",
       "previous": [
         "0caf288829756d8410fb9c607825239742df331f6d69dbad9fb72ce2a212296d",
         "700d10578dba3ab490046e87527c833640cfe4dcd6a8446c200b0fa6c036ab87",
         "8f9b827f827aacd9f59fb3d42dcc1d7e13eb3876d8a81c4eb3da0126b49068ac",
         "35775bce1bfcc9b999c9d10545c9cd4430958e35d3277a1046ceeab34f943714",
-        "7987112dfd4377e80b85575f5de06181c930d3cd923df35c0168568364813df7"
+        "7987112dfd4377e80b85575f5de06181c930d3cd923df35c0168568364813df7",
+        "9b67b0ef48937e2b7ba3e824cb483229e6df44175ec81e20b501723f3ae3d001"
       ]
     },
     ".claude/commands/dev-change.md": {
@@ -216,8 +217,11 @@
       ]
     },
     ".harness/docs/commits-and-prs.md": {
-      "sha256": "ad9600f31d31ea029e19678acaef0b484c3a4f40303243f3cef93534aab63dcf",
-      "previous": []
+      "sha256": "579b5c8766622810edd9719b91571ea9ece2c807e7d54fbafdcfb05d85e3bf95",
+      "previous": [
+        "ad9600f31d31ea029e19678acaef0b484c3a4f40303243f3cef93534aab63dcf",
+        "47609e79ed72bc74c8e03fac76e53252926d60d219adfd77943892c0d9b4e8be"
+      ]
     },
     ".harness/docs/design.md": {
       "sha256": "555d9b94007f489b2e6fc6eaea64199276293fd91c68b69dfad287823d856344",
@@ -316,16 +320,20 @@
       "previous": []
     },
     ".harness/scripts/cmd_commit_push_pr.sh": {
-      "sha256": "6696bfd6744840be672542ba569cac9e3579a6c07a0726cd64fd21a2ef1ab6b5",
-      "previous": []
+      "sha256": "a54eb74c0f1fe346b7902b2ebe903239a4894f1a7328d5f2c8de37d02b48b309",
+      "previous": [
+        "6696bfd6744840be672542ba569cac9e3579a6c07a0726cd64fd21a2ef1ab6b5"
+      ]
     },
     ".harness/scripts/cmd_dev_change.sh": {
       "sha256": "7e4bbeb16633fe40391e726b3e55e8f72e4592a06997e819bfb5ff431bbd5ed3",
       "previous": []
     },
     ".harness/scripts/cmd_review.sh": {
-      "sha256": "50e2b255f41944c863de7b96b5ed8bd3861b1f791435510dc6f9141050fee1ef",
-      "previous": []
+      "sha256": "9ca74bcb2a731380a141630dc949536e9ad971fe17df25b1d5f39bc6480db049",
+      "previous": [
+        "50e2b255f41944c863de7b96b5ed8bd3861b1f791435510dc6f9141050fee1ef"
+      ]
     },
     ".harness/scripts/cmd_spike.sh": {
       "sha256": "c619572b83d98af83f179f29fd93a4e0c408f0f88d265dd33d6db4525db65ee2",
@@ -334,8 +342,11 @@
       ]
     },
     ".harness/scripts/lib/change.sh": {
-      "sha256": "28dd8980b895b128489d6bfb0366977f53128ac61d195179ecdb0999c86dd99e",
-      "previous": []
+      "sha256": "e3bd223b16ddb199190af7abf3ccb0a9027e4ec698262240abce7eef7f491e48",
+      "previous": [
+        "28dd8980b895b128489d6bfb0366977f53128ac61d195179ecdb0999c86dd99e",
+        "1fdf57c707805f02200c659fd1914b2ac39e1f28ab108c147fd00d86139cd4ba"
+      ]
     },
     ".harness/setup.sh": {
       "sha256": "2ca87944047f926399c05edf86857c8f636f3b4783a94b55f184a63bc39bb132",
@@ -344,7 +355,7 @@
       ]
     },
     "CLAUDE.md": {
-      "sha256": "aabe8f01a0a47ae35c044c6ef47a129f341d946cbad52fb7831a0ebc19cf0a09",
+      "sha256": "0447805036b254fb7400c096c528e053a00cd2a649d4f5119772e5d0b5cd8cf4",
       "previous": [
         "a0a50af913899fa9e8c57c7eb4fc161710266fd865129ad34620da7ba12e3b04",
         "272f7dbf20b234ae0c1c6c0495b8a7f8541a2a5fa279ee1083fdae6c42cd0ed5",
@@ -364,11 +375,12 @@
         "ae5a390952278fbea28aab29d1c24f2d5cb70da6f68e59790edee1696e78ba23",
         "8033b1227bd733c045281d3f5aad1d9f1b5dd53f367b1e6af3b21328639f21bf",
         "db0c0acd4bf5d50d1424e64a18bf5b8d19e73ba5be79499faa08afa8f52e531c",
-        "0e6270c242e8ea20cd0b4da1a5e35a61f02cc7ce4dd95714ff373e37c26cf46b"
+        "0e6270c242e8ea20cd0b4da1a5e35a61f02cc7ce4dd95714ff373e37c26cf46b",
+        "aabe8f01a0a47ae35c044c6ef47a129f341d946cbad52fb7831a0ebc19cf0a09"
       ]
     },
     "HARNESS.md": {
-      "sha256": "e618d96c125fe946442389e9fcd3c4b2c09c7b588239a82976218d8079c9dee4",
+      "sha256": "e82af9a3a59ed853377ae56e7d95ff65161ae3516bb7509b9b65f260072c23a7",
       "previous": [
         "1ebcae832e0787f00216752c5a7313b3b2496134c8996ba024ecbd211494b72d",
         "6c36bcd3f84ded04f4481e31974e38ada2a5a55e99bd9990d8f5ab0295f94fe1",
@@ -380,7 +392,9 @@
         "45ddfacbaf268603eb56a65a148e71425ffdc8707b3a3d59150c9b40d3b09bd6",
         "33aac66378b0ffe674ca64dd109e01687de6a571a9de3dd0b064cabdeb2fb4a2",
         "727522ab783f3b3a6f6d89cec0474dda57523a9a4f7f7b8d7c400e9fafa72211",
-        "d65f0a79598ff813364c1506967f95718ab8229fe7b22fa5acca36c19fe03421"
+        "d65f0a79598ff813364c1506967f95718ab8229fe7b22fa5acca36c19fe03421",
+        "e618d96c125fe946442389e9fcd3c4b2c09c7b588239a82976218d8079c9dee4",
+        "452c91cd80880be26a7003eb34f96bdbda8809f0628e2a7e9d62b64af05f2652"
       ]
     },
     "Makefile": {

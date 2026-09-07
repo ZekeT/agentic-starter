@@ -66,6 +66,19 @@ Fill every section; delete one only with a one-line reason.
 **Title.** Same format as a commit subject. It becomes the squash-merge commit,
 so it is what `git log` shows on `main` forever.
 
+**Base branch.** `/commit-push-pr` never assumes `main`. It resolves the target
+from `--base <branch>`, else `git config harness.baseBranch`, else the remote's
+default branch, else `main` — and prints which. If this project merges to
+anything but its remote default, set it once:
+
+```bash
+git config harness.baseBranch develop
+```
+
+That same value is what every command diffs against — via `origin/<branch>`
+rather than your possibly-stale local copy — so `/review` shows the branch
+relative to the trunk it will actually merge into.
+
 **Scope.** One task group per PR. `/dev-change <slug> <group>` enforces this by
 giving each group its own branch. A PR spanning groups is a review-fatigue
 problem and a merge-conflict problem at once.

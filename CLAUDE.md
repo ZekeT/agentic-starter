@@ -98,8 +98,10 @@ then open only the named capability files. Never bulk-read `openspec/` or `docs/
   `spike/{slug}` (never merged — see `/spike`)
 - Commits: `type(scope): description`; PR body is `.github/pull_request_template.md`.
   Conventions: `.harness/docs/commits-and-prs.md`. Nothing reaches `main` unmerged.
-- Diff a branch against `git merge-base main HEAD`, never bare `git diff main` —
-  a moved `main` otherwise shows up inverted as noise.
+- Diff a branch against `git merge-base <base> HEAD`, never bare `git diff <base>`
+  — a moved trunk otherwise shows up inverted as noise. `<base>` is not assumed
+  to be `main`: `--base` on `/commit-push-pr`, else `git config harness.baseBranch`,
+  else the remote default. Set it once per project if you don't merge to `main`.
 
 ---
 
