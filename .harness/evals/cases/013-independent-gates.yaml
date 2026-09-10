@@ -1,0 +1,30 @@
+id: independent-verification-and-final-gate
+kind: static
+why: >
+  A verifier contaminated by implementation reasoning, a duplicate implementer
+  suite, or a swallowed shipping failure removes independence or wastes full runs.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  dev = Path('.claude/commands/dev-change.md').read_text()
+  preamble = Path('.harness/scripts/cmd_dev_change.sh').read_text()
+  verifier = Path('.claude/agents/verifier.md').read_text()
+  ship = Path('.harness/scripts/cmd_commit_push_pr.sh').read_text()
+  assert 'Do not invoke Superpowers brainstorming, writing-plans,' in dev
+  assert 'subagent-driven-development, worktree orchestration, or branch-finishing' in dev
+  assert 'Do not run the full `make check` immediately before' in dev
+  assert '\n8. Run `make check`' not in dev
+  assert 'only the change slug and group number' in dev
+  assert 'reasoning, a summary, or a narrative' in dev
+  assert 'Run `make check`' in verifier and 'readonly: true' in verifier
+  assert 'FAST: receive only the branch name' in verifier
+  assert 'never edit, fix, format, or commit' in verifier
+  assert 'untracked files' in verifier
+  assert '\nmake check\n' in ship
+  assert 'make check 2>&1 |' not in ship
+  assert 'cat "$CHANGE_DIR/design.md"' not in preamble
+  assert '-exec cat' not in preamble
+  assert 'git switch -c "$BRANCH"' in preamble
+  assert 'git worktree add "$WT_PATH" -b "$BRANCH"' in preamble
+  assert 'Legacy STANDARD' in preamble
+  PY

@@ -1,0 +1,32 @@
+id: progressive-skills-and-canonical-truth
+kind: static
+why: >
+  Broad skill triggers restore a competing workflow and inflate every session.
+  Factory documentation and helpers must also ship to downstream projects.
+shell: |
+  python3 - <<'PY'
+  import json
+  from pathlib import Path
+  root = Path('CLAUDE.md').read_text()
+  cfg = json.loads(Path('.claude/settings.json').read_text())
+  assert 'Superpowers' not in root
+  assert 'karpathy-guidelines' not in root
+  assert '**canonical**' in root and 'Never edit `openspec/specs/` directly' in root
+  for name in ('gauntlet-loop', 'grilling', 'handoff', 'setup-update', 'rescan-docs'):
+      assert cfg['skillOverrides'][name] == 'user-invocable-only'
+      assert 'disable-model-invocation: true' in Path(f'.claude/skills/{name}/SKILL.md').read_text()
+  handoff = Path('.claude/skills/handoff/SKILL.md').read_text()
+  for field in ('Goal', 'Current stage', 'Accepted artifacts', 'Current branch/change/group',
+                'Decisions already made', 'Open blockers', 'Exact next action',
+                'Files the next agent should read first'):
+      assert field in handoff, field
+  assert 'suggested skills' not in handoff
+  manifest = json.loads(Path('.harness/template-manifest.json').read_text())['files']
+  for path in ('FACTORY.md', '.claude/skills/shape-change/SKILL.md',
+               '.claude/skills/handoff/SKILL.md', '.harness/scripts/cmd_check.sh',
+               '.harness/scripts/check_feature_docs.py', '.harness/scripts/lib/run_quiet.sh',
+               '.harness/evals/workflow-runs.md'):
+      assert path in manifest, path
+  assert not Path('.claude/hooks/post_tool_feature_claude_reminder.py').exists()
+  assert 'post_tool_feature_claude_reminder' not in json.dumps(cfg)
+  PY

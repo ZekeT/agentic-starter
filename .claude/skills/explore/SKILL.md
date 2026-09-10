@@ -3,16 +3,16 @@ name: explore
 description: >
   Turn messy exploration — a pasted chat transcript, scattered notes, or a
   one-line idea — into a single reviewable `intent.md`, gated before any spec
-  is written. Use when someone has an idea they want to build, before any
-  planning or code. Trigger on: /explore, "I want to build X", "turn this into
-  a change", "here's a transcript, what now", "spec this out".
+  is written. Use /explore for product ideas or transcripts that need an intent.
+  Classify maintenance before creating artifacts.
 ---
 
 # Explore
 
 Announce at start: **"Using explore to turn this into an intent."**
 
-One stage, one artifact, one gate: this skill produces
+First classify workflow size using [FACTORY.md](../../../FACTORY.md).
+For STANDARD and DEEP, one stage, one artifact, one gate: this skill produces
 `openspec/changes/<slug>/intent.md` and stops. `/crystallize` turns an accepted
 intent into the proposal, delta specs, design and tasks. Never do both in one
 turn — the gate between them is the cheapest possible point to kill or redirect
@@ -29,12 +29,36 @@ existing truth, the separation pass, the intent gate, and conflict surfacing.
 
 | Situation | Do |
 |---|---|
-| The *how* is the unresolved part | Stop. `/spike <slug> <question>` settles an approach into an ADR and a `design.md` first, and writes this intent itself. Speccing an approach nobody has tested produces tasks that dissolve on contact with the code. |
+| The *how* is the unresolved part | Classify DEEP, record the uncertainty in intent, and recommend optional `/spike <slug> <question>` after the intent gate. Do not guess an architecture. |
 | `openspec/changes/<slug>/intent.md` exists | The intent is already written. Say so and point at `/crystallize <slug>`. Do not rewrite it. |
 | `openspec/changes/<slug>/` exists without `intent.md` | A spike wrote `design.md` there. Read it, and let it inform the intent you are about to write — its "Still unknown" section becomes your Open questions. |
 | The user wants to be interrogated properly | Invoke the `grilling` skill and work the design tree in rounds before writing anything. It settles far more than a single pass of questions. |
 
-## 1. Read cheaply first
+## 1. Route, then read cheaply
+
+Report these two lines before creating any artifact:
+
+```text
+Workflow: FAST | STANDARD | DEEP
+Reason: <one sentence>
+```
+
+- FAST: localized maintenance without product/spec impact. Cosmetic wording
+  corrections are FAST when meaning and behavior are unchanged; contractual
+  output changes are STANDARD. FAST does not require an OpenSpec change for
+  behavior-neutral work. Stop after routing to the FAST path in FACTORY.md;
+  do not create `intent.md` or a change folder.
+- STANDARD: normal observable behavior/product changes; preserve the intent flow.
+- DEEP: major architecture, substantial cross-module changes, important unknowns,
+  risky migration, new subsystem, hard-to-reverse decisions, multiple viable
+  architectures, or many independently shippable slices. Record which design
+  issues justify this route.
+
+Promote FAST to STANDARD for observable behavior changes or ambiguity; use DEEP
+when its triggers apply. Classification is advisory and may be promoted later.
+Never silently demote DEEP after major architectural uncertainty is identified.
+
+For STANDARD/DEEP, read cheaply:
 
 Read in this order and stop as soon as you can classify:
 
@@ -123,18 +147,11 @@ turns into `design.md`, so losing them here costs the change its memory.
 leading indicators it makes readable from `git log` on the change folder — time
 from first conversation to accepted intent, and intent to spec.
 
-Commit it alone:
+Present the intent for human acceptance before committing or advancing.
+If a commit is authorized, keep the intent in its own commit.
 
-```bash
-git add openspec/changes/<slug>/
-git commit -m "feat(<slug>): intent"
-```
-
-**Then stop and hand back to the user**, naming the next command:
-
-```
-/crystallize <slug>
-```
+**Then stop and hand back to the user**, naming `/crystallize <slug>` as the next command, or recommending an optional
+`/spike <slug> <question>` when DEEP uncertainties need evidence first.
 
 Do not write the proposal, the delta specs, or `tasks.md`. That is the next
 stage, and it runs only on the user's say-so.

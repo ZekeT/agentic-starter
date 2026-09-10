@@ -1,9 +1,8 @@
 # Harness evals
 
 This repo **is** agent configuration. `CLAUDE.md`, `REVIEW.md`, the skills, and
-the hooks steer every downstream project, and `tests/` only covers the two Python
-scripts. Everything that actually shapes agent behaviour is unversioned prose
-with no regression test. That is what these cover.
+the hooks steer every downstream project. `.harness/tests/` exercises executable
+tooling; these evals guard the instructions that shape agent behavior.
 
 Two kinds of case, deliberately:
 
@@ -41,3 +40,9 @@ One YAML-ish block per file in `cases/`. Fields:
 | `prompt` | (prompt) Sent to `claude -p` |
 | `expect` | (prompt) Substrings that must ALL appear, case-insensitive, one per line |
 | `reject` | (prompt) Substrings that must NOT appear |
+
+Routing prompt cases cover FAST cosmetic maintenance, STANDARD product behavior,
+and DEEP architectural migration. Static cases cover the artifact split, lazy
+context loading, independent verification, final shipping gate, skill policy,
+and packaging. Record representative workflow costs with
+[workflow-runs.md](workflow-runs.md); routing evals alone do not measure full runs.

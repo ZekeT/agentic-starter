@@ -1,24 +1,15 @@
-# your-project-name
+# Agentic Starter
 
-<!-- One line: what this does and who it's for. -->
+A portable software-factory starter for taking an idea through accepted specs,
+implementation, independent verification, human review, and shipping.
 
-## Getting started
+Choose FAST for small maintenance, STANDARD for ordinary behavior changes, and
+DEEP for architectural work. OpenSpec preserves canonical system truth; durable
+artifacts let each stage start in a fresh session.
 
-```bash
-bash . .harness/setup.sh
-make check
-```
+- [FACTORY.md](FACTORY.md): workflow tiers, artifacts, lifecycle and human gates.
+- [HARNESS.md](HARNESS.md): the shipped Claude Code commands, agents and checks.
+- [Setup](.harness/docs/setup.md): bootstrap with `make setup`.
 
-## Development workflow
-
-This project uses an agentic harness — changes go through a spec loop rather
-than straight to code. See [`HARNESS.md`](HARNESS.md).
-
----
-
-<!--
-This README belongs to your project. Overwrite it.
-
-Once your team knows the workflow, deleting the HARNESS.md pointer above is
-fine — the harness works whether or not this file mentions it.
--->
+The workflow is runtime-independent; the included adapter targets Claude Code.
+Other runtimes can use the artifacts and scripts with their own tool integration.

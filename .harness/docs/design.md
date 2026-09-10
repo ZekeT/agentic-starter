@@ -1,6 +1,7 @@
 # Harness design
 
-Why the harness is shaped the way it is. This is the template's own decision
+Historical rationale for the harness. Current workflow policy is in
+[FACTORY.md](../../FACTORY.md). This is the template's own decision
 record, consolidated from three ADRs written days apart during the 1.4.0
 cleanup. A fork inherits the ADR *practice* (`docs/decisions/`, append-only,
 one file per decision) with an empty log — this document is the template's
@@ -51,7 +52,7 @@ Ownership is split so that no artifact has two masters:
 | Product intent (`docs/product.md`, `docs/architecture.md`, `docs/decisions/`) | human + agent, hand-maintained, small | durable |
 | Behaviour specs (`openspec/specs/`) | OpenSpec, mutated only at archive | durable |
 | In-flight change (`openspec/changes/<slug>/`) | OpenSpec | until archived |
-| Implementation tasks | Superpowers, driven from `tasks.md` | ephemeral |
+| Implementation tasks | Factory task groups in `tasks.md` | until archived |
 
 A few decisions worth recording:
 
@@ -171,7 +172,7 @@ file, only signalled by it.
 
 `CLAUDE.md` is the single agent-instruction file. `AGENTS.md` is not shipped,
 and nothing in the template writes or imports one. The current rule: the
-*whole file* is budgeted at 120 lines, checked by eval 006 — there is no
+*whole file* is budgeted at 150 lines, checked by eval 006 — there is no
 generated section to exclude any more, so the cost of adding to `CLAUDE.md` is
 visible and immediate: adding means cutting.
 

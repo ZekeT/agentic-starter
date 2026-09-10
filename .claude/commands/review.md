@@ -22,8 +22,9 @@ harness exists to enable: check the diff against the delta specs and the task
 group above, not just against general good taste.
 
 `make check` is not run here — `REVIEW.md`'s **Skip entirely** section says not
-to relitigate what the gate decides. If you have no hand-off result for this
-branch, run `make check` yourself before trusting the diff.
+to relitigate what the gate decides. Use the fresh verifier's result for this branch. If absent or stale, request
+fresh verification before approval. For FAST, verify the diff and existing
+behavior contracts without requiring an OpenSpec change or task group.
 
 Produce: Summary / Must Fix / Should Fix / Notes / Verdict.
 

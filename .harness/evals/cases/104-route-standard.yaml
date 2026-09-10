@@ -1,0 +1,15 @@
+id: route-normal-feature-standard
+kind: prompt
+why: Ordinary product behavior must keep the intent/spec/tasks path without DEEP ceremony.
+prompt: |
+  Read FACTORY.md and classify this request using its workflow routing rules:
+  "Add password reset behavior." The existing account system and email delivery
+  already support the necessary integration; no architectural unknowns exist.
+  Reply only Workflow: <tier> and the next factory stages. Do not edit files.
+expect: |
+  Workflow: STANDARD
+  crystallize
+reject: |
+  Workflow: FAST
+  Workflow: DEEP
+  shape-change

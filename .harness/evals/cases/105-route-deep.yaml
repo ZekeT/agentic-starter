@@ -1,0 +1,15 @@
+id: route-persistence-migration-deep
+kind: prompt
+why: Risky architectural replacement must pass the architecture gate before program design and tasks.
+prompt: |
+  Read FACTORY.md and classify this request using its workflow routing rules:
+  "Replace persistence architecture while maintaining compatibility." Several
+  viable designs and an uncertain migration path exist. Reply only Workflow:
+  <tier> and the factory stages through implementation readiness. Do not edit files.
+expect: |
+  Workflow: DEEP
+  crystallize
+  shape-change
+reject: |
+  Workflow: FAST
+  Workflow: STANDARD

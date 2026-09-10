@@ -1,16 +1,30 @@
 ---
 name: handoff
-description: Compact the current conversation into a handoff document for another agent to pick up.
+description: Write a compact restart packet for an explicitly requested context transfer after an interruption.
 argument-hint: "What will the next session be used for?"
 disable-model-invocation: true
 ---
 
-Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS - not the current workspace.
+# Handoff
 
-Include a "suggested skills" section in the document, naming which skills the next agent should call the Skill tool for.
+User-invoked only. Normal factory stages restart from accepted artifacts and
+repository state; use this for exceptional interruptions, not as another plan.
 
-Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+Save a compact restart packet in the operating system's temporary directory,
+then give the user its path. If arguments specify the next session's focus,
+tailor the packet accordingly. Include:
 
-Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
+- Goal
+- Current stage
+- Accepted artifacts (paths; distinguish drafts from accepted decisions)
+- Current branch/change/group (FAST has a branch, no change/group)
+- Decisions already made
+- Open blockers
+- Exact next action
+- Files the next agent should read first (paths and relevant sections)
 
-If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+Reference specs, program design, task groups, ADRs and diffs by path or commit.
+Do not copy large artifact contents, conversation history, or implementation
+reasoning into the packet. Do not create a new implementation plan or recommend
+another planning methodology. A verifier still receives only its prescribed
+identifiers, never this implementation handoff. Omit secrets and sensitive data.

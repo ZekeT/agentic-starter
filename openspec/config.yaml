@@ -4,7 +4,8 @@ schema: spec-driven
 # Keep this short — CLAUDE.md is the full agent brief, this is the slice
 # that matters when writing proposals, specs, and tasks.
 context: |
-  agentic-starter is a project template (a "harness"), not an application.
+  agentic-starter is a portable software-factory blueprint implemented by an
+  agent harness, not an application. FACTORY.md owns lifecycle policy.
   What it ships is agent configuration: Claude Code skills, commands, hooks,
   and CLAUDE.md, plus a Python toolchain. Downstream projects are created by
   copying it, and stay current via template-manifest.json + the setup-update
@@ -28,10 +29,15 @@ context: |
 rules:
   proposal:
     - State explicitly whether the change is architecture-affecting. /dev-change
-      loads docs/architecture.md only when the proposal says so.
+      reads relevant architecture sections only when the claimed group needs them.
   tasks:
     - Group tasks so that each `## N` group is independently shippable as one PR.
-      /dev-change takes a group number and opens one PR per group.
+      /dev-change claims one group and stops uncommitted; the human reviews
+      before /commit-push-pr ships it. Include tests and integration in each slice.
+    - STANDARD crystallize generates tasks. DEEP crystallize stops at the
+      architecture gate; /shape-change generates program-design.md and final tasks.
+    - Each group includes Context references to relevant scenarios and
+      design/program-design sections so a fresh implementer can load selectively.
 
 # Per-operation guidance.
 operations:

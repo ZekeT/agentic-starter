@@ -3,15 +3,17 @@
 # Referenced in CLAUDE.md so agents always use these targets.
 # ============================================================
 
+# harness-test shells out to `make check` from inside pytest, which inherits
+# MAKELEVEL from this process — GNU Make auto-prints Entering/Leaving
+# directory lines for any sub-make (MAKELEVEL > 0), which breaks tests that
+# assert on exact stdout. Suppress it and export so it's inherited.
+MAKEFLAGS += --no-print-directory
+export MAKEFLAGS
+
 .PHONY: install fmt lint test check clean evals evals-full manifest setup harness-test
 
 # Source directory — override with: make fmt SRC=mypackage
 SRC ?= src
-
-# True once $(SRC) contains at least one .py file. Empty/missing $(SRC) is the
-# template's pre-setup state (see pyproject.toml) — mypy errors out on an empty
-# directory, so skip it until there's real code. ruff does not, so it always runs.
-HAS_SRC_FILES := $(shell test -d $(SRC) && find $(SRC) -name '*.py' -print -quit)
 
 # ---- Setup ------------------------------------------------
 
@@ -30,28 +32,22 @@ fmt:
 # ---- Lint (non-mutating — fails if issues found) ----------
 
 lint:
-	@mkdir -p $(SRC)
-	uv run ruff format --check $(SRC) tests
-	uv run ruff check $(SRC) tests
-ifneq ($(strip $(HAS_SRC_FILES)),)
-	uv run mypy $(SRC)
-else
-	@echo "  (skipping mypy — no .py files in $(SRC) yet)"
-endif
+	@SRC="$(SRC)" bash .harness/scripts/cmd_check.sh lint
 
 # ---- Test -------------------------------------------------
 # Exit 5 = pytest collected zero tests, which is the fork's own tests/ before
-# any product code exists — the same pre-setup state HAS_SRC_FILES skips above.
+# any product code exists — the same pre-setup state the type check handles.
 # Any other nonzero exit (real failures, errors) still fails the gate.
 
 test:
 	uv run pytest || test $$? -eq 5
 
 # ---- Combined gate (run before every commit) --------------
-# Mirrors the pre-commit hook logic so CI never surprises you.
-# Order matters: fmt first so lint sees clean code.
+# Read-only with respect to source: formatting problems fail, never auto-fix.
+# VERBOSE=1 includes successful command output; failures always show full output.
 
-check: fmt lint test
+check:
+	@SRC="$(SRC)" bash .harness/scripts/cmd_check.sh
 
 # ---- Harness evals ----------------------------------------
 # This repo IS agent configuration; tests/ only covers the Python scripts.

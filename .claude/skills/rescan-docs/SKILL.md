@@ -7,6 +7,7 @@ description: >
   or after inheriting a codebase with no planning artefacts. Trigger on:
   "rescan docs", "generate specs from code", "reverse-engineer architecture",
   "create docs from codebase", "what does this system currently do".
+disable-model-invocation: true
 ---
 
 # Rescan-Docs Skill

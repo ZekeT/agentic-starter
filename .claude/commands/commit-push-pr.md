@@ -24,8 +24,9 @@ commit message, which is not shell-safe:
 bash .harness/scripts/cmd_commit_push_pr.sh          # or: … --base <branch>
 ```
 
-`make check` above is **the** gate for this branch — deterministic, and run
-once. `/dev-change` does not run it separately.
+`make check` above is the final non-mutating full gate before committing.
+The fresh verifier ran it before human review; repeat it here to catch edits
+made since verification. Never replace it with a cached verdict.
 
 Only proceed if `make check` passes. If it fails, stop and report the failures —
 never commit past a red gate.

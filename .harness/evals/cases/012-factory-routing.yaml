@@ -1,0 +1,33 @@
+id: factory-routing-and-artifacts
+kind: static
+why: >
+  Tier drift either makes maintenance unnecessarily expensive or lets architectural
+  changes bypass accepted program design. Legacy STANDARD tasks must stay usable.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  explore = Path('.claude/skills/explore/SKILL.md').read_text()
+  crystal = Path('.claude/skills/crystallize/SKILL.md').read_text()
+  shape = Path('.claude/skills/shape-change/SKILL.md').read_text()
+  factory = Path('FACTORY.md').read_text()
+  standard = crystal.split('## STANDARD:')[1].split('## DEEP:')[0]
+  deep = crystal.split('## DEEP:')[1]
+  assert 'Workflow: FAST | STANDARD | DEEP' in explore and 'Reason:' in explore
+  assert 'FAST does not require an OpenSpec change' in explore
+  assert 'contractual' in explore and 'meaning' in explore
+  assert 'Fixing an implementation to match an existing specification can remain FAST' not in factory
+  assert 'Never silently demote DEEP' in explore
+  assert 'openspec instructions tasks' in standard and 'Create `tasks.md`' in standard
+  assert 'Do not generate\nfinal `tasks.md`' in deep
+  assert 'openspec instructions tasks' not in deep
+  assert 'STOP' in deep and '/shape-change <slug>' in deep
+  assert 'program-design.md' in shape and 'tasks.md' in shape
+  assert 'vertical, independently shippable' in shape
+  for section in ('Files to create', 'Files to modify', 'Important types and interfaces',
+                  'Data and control flow', 'Integration boundaries', 'Behavior tests',
+                  'Failure cases', 'Neighbouring regression risks', 'Least-confident decisions'):
+      assert section in shape, section
+  assert 'Existing STANDARD changes with populated `tasks.md` remain implementable' in factory
+  assert 'one branch = one PR' in factory
+  assert 'Branch existence is\nthe mutex' in factory
+  PY

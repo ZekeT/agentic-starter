@@ -7,6 +7,7 @@ description: >
   "pull template updates", "sync with the starter", or "my starter is newer".
   The companion script does the mechanical hash-compare work; this skill
   handles the guided merges for customized files.
+disable-model-invocation: true
 ---
 
 # Template Update Skill
@@ -136,3 +137,14 @@ install. Finish the swap by hand in the target's `pyproject.toml`:
 - **Maintainers:** after changing template-owned files in the starter, bump
   `TEMPLATE_VERSION` and run `make manifest` — otherwise downstream updates
   will misclassify pristine files as customized.
+
+## Factory workflow migration
+
+Apply Makefile, `.harness/scripts/cmd_check.sh`, `lib/run_quiet.sh`,
+`check_feature_docs.py`, and hook settings together. The new check is
+non-mutating; developers run `make fmt` before verification. Remove the retired
+`.claude/hooks/post_tool_feature_claude_reminder.py` and its settings entry after
+reviewing local customizations. The final check replaces its repeated reminder.
+Ship FACTORY.md and shape-change with the lifecycle updates. Existing STANDARD
+changes with populated tasks remain valid without tier markers or program design.
+Superpowers remains optional; do not uninstall it as part of this migration.
