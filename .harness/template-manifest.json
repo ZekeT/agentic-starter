@@ -1,6 +1,6 @@
 {
   "template_version": "1.5.0",
-  "generated_at": "2026-09-08T15:03:09+00:00",
+  "generated_at": "2026-09-10T08:41:31+00:00",
   "files": {
     ".claude/agents/security-reviewer.md": {
       "sha256": "5058abcd39f77dad19cda05ff7be89cd2dd82e297ef59dedc1dda2750f91dc1d",
@@ -534,7 +534,7 @@
       ]
     },
     "Makefile": {
-      "sha256": "7325b0a775a0618950c5ffdf641c77ddc4522565da359583c6a0739face80fa4",
+      "sha256": "1bb078fa10d823ee31d94680a39c2cb9212e6cbc1d043ba3f31afafe184052ee",
       "previous": [
         "dd03fdb0af9a0c26149a3cb5da2ad55e44daf5b99c9e5293e5dd7ce1b747a7b9",
         "8a02e6e63744b4a371303fb604af2c7c2ea4d7bd57a614e9d17e6bb266b54ad2",
@@ -544,7 +544,8 @@
         "a0ceb1cccd232378302e547ef5bd3c2a53b6161dff774ebfa2d4ed2367136dba",
         "9359a0301d4cb6addb17713fe7fc63506163e64f96175f9be4022e784ca67e47",
         "ca876d4667e45aebaf38d8932292604af2ea31f8493c02515aa8244e10f2d0a7",
-        "61eabb6a888fd8e1239b947a87c3b324cb6cd16696b30c51734c07ed496e73cf"
+        "61eabb6a888fd8e1239b947a87c3b324cb6cd16696b30c51734c07ed496e73cf",
+        "7325b0a775a0618950c5ffdf641c77ddc4522565da359583c6a0739face80fa4"
       ]
     },
     "REVIEW.md": {
