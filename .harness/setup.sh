@@ -5,6 +5,8 @@
 
 set -e
 
+python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else "Python 3.12+ required; activate a supported interpreter before setup.")'
+
 # ── --check: verify an existing project, mutate nothing ──────────────────────
 # The structural half of what the retired setup-base skill did. Assertions only:
 # no file is created, copied, or edited on this path.

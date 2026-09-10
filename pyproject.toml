@@ -2,7 +2,7 @@
 name = "your-project-name"
 version = "0.1.0"
 description = ""
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]
@@ -35,7 +35,7 @@ package = false
 # --- Formatter + linter (one tool: format, imports, unused code, docstrings) ---
 [tool.ruff]
 line-length = 88
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 # E4/E7/E9 + F is ruff's default. E501 is deliberately absent: the formatter
@@ -59,13 +59,13 @@ convention = "google"
 # documentation.
 "**/tests/**" = ["D"]
 # migrate_to_framework.py is run standalone against *other* projects, often with
-# whatever `python3` is on PATH rather than this project's 3.11 venv. Its
+# whatever `python3` is on PATH rather than this project's 3.12 venv. Its
 # sys.version_info fallbacks are load-bearing there, not dead code.
 ".harness/scripts/migrate_to_framework.py" = ["UP036"]
 
 # --- Type checker ---
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict = true
 # strict enables: disallow_any_generics, disallow_untyped_defs,
 # warn_return_any, warn_unused_ignores, and more.

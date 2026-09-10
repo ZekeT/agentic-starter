@@ -8,6 +8,7 @@ guided merge, and setup-update would fight `openspec update` for ownership.
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -21,6 +22,38 @@ SCRIPTS = Path(__file__).parents[2] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import generate_template_manifest as g  # noqa: E402
+
+
+@pytest.mark.parametrize("schema", [2, 0, True, "1", None])
+def test_unknown_schema_leaves_manifest_untouched(tmp_path, monkeypatch, schema):
+    path = tmp_path / "manifest.json"
+    original = json.dumps({"schema_version": schema, "future_metadata": {"keep": True}})
+    path.write_text(original)
+    monkeypatch.setattr(g, "MANIFEST_PATH", path)
+    with pytest.raises(SystemExit, match="compatible"):
+        g.main()
+    assert path.read_text() == original
+
+
+@pytest.mark.parametrize("version", [{}, {"schema_version": 1}])
+def test_supported_schema_preserves_history_and_overrides(
+    tmp_path, monkeypatch, version
+):
+    source = tmp_path / "factory"
+    source.write_text("new content")
+    monkeypatch.setattr(g, "ROOT", tmp_path)
+    monkeypatch.setattr(g, "collect_files", lambda: [source])
+    project = {"maintainability": {"warn_file_lines": 222}}
+    result = g.build_manifest(
+        {
+            **version,
+            "project": project,
+            "files": {"factory": {"sha256": "old", "previous": ["older"]}},
+        }
+    )
+    assert result["schema_version"] == 1
+    assert result["project"] == project
+    assert result["files"]["factory"]["previous"] == ["older", "old"]
 
 
 @pytest.mark.parametrize(

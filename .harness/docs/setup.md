@@ -185,3 +185,6 @@ Update Makefile, check helpers and hook wiring together. Remove the retired
 local customizations; `check_feature_docs.py` now enforces documentation during
 `make check`. Existing feature directories may need a CLAUDE.md before their
 next successful gate. Existing STANDARD tasks need no shape-change migration.
+
+Factory tooling requires Python 3.12+. Use `uv sync --python 3.12 --all-extras`
+and activate that environment before running standalone setup or update scripts.

@@ -17,7 +17,7 @@ Run from the starter checkout against a target project:
     python setup_update.py /path/to/target --dry   # report only
     python setup_update.py /path/to/target         # apply
 
-Stdlib-only and Python 3.9-compatible on purpose — it must run on the
+Stdlib-only and Python 3.12+ on purpose — it must run on the
 system python3 of a machine that has not bootstrapped the venv yet.
 """
 
@@ -31,6 +31,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+if sys.version_info < (3, 12):
+    sys.exit("Python 3.12+ required. Use uv run --python 3.12 python with this script.")
 
 STARTER_DIR = Path(__file__).resolve().parents[4]
 MANIFEST_NAME = "template-manifest.json"
@@ -235,6 +238,12 @@ def run_update(starter: Path, target: Path, dry: bool) -> dict[str, list[str]]:
         info(f"{len(added)} missing line(s) appended to .gitignore")
     else:
         ok(".gitignore already covers all template entries")
+
+    if not dry and manifest.get("schema_version") == 1:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / ".harness"))
+        from factory.config import initialize_manifest
+
+        initialize_manifest(target)
 
     return results
 

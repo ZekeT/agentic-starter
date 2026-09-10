@@ -20,11 +20,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(ROOT / ".harness"))
+from factory.config import DEFAULTS
+
 MANIFEST_PATH = ROOT / ".harness" / "template-manifest.json"
 VERSION_PATH = ROOT / ".harness" / "TEMPLATE_VERSION"
 
@@ -37,6 +41,8 @@ VERSION_PATH = ROOT / ".harness" / "TEMPLATE_VERSION"
 # — both are starter-repo-only maintainer tools, never meant to be
 # copied into a downstream project.
 MANIFEST_FILES = [
+    "factory",
+    ".harness/docs/maintainability.md",
     "CLAUDE.md",
     "REVIEW.md",
     "Makefile",
@@ -76,6 +82,7 @@ MANIFEST_FILES = [
 # scripts beside them are not: every shipped command calls one, so a downstream
 # project that took the commands without the scripts would have a broken loop.
 MANIFEST_GLOBS = [
+    ".harness/factory/*.py",
     ".claude/hooks/*.py",
     ".claude/commands/*.md",
     ".claude/agents/*.md",
@@ -187,6 +194,13 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
     Returns:
         The new manifest dict ready to serialise.
     """
+    if "schema_version" in previous and (
+        type(previous["schema_version"]) is not int or previous["schema_version"] != 1
+    ):
+        raise ValueError(
+            "Unsupported manifest schema_version; use factory tooling compatible "
+            "with this manifest before regenerating it"
+        )
     prev_files: dict[str, Any] = previous.get("files", {})
     files: dict[str, Any] = {}
     for path in collect_files():
@@ -202,6 +216,9 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
     if VERSION_PATH.exists():
         version = VERSION_PATH.read_text().strip()
     return {
+        "schema_version": 1,
+        "defaults": {"maintainability": dict(DEFAULTS)},
+        "project": previous.get("project", {}),
         "template_version": version,
         "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "files": files,
@@ -210,8 +227,11 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> None:
     """Regenerate template-manifest.json in place."""
-    previous = load_previous_manifest()
-    manifest = build_manifest(previous)
+    try:
+        previous = load_previous_manifest()
+        manifest = build_manifest(previous)
+    except ValueError as exc:
+        sys.exit(str(exc))
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n")
     changed = sum(
         1

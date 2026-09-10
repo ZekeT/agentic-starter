@@ -11,7 +11,7 @@ context: |
   copying it, and stay current via template-manifest.json + the setup-update
   skill.
 
-  Stack: Python 3.11+ managed with uv. ruff (format, imports, unused code,
+  Stack: Python 3.12+ managed with uv. ruff (format, imports, unused code,
   docstrings) / mypy (strict) / pytest, all gated behind `make check`. Hooks
   and scripts are stdlib-only so they run before the venv exists.
 

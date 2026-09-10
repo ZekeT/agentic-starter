@@ -30,6 +30,16 @@ Use this structure, omitting migration details when irrelevant:
 ```markdown
 # Program Design
 
+## Code Shape
+### Existing modules reused
+- Path and reason
+### New modules
+- Path, responsibility and intended public surface
+### Existing modules intentionally not extended
+- Path and reason
+### Expected implementation footprint
+- Expected changed/created files and rough size/complexity, not exact LOC
+
 ## Implementation shape
 ### Files to create
 - Path and responsibility

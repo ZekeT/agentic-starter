@@ -1,0 +1,24 @@
+id: deterministic-maintainability-policy
+kind: static
+why: >
+  Growth checks must retain configurable code-line limits, exception reasons,
+  Code Shape guidance, and all shipped runtime dependencies.
+shell: |
+  python3 - <<'PY'
+  import json
+  from pathlib import Path
+  manifest = json.loads(Path('.harness/template-manifest.json').read_text())
+  defaults = manifest['defaults']['maintainability']
+  assert defaults['warn_file_lines'] == 300
+  assert defaults['max_file_lines'] == 500
+  assert defaults['substantial_growth_lines'] == 150
+  assert 'uv run --no-project --isolated --python 3.12 python factory maintainability' in Path('.harness/scripts/cmd_check.sh').read_text()
+  shape = Path('.claude/skills/shape-change/SKILL.md').read_text()
+  assert '## Code Shape' in shape
+  assert 'Existing modules intentionally not extended' in shape
+  for path in Path('.harness/factory').glob('*.py'):
+      assert path.as_posix() in manifest['files'], path
+  assert 'factory' in manifest['files']
+  policy = Path('.harness/docs/maintainability.md').read_text()
+  assert 'reviewed reasons' in policy and 'docstrings' in policy
+  PY
