@@ -56,6 +56,6 @@ else
   echo "(no change folder resolved — reviewing the diff on its own)"
 fi
 
-# No `make check` here. /dev-change ran it post-implementation and handed the
+# No `make check` here. The fresh verifier ran it and handed the
 # result over; /commit-push-pr runs it again before the push, which is the run
 # that catches anything edited during this review.

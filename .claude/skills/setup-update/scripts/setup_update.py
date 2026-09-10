@@ -286,7 +286,8 @@ def print_summary(
     print("         harness_setup.sh         → .harness/setup.sh")
     print("         docs/harness/            → .harness/docs/")
     print("         scripts/                 → .harness/scripts/")
-    info("Update the global Superpowers plugin inside Claude Code:")
+    info("Optional Superpowers: retain installed techniques while measuring usage.")
+    info("If you choose to update it inside Claude Code:")
     print("       /plugin update superpowers@superpowers-marketplace")
     info("Then verify: bash .harness/setup.sh --check")
 

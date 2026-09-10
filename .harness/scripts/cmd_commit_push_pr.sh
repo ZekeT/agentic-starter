@@ -73,4 +73,5 @@ fi
 echo "=== Tests touched by this diff ==="
 git diff "$BASE" --name-only | grep -E '^tests/' || echo "(none — is that right for this change?)"
 
-echo "=== make check ===" && make check 2>&1 | tail -15
+echo "=== make check ==="
+make check

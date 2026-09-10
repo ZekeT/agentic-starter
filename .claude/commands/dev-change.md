@@ -36,14 +36,19 @@ After the preamble runs:
 2. Work **only** the tasks in the claimed group. The other groups belong to
    other branches; touching them here creates the merge conflicts this
    one-group-per-PR split exists to prevent.
-3. The proposal, delta specs, and design printed above are the full context.
-4. **The task group is the plan. Do not re-plan it.** It was written by
-   `/crystallize` and accepted at a human gate, and it is already on screen.
-   Implement it directly in this session, driving each task with the Superpowers
-   **`test-driven-development`** skill: failing test, minimal code, refactor.
-   Do **not** invoke `subagent-driven-development` here — it dispatches a fresh
-   implementer and a fresh reviewer per task, each re-reading this context cold,
-   to re-derive a plan you already have.
+3. Load only the claimed group, its relevant delta-spec scenarios, relevant
+   design/program-design sections, local feature instructions, and needed files.
+   The preamble prints artifact paths, not their full contents. Follow the group's
+   `Context:` references; for legacy groups, discover relevant headings with
+   targeted search. Existing STANDARD `tasks.md` remains usable without
+   `program-design.md` or a workflow marker. DEEP requires accepted program design.
+   Check prerequisite groups have merged before implementation.
+4. **The task group is the plan. Do not re-plan it.** `/crystallize` (STANDARD)
+   or `/shape-change` (DEEP) already prepared it for human acceptance. Implement
+   directly. Do not invoke Superpowers brainstorming, writing-plans,
+   subagent-driven-development, worktree orchestration, or branch-finishing
+   workflows. TDD or systematic debugging may be used when useful; no broad
+   Superpowers workflow is required.
 5. As each task completes, tick its checkbox in `openspec/changes/<slug>/tasks.md`
    (`- [ ]` → `- [x]`), and update the task text in the same commit if
    implementation departed from it (see CLAUDE.md **Rules**).
@@ -56,17 +61,19 @@ After the preamble runs:
    what to do when a delta spec turns out to be wrong, and when to stop and ask
    rather than guess. A bug attempted twice without success is one of those
    stopping points.
-8. Run `make check`. It must pass before you hand anything to a human, and its
-   result is what you hand over — nothing downstream runs it again until
-   `/commit-push-pr`.
+8. Use targeted tests while coding. Run `make fmt` before verification and
+   inspect the changes. Do not run the full `make check` immediately before
+   dispatching the verifier; it owns that independent full gate.
 9. Dispatch the **`verifier`** subagent. Fresh context, so its verdict is not
    coloured by the assumptions that produced the code — this session has
-   already convinced itself. Give it the change slug and group number; it runs
-   the change and reports mismatches without fixing anything. A FAIL is yours
+   already convinced itself. Give it **only the change slug and group number**,
+   never implementation
+   reasoning, a summary, or a narrative. It discovers artifacts itself, runs
+   the full deterministic `make check`, exercises changed behavior, and reports mismatches without fixing anything. A FAIL is yours
    to resolve now: either the code is wrong or the delta spec is (step 7).
 10. Worktree mode only: call `ExitWorktree` with `action: "keep"`.
 11. **Stop here. Do not commit, and do not open a PR.** Print, for the user:
-    the branch name, the `make check` result, the verifier's report verbatim,
+    the branch name, the verifier's full-gate result and report verbatim,
     the tasks now ticked, the remaining unchecked groups, and the two commands
     that come next —
 

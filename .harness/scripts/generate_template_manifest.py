@@ -55,6 +55,9 @@ MANIFEST_FILES = [
     "docs/product.md",
     "docs/decisions/index.md",
     "HARNESS.md",
+    "FACTORY.md",
+    ".harness/evals/workflow-runs.md",
+    ".harness/scripts/check_feature_docs.py",
     ".harness/evals/README.md",
     ".harness/evals/run_evals.py",
     ".github/workflows/evals.yml",
@@ -87,6 +90,13 @@ MANIFEST_SKILL_DIRS = [
     "rescan-docs",
     "explore",
     "crystallize",
+    "shape-change",
+    "handoff",
+    "grilling",
+    "domain-modeling",
+    "prototype",
+    "karpathy-guidelines",
+    "gauntlet-loop",
     "python-standards",
 ]
 

@@ -26,7 +26,7 @@ if [ "${1:-}" = "--check" ]; then
 
   echo ""
   echo "Required files"
-  for f in CLAUDE.md HARNESS.md REVIEW.md Makefile pyproject.toml \
+  for f in CLAUDE.md HARNESS.md FACTORY.md REVIEW.md Makefile pyproject.toml \
            .env.template .claude/settings.json; do
     [ -f "$f" ] && ok "$f" || bad "$f missing"
   done
@@ -127,20 +127,20 @@ else
   echo "  SKIP: .env.template not found."
 fi
 
-# 4. Superpowers — must be installed manually inside Claude Code.
+# 4. Superpowers — optional techniques; no factory stage requires it.
 # /plugin is an interactive slash command, not a CLI argument.
 # There is no way to automate this from a shell script.
-echo "[4/6] Superpowers (manual step required)..."
+echo "[4/6] Superpowers (optional techniques)..."
 echo ""
-echo "  Open Claude Code in this project directory, then run:"
+echo "  If you want selected TDD/debugging techniques, run inside Claude Code:"
 echo "    /plugin marketplace add obra/superpowers-marketplace"
 echo "    /plugin install superpowers@superpowers-marketplace"
 echo ""
-echo "  Already installed on this machine? Update instead (v6+ required):"
+echo "  Already installed? Keep it while measuring technique usage; update if desired:"
 echo "    /plugin update superpowers@superpowers-marketplace"
 echo ""
 echo "  This installs globally to ~/.claude/ — do it once,"
-echo "  and it works for all your projects."
+echo "  and it works for all your projects. Factory planning and shipping stay local."
 echo
 
 # 5. Verify make check works (no src yet, just confirm tooling)
@@ -205,15 +205,14 @@ echo "Next steps:"
 echo "  1. Edit pyproject.toml — set [project] name, description"
 echo "  2. Create src/<your_package>/__init__.py"
 echo "  3. Write docs/product.md — what this is, who it is for, non-goals"
-echo "  4. In Claude Code, crystallize your first idea into a change:"
-echo "       /crystallize \"<your idea>\""
-echo "     then review the intent, review the proposal + specs + tasks,"
-echo "     and run /dev-change <slug> <group>"
+echo "  4. In Claude Code, explore your first idea:"
+echo "       /explore \"<your idea>\""
+echo "     follow the workflow tier and human gates in FACTORY.md."
 echo ""
-echo "  Human gates: intent → spec+tasks → PR merge → archived spec diff"
+echo "  Human gates and DEEP program design: FACTORY.md"
 echo ""
 echo "Quick reference:"
 echo "  make fmt    — format code"
 echo "  make lint   — check code"
 echo "  make test   — run tests"
-echo "  make check  — all three (run before every commit)"
+echo "  make check  — non-mutating full gate (verifier and before commit)"

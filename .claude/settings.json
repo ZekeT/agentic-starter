@@ -35,10 +35,6 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_tool_lint.py"
-          },
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_tool_feature_claude_reminder.py"
           }
         ]
       }
@@ -53,6 +49,9 @@
   },
   "skillOverrides": {
     "gauntlet-loop": "user-invocable-only",
-    "handoff": "user-invocable-only"
+    "handoff": "user-invocable-only",
+    "grilling": "user-invocable-only",
+    "setup-update": "user-invocable-only",
+    "rescan-docs": "user-invocable-only"
   }
 }

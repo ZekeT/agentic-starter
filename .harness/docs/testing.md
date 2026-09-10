@@ -163,7 +163,7 @@ blocks everyone until someone writes filler tests.
 
 ```bash
 make test                                # full suite, with coverage
-make check                               # fmt + lint + test — the commit gate
+make check                               # non-mutating format/lint/types/tests/docs gate
 uv run pytest tests/unit -q              # fast loop while working
 uv run pytest -k invoice                 # by name
 uv run pytest --lf                       # only what failed last run

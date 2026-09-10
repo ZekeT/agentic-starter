@@ -47,6 +47,19 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/hooks/pre_tool_env_guard.py": ".claude/hooks/pre_tool_env_guard.py",
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
     ".claude/hooks/post_tool_lint.py": ".claude/hooks/post_tool_lint.py",
+    ".claude/agents/verifier.md": ".claude/agents/verifier.md",
+    "FACTORY.md": "FACTORY.md",
+    "HARNESS.md": "HARNESS.md",
+    ".harness/evals/workflow-runs.md": ".harness/evals/workflow-runs.md",
+    ".harness/docs/design.md": ".harness/docs/design.md",
+    ".harness/scripts/cmd_check.sh": ".harness/scripts/cmd_check.sh",
+    ".harness/scripts/check_feature_docs.py": ".harness/scripts/check_feature_docs.py",
+    ".harness/scripts/lib/run_quiet.sh": ".harness/scripts/lib/run_quiet.sh",
+    ".harness/scripts/lib/change.sh": ".harness/scripts/lib/change.sh",
+    ".harness/scripts/cmd_dev_change.sh": ".harness/scripts/cmd_dev_change.sh",
+    ".harness/scripts/cmd_review.sh": ".harness/scripts/cmd_review.sh",
+    ".harness/scripts/cmd_commit_push_pr.sh": ".harness/scripts/cmd_commit_push_pr.sh",
+    ".harness/scripts/cmd_archive_change.sh": ".harness/scripts/cmd_archive_change.sh",
     ".claude/agents/security-reviewer.md": ".claude/agents/security-reviewer.md",
     # Planning / implementation commands
     ".claude/commands/review.md": ".claude/commands/review.md",
@@ -56,15 +69,11 @@ FILES_TO_COPY: dict[str, str] = {
     ".claude/settings.json": ".claude/settings.json",
     "REVIEW.md": "REVIEW.md",
     # Docs — product.md/architecture.md are placeholders the team fills in.
-    # Source moved to .harness/docs/ in the starter; dest stays docs/harness/
-    # here deliberately — migrate never creates a .harness/ tree in the
-    # target (no evals/scripts/setup.sh copied), so these land at a visible
-    # path like everything else this dict copies, rather than alone in an
-    # otherwise-empty dotfolder.
-    ".harness/docs/setup.md": "docs/harness/setup.md",
-    ".harness/docs/coding-standards.md": "docs/harness/coding-standards.md",
-    ".harness/docs/testing.md": "docs/harness/testing.md",
-    ".harness/docs/commits-and-prs.md": "docs/harness/commits-and-prs.md",
+    # Keep the same paths as the shipped command/skill references.
+    ".harness/docs/setup.md": ".harness/docs/setup.md",
+    ".harness/docs/coding-standards.md": ".harness/docs/coding-standards.md",
+    ".harness/docs/testing.md": ".harness/docs/testing.md",
+    ".harness/docs/commits-and-prs.md": ".harness/docs/commits-and-prs.md",
     ".github/pull_request_template.md": ".github/pull_request_template.md",
     "docs/product.md": "docs/product.md",
     "docs/decisions/index.md": "docs/decisions/index.md",
@@ -75,6 +84,8 @@ FILES_TO_COPY: dict[str, str] = {
 SKILL_DIRS_TO_COPY: list[str] = [
     "explore",
     "crystallize",
+    "shape-change",
+    "handoff",
     "rescan-docs",
     "setup-update",
 ]
@@ -129,7 +140,7 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
         'target-version = "py311"\n'
         "\n"
         "[tool.ruff.lint]\n"
-        '# E501 is deliberately absent: the formatter owns line length.\n'
+        "# E501 is deliberately absent: the formatter owns line length.\n"
         'select = ["E4", "E7", "E9", "F", "W", "I", "UP", "B", "D"]\n'
         'ignore = ["D104", "D105", "D107"]\n'
         "\n"
@@ -175,7 +186,7 @@ MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
         "\tuv run mypy $(SRC)\n"
     ),
     "test": "test:\n\tuv run pytest\n",
-    "check": "check: fmt lint test\n",
+    "check": 'check:\n\t@SRC="$(SRC)" bash .harness/scripts/cmd_check.sh\n',
     "setup-hooks": (
         "setup-hooks:\n"
         '\t@echo "Hooks live in .claude/hooks/ — Claude Code loads them automatically."\n'
@@ -592,14 +603,14 @@ def detect_existing_files(target: Path) -> set[str]:
     return existing
 
 
-# Agents another tool already owns. Leaving a project's own copy in place means
-# two definitions of the same role, and the globally-installed one wins silently.
+# Legacy workflow roles to review when migrating. The factory now owns these
+# stages; customized agents should be assessed before removal.
 STALE_AGENTS: dict[str, str] = {
-    "developer.md": "Superpowers owns implementation (installed globally via /plugin install)",
-    "code-reviewer.md": "Superpowers owns code review (installed globally via /plugin install)",
-    "analyst.md": "planning is conversational (Superpowers brainstorming) — no agent needed",
-    "pm.md": "planning is conversational (Superpowers brainstorming) — no agent needed",
-    "architect.md": "planning is conversational (Superpowers writing-plans) — no agent needed",
+    "developer.md": "factory /dev-change owns implementation from accepted task groups",
+    "code-reviewer.md": "factory verifier and human /review own verification and review",
+    "analyst.md": "factory /explore owns intent and workflow classification",
+    "pm.md": "factory /explore owns intent and workflow classification",
+    "architect.md": "factory /crystallize and /shape-change own architecture and program design",
     "scrum-master.md": "the crystallize skill owns change breakdown — no agent needed",
 }
 
@@ -1003,7 +1014,7 @@ make install          # install all deps (uv sync)
 make fmt              # format + autofix: ruff
 make lint             # check: ruff format --check, ruff check, mypy
 make test             # pytest
-make check            # fmt + lint + test (run before every commit)
+make check            # non-mutating full gate (verifier and before commit)
 ```
 
 TODO: Add any project-specific commands here.
@@ -1035,7 +1046,7 @@ TODO: Add your architecture decisions, language conventions, and style rules.
 
 ## Review Checklist
 
-- [ ] `make check` passes (fmt + lint + test)
+- [ ] `make check` passes without source edits
 - [ ] No secrets in diff
 - [ ] Every task in the group is ticked in the change's `tasks.md`
 - [ ] Tests added for new behaviour
@@ -1044,7 +1055,15 @@ TODO: Add your architecture decisions, language conventions, and style rules.
 
 ## Rules
 
-Add rules here when Claude makes a mistake — this is Claude's persistent memory.
+- Read FACTORY.md for FAST/STANDARD/DEEP routing and accepted artifact gates.
+- `openspec/specs/` is canonical; never edit it directly. Use change artifacts
+  and human-gated /archive-change.
+- One independently shippable task group = one branch = one PR; branch existence
+  is the mutex. The task group is the plan; load only relevant context.
+- Skills are conditional techniques; the factory owns orchestration.
+- Run make fmt before fresh verification. The verifier owns the full make check;
+  shipping repeats it after human review. Stop before committing or opening a PR.
+- Stop and ask when architecture, requirements or a spec assumption is unclear.
 """
 
 _PYTHON_BLOCK = """\
@@ -1306,7 +1325,7 @@ def print_next_steps(audit: AuditResult) -> None:
         ]
     steps += [
         "npm install -g @fission-ai/openspec@latest && openspec init --tools claude",
-        'Write docs/product.md, then /crystallize "<your idea>" in Claude Code',
+        'Write docs/product.md, then /explore "<your idea>" in Claude Code',
     ]
     for i, step in enumerate(steps, 1):
         print(f"  {i}. {step}")
@@ -1359,7 +1378,7 @@ def run_migration(
     for f in report.skipped:
         _info(f"skipped: {f}  (exists — use --force to overwrite)")
 
-    _header("COPYING SKILLS  (explore, crystallize, rescan-docs, setup-update)")
+    _header("COPYING FACTORY SKILLS")
     report.skill_dirs_copied, report.skill_dirs_skipped = copy_skill_dirs(
         target, starter, force, dry
     )

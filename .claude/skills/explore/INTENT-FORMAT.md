@@ -9,6 +9,9 @@ is almost always a sign the input was not interrogated, not that nothing is open
 ```markdown
 # Intent: <slug>
 
+Workflow: STANDARD | DEEP
+Reason: <one sentence; DEEP names the uncertainty/design issues>
+
 ## Classification
 One of: new capability `<path>` · modification of `<existing/path>` ·
 architectural decision · spec-less (tooling, docs, refactor). `/crystallize`

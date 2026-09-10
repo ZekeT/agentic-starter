@@ -1,6 +1,6 @@
 ---
 name: karpathy-guidelines
-description: Behavioral guidelines for the LLM coding failure modes that need more than a one-line rule. Use on a large refactor, when a request arrives underspecified or with several readings, when asked to make something flexible or configurable, or when starting a module from scratch. Routine edits do not need it — CLAUDE.md's Simplicity First carries the everyday rule.
+description: Behavioral guidelines for the LLM coding failure modes that need more than a one-line rule. Use on a large refactor, when a request arrives underspecified or with several readings, when asked to make something flexible or configurable, or when starting a module from scratch. Routine edits do not need it — CLAUDE.md's simplicity rule carries the everyday rule.
 license: MIT
 ---
 
@@ -22,7 +22,7 @@ Before implementing:
 
 ## 2. Simplicity First
 
-Lives in `CLAUDE.md` under **Simplicity First**, because it applies to every
+Lives in `CLAUDE.md` under **Simplicity and retrieval**, because it applies to every
 line written and is therefore not worth a skill invocation to reach.
 
 ## 3. Surgical Changes
@@ -50,7 +50,7 @@ Transform tasks into verifiable goals:
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
-For multi-step tasks, state a brief plan:
+When no accepted factory task group already supplies the plan, state brief verification steps:
 ```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]

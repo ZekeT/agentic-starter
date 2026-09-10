@@ -9,10 +9,10 @@ is up and running, you can ignore this file.
 
 ```bash
 git clone <this-repo> my-project && cd my-project
-bash harness_setup.sh
+bash .harness/setup.sh
 ```
 
-`harness_setup.sh` installs Python deps via `uv`, bootstraps `.env`, and checks
+`.harness/setup.sh` installs Python deps via `uv`, bootstraps `.env`, and checks
 for OpenSpec.
 
 ### OpenSpec (required for the change loop)
@@ -28,7 +28,7 @@ npm install -g @fission-ai/openspec@latest
 openspec init --tools claude                # only in a fresh project
 ```
 
-`harness_setup.sh` **warns** rather than fails when Node or `openspec` is
+`.harness/setup.sh` **warns** rather than fails when Node or `openspec` is
 missing — formatting, linting, tests, hooks, and every other command work
 without it. Only the change loop needs it.
 
@@ -39,45 +39,17 @@ hand. Both `scripts/generate_template_manifest.py` and the `setup-update` skill
 exclude these paths explicitly, so template updates and OpenSpec updates never
 fight over the same file.
 
-Then install Superpowers **once per machine** inside a Claude Code session
-(this template assumes Superpowers **v6+**):
+### Optional Superpowers techniques
 
-```
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install superpowers@superpowers-marketplace
-```
+An existing Superpowers installation may remain for selected TDD, debugging or
+verification techniques. The factory does not require it for any stage and owns
+planning, task decomposition, branch/worktree management, review and shipping.
+Measure usage before deciding whether to remove an existing installation; see
+[workflow runs](../evals/workflow-runs.md).
 
-Already installed on this machine? Update instead:
-
-```
-/plugin update superpowers@superpowers-marketplace
-```
-
-This installs implementation skills (TDD, subagent dispatch, code review) globally
-to `~/.claude/`. Required for `/dev-change` to use the full agentic TDD workflow.
-Superpowers v6 replaced the two-stage review with a unified single-pass task
-reviewer. SDD scratch files live in `.superpowers/sdd/<plan-basename>/`
-(gitignored here), scoped per plan so a follow-up plan can't read a prior
-plan's progress ledger.
-
-Then open Claude Code and run the change loop:
-
-```
-/explore "<idea>"            # → intent.md
-                             #   ← HUMAN GATE: accept the intent
-/crystallize <slug>          # → proposal + delta specs + design + tasks
-                             #   ← HUMAN GATE: accept the spec
-/dev-change <slug> <group>   # Implement one task group on feat/<slug>-g<N>,
-                             #   then stop without committing
-/review                      # → verdict against the delta specs
-                             #   ← HUMAN GATE: approve before anything is committed
-/commit-push-pr              # → commit + PR
-                             #   ← HUMAN GATE: merge the PR
-/archive-change <slug>       # Merge deltas into openspec/specs/
-                             #   ← HUMAN GATE: review the spec diff
-```
-
-Run `/dev-change` once per `## N` task group — each is its own branch and PR.
+For the workflow, gates and tier-specific commands, read
+[FACTORY.md](../../FACTORY.md). Runtime commands and check mechanics are in
+[HARNESS.md](../../HARNESS.md).
 
 ---
 
@@ -88,17 +60,15 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 ├── CLAUDE.md                            # Project brain — read every session
 ├── Makefile                             # Single entry point for all commands
 ├── pyproject.toml                       # Python deps + tool config
-├── harness_setup.sh                     # One-command bootstrap
+├── .harness/setup.sh                     # One-command bootstrap
 ├── .env.template                        # Committed — documents all env vars, no real values
 ├── .gitignore
 │
 ├── .claude/
 │   ├── settings.json                    # Hook wiring
 │   ├── agents/                          # Project-specific agents only
-│   │   ├── security-reviewer.md         # OWASP/CVE scan, read-only (Opus)
-│   │   └── verifier.md                  # Final check in a fresh context, read-only (Opus)
-│   │                                    # developer + code-reviewer live in Superpowers
-│   │                                    # (~/.claude/) — not committed here
+│   │   ├── security-reviewer.md         # OWASP/CVE scan, read-only
+│   │   └── verifier.md                  # Final check in a fresh context, read-only
 │   ├── commands/                        # Slash commands
 │   │   ├── dev-change.md                # /dev-change <slug> <group> — implement one task group
 │   │   ├── archive-change.md            # /archive-change <slug> — merge deltas into specs
@@ -113,7 +83,8 @@ Run `/dev-change` once per `## N` task group — each is its own branch and PR.
 │   └── skills/
 │       ├── graphify/SKILL.md            # Optional: knowledge graph
 │       ├── setup-update/                # Update a copied project to the latest template
-│       ├── crystallize/                 # Exploration → an OpenSpec change
+│       ├── crystallize/                 # Accepted intent → tier-specific artifacts
+│       ├── shape-change/                # DEEP architecture → program design + tasks
 │       ├── rescan-docs/                 # Reverse-engineer specs + product doc from code
 │       └── openspec-*/                  # OpenSpec's own skills — generated by `openspec update`, gitignored, not committed
 │
@@ -138,9 +109,9 @@ Run on every tool call. No LLM judgment — pure code.
 
 | Hook | Trigger | Action |
 |------|---------|--------|
-| `post_tool_lint.py` | Write/Edit | Auto-lint after file changes |
+| `post_tool_lint.py` | Write/Edit | Check edited Python file only, non-mutating, silent success |
 | `post_tool_secrets.py` | Write/Edit | Block committed credentials |
-| `post_tool_feature_claude_reminder.py` | Write/Edit (feature `CLAUDE.md`) | Nudge to add the root CLAUDE.md pointer |
+| `.harness/scripts/check_feature_docs.py` | Final `make check` | Fail for missing feature `CLAUDE.md`; no per-edit reminders or session state |
 | `pre_tool_dangerous.py` | Bash | Block rm -rf, force push, etc. |
 | `pre_tool_env_guard.py` | Read/Glob/LS/Grep/Bash | Block Claude reading `.env` |
 
@@ -174,7 +145,7 @@ python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/t
 ```
 
 This copies hooks, commands, the security agent, config, scripts, docs, and
-our skills (`rescan-docs`, `setup-update`, `crystallize`, `python-standards`) into your project
+the factory lifecycle skills and conditional/explicit utilities into your project
 without overwriting anything that already exists.
 
 Then open Claude Code in your project and generate planning docs from the existing code:
@@ -193,7 +164,7 @@ code *does*, which is not always what it *should* do.
 
 Upstream framework updates do not touch your customisations:
 
-- **Superpowers** (`/plugin update superpowers@superpowers-marketplace`) — separate from your agent definitions.
+- **Superpowers**, if installed, stays optional and separate from agent definitions.
 - **The rest of the template** (hooks, commands, docs, scripts, our skills) —
   use the **`setup-update`** skill (or `python
   /path/to/agentic-starter/.claude/skills/setup-update/scripts/setup_update.py
@@ -206,3 +177,11 @@ Upstream framework updates do not touch your customisations:
 Every project created from this template records the template version it
 started from in `.claude/template-version.json` (or `.claude/migration-report.json`
 for older projects) — that's what `setup-update` diffs against.
+
+## Updating to factory checks
+
+Update Makefile, check helpers and hook wiring together. Remove the retired
+`post_tool_feature_claude_reminder.py` and its settings entry after reviewing
+local customizations; `check_feature_docs.py` now enforces documentation during
+`make check`. Existing feature directories may need a CLAUDE.md before their
+next successful gate. Existing STANDARD tasks need no shape-change migration.

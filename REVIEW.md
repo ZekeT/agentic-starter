@@ -48,7 +48,9 @@ touching auth, input handling, subprocess, or deserialization. At minimum:
 
 **This is the pass this harness exists to enable**, and the one no generic
 reviewer can run. It is only possible because the delta specs and `tasks.md` are
-committed artifacts.
+durable artifacts. For FAST maintenance there is no required change or task
+group: compare the diff with relevant existing contracts and verify that meaning
+and behavior remain unchanged. Contractual output changes require STANDARD.
 
 - Does the diff satisfy every `#### Scenario:` in the change's delta specs?
 - Does it do anything the specs *don't* describe? Unspecced behaviour is either
@@ -62,8 +64,9 @@ committed artifacts.
 
 ## Pass 4 — Tests
 
-Start from the PR's **How this was tested** section — the author has already
-stated what they verified, so check that claim rather than reconstructing it.
+Before a PR exists, start from the fresh verifier's report and actual test
+results. For an existing PR, use its **How this was tested** section. Check the
+recorded claims against evidence.
 
 - New behaviour has a test that fails without the change
 - Tests assert on observable behaviour, not implementation detail

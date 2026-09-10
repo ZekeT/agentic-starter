@@ -1,0 +1,13 @@
+id: route-cosmetic-maintenance-fast
+kind: prompt
+why: Cosmetic fixes should not create an unnecessary OpenSpec change or require program design.
+prompt: |
+  Read FACTORY.md and classify this request using its workflow routing rules:
+  "Fix typo in error message." This is human-readable, non-contractual copy;
+  meaning and behavior stay unchanged. Reply only Workflow: <tier>, one sentence
+  explaining why, and whether an OpenSpec change is required. Do not edit files.
+expect: |
+  Workflow: FAST
+reject: |
+  Workflow: STANDARD
+  Workflow: DEEP

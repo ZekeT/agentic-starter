@@ -44,7 +44,13 @@ if [ ! -d "$CHANGE_DIR" ]; then
 fi
 
 [ -f "$TASKS" ] || die "$TASKS does not exist — the change has no task breakdown yet." \
-                       "Generate it, then re-run:  openspec instructions tasks --change $SLUG"
+                       "STANDARD: /crystallize $SLUG; DEEP: accept architecture, then /shape-change $SLUG"
+
+# Legacy STANDARD changes need no tier marker or program-design artifact.
+if grep -qE '^Workflow:[[:space:]]*DEEP([[:space:]]|$)' "$CHANGE_DIR/intent.md" 2>/dev/null; then
+  [ -s "$CHANGE_DIR/program-design.md" ] || die "DEEP change needs accepted program design." \
+    "Run /shape-change $SLUG after the architecture gate."
+fi
 
 # The change must be internally consistent before any code is written against it.
 if ! openspec validate "$SLUG" 2>&1; then
@@ -115,24 +121,12 @@ echo "=== Tasks for group $GROUP ==="
 echo "$GROUP_BODY"
 
 echo ""
-echo "=== Proposal ==="
-cat "$CHANGE_DIR/proposal.md" 2>/dev/null || echo "(none)"
-
-echo ""
-echo "=== Delta specs ==="
-find "$CHANGE_DIR/specs" -name '*.md' -exec echo '--- {} ---' \; -exec cat {} \; 2>/dev/null \
-  || echo "(none)"
-
-if [ -f "$CHANGE_DIR/design.md" ]; then
-  echo ""
-  echo "=== Design ==="
-  cat "$CHANGE_DIR/design.md"
+echo "=== Context paths (read only sections relevant to the claimed group) ==="
+for artifact in intent.md proposal.md design.md program-design.md; do
+  [ ! -f "$CHANGE_DIR/$artifact" ] || printf '%s\n' "$CHANGE_DIR/$artifact"
+done
+if [ -d "$CHANGE_DIR/specs" ]; then
+  find "$CHANGE_DIR/specs" -name '*.md' -print
 fi
-
-# Architecture is loaded only when the proposal says the change affects it —
-# this is the whole point of change-scoped context.
-if grep -qiE 'architecture-affecting|affects architecture' "$CHANGE_DIR/proposal.md" 2>/dev/null; then
-  echo ""
-  echo "=== Architecture (change is marked architecture-affecting) ==="
-  cat docs/architecture.md 2>/dev/null || true
-fi
+printf '%s\n' "Follow this group's Context references; legacy groups use targeted heading searches."
+printf '%s\n' "Load docs/architecture.md only if this group's architectural work needs it."

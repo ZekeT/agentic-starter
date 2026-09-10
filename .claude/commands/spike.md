@@ -42,22 +42,20 @@ bash .harness/scripts/cmd_spike.sh $ARGUMENTS
 
 After the preamble runs:
 
-1. **Interview before you build.** Invoke the **`grilling`** skill and work the
-   design tree in rounds. Most of what looks like a coding question is an
-   undecided requirement, and an interview settles those far faster than a
-   prototype does. Facts are yours to find; decisions are the user's.
-2. Invoke **`domain-modeling`** alongside it. When a term settles, write it to
-   `CONTEXT.md` there and then. When the user's word conflicts with the
-   glossary, say so immediately — that conflict is usually the real question.
+1. Clarify the unresolved question. Invoke **`grilling`** only when the user
+   explicitly requests deep interrogation; ordinary exploration does not need it.
+2. Use **`domain-modeling`** only when terminology or domain boundaries are being
+   designed. An ADR alone does not trigger it. Read existing vocabulary as needed.
 3. **Prototype only what the interview cannot settle.** For each question that
-   genuinely needs running code, invoke the **`prototype`** skill. Throwaway
+   is cheapest to resolve with running code, invoke the **`prototype`** skill. Throwaway
    from day one, no persistence, no tests, no abstractions; surface the state
    after every action so the user can see what changed. Commit prototypes to
    this branch — that is what the branch is for.
 4. **Time-box it and say so.** State up front how long you expect to spend and
    what would make you stop. A spike that cannot answer its question is a
    result: record what you ruled out.
-5. **Write or extend `intent.md`** to the shape in the `explore` skill's
+5. Record `Workflow: DEEP` and a one-sentence `Reason:` naming the uncertainty.
+   **Write or extend `intent.md`** to the shape in the `explore` skill's
    `INTENT-FORMAT.md`. A spike answers *how*, but the change still needs its
    *what* on record, and `/crystallize` reads the Classification line from here.
 6. **Write the ADR** in `docs/decisions/`, following that directory's
@@ -93,7 +91,8 @@ After the preamble runs:
    ```
 
    `/crystallize` finds `intent.md` and `design.md` already written, and builds
-   the proposal, delta specs and tasks around them. Do not write any of those
+   the proposal, delta specs and architectural design around them, then stops
+   at the DEEP architecture gate before `/shape-change` creates final tasks. Do not write any of those
    here.
 
 **Leave `spike/<slug>` unmerged.** It is a primary source, not work in flight:

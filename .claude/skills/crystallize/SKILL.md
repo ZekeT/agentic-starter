@@ -1,85 +1,83 @@
 ---
 name: crystallize
 description: >
-  Turn an accepted `intent.md` into the OpenSpec change artifacts — proposal,
-  delta specs, design, and independently-shippable task groups — ready for
-  /dev-change. Runs after the intent gate, never before it. Trigger on:
-  /crystallize, "write the spec", "turn the intent into a change", "generate
-  the tasks".
+  Turn accepted intent into proposal, delta specs and design. STANDARD also
+  generates task groups; DEEP stops for architecture approval before shape-change.
+  Use /crystallize after the intent gate, never to skip exploration.
 ---
 
 # Crystallize
 
-Announce at start: **"Using crystallize to spec `<slug>`."**
+Announce: **"Using crystallize to spec `<slug>`."**
 
-One stage, one gate: this skill reads an accepted `intent.md` and writes
-`proposal.md`, `specs/`, `design.md` and `tasks.md`. `/explore` wrote the
-intent; `/dev-change` consumes the tasks.
+Read `openspec/changes/<slug>/intent.md` first. If absent or not accepted, stop
+and direct the user to `/explore` and its intent gate. Read only relevant
+canonical capability specs and recorded decisions. Never edit `openspec/specs/`.
 
-## Preflight
+Read the intent's `Workflow:` and `Reason:`. Existing intents without a tier
+remain STANDARD unless new complexity warrants promotion; surface that promotion.
+FAST behavior-neutral work needs no crystallize stage or OpenSpec change.
+Never silently demote DEEP after architectural uncertainty has been identified.
 
-| On disk in `openspec/changes/<slug>/` | Do |
-|---|---|
-| `intent.md`, no `proposal.md` | Proceed. This is the normal case. |
-| `intent.md` **and** `design.md` | A `/spike` settled the *how*. Treat `design.md` as authored: build the specs and tasks around it and extend it if speccing reveals more — never rewrite it. |
-| `proposal.md` already present | The change is already specced. Say so, name its task groups, and stop. |
-| no `intent.md` | Stop. Run `/explore` first — speccing an unaccepted intent skips the gate that makes a bad idea cheap to kill. |
+If `proposal.md` already exists, do not overwrite accepted artifacts. For DEEP
+without final tasks, report the architecture/spec gate and `/shape-change <slug>`.
+For an already populated STANDARD `tasks.md`, report its groups and the next
+`/dev-change` command; it does not need program design. If artifacts are partly
+written, show what is missing and ask whether to resume rather than inventing
+acceptance of unfinished work.
 
-Read `intent.md` before anything else. Its **Classification** line names the
-capability path these deltas attach to, and its **Open questions** are the
-unknowns `design.md` must carry.
+## Generate the shared artifacts
 
-## 1. Generate the artifacts
-
-Delegate generation to OpenSpec rather than hand-rolling it:
+Use OpenSpec's artifact instructions:
 
 ```bash
 openspec instructions proposal --change <slug>
 openspec instructions specs --change <slug>
 openspec instructions design --change <slug>
+```
+
+- `proposal.md`: why, changes, new/modified capabilities, impact. State whether
+  it is architecture-affecting and record the workflow tier.
+- Delta `specs/`: observable requirements and `#### Scenario:` WHEN/THEN cases.
+  Carry requirements from intent and cite the affected current capability.
+- `design.md`: approach, architectural decisions, rejected alternatives,
+  evidence, and surviving unknowns. Preserve and extend an existing spike's
+  findings rather than replacing them. Record durable decisions as ADRs using
+  `docs/decisions/index.md`'s convention when relevant.
+
+For spec-less architecture/tooling work, follow the repository's `skip_specs`
+convention; never invent behavior to appease validation.
+
+## STANDARD: generate tasks
+
+```bash
 openspec instructions tasks --change <slug>
 ```
 
-Follow those instructions, carrying the intent across:
+Create `tasks.md` with `## N.` groups and `- [ ] N.M ...` claims. Each group
+must be a vertical, independently shippable slice: one group = one branch = one
+PR. Include behavior, integration, and tests together. Add a short `Context:`
+list of relevant spec scenarios and design sections per group, plus prerequisite
+groups when applicable. A fresh implementer should need only that group and its
+referenced sections. The group is the plan; do not add a second planning file.
 
-- **`proposal.md`** — why, what changes, capabilities (New/Modified), impact.
-  State explicitly whether the change is **architecture-affecting**;
-  `/dev-change` keys off that to decide whether to load `docs/architecture.md`.
-- **Delta specs** — requirements as observable behaviour, each with at least one
-  `#### Scenario:` block using WHEN/THEN. No internal class or library names.
-- **`design.md`** — the intent's open questions and rejected alternatives, plus
-  how. If a spike already wrote this file, extend it rather than replacing it.
-- **`tasks.md`** — each `## N` group must be **independently shippable**: one
-  group = one branch = one PR under `/dev-change`. If a group can't ship alone,
-  regroup until it can.
+Validate with `openspec validate <slug>`. Present proposal, specs, design and
+task groups at the human gate. Stop and name `/dev-change <slug> 1` as next.
 
-Where the work settled a durable architectural question, also draft
-`docs/decisions/NNNN-slug.md` (Context / Decision / Consequences) and add its row
-to `docs/decisions/index.md`.
+## DEEP: architecture gate before shaping
 
-## 2. Validate
+Generate proposal, delta specs and architectural design only. Do not generate
+final `tasks.md` or run the tasks artifact instruction in this stage.
+`design.md` covers architectural approach and decisions, not implementation by
+file; implementation types, files and test design belong in program design.
 
-```bash
-openspec validate <slug>
-```
+Validate the available change artifacts with `openspec validate <slug>`.
+Missing final tasks is expected at this stage; never manufacture tasks merely
+to mark the change implementation-ready. Report real validation errors.
 
-A change with no spec-level behaviour change (pure refactor, tooling, docs) must
-set `skip_specs: true` in its `.openspec.yaml`. Never invent a requirement just
-to satisfy the validator.
+STOP at the human architecture/spec gate. Present the design, evidence and
+unresolved decisions, then direct the user to `/shape-change <slug>` after
+acceptance. Do not start shaping or implementation yourself.
 
-```bash
-git add openspec/changes/<slug>/ docs/decisions/
-git commit -m "feat(<slug>): proposal, specs, design, tasks"
-```
-
-## 3. Stop at the gate
-
-Report the change slug, its task groups, and any areas of concern. Then stop,
-naming the next command:
-
-```
-/dev-change <slug> 1
-```
-
-**Never run `/dev-change` yourself.** Accepting the spec is the user's gate, and
-implementation begins only on their explicit next instruction.
+Artifact commits require human approval. A new session can begin from these
+accepted artifacts and repository state; it needs no exploration transcript.
