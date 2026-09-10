@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Run repository-local factory tooling without installing a package."""
+
+import sys
+from pathlib import Path
+
+if sys.version_info < (3, 12):
+    sys.exit("Python 3.12+ required. Run: uv run --python 3.12 python factory")
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / ".harness"))
+from factory.cli import main
+
+sys.exit(main())

@@ -30,8 +30,8 @@ from pathlib import Path
 # Checked before importing tomllib, not after: tomllib is 3.11+, so on an older
 # interpreter the import itself raises and the user gets a ModuleNotFoundError
 # traceback instead of this message. Many systems still ship python3 as 3.9.
-if sys.version_info < (3, 11):
-    print("Error: Python 3.11+ required (tomllib is stdlib from 3.11).")
+if sys.version_info < (3, 12):
+    print("Error: Python 3.12+ required by the factory (tomllib is stdlib from 3.11).")
     print(f"       Running under {sys.version.split()[0]} ({sys.executable}).")
     print("       Try: uv run python .harness/scripts/migrate_to_framework.py ...")
     sys.exit(1)
@@ -43,6 +43,9 @@ STARTER_DIR = Path(__file__).parent.parent.parent
 
 # ── files to copy: starter-relative → target-relative ────────────────────────
 FILES_TO_COPY: dict[str, str] = {
+    "factory": "factory",
+    ".harness/docs/maintainability.md": ".harness/docs/maintainability.md",
+    **{f".harness/factory/{name}.py": f".harness/factory/{name}.py" for name in ("__init__", "cli", "config", "source", "growth")},
     ".claude/hooks/pre_tool_dangerous.py": ".claude/hooks/pre_tool_dangerous.py",
     ".claude/hooks/pre_tool_env_guard.py": ".claude/hooks/pre_tool_env_guard.py",
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
@@ -137,7 +140,7 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
         "# --- Formatter + linter (format, imports, unused code, docstrings) ---\n"
         "[tool.ruff]\n"
         "line-length = 88\n"
-        'target-version = "py311"\n'
+        'target-version = "py312"\n'
         "\n"
         "[tool.ruff.lint]\n"
         "# E501 is deliberately absent: the formatter owns line length.\n"
@@ -153,7 +156,7 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
     "tool.mypy": (
         "# --- Type checker ---\n"
         "[tool.mypy]\n"
-        'python_version = "3.11"\n'
+        'python_version = "3.12"\n'
         "strict = true\n"
         "ignore_missing_imports = true\n"
     ),
@@ -390,9 +393,9 @@ def preflight_checks(target: Path, starter: Path, force: bool) -> Preflight:
                 "was not finished. Merge or delete it before re-running."
             )
 
-    if sys.version_info < (3, 11):
+    if sys.version_info < (3, 12):
         pf.blockers.append(
-            f"Python {sys.version_info.major}.{sys.version_info.minor} — 3.11+ required."
+            f"Python {sys.version_info.major}.{sys.version_info.minor} — 3.12+ required."
         )
 
     if not (target / "pyproject.toml").exists():
@@ -1422,6 +1425,10 @@ def run_migration(
     report.makefile_targets_added = patch_makefile(target, dry)
 
     if not dry:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from factory.config import initialize_manifest
+
+        initialize_manifest(target)
         save_migration_report(target, report)
         save_template_version_stamp(target, report)
 

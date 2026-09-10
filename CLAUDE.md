@@ -38,6 +38,8 @@ before committing. Run `make fmt` again if later edits need formatting.
 - **Never read `.env`.** Read `.env.template` for variable names; use
   `os.environ` or settings objects. Never bypass security/env/git hooks.
 
+Source growth follows [.harness/docs/maintainability.md](.harness/docs/maintainability.md).
+
 ## Simplicity and retrieval
 
 Build the minimum solution. No speculative features, single-use abstractions,

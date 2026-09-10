@@ -83,4 +83,7 @@ setup:
 # Starter-repo only: tests of the maintainer scripts. Explicit path, and
 # addopts cleared because the shipped --cov=src does not apply here.
 harness-test:
+	uv run ruff check .harness/factory
+	uv run ruff format --check .harness/factory
+	uv run mypy .harness/factory
 	uv run pytest .harness/tests -o addopts="" -q

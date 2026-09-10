@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -80,6 +81,7 @@ def check_fixture(tmp_path: Path) -> dict[str, str]:
         bin_dir / "uv",
         """printf '%s\n' "$*" >> "$CHECK_CALLS"
 case "$*" in
+  *"factory maintainability"*) echo growth-detail; echo growth-stderr >&2; exit "${GROWTH_STATUS:-0}" ;;
   *--fix*|*"ruff format src"*) echo "mutating command" >&2; exit 97 ;;
   *pytest*) echo test-output; exit "${PYTEST_STATUS:-0}" ;;
   *ruff*) echo format-or-lint-output; exit "${RUFF_STATUS:-0}" ;;
@@ -110,6 +112,7 @@ def test_make_check_preserves_test_failures(
             "✓ lint",
             "✓ types",
             "✓ tests",
+            "✓ maintainability",
             "✓ feature-docs",
         ]
     calls = (tmp_path / "calls").read_text()
@@ -125,6 +128,81 @@ def test_format_failure_stops_before_tests_without_fixing(tmp_path: Path) -> Non
     assert proc.returncode != 0 and "✗ format" in proc.stderr
     assert source.read_text() == "x=  1\n"
     assert "pytest" not in (tmp_path / "calls").read_text()
+
+
+def test_growth_failure_retains_output_and_stops_gate(tmp_path: Path) -> None:
+    env = check_fixture(tmp_path)
+    env["GROWTH_STATUS"] = "8"
+    proc = run(["make", "check"], tmp_path, env=env)
+    assert proc.returncode != 0
+    assert "✗ maintainability" in proc.stderr
+    assert "growth-detail" in proc.stderr and "growth-stderr" in proc.stderr
+    assert "✓ feature-docs" not in proc.stdout
+
+
+def test_migrated_python311_project_uses_separate_factory_runtime(
+    tmp_path: Path,
+) -> None:
+    python311 = shutil.which("python3.11")
+    uv = shutil.which("uv")
+    if not python311 or not uv:
+        pytest.skip("Requires Python 3.11 and uv for the legacy environment fixture")
+    env = check_fixture(tmp_path)
+    pyproject = tmp_path / "pyproject.toml"
+    original = (
+        '[project]\nname="legacy"\nversion="0.1"\nrequires-python=">=3.11,<3.12"\n'
+    )
+    pyproject.write_text(original)
+    run([python311, "-m", "venv", "--without-pip", ".venv"], tmp_path, check=True)
+    config = tmp_path / ".venv/pyvenv.cfg"
+    original_config = config.read_bytes()
+    sys.path.insert(0, str(ROOT / ".harness/scripts"))
+    from migrate_to_framework import copy_framework_files, patch_pyproject
+    from factory.config import initialize_manifest
+
+    copy_framework_files(tmp_path, ROOT, False, False)
+    patch_pyproject(tmp_path, False)
+    initialize_manifest(tmp_path)
+    migrated_project = pyproject.read_bytes()
+    assert pyproject.read_text().startswith(original)
+    run(["git", "init", "-b", "main"], tmp_path, check=True)
+    run(["git", "add", ".harness", "factory"], tmp_path, check=True)
+    run(
+        [
+            "git",
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "commit",
+            "--allow-empty",
+            "-m",
+            "baseline",
+        ],
+        tmp_path,
+        check=True,
+    )
+    # Stub project checks, but execute the actual factory command through real uv.
+    env.update(
+        REAL_UV=uv,
+        UV_CACHE_DIR=str(tmp_path / "uv-cache"),
+        UV_PYTHON_DOWNLOADS="never",
+        HARNESS_BASE_BRANCH="main",
+        VIRTUAL_ENV=str(tmp_path / ".venv"),
+    )
+    stub(
+        tmp_path / "bin/uv",
+        """case "$*" in
+  *"factory maintainability"*) exec "$REAL_UV" "$@" ;;
+esac
+""",
+    )
+    proc = run(["make", "check"], tmp_path, env=env)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "✓ maintainability" in proc.stdout
+    assert config.read_bytes() == original_config
+    assert pyproject.read_bytes() == migrated_project
+    assert not (tmp_path / "uv.lock").exists()
 
 
 def test_feature_docs_gate_is_stateless_and_respects_source_root(

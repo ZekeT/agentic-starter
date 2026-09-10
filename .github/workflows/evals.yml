@@ -11,7 +11,11 @@ on:
       - "CLAUDE.md"
       - "REVIEW.md"
       - ".claude/**"
-      - ".harness/evals/**"
+      - ".harness/**"
+      - "factory"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Makefile"
       - ".harness/setup.sh"
       - "openspec/config.yaml"
       - ".harness/template-manifest.json"
@@ -25,10 +29,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       # The runner is Linux (GNU sed); the eval that checks BSD/GNU sed
       # portability is a static grep, so it is dialect-independent.
@@ -39,8 +45,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: astral-sh/setup-uv@v5
+
+      # Exercise migration from a real 3.11 environment to separate factory tooling.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: |
+            3.11
+            3.12
 
       - name: Install
         run: uv sync --all-extras
