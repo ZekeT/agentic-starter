@@ -3,6 +3,13 @@
 # Referenced in CLAUDE.md so agents always use these targets.
 # ============================================================
 
+# harness-test shells out to `make check` from inside pytest, which inherits
+# MAKELEVEL from this process — GNU Make auto-prints Entering/Leaving
+# directory lines for any sub-make (MAKELEVEL > 0), which breaks tests that
+# assert on exact stdout. Suppress it and export so it's inherited.
+MAKEFLAGS += --no-print-directory
+export MAKEFLAGS
+
 .PHONY: install fmt lint test check clean evals evals-full manifest setup harness-test
 
 # Source directory — override with: make fmt SRC=mypackage
