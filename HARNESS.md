@@ -11,6 +11,8 @@ Bootstrap instructions are in [setup](.harness/docs/setup.md).
 |---|---|
 | `/explore`, `/crystallize`, `/shape-change` | `.claude/skills/<name>/SKILL.md` |
 | `/dev-change`, `/review`, `/commit-push-pr`, `/archive-change`, `/spike` | `.claude/commands/<name>.md` and `.harness/scripts/cmd_<name>.sh` (hyphens become underscores) |
+| `/graft` | Upstream generated skill; `.harness/bin/graft` selects the isolated pinned CLI |
+| Independent maintainability review | `.claude/agents/maintainability-reviewer.md`; fresh context, read-only |
 | Independent verifier | `.claude/agents/verifier.md`; fresh context, read-only |
 | Conditional security review | `.claude/agents/security-reviewer.md` |
 | Git/base/task helpers | `.harness/scripts/lib/change.sh` |
@@ -28,6 +30,77 @@ The verifier discovers its own context from slug + group, or branch name for
 FAST. No implementation reasoning is passed. Use a fresh agent/session in the
 same checkout or claimed worktree; artifacts remain sufficient on other runtimes.
 The definitions pin no model and inherit the invoking session's selection.
+
+## Application navigation with `/graft`
+
+Install Node.js 22.12+ and run `make graft-install`. This installs a locked CLI in
+`.harness/graft`, previews the unchanged upstream skill, then installs that skill
+and appends missing cache ignore rules without hooks, MCP, statusline changes or global agent configuration. Restart the
+agent session if needed to discover `/graft`. Add the local launcher to the agent
+shell before invoking the skill:
+
+```bash
+export PATH="$PWD/.harness/bin:$PATH"
+```
+
+Use `/graft` for the main application
+implementation, excluding factory and harness tooling. For example, invoke:
+
+```text
+/graft Find where the application validates incoming requests.
+/graft Show callers of validate_request without refreshing the graph.
+```
+
+Set `project.navigation.application_roots` in `.harness/template-manifest.json`
+to the actual application directories, for example `["src"]` or `["app", "lib"]`.
+The starter ships an empty list. Roots must exclude factory/harness tooling,
+including tooling nested inside an otherwise selected directory. Roots containing
+visible `factory/` or `harness/` subdirectories are rejected; select narrower
+application roots instead. The launcher
+passes these roots as upstream `--only-dir` options on every build. After changing
+application roots, the implementer must run `graft build` before review. Upstream
+owns fingerprint selection and validation; the wrapper does not inspect those
+files. A check uses the last-built scope and does not detect manifest scope changes:
+
+```bash
+graft build
+```
+
+Its ignored `graft/` directory is a local, regenerable cache. Structural builds
+need no model credentials; `--deep` enrichment is optional and outside required
+checks. The launcher disables `.env` loading and query auto-refresh. Use `graft build
+--deep` only when explicitly choosing model-backed enrichment.
+
+Run targeted tests, then prepare the graph before independent review. Reviewers
+check freshness and disable automatic refresh on every query:
+
+```bash
+graft check
+graft ask "Where are requests validated?" --source
+graft callers validate_request
+```
+
+For an on-demand review report, use `graft blast --base origin/main --format
+markdown` (substitute the configured review base). Optional visual exports use
+the upstream visualization CLI outside the required read-only review commands.
+No committed graph or export is required.
+
+A missing or stale application graph returns to the implementer for preparation;
+reviewers never install, build or refresh it. Use targeted retrieval and relevant
+impact evidence for review. Graph output supports navigation; source, accepted
+design and behavioral checks remain necessary. Factory workflow boundaries apply
+when using the upstream skill, including its examples that normally auto-refresh.
+
+The local `graft check` gates structural freshness using the pinned CLI's JSON
+report. Stale optional summaries or deep content are reported without blocking;
+use source for current behavior. Enrichment is preserved, and refreshing it with
+`graft build --deep` remains optional. Missing graphs, structural drift and
+invalid upstream check results still fail.
+
+When no application sources are configured, report **not applicable: no application
+sources configured**. This starter currently has no application implementation;
+validate navigation with an application fixture, and review factory/harness code
+directly. This disposition does not skip growth checks or behavioral verification.
 
 ## Git mechanics
 
@@ -153,8 +226,8 @@ use narrow descriptions rather than global instructions to load them.
 Superpowers is optional and remains installed if already present. Only selected
 engineering techniques are relevant; its overlapping workflow responsibilities
 are excluded by the factory policy. Measure actual technique usage before
-considering removal. Graphify is an optional external tool for broad architecture
-queries when a graph exists; it is never a mandatory first step.
+considering removal. Use `/graft` for application navigation as described above. Factory workflow
+boundaries take precedence over upstream skill suggestions to auto-refresh.
 
 `make manifest` records hashes for template-owned instructions, factory docs,
 scripts, and evals. `setup-update` uses that history to distinguish pristine

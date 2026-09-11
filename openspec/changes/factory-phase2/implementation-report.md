@@ -164,3 +164,278 @@ rerun or a remote CI verdict. The prior review also independently ran 70 targete
 integration tests successfully. Groups 2–4 remain unimplemented. The user's
 shipping request authorizes committing, pushing, and opening the group 1 PR;
 it does not authorize merging or archiving.
+
+## Group 2 feasibility checkpoint — 2026-09-11
+
+Group 2 remains incomplete and uncommitted. Removed the paused custom CODEMAP
+implementation and restored its unshipped integration edits, preserving the
+merged growth checker, revised Graft planning documents and reusable reviewer.
+
+Installed published `@nanonets/graft@0.18.0` in a disposable directory under
+`/private/tmp`, isolated from application dependencies. npm reports Node >=20;
+installation and CLI help succeeded with the available Node 25 runtime.
+No repository skill installation or global Graft configuration was performed.
+
+Release validation found a coverage blocker: `graft build --help` explicitly
+states that dot-directories are never overridable. The published
+`dist/ingest/fs.js` implements that exclusion before checking include overrides.
+A direct invocation of `shouldSkipDir(".harness", new Set([".harness"]))`
+returned `true`. Thus the proposed repository-root graph omits factory source
+under `.harness`, contrary to task 2.2's hidden-harness coverage requirement.
+CLI inspection used `DOTENV_CONFIG_PATH=/dev/null` to avoid loading `.env`.
+
+Implementation is paused for the user's decision on this incompatibility.
+Suggested direction: retain Graft, but seek an upstream hidden-directory opt-in
+before making its graph a required factory review gate. No full fixture build,
+freshness/mutation verification, full gates or independent group 2 reviews are
+claimed by this checkpoint.
+
+### Scope decision addendum — 2026-09-11
+
+The user clarified that navigation must exclude factory/harness tooling and focus
+on the main project implementation. This resolves the hidden-directory coverage
+blocker above. Planning and the navigation delta now require application coverage
+and tooling exclusion. Release integration remains unverified; no additional
+build, installation or gate result is claimed.
+
+## Group 2 implementation evidence — 2026-09-11
+
+### Delivered behavior and files
+
+Replaced paused custom CODEMAP work with the unchanged upstream `/graft` skill
+and `@nanonets/graft@0.18.0`, locked separately under `.harness/graft`. The local
+`.harness/bin/graft` launcher delegates through `factory navigation` to the thin
+`graft.py` boundary. Skill installation previews writes, refuses customized skill
+replacement, and appends missing ignore rules while preserving existing content.
+It never runs upstream `init` or adds hooks, MCP or global agent configuration.
+
+`project.navigation.application_roots` explicitly selects application inputs;
+the starter's list is empty. Build/check report not applicable here. Python
+application fixtures exercise real structural graphs, including exclusion of
+visible and hidden harness tooling. Review commands force no refresh and disable
+`.env` loading. Missing/incompatible dependencies, missing/stale application
+graphs and changed application scope produce failures with remediation.
+
+Added fresh read-only maintainability review between graph preparation and the
+behavioral verifier. Updated CLAUDE/FACTORY/HARNESS/REVIEW and command/agent
+instructions, setup guidance, migration packaging and CI preparation. HARNESS.md
+includes `/graft` installation, PATH, scope, build and retrieval examples.
+Template inventory includes 101 files; upstream generated skill/cache are ignored
+and excluded from template ownership.
+
+### Implementer validation
+
+- Real Graft fixtures: 18 tests cover structural Python scope, read-only retrieval,
+  missing/stale graphs (including preserved file size/mtime), changed scope,
+  empty application scope, dependency errors, unsupported Node, environment and
+  alternate-root bypass rejection, skill preview/idempotence/customization,
+  settings/instruction preservation and ignore-rule append behavior.
+- Graft plus migration regression run: 86 tests passed. Earlier manifest,
+  migration and growth regression run: 124 tests passed.
+- Static evals: 16/16 passed. Focused prompt eval 106: passed after an approved
+  rerun with Claude authentication; the sandboxed run reported not logged in.
+  Six unrelated prompt evals were not run.
+- Factory lint/type checks passed. Strict OpenSpec validation and diff whitespace
+  checks passed. Starter navigation build/check both reported the accepted
+  no-application disposition, rather than claiming a real starter graph build.
+- Fresh maintainability review and independent full-gate verification are pending;
+  task 2.5 remains unchecked. No commit or PR has been created.
+
+### Compatibility adjustments and limits
+
+The user approved application-only scope, the no-application disposition, and
+skill-only installation because the upstream Claude installer disregards its
+no-hooks option. The lockfile requires Node 22.12+ through Commander 15, stricter
+than Graft's advertised Node 20+; the launcher and docs enforce the actual minimum.
+Local release fixtures used Node 25; CI is configured for Node 22, with no remote
+CI result claimed. Only structural navigation is required; deep enrichment and
+visual exports are optional and not exercised. The upstream CLI may check for
+new package versions and maintain its own machine-level update cache; it does
+not install global agent configuration through this integration. Tests assert
+repository source/config/graph preservation, not absence of upstream version
+checks. Doctor and shared ownership/adoption/update remain groups 3 and 4.
+
+### Independent review and verification corrections — 2026-09-11
+
+Fresh maintainability reviewer returned:
+
+```text
+PASS
+
+No maintainability concerns requiring review.
+```
+
+The first independent verifier passed make check, make harness-test (222 tests),
+and make evals (16 static cases), but returned FAIL after a real fixture showed
+that `application_roots=["src"]` included `src/harness/tool.py`. The boundary now
+rejects roots containing visible factory/harness subdirectories and requests
+narrower roots, with regression coverage for both names and successful narrowed
+application builds. This is a scope-enforcement fix, not a change to the accepted
+application-only requirement.
+
+A separate implementer correction preserves explicit provider settings only for
+optional `build --deep`; default structural commands still strip Graft overrides.
+Its environment regression uses fixture placeholders and makes no model calls.
+Manual real-fixture `blast --format markdown` succeeded on an edited Python source
+and preserved repository source/config/cache bytes. Full independent verification
+of these corrections is pending; no shipping approval is implied.
+
+### Final boundary correction — 2026-09-11
+
+The verifier subsequently returned PASS on the nested-tooling corrections,
+including make check, make harness-test (226 tests), 16 static evals, focused
+prompt eval 106, independent non-mutating nested-tooling rejection and a
+committed-change blast fixture. The verifier corrected an overly specific test
+assertion about plural wording; no corresponding implementation defect existed.
+
+After that tree, final dependency inspection showed dotenv merges CLI settings
+after environment settings, so a query argument beginning `dotenv_config_` could
+override the disabled dotenv path. The launcher now rejects those arguments
+before upstream execution and removes the optional dotenv vault key from the
+child environment. No `.env` file was read to validate this: a placeholder
+argument and environment contract test exercise the rejection. The current
+Graft suite passes 23 tests. Fresh reviews of this final correction are pending.
+
+### Group 2 completion and final independent verdict — 2026-09-11
+
+Fresh maintainability review of the final correction again returned PASS with
+no concerns requiring review. Task group 2 is complete, including its report;
+groups 3 and 4 remain pending. Changes are uncommitted on
+`feat/factory-phase2-g2`, awaiting human `/review` before `/commit-push-pr`.
+No canonical specs were edited, and nothing was committed, pushed or archived.
+
+Final verifier report, verbatim:
+
+```text
+Verification — factory-phase2, group 2
+
+Ran on current `feat/factory-phase2-g2`:
+- `.harness/bin/graft check`: exit 0; accepted no-application disposition.
+- `make check`: exit 0.
+- `make harness-test`: exit 0; lint, formatting, types and 227 tests passed.
+- `make evals`: exit 0; 16/16 static cases passed.
+- `git diff --check`: exit 0.
+- Template hash verification: exit 0; all 101 match.
+
+Checked against:
+- Navigation scenarios, installation preservation, dependency validation, application coverage, tooling exclusion, freshness and non-mutating retrieval: HOLDS.
+- Latest dotenv override hardening and nested-tooling regressions: HOLDS.
+- Reviewer restrictions, completion ordering, FAST handling and packaging: HOLDS.
+- Prior independent focused prompt evaluation and committed-change impact/non-mutation fixture remain applicable and passed.
+
+Mismatches: None remaining.
+
+Not covered: Six unrelated prompt evals, remote Node 22 CI, optional model enrichment and visualization exports. Starter navigation correctly reports no application sources; real graph behavior is exercised through fixtures.
+
+Verdict: PASS.
+```
+
+Only this report and the task checklist changed after the verifier's final checks;
+strict OpenSpec validation and diff whitespace checks were repeated for that
+reporting update. HARNESS.md contains the installed `/graft` usage instructions.
+
+### Human-review P2 correction: structural gate after enrichment — 2026-09-11
+
+Human review reproduced a successful structural rebuild followed by a failing
+check because upstream also gates stale optional summaries. The user approved
+adapting the check to distinguish structural drift from optional enrichment.
+
+The launcher now consumes the pinned CLI's `check --json` report. Missing wiring,
+added/removed/changed structural nodes, malformed reports and inconsistent process
+statuses fail. Stale optional summaries and deep content are reported without
+blocking a structurally current graph. Checks preserve enrichment and remain
+read-only; no deep build or model access is introduced. HARNESS.md and the active
+navigation delta scenario document this distinction.
+
+Verification performed by the implementer on this correction:
+- Pinned Graft integration suite: 28 passed. A fixture seeds prior summaries,
+  edits source, observes structural failure, rebuilds structurally, then observes
+  success with a non-blocking stale-summary message. Snapshot comparisons confirm
+  checks preserve source/config/cache bytes and retain summaries.
+- Additional fixtures cover stale deep content, added/removed source and an
+  upstream execution failure from invalid wiring. Existing missing-cache,
+  changed-source and scope tests continue to pass.
+- `make harness-test`: exit 0; lint, formatting, strict types and 232 tests passed.
+- `make check`: exit 0; all six gates passed.
+- `make evals`: exit 0; 16 static cases passed, seven prompt cases skipped.
+- `make manifest`: exit 0; refreshed the 101-file manifest.
+- `.venv/bin/python factory navigation check`: exit 0, accepted no-application
+  disposition. `openspec validate factory-phase2 --strict`: passed.
+- `git diff --check`: passed.
+
+Not covered: live model enrichment, remote Node 22 CI and prompt eval reruns.
+Enrichment state is seeded in disposable fixtures, with actual pinned upstream
+build/check processing. Earlier independent reviewer/verifier PASS reports predate
+this correction; fresh independent review is still required before shipping.
+Nothing was committed, pushed or archived.
+
+### Accepted review correction: upstream-owned fingerprints — 2026-09-11
+
+The user chose to remove wrapper fingerprint validation rather than select a
+fingerprint through another internal upstream API. Graft owns fingerprint
+selection and validation, including coexistence of extractor versions. The
+wrapper retains application-root validation, missing-graph diagnostics and the
+structural freshness gate. After changing application roots, the implementer must
+explicitly build before review: upstream checks the last-built scope and does not
+detect changes to the manifest's roots. HARNESS.md, design, program design and the
+navigation delta record this accepted tradeoff.
+
+Validation: the pinned Graft integration suite passed all 30 tests. New fixtures
+verify successful read-only checks and queries with two fingerprints after a
+rebuild, and verify an explicit build applies changed roots and excludes the old
+scope. Ruff lint, Ruff formatting and mypy passed for .harness/factory.
+
+Not covered: fresh independent maintainability/verifier verdicts, live model
+calls and remote CI. This targeted correction does not replace those required
+independent verdicts. Nothing was committed, pushed or archived.
+
+### Fresh independent verification after review corrections — 2026-09-12
+
+Fresh agents independently discovered factory-phase2 group 2 from the checkout,
+without implementation-session history. The maintainability reviewer completed
+first, followed by the behavioral verifier. Both returned PASS on the current
+implementation, including the structural/enrichment correction and accepted
+removal of wrapper fingerprint inspection.
+
+Maintainability evidence:
+- Confirmed feat/factory-phase2-g2 and merge base
+  339d8f80e30d3e1b8e333ef320d939720fe85793; included untracked files.
+- `uv run --no-project --isolated --python 3.12 python factory maintainability --verbose`:
+  exit 0, no pathological growth. Migration script and Graft test file produced
+  non-blocking size warnings; 10 non-Python files were reported unanalyzed.
+- `.harness/bin/graft check`: exit 0, accepted no-application disposition.
+- Verdict: PASS; no maintainability concerns requiring review.
+
+Independent verifier report:
+
+```text
+Verification — factory-phase2, group 2
+Ran:
+- .harness/bin/graft check: exit 0; accepted no-application disposition.
+- make check: exit 0.
+- make harness-test: exit 0; 234 tests passed.
+- make evals: exit 0; 16/16 static cases passed.
+- Focused prompt eval 106: exit 0; 1/1 passed.
+- git diff --check: exit 0.
+- Independent manifest assertions: all 101 hashes match.
+
+Checked against:
+- Claimed branch and group 2 installation, scope, lifecycle, packaging and reviewer contracts: HOLDS.
+- Multiple upstream fingerprints accepted without wrapper inspection: HOLDS.
+- Changed application roots require explicit build; check uses last-built scope: HOLDS.
+- Structural drift fails; stale optional enrichment remains nonblocking: HOLDS.
+- Application retrieval and read-only source/config/cache preservation: HOLDS.
+- Existing growth checks and dependency/configuration regression paths: HOLDS.
+
+Mismatches: None found.
+Not covered: Six unrelated prompt cases, remote Node 22 CI execution, actual
+model-backed deep enrichment and visualization exports. Application graphs were
+exercised in disposable integration fixtures; the starter has no configured
+application sources. Initial sandbox cache/auth failures resolved with escalation.
+Verdict: PASS.
+```
+
+These verdicts supersede the earlier pending-verification notes for group 2.
+Only this report and tasks.md were updated afterward to record the results.
+The implementation remains uncommitted for human /review; groups 3 and 4 remain
+pending. No source, canonical specs, commits, pushes or archive state changed.

@@ -32,7 +32,11 @@ checkout is sufficient; no particular runtime's context-forking feature is neede
 
 ## Independent full gate
 
-1. Run `make check`. It is non-mutating: formatting failures are failures to
+1. Run `.harness/bin/graft check`; never build or refresh navigation. The launcher
+   disables query auto-refresh. No configured application sources reports not
+   applicable; factory/harness changes still require direct source verification.
+   Missing/stale required application graphs return to the implementer.
+   Run `make check`. It is non-mutating: formatting failures are failures to
    report, not permission to run `make fmt`. Record actual output and exit status.
 2. Verify every relevant delta-spec scenario and every completed task claim for
    the selected group. For FAST, use the discovered diff and existing contracts.

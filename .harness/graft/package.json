@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "dependencies": {
+    "@nanonets/graft": "0.18.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "name": "factory-navigation-tools"
+}

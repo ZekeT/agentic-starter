@@ -42,7 +42,7 @@ count; ordinary multiline string data and executable code on docstring lines do.
 Python is the v1 supported language. Other detected source languages are reported
 as unanalyzed. Git-tracked and non-ignored untracked Python files include hidden
 harness tooling. Deleted files, virtual environments, caches, node_modules,
-vendor/vendored directories and generated CODEMAP data are excluded. Generated
+vendor/vendored directories and generated Graft cache data are excluded. Generated
 Python, fixtures, migrations and schemas can use reasoned path exceptions; there
 is no blanket exemption based on an easy-to-add inline magic comment.
 

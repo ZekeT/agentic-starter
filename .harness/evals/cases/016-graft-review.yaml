@@ -1,0 +1,30 @@
+id: application-navigation-review-boundary
+kind: static
+why: >
+  Application navigation must ship its isolated dependency and preserve fresh,
+  non-mutating maintainability and behavioral review boundaries.
+shell: |
+  python3 - <<'PY'
+  import json
+  from pathlib import Path
+  manifest = json.loads(Path('.harness/template-manifest.json').read_text())
+  package = json.loads(Path('.harness/graft/package.json').read_text())
+  lock = json.loads(Path('.harness/graft/package-lock.json').read_text())
+  assert package['dependencies']['@nanonets/graft'] == '0.18.0'
+  assert lock['packages']['node_modules/@nanonets/graft']['version'] == '0.18.0'
+  for name in ('.harness/bin/graft', '.harness/graft/package.json', '.harness/graft/package-lock.json', '.claude/agents/maintainability-reviewer.md'):
+      assert name in manifest['files'], name
+  assert '.claude/skills/graft/SKILL.md' not in manifest['files']
+  reviewer = Path('.claude/agents/maintainability-reviewer.md').read_text()
+  for text in ('tools: Bash, Read, Grep', 'readonly: true', 'CONCERNS', 'M1', 'Why it matters:', 'Suggested direction:', 'not applicable:', '.harness/bin/graft check'):
+      assert text in reviewer, text
+  flow = Path('.claude/commands/dev-change.md').read_text()
+  assert flow.index('.harness/bin/graft build') < flow.index('**`maintainability-reviewer`**') < flow.index('**`verifier`**')
+  assert 'FAST may' in Path('FACTORY.md').read_text()
+  harness = ' '.join(Path('HARNESS.md').read_text().split())
+  for text in ('/graft Find', 'application_roots', 'make graft-install', 'no application sources configured'):
+      assert text in harness, text
+  ci = Path('.github/workflows/evals.yml').read_text()
+  assert ci.index('.harness/bin/graft build') < ci.index('.harness/bin/graft check')
+  assert 'factory map' not in Path('HARNESS.md').read_text()
+  PY

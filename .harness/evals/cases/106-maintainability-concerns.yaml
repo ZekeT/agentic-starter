@@ -1,0 +1,28 @@
+id: concrete-maintainability-concerns
+kind: prompt
+why: >
+  The maintainability reviewer should identify missed reuse and design drift
+  with a concrete consequence and suggestion, without editing or inventing abstractions.
+prompt: |
+  Read .claude/agents/maintainability-reviewer.md. For this isolated output-format
+  evaluation, use only the following supplied review evidence, not the actual
+  branch or repository implementation. Do not execute commands or edit files
+  beyond reading those reviewer instructions.
+
+  Accepted design: reuse users/identity.py canonicalize_user_id(value), which
+  returns value.strip().lower(). The change diff adds normalize_user_id(value)
+  with identical value.strip().lower() implementation at users/service.py:20,
+  and calls it for the same user identifiers. Existing nearby source confirms
+  canonicalize_user_id is public and used for that purpose. Static checks and
+  application Graft freshness passed; no size issue exists. No semantic distinction or
+  accepted exception is documented.
+
+  Return the reviewer's concise verdict and any concrete concerns. Avoid
+  speculative interfaces or extra services.
+expect: |
+  CONCERNS
+  M1
+  users/service.py
+  canonicalize_user_id
+reject: |
+  ^PASS

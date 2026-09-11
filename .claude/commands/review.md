@@ -26,6 +26,10 @@ to relitigate what the gate decides. Use the fresh verifier's result for this br
 fresh verification before approval. For FAST, verify the diff and existing
 behavior contracts without requiring an OpenSpec change or task group.
 
+Also check the independent maintainability verdict and disposition of any
+CONCERNS under REVIEW.md. Use the local Graft launcher for read-only application
+evidence; never rebuild a missing/stale graph during review.
+
 Produce: Summary / Must Fix / Should Fix / Notes / Verdict.
 
 For security-sensitive changes, also dispatch the `security-reviewer` agent.

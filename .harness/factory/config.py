@@ -66,9 +66,9 @@ def load_config(root: Path) -> Config:
     merged = dict(DEFAULTS)
     for section in ("defaults", "project"):
         group = object_value(data.get(section, {}), section)
-        if set(group) - {"maintainability"}:
+        if set(group) - {"maintainability", "navigation"}:
             raise ValueError(
-                f"Unknown {section} configuration: {sorted(set(group) - {'maintainability'})}"
+                f"Unknown {section} configuration: {sorted(set(group) - {'maintainability', 'navigation'})}"
             )
         values = object_value(
             group.get("maintainability", {}), section + ".maintainability"

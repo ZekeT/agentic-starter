@@ -42,6 +42,9 @@ VERSION_PATH = ROOT / ".harness" / "TEMPLATE_VERSION"
 # copied into a downstream project.
 MANIFEST_FILES = [
     "factory",
+    ".harness/bin/graft",
+    ".harness/graft/package.json",
+    ".harness/graft/package-lock.json",
     ".harness/docs/maintainability.md",
     "CLAUDE.md",
     "REVIEW.md",

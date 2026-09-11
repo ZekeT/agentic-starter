@@ -56,24 +56,45 @@ Group 1 review fixes (2026-09-11):
 - These are implementer checks after review fixes, not a new independent
   verifier report. Changes remain uncommitted.
 
-## 2. Ship CODEMAP navigation and independent maintainability review
+## 2. Ship Graft navigation and independent maintainability review
 
-Branch: `feat/factory-phase2-g2`. Prerequisite: group 1 merged.
-Shipping boundary: usable map/map --check, checked-in navigation, and the complete
-new review sequence. Analyzer, renderer, annotations, reviewer, docs, packaging,
-and tests ship together so completion instructions point only to available tools.
+Branch: `feat/factory-phase2-g2`. Prerequisite: group 1 merged (satisfied).
+Navigation revision accepted 2026-09-11. This replaces the uncompleted custom
+CODEMAP plan; no earlier CODEMAP test run counts as Graft integration evidence.
+Shipping boundary: validated upstream Graft skill/CLI, local-cache lifecycle,
+reviewer, documentation, packaging and tests ship together. No committed map,
+in-house graph schema/analyzer/renderer, or factory map command is required.
 
 Context:
-- specs/factory-codemap/spec.md: all requirements
+- specs/factory-navigation/spec.md: all requirements
 - specs/factory-maintainability/spec.md: Code-shape planning and narrow independent review; Maintainability joins existing completion boundaries
-- design.md: Source graph and navigation; Maintainability review and lifecycle
-- program-design.md: Source and graph contracts; Group 2; Test design
+- design.md: Graft navigation and review evidence; Maintainability review and lifecycle
+- program-design.md: Source counting and Graft contracts; Group 2; Test design
 
-- [ ] 2.1 Add graph records, Python AST symbol/import/entry-point analysis and supported call resolution; verify semantic fixtures including ambiguous imports and unsupported dynamic targets without executing fixture source.
-- [ ] 2.2 Add annotation validation and compact Markdown/Mermaid rendering with navigation sections, bounded diagrams and physical/code metrics; verify required headings, escaped labels, omitted external nodes, and disclosed graph limits.
-- [ ] 2.3 Expose factory map and non-mutating map --check, generate the starter graph/CODEMAP, and document source-of-truth hierarchy and targeted retrieval; verify repeated byte stability and stale/missing artifact failures without writes.
-- [ ] 2.4 Add the fresh read-only maintainability reviewer and integrate tests → map → maintainability → verifier → human review; verify restricted inputs/tools, PASS/CONCERNS output, FAST exceptions, and architectural drift coverage through static and focused prompt evals where necessary.
-- [ ] 2.5 Refresh packaging, navigation and relevant human review docs, run targeted tests/formatting, and obtain independent maintainability and verifier evidence from map --check, make check, make harness-test, and applicable evals; append the group’s implementation report and stop uncommitted for human review.
+- [x] 2.1 Remove the paused custom CODEMAP navigation implementation, generated artifacts, annotations and integrations while retaining merged growth checks and reusable reviewer work; verify the diff contains no unrelated reversions and no active CODEMAP command/schema dependencies.
+- [x] 2.2 Select and validate a pinned Graft release with Node.js 22.12+ tooling (the locked dependency minimum) isolated from application dependencies, then install its unchanged upstream /graft skill directly from the package template through previewed repository-local wiring (do not run upstream init); verify application Python coverage and exclusion of factory/harness tooling, no automatic hooks, preserved instructions/statusline and no global configuration writes on a disposable fixture.
+- [x] 2.3 Integrate explicit structural builds, non-mutating freshness checks and non-refreshing reviewer queries; document the local ignored cache, optional deep enrichment and on-demand impact/visualization evidence; verify no model credentials are required, read-only queries preserve source/config/cache bytes, and absent application scope reports not applicable.
+- [x] 2.4 Complete the fresh read-only maintainability reviewer and tests → Graft build → maintainability → verifier → human review sequence; verify restricted inputs/tools, PASS/CONCERNS output, FAST exceptions, actionable drift findings and missing-cache disposition through static and focused prompt evals where necessary.
+- [x] 2.5 Refresh packaging and navigation/review guidance (including /graft usage in HARNESS.md), remove obsolete CODEMAP CI checks, prepare Graft’s local cache in CI, and obtain independent maintainability/verifier evidence from graft check, make check, make harness-test and applicable evals; append actual group results to implementation-report.md and stop uncommitted for human review.
+
+
+Group 2 final verification (2026-09-11):
+The evidence below predates the human-review P2 correction. See the latest
+implementation-report.md entry for the structural/enrichment gate correction and
+its verification; earlier independent verdicts do not cover that correction.
+- Fresh maintainability review: PASS on the final tree.
+- Fresh verifier: PASS; make check, make harness-test (227 tests), make evals
+  (16 static cases), diff whitespace and all 101 template hashes passed.
+- Focused prompt eval 106 and independent impact/non-mutation fixture passed.
+- The nested-tooling finding was fixed and re-verified. Final regressions also
+  cover dotenv override rejection; no unresolved mismatch remains.
+- Starter Graft build/check report the accepted no-application disposition;
+  actual application graphs are exercised in disposable fixtures.
+- Six unrelated prompt cases, remote Node 22 CI, optional deep enrichment and
+  visualization exports were not exercised. See implementation-report.md for
+  cumulative evidence, corrections and the final verifier report.
+- Group 2 remains uncommitted on feat/factory-phase2-g2 for human review.
+  Groups 3 and 4 remain unchecked.
 
 ## 3. Ship deterministic installation diagnosis
 
@@ -88,10 +109,10 @@ Context:
 - design.md: Doctor, dogfooding, and validation
 - program-design.md: Group 3; Integration boundaries; Test design
 
-- [ ] 3.1 Implement doctor diagnostics for current manifest/version, directories, command/hook wiring, executable bits, OpenSpec, git protections, configuration/exception paths, map freshness and eval configuration; verify each failure category in independent filesystem fixtures.
-- [ ] 3.2 Expose factory doctor and integrate it into make check/CI without recursion, while retaining stale-map warning semantics; verify no source writes, no project-command execution, and no environment-secret reads.
+- [ ] 3.1 Implement doctor diagnostics for current manifest/version, directories, command/hook wiring, executable bits, OpenSpec, git protections, configuration/exception paths, Graft availability/version/wiring/cache freshness and eval configuration; verify each failure category in independent filesystem fixtures.
+- [ ] 3.2 Expose factory doctor and integrate it into make check/CI without recursion, while retaining stale-cache warning semantics; verify no source writes, no project-command execution, and no environment-secret reads.
 - [ ] 3.3 Dogfood ordinary installation health against the starter, update lifecycle documentation and manifest packaging, and add credential-free static doctor evals; verify healthy/stale/broken fixtures and starter doctor results.
-- [ ] 3.4 Run targeted tests/formatting, refresh map and manifest, then obtain fresh maintainability and verifier evidence from doctor, map --check, make check, make harness-test and make evals; append the group’s implementation report and stop uncommitted for human review.
+- [ ] 3.4 Run targeted tests/formatting, build the Graft structural cache and refresh the manifest, then obtain fresh maintainability and verifier evidence from doctor, graft check, make check, make harness-test and make evals; append the group’s implementation report and stop uncommitted for human review.
 
 ## 4. Ship shared safe adoption, update, and ownership migration
 
@@ -112,6 +133,16 @@ Context:
 - [ ] 4.4 Implement explicit apply with clean committed Git preflight, changed-input detection, all-conflict validation, state handling, doctor and recovery reporting; verify zero writes on preflight failure and honest reporting of write/postcheck failures.
 - [ ] 4.5 Replace legacy migration/update execution paths with shared-engine adapters, retaining supported argument forms and rejecting unsafe force behavior; verify old/new entry-point agreement and replace only tests for intentionally changed overwrite contracts.
 - [ ] 4.6 Convert the starter inventory and mixed-ownership regions, activate doctor baseline validation, set completed template version 2.0.0 and make manifest refresh behavior; verify ordinary starter doctor health, deterministic regeneration and install/update fixture round trips.
-- [ ] 4.7 Update FACTORY/HARNESS/setup/review documentation and lifecycle diagrams, refresh map and manifest, and verify command instructions plus managed dependency completeness through static evals.
-- [ ] 4.8 Run targeted tests and formatting, obtain fresh maintainability review and verifier evidence covering doctor, map --check, make check, make harness-test and full static/behavioral evals; report actual gaps and stop uncommitted for human review.
+- [ ] 4.7 Update FACTORY/HARNESS/setup/review documentation and lifecycle diagrams, build the Graft structural cache and refresh the manifest, and verify command instructions plus managed dependency completeness through static evals.
+- [ ] 4.8 Run targeted tests and formatting, obtain fresh maintainability review and verifier evidence covering doctor, graft check, make check, make harness-test and full static/behavioral evals; report actual gaps and stop uncommitted for human review.
 - [ ] 4.9 Append group 4 results and the final Phase 2 acceptance summary to implementation-report.md, retaining the earlier group reports and listing delivered behavior, files, evidence, limitations, deferred work and deviations; verify every acceptance claim against recorded results without changing canonical specs or archiving implicitly.
+
+Group 2 accepted fingerprint correction (2026-09-11): wrapper fingerprint
+inspection removed by user decision; upstream owns cache selection/validation.
+Application-root changes require an explicit build before review. The navigation
+delta and design document the tradeoff. All 30 pinned Graft integration tests and
+factory lint/format/type checks passed. Fresh independent verdicts on 2026-09-12:
+maintainability PASS; verifier PASS. make check, 234 harness tests, 16 static evals,
+focused prompt eval 106, all 101 template hashes and whitespace checks passed.
+See the latest implementation-report.md entry for coverage gaps. Group 2 remains
+uncommitted for human /review; groups 3 and 4 remain pending.

@@ -43,7 +43,7 @@ There is no OpenSpec archive step for FAST.
 | `/crystallize` STANDARD | `proposal.md`, delta `specs/`, `design.md`, `tasks.md` | Accept before `/dev-change <slug> <group>` |
 | `/crystallize` DEEP | `proposal.md`, delta `specs/`, architectural `design.md`; no final tasks | Accept architecture/spec before `/shape-change <slug>` |
 | `/shape-change` DEEP | `program-design.md`, `tasks.md` | Accept program design and vertical slices before implementation |
-| `/dev-change` | Code, tests, completed claims in the selected task group | Fresh verifier, then human `/review`; stop uncommitted |
+| `/dev-change` | Code, tests, completed claims in the selected task group | Graft preparation, fresh maintainability reviewer and verifier, then human `/review`; stop uncommitted |
 | `/commit-push-pr` | Commit and PR after the final full gate | Human authorizes shipping and merges the PR |
 | `/archive-change` | Delta specs merged into canonical specs; change folder archived | All groups merged, then human confirms the proposed spec diff |
 
@@ -89,6 +89,15 @@ FAST. It discovers evidence independently, runs the full deterministic gate,
 checks every relevant scenario and completed task claim, exercises changed
 behavior and the nearest regression paths, and reports PASS/FAIL without edits.
 If something cannot be exercised, report the gap rather than claim success.
+
+STANDARD/DEEP completion follows targeted tests → Graft structural build → fresh
+maintainability review → fresh verifier → human review. The maintainability
+reviewer receives only slug + group, returns PASS/CONCERNS, and never fixes code.
+Resolve concerns or obtain explicit human disposition before proceeding. FAST may
+skip semantic maintainability review; deterministic growth checks remain required.
+Application-only navigation and its no-application disposition are documented in
+[HARNESS.md](HARNESS.md#application-navigation-with-graft). Tooling changes still
+receive source review.
 
 Use targeted tests during implementation. Run `make fmt` before verification
 (and again if subsequent edits require it). The normal full-suite sequence is

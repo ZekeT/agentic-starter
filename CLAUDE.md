@@ -40,6 +40,12 @@ before committing. Run `make fmt` again if later edits need formatting.
 
 Source growth follows [.harness/docs/maintainability.md](.harness/docs/maintainability.md).
 
+Application navigation uses `/graft`; setup and read-only commands are in
+[HARNESS.md](HARNESS.md#application-navigation-with-graft). Use the local launcher
+(`export PATH="$PWD/.harness/bin:$PATH"`) so the pinned CLI and non-refreshing
+queries apply. Factory workflow gates take precedence over upstream skill
+instructions to auto-refresh or use Graft for tooling outside application scope.
+
 ## Simplicity and retrieval
 
 Build the minimum solution. No speculative features, single-use abstractions,

@@ -1,10 +1,12 @@
 """Command-line boundary for deterministic factory tooling."""
 
 import argparse
+import subprocess
 import sys
 import tokenize
 from pathlib import Path
 
+from . import graft
 from .config import load_config
 from .growth import check_growth
 
@@ -18,6 +20,8 @@ def main(argv: list[str] | None = None) -> int:
         "--root", type=Path, default=Path(__file__).resolve().parents[2]
     )
     sub = parser.add_subparsers(dest="command", required=True)
+    navigation = sub.add_parser("navigation", help="Pinned application-only Graft CLI")
+    navigation.add_argument("arguments", nargs=argparse.REMAINDER)
     growth = sub.add_parser("maintainability", help="Check Python code-line growth")
     growth.add_argument("--base", help="Comparison branch (uses its merge base)")
     growth.add_argument(
@@ -29,6 +33,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "navigation":
+            return graft.run(root, args.arguments)
         config = load_config(root)
         if not config.enabled:
             print("⚠ maintainability: explicitly disabled by project configuration")
@@ -52,6 +58,11 @@ def main(argv: list[str] | None = None) -> int:
             f"{'✗' if failed else '✓'} maintainability: {'pathological growth detected' if failed else 'no pathological file growth'} (warn={config.warn_file_lines}, max={config.max_file_lines}, growth={config.substantial_growth_lines})"
         )
         return int(failed)
-    except (OSError, ValueError, tokenize.TokenError) as exc:
-        print(f"✗ maintainability: {exc}", file=sys.stderr)
+    except (
+        OSError,
+        ValueError,
+        tokenize.TokenError,
+        subprocess.CalledProcessError,
+    ) as exc:
+        print(f"✗ {args.command}: {exc}", file=sys.stderr)
         return 1

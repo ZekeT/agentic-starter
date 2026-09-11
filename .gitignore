@@ -23,6 +23,12 @@ coverage.xml
 # Graphify output — generated, never committed
 graphify-out/
 
+# Graft's application graph, local settings, generated skill and isolated CLI.
+/graft/
+/.graft/
+/.harness/graft/node_modules/
+/.claude/skills/graft/
+
 # IDE
 .idea/
 .vscode/
