@@ -88,7 +88,7 @@ and meaningless file fragmentation.
 - **THEN** it reports PASS with a concise explanation
 
 ### Requirement: Maintainability joins existing completion boundaries
-STANDARD and DEEP completion SHALL run targeted tests, map refresh, maintainability
+STANDARD and DEEP completion SHALL run targeted tests, Graft structural build, maintainability
 review, fresh behavioral verification, and human review in that order. Concerns
 SHALL return to the implementer or human. FAST SHALL permit skipping semantic
 maintainability review, while deterministic growth checks remain in the full gate.

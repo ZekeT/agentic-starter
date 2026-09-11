@@ -44,8 +44,9 @@ STARTER_DIR = Path(__file__).parent.parent.parent
 # ── files to copy: starter-relative → target-relative ────────────────────────
 FILES_TO_COPY: dict[str, str] = {
     "factory": "factory",
+    **{path: path for path in (".harness/bin/graft", ".harness/graft/package.json", ".harness/graft/package-lock.json", ".claude/agents/maintainability-reviewer.md")},
     ".harness/docs/maintainability.md": ".harness/docs/maintainability.md",
-    **{f".harness/factory/{name}.py": f".harness/factory/{name}.py" for name in ("__init__", "cli", "config", "source", "growth")},
+    **{f".harness/factory/{name}.py": f".harness/factory/{name}.py" for name in ("__init__", "cli", "config", "source", "growth", "graft")},
     ".claude/hooks/pre_tool_dangerous.py": ".claude/hooks/pre_tool_dangerous.py",
     ".claude/hooks/pre_tool_env_guard.py": ".claude/hooks/pre_tool_env_guard.py",
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
@@ -176,6 +177,12 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
 MAKEFILE_MARKER = "# ---- Agentic Engineering (added by migrate_to_framework.py) ----"
 
 MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
+    "graft-install": (
+        "graft-install:\n"
+        "\tnpm ci --prefix .harness/graft --no-audit --no-fund\n"
+        "\t@.harness/bin/graft install-skill\n"
+        "\t@.harness/bin/graft install-skill --apply\n"
+    ),
     "install": "install:\n\tuv sync --all-extras\n",
     "fmt": (
         "fmt:\n"

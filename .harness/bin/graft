@@ -1,0 +1,4 @@
+#!/bin/sh
+# Select factory Python independently of the downstream application's runtime.
+root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+exec uv run --no-project --isolated --python 3.12 python "$root/factory" navigation "$@"

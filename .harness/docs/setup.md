@@ -19,7 +19,7 @@ for OpenSpec.
 
 OpenSpec owns the document lifecycle: `openspec/specs/` is the living statement
 of what the system currently does, and `openspec/changes/<slug>/` holds work in
-flight. It is a **Node** CLI, the one non-Python dependency in an otherwise
+flight. It is a **Node** CLI, a non-Python dependency in an otherwise
 uv-managed harness.
 
 ```bash
@@ -38,6 +38,18 @@ this template: `openspec/`, `.claude/commands/opsx/`, and
 hand. Both `scripts/generate_template_manifest.py` and the `setup-update` skill
 exclude these paths explicitly, so template updates and OpenSpec updates never
 fight over the same file.
+
+### Application navigation (Graft)
+
+Install Node.js 22.12+ and run `make graft-install` after bootstrap or migration.
+For older installations whose Makefile lacks that target, run `npm ci --prefix
+.harness/graft --no-audit --no-fund`, then `.harness/bin/graft install-skill` to
+preview and `.harness/bin/graft install-skill --apply` to apply. This adds the
+unchanged upstream skill and missing cache ignore rules, preserving existing
+hooks, instructions, statusline and customized skill content. No global agent
+configuration is installed. Set the application roots and agent PATH as described
+in [HARNESS.md](../../HARNESS.md#application-navigation-with-graft). Graph
+preparation is not applicable until application sources are configured.
 
 ### Optional Superpowers techniques
 

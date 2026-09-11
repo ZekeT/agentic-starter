@@ -62,6 +62,17 @@ and behavior remain unchanged. Contractual output changes require STANDARD.
 - Did anything edit `openspec/specs/` directly? That is always wrong outside
   `/archive-change`.
 
+## Maintainability evidence
+
+For STANDARD/DEEP, require a fresh maintainability reviewer’s PASS or explicit
+human disposition of CONCERNS. Compare accepted Code Shape with relevant source,
+nearby modules, and application Graft evidence; report structural drift with
+location, consequence and a specific direction. Missing/stale required graphs
+return to the implementer. With no application sources configured, navigation is
+not applicable and tooling is reviewed directly. FAST may skip the semantic
+reviewer; growth checks remain required. See
+[maintainability policy](.harness/docs/maintainability.md).
+
 ## Pass 4 — Tests
 
 Before a PR exists, start from the fresh verifier's report and actual test

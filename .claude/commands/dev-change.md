@@ -64,7 +64,11 @@ After the preamble runs:
 8. Use targeted tests while coding. Run `make fmt` before verification and
    inspect the changes. Do not run the full `make check` immediately before
    dispatching the verifier; it owns that independent full gate.
-9. Dispatch the **`verifier`** subagent. Fresh context, so its verdict is not
+9. Prepare application navigation with `.harness/bin/graft build`. With no
+   configured application sources, record its not-applicable disposition.
+   Dispatch a fresh **`maintainability-reviewer`** with only slug + group. Resolve
+   CONCERNS or obtain explicit human disposition; never ask it to edit or rebuild.
+   Then dispatch the **`verifier`** subagent. Fresh context, so its verdict is not
    coloured by the assumptions that produced the code — this session has
    already convinced itself. Give it **only the change slug and group number**,
    never implementation

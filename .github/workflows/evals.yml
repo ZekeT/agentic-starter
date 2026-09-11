@@ -10,6 +10,8 @@ on:
     paths:
       - "CLAUDE.md"
       - "REVIEW.md"
+      - "HARNESS.md"
+      - "FACTORY.md"
       - ".claude/**"
       - ".harness/**"
       - "factory"
@@ -59,6 +61,19 @@ jobs:
 
       - name: Install
         run: uv sync --all-extras
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Graft skill and isolated CLI
+        run: make graft-install
+
+      - name: Prepare application navigation
+        run: .harness/bin/graft build
+
+      - name: Check application navigation
+        run: .harness/bin/graft check
 
       - name: make check
         run: make check

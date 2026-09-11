@@ -31,11 +31,7 @@ All Python runtime modules live in `.harness/factory/`, imported by a thin root
 | `config.py` | Manifest schema, defaults, project overrides and validation | `load_config(root)`, `validate_config(root, data)` |
 | `source.py` | Safe repository source inventory and Python code-line counting | `discover_sources(root)`, `count_python(source) -> LineCounts` |
 | `growth.py` | Merge-base comparison, rename mapping, threshold decisions | `check_growth(root, config, base) -> list[GrowthFinding]` |
-| `graph.py` | Normalized source-graph records and stable serialization | `CodeGraph`, `serialize_graph(graph)` |
-| `python_analysis.py` | AST symbols, imports and entry points | `analyze_python(root, sources) -> CodeGraph` |
-| `call_edges.py` | Resolve supported local imports/calls without dynamic guesses | `resolve_edges(graph, syntax) -> list[CallEdge]` |
-| `map_render.py` | Markdown/Mermaid navigation from graph and annotations | `render_map(graph, annotations) -> str` |
-| `codemap.py` | Compose analysis, rendering, refresh and non-mutating check | `build_map(root, config)`, `refresh_map(...)`, `check_map(...)` |
+| `graft.py` | Thin pinned-CLI invocation and non-mutating freshness diagnostics; no source analysis | `run(root, args)`, `application_roots(root)`, `install_skill(root, apply=...)` |
 | `doctor.py` | Independent installation checks and remediation | `diagnose(root) -> list[Diagnostic]` |
 | `ownership.py` | Managed paths, section extraction and structural JSON rules | `validate_ownership(...)`, `owned_content(...)`, `merge_owned(...)` |
 | `installation.py` | Versioned baseline state, fingerprint validation | `load_state(root)`, `build_state(...)` |
@@ -63,9 +59,9 @@ application boundary used by adoption and update.
 
 ### Expected implementation footprint
 
-Approximately 15–20 runtime/launcher files across the complete change, plus
+Approximately 10–15 runtime/launcher files across the complete change, plus
 focused test modules, one reviewer definition, one policy document, and generated
-graph/map artifacts. Existing workflow, packaging, runtime, and CI files receive
+upstream Graft skill wiring. Graft caches remain ignored local artifacts. Existing workflow, packaging, runtime, and CI files receive
 localized integrations. Each group below names its subset; this is not a demand
 to create every possible module regardless of need.
 
@@ -89,9 +85,9 @@ The maintainability object exposes `enabled`, `warn_file_lines=300`,
 paths must remain inside the repository. Source scope identifies Python v1 and
 documented exclusions; unsupported languages are visible, not implicitly checked.
 
-CODEMAP configuration owns module responsibility/contract annotations, navigation
-entries, and bounded graph settings. Validate annotation paths and referenced
-navigation destinations; machine-generated symbols remain outside configuration.
+Factory configuration records only the tested Graft dependency/integration
+contract. Graft owns navigation settings, symbols and graph storage; remove
+`project.codemap` and do not introduce a replacement annotation schema.
 
 `Diagnostic` contains a stable code, severity, optional path, explanation, and
 remediation. `GrowthFinding` contains current/base paths, available code counts,
@@ -99,25 +95,34 @@ growth, status, and exception reason. CLI exit codes: 0 for success with possibl
 warnings, 1 for failed checks/conflicts, and 2 for invalid invocation. Errors
 never disappear behind quiet output; library functions do not terminate Python.
 
-### Source and graph contracts
+### Source counting and Graft contracts
 
-`LineCounts` separates physical LOC and code LOC. Token and AST positions must
-exclude only docstring tokens, not executable statements sharing the same line.
-Support Python source encodings using standard-library source decoding.
+Preserve `LineCounts` and the existing token/AST code-line accounting unchanged.
+Graft replaces only navigation analysis. No factory-owned graph records, renderer,
+Mermaid escaping layer, source-hash cache or semantic annotation system is needed.
 
-Graph schema version 1 contains `modules`, `symbols`, `imports`, `calls`, and
-`entrypoints`, plus analysis diagnostics. Module IDs use relative POSIX paths;
-symbol IDs combine path and qualified name. Edges identify source and target,
-source location, relationship kind, and confidence. Internal module resolution
-requires an unambiguous mapping; duplicate script basenames must not create false
-edges. Signatures preserve positional/keyword structure, defaults and annotations
-where available. Do not execute imports, source, annotations, or build scripts.
+The small Graft boundary calls the upstream executable using argument arrays and
+an explicit repository root. It never invokes a shell with interpolated input.
+Capture exit status and actionable stderr; missing/incompatible executables are
+errors, not successful empty navigation. Keep version pinning separate from the
+application package manifest. Validate the selected executable/package once
+installed; do not fetch packages implicitly from doctor or reviewer commands.
 
-Sort serialized records by stable keys. Render safe Mermaid identifiers derived
-from IDs and escape labels/table cells. Graph limits must disclose omissions.
-No supported entry points means an explicit empty-state explanation, not an
-invented request flow. Refresh validates all input before replacing artifacts;
-check mode computes expected bytes without writing either artifact.
+Expose upstream `/graft` and CLI guidance with this lifecycle contract:
+- Implementer: explicit structural build after targeted tests.
+- Reviewer: `graft check`, plus queries with `--no-refresh` or
+  `GRAFT_NO_REFRESH=1`; never build, enrich, install, or refresh.
+- CI: install the pinned dependency, prepare its local cache, then test freshness
+  and integration without LLM credentials.
+- Human review: relevant on-demand impact output or optional visualization export,
+  not a mandatory checked-in CODEMAP diff.
+
+Obtain the unchanged skill from the pinned package’s skill template; preview writes and
+validate disabled hooks, preserved statusline, repository-local scope and no
+implicit global configuration. Keep safety/lifecycle instructions in the factory
+rather than forking upstream skill content. Graft’s own versioned configuration
+and cache stay under its ownership. Integration tests must prove that querying
+with refresh disabled leaves cache, source and configuration unchanged.
 
 ### Ownership and plan contracts
 
@@ -125,8 +130,9 @@ Manifest entries keep full-file distribution hashes and add explicit ownership
 mode and, where needed, named section metadata. Distribution hashes verify
 template contents; installation fingerprints describe the actual managed scope.
 Neither manifest nor state fingerprints itself. Project fields remain outside
-factory metadata replacement. Generated CODEMAP is derived target content, not
-an upstream map copied from the starter.
+factory metadata replacement. Graft cache content is derived locally and never fingerprinted or copied from
+the starter. Track only explicitly owned integration wiring; preserve existing
+Graft configuration and report incompatible versions or ownership conflicts.
 
 `Plan` records template/target roots, target Git baseline, observed input hashes,
 actions, conflicts, and detections. Actions use ADD/MERGE/PRESERVE/CONFLICT/SKIP
@@ -155,22 +161,31 @@ full-repository inspection warns on sizes with unknown history; normal diff
 verification fails visibly if a requested comparison base cannot be resolved.
 
 Ship the short policy and Code Shape template extension here. The semantic
-reviewer and map completion instructions join together in group 2 so commands
+reviewer and Graft completion instructions join together in group 2 so commands
 never refer to an unavailable stage. Upgrade active Python metadata, lockfile,
 CI, bootstrap checks, and emitted migration defaults together.
 
-### Group 2: Navigation and independent maintainability review
+### Group 2: Graft navigation and independent maintainability review
 
-Safe inventory → Python analysis → resolved supported edges → normalized graph
-→ annotation-enriched Markdown/Mermaid. `factory map --check` compares both
-artifacts; `factory map` refreshes them. Then add the read-only reviewer and
-completion sequence to dev/review/verifier guidance. The new reviewer receives
-slug/group or branch identity only and discovers static evidence independently.
+First reconcile the uncommitted custom CODEMAP attempt: remove its navigation
+modules, generated files, annotation settings, tests and command integrations,
+while preserving group 1 source/growth code and reusable reviewer work. Scope this
+cleanup to this branch’s CODEMAP additions; do not reset unrelated user edits.
+
+Validate a pinned Graft release on a disposable fixture before wiring the starter.
+Then add `/graft`, dependency setup, structural build/read-only retrieval guidance,
+and the maintainability reviewer. Existing task group/branch identity remains
+`factory-phase2`, group 2; no new parallel change framework is introduced.
+
+Flow: targeted tests → Graft structural build → maintainability review → fresh
+behavioral verifier → human review. Supply identifiers to fresh reviewers, never
+implementation-session reasoning. Report concerns and missing evidence explicitly.
+Append actual group results and deviations to implementation-report.md.
 
 ### Group 3: Installation diagnosis
 
 Doctor reads installed manifest/version → required structure and hook/settings
-checks → configuration/exception validation → map freshness → findings. Register
+checks → configuration/exception validation → Graft dependency/wiring/freshness → findings. Register
 only checks for functionality actually shipped at this stage. Baseline ownership
 state is not made mandatory before group 4 installs it. Integrate doctor into
 make check and CI without invoking make check from doctor.
@@ -218,11 +233,11 @@ pytest markers and test conventions.
 | Thresholds | 300/301, 500/501, and 149/150 boundaries; project override; disabled policy |
 | Growth | New 900-line file fails; existing 900 unchanged passes; 700→950 fails; staged/unstaged/untracked; rename |
 | Exceptions | 1500-line generated fixture; duplicate/missing/escaping/wildcard paths; empty reasons; invalid types |
-| Graph | Classes/functions/method signatures/import aliases/relative imports/entry points/basic calls; ambiguous targets omitted |
-| Rendering | Required headings, no external primary nodes, escaped labels, graph limits and disclosed omissions |
-| Map check | Stable output bytes; stale/missing graph or Markdown; no writes on check or analysis failure |
+| Graft navigation | Real pinned-release fixture covers application Python sources, excludes factory/harness tooling, and checks public surfaces, retrieval and impact evidence; do not retest every upstream parser |
+| Graft integration | Previewed local wiring, preserved instructions/statusline, hooks disabled, no global agent configuration changes, isolated dependency |
+| Graft checks | Missing executable, incompatible release, missing/stale cache; read-only queries/checks preserve source/config/cache bytes |
 | Reviewer | Read-only tools, restricted inputs, exact PASS/CONCERNS contract, concrete drift output in a prompt eval where useful |
-| Doctor | Missing commands/hooks; invalid manifest/config; absent protections; stale map warning; normal starter health |
+| Doctor | Missing commands/hooks; invalid manifest/config; absent protections; stale Graft cache warning; normal starter health |
 | Adoption | Plan writes nothing; canonical make check and instructions preserved; Python/non-Python detections; unknown commands |
 | Update | Four-way fingerprint table, convergence, local deletion, upstream removal, legacy unknown hashes, section preservation |
 | Apply | Dirty target refusal; conflict preflight writes nothing; changed inputs rejected; failures report recovery paths |
@@ -241,7 +256,7 @@ Do not weaken checks to get starter dogfooding to pass.
 Retain existing manifest OpenSpec ownership exclusions, migration/update safety,
 base selection, feature-doc checks, shell portability, quiet failure propagation,
 root instruction size budget, static eval credentials, and verifier independence.
-Regenerate the template manifest after owned changes, and refresh CODEMAP after
+Regenerate the template manifest after owned changes, and build the Graft structural cache after
 targeted implementation tests once group 2 has shipped. Fresh verification owns
 the full gate; broaden testing only for changed behavior or unresolved failures.
 
@@ -260,9 +275,10 @@ groups and the human-approved canonical spec diff.
 
 ## Least-confident decisions
 
-- Import/call resolution in standalone scripts is inherently approximate. Start
-  with provable local mappings, label approximations, and test ambiguous names;
-  a richer resolver is deferred, not a reason to invent graph edges.
+- Graft’s published release, application-only scope and installation side
+  effects need fixture validation. Select a pinned release and verify integration
+  before adopting it; if it cannot satisfy the approved boundaries, stop and
+  present evidence instead of restoring an in-house analyzer implicitly.
 - Legacy arbitrary instruction/Makefile structure may prevent a clean bounded
   merge. The accepted fallback is a conflict with remediation; fixtures must
   prove preservation before extending the recognized patterns.
@@ -273,3 +289,37 @@ groups and the human-approved canonical spec diff.
 These are bounded implementation risks with accepted safe outcomes, not unresolved
 architecture choices. If evidence invalidates an accepted boundary, stop and
 present the issue, consequence, and suggested revision before proceeding.
+
+### Application-only navigation scope — 2026-09-11
+
+The user clarified that Graft graphs cover the main project implementation only.
+Exclude factory and harness tooling, including tooling outside hidden directories.
+Use upstream scope controls to select application source roots; do not infer graph
+scope from dot-directory exclusion alone. This does not narrow source-growth
+enforcement or independent source review of factory changes.
+
+No-application behavior accepted 2026-09-11: when no application sources are
+configured, report `not applicable: no application sources configured`. Validate
+Graft against an application fixture; retain tooling growth and behavioral gates.
+Document `/graft` usage in HARNESS.md.
+
+### Approved skill-only integration — 2026-09-11
+
+Graft 0.18.0's Claude installer adds hooks despite `--no-hooks`. The user approved
+installing only its unchanged upstream skill and isolated CLI. Preview skill
+installation, preserve customized skill files, and do not run upstream `init`.
+The generated skill stays upstream-owned and ignored; `make graft-install`
+regenerates it from the locked package without hooks, MCP or global agent wiring.
+
+The factory's `.harness/bin/graft` launcher delegates through `factory navigation`
+to the thin `graft.py` boundary. `project.navigation.application_roots` in the
+existing manifest records the explicit application input list (empty in this
+starter), forwarded as upstream `--only-dir` options. Graft still owns all graph
+and cache formats. The launcher checks the pinned release, disables dotenv and
+query refresh. Upstream owns fingerprint selection and validation; the wrapper
+does not inspect fingerprint files. Changing application roots requires an
+explicit build before review because upstream checks the last-built scope.
+This input list is not an alternate graph/configuration store. Supported review
+commands are check, ask, grep, skeleton, callers, map and blast; structural build
+and explicit optional `build --deep` belong to the implementer. Upstream visual
+exports remain optional, outside the required read-only command surface.

@@ -6,7 +6,7 @@ content and making every installation mutation reviewable and recoverable.
 ## ADDED Requirements
 
 ### Requirement: Unified versioned factory tooling
-Doctor, map, adopt, and update SHALL share one consistent interface and the
+Doctor, maintainability, adopt, and update SHALL share one consistent interface and the
 existing manifest/version convention. Factory tooling and project configuration
 SHALL require Python 3.12+. Existing migration/update entry points SHALL use the
 same lifecycle decisions and explain incompatible legacy options. No alternate
@@ -24,7 +24,7 @@ entry point SHALL bypass project-ownership preservation.
 Doctor SHALL validate manifest parsing and version, required directories,
 commands, hook wiring, relevant executable bits, OpenSpec structure, gitignore
 and environment protections, managed metadata consistency, maintainability
-configuration and exceptions, CODEMAP configuration, and eval configuration.
+configuration and exceptions, Graft dependency/wiring configuration, and eval configuration.
 Findings SHALL include severity and remediation. Doctor SHALL NOT mutate source
 or invoke the full gate. The starter SHALL pass as an ordinary installation.
 
@@ -37,8 +37,8 @@ or invoke the full gate. The starter SHALL pass as an ordinary installation.
 - **THEN** doctor fails with an actionable diagnostic
 
 #### Scenario: Stale navigation
-- **WHEN** CODEMAP is stale but installation structure is valid
-- **THEN** doctor reports a warning directing the user to refresh the map
+- **WHEN** the local Graft graph is stale but installation structure is valid
+- **THEN** doctor reports a warning directing the user to rebuild the local structural graph
 
 ### Requirement: Explicit ownership and preserved project configuration
 Managed content SHALL have explicit full-file or bounded ownership and upstream
@@ -103,7 +103,7 @@ Adopt/update apply SHALL require a clean committed Git target unless an equally
 safe recovery path is explicitly implemented. Plans SHALL reject unsafe paths,
 symlink escapes, and malformed ownership regions. Applied changes SHALL remain
 uncommitted, with recovery baseline and affected paths reported. Successful apply
-SHALL run doctor and report relevant map/eval follow-up. Failed postchecks or
+SHALL run doctor and report relevant Graft freshness/eval follow-up. Failed postchecks or
 partial writes SHALL be reported as failures, not successful installation.
 
 #### Scenario: Dirty target
@@ -122,7 +122,7 @@ partial writes SHALL be reported as failures, not successful installation.
 Static evals and fixture tests SHALL cover invalid doctor inputs, safe adoption
 planning, instruction preservation, fingerprint update outcomes, and starter
 health. Static evaluation SHALL require no credentials. Maintainer documentation
-SHALL describe manifest refresh, map refresh/check, doctor, full gates, and evals
+SHALL describe manifest refresh, Graft structural build/check, doctor, full gates, and evals
 without recursive command dependencies.
 
 #### Scenario: Credential-free lifecycle validation
