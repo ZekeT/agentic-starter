@@ -52,6 +52,21 @@ After the preamble runs:
 5. As each task completes, tick its checkbox in `openspec/changes/<slug>/tasks.md`
    (`- [ ]` → `- [x]`), and update the task text in the same commit if
    implementation departed from it (see CLAUDE.md **Rules**).
+   Maintain `openspec/changes/<slug>/implementation-report.md` for every change
+   implemented through this command, creating it if absent. The implementing
+   session owns this report. Append dated entries as meaningful actions finish:
+   implementation changes and their reasons, checks and observed outcomes,
+   failed attempts and corrections, review findings and their resolution, and
+   blockers or explicit human decisions. Include the branch and task group in
+   each entry. Keep entries concise; summarize routine actions together rather
+   than logging every tool call. Preserve earlier entries and append corrections
+   or superseding results so the history remains visible. `tasks.md` remains
+   the authority for task completion.
+   When beginning or resuming implementation, overwrite
+   `openspec/changes/<slug>/verification-report.md` with a pending handoff for
+   this branch and group, after preserving any prior reports in the history.
+   This file holds only the latest review cycle; an older PASS must not remain
+   presented as current while new work is underway.
 6. If this group adds a feature directory under `src/`, or changes what an
    existing one is for, write or update that directory's own `CLAUDE.md` in the
    same commit — purpose, entry points, invariants, gotchas; ~30 lines. This is
@@ -75,9 +90,30 @@ After the preamble runs:
    reasoning, a summary, or a narrative. It discovers artifacts itself, runs
    the full deterministic `make check`, exercises changed behavior, and reports mismatches without fixing anything. A FAIL is yours
    to resolve now: either the code is wrong or the delta spec is (step 7).
+   Append each independent report verbatim to `implementation-report.md` when
+   received, including FAIL or CONCERNS reports and subsequent reruns. Identify
+   the reviewer role, date, reviewed branch and task group, coverage gaps, and
+   any explicit human disposition of concerns. Keep reviewer agents read-only;
+   the implementing session records their outputs. Reports supplied by the user
+   from separate sessions must be attributed as such, without inventing missing
+   evidence. If implementation changes after a review, record which evidence
+   is superseded and obtain fresh affected reviews before claiming readiness.
+   Update `verification-report.md` after each result, replacing its contents
+   with the current cycle's complete handoff. Include date, slug, group, branch,
+   reviewed HEAD, scope of staged/unstaged/untracked changes, and separate
+   maintainability and verifier sections containing their outputs verbatim.
+   Mark missing results PENDING and invalidated results STALE; retain actual
+   FAIL/CONCERNS verdicts and explicit human dispositions. Include coverage gaps
+   and a link to `implementation-report.md` for history. Record changes made
+   after the reviews so `/review` can assess freshness; HEAD alone does not
+   identify reviewed uncommitted work. Updating this evidence or completion
+   checkboxes alone does not require a new verification cycle.
+   Mark the verification task complete only when its requirements are satisfied.
 10. Worktree mode only: call `ExitWorktree` with `action: "keep"`.
 11. **Stop here. Do not commit, and do not open a PR.** Print, for the user:
     the branch name, the verifier's full-gate result and report verbatim,
+    a link to `verification-report.md` for the current independent reports and
+    to `implementation-report.md` for the action history,
     the tasks now ticked, the remaining unchecked groups, and the two commands
     that come next —
 

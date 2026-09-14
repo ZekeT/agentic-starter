@@ -21,6 +21,23 @@ Run the passes defined in `REVIEW.md`. The compliance pass is the one this
 harness exists to enable: check the diff against the delta specs and the task
 group above, not just against general good taste.
 
+For STANDARD/DEEP, read
+`openspec/changes/<slug>/verification-report.md` as the current evidence handoff.
+It contains the latest cycle's verifier and maintainability reports; consult
+`implementation-report.md` only when historical context is needed. Confirm the
+reported branch, group, reviewed HEAD and uncommitted scope match the work under
+review, including untracked files. Check any changes made since those reports;
+the file's existence or a PASS heading alone does not establish freshness.
+For a named branch that is not checked out, read its evidence from that branch,
+not from the current checkout.
+
+PENDING, STALE, missing required results or unresolved failures prevent approval.
+For older changes without this handoff file, accept fresh reports supplied in
+the conversation or explicitly located in the implementation history, applying
+the same scope/freshness checks. A missing handoff file alone does not invalidate
+otherwise available evidence. FAST continues to use its branch-specific reports
+without requiring an OpenSpec directory or either report file.
+
 `make check` is not run here — `REVIEW.md`'s **Skip entirely** section says not
 to relitigate what the gate decides. Use the fresh verifier's result for this branch. If absent or stale, request
 fresh verification before approval. For FAST, verify the diff and existing

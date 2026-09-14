@@ -48,6 +48,14 @@ def safe_path(root: Path, name: str) -> Path:
     return path
 
 
+def read_text(root: Path, name: str) -> str:
+    """Read only regular, contained, non-secret installation files."""
+    path = safe_path(root, name)
+    if not path.is_file():
+        raise ValueError(f"Missing regular file: {name}")
+    return path.read_text()
+
+
 def object_value(value: Any, label: str) -> dict[str, Any]:
     """Require a JSON object with a useful diagnostic."""
     if not isinstance(value, dict):
@@ -57,8 +65,9 @@ def object_value(value: Any, label: str) -> dict[str, Any]:
 
 def load_config(root: Path) -> Config:
     """Read defaults and project overrides from the existing template manifest."""
-    path = safe_path(root, ".harness/template-manifest.json")
-    data = object_value(json.loads(path.read_text()), "manifest")
+    data = object_value(
+        json.loads(read_text(root, ".harness/template-manifest.json")), "manifest"
+    )
     if type(data.get("schema_version")) is not int or data["schema_version"] != 1:
         raise ValueError(
             "Unsupported manifest schema_version; refresh the factory manifest"
@@ -71,7 +80,7 @@ def load_config(root: Path) -> Config:
                 f"Unknown {section} configuration: {sorted(set(group) - {'maintainability', 'navigation'})}"
             )
         values = object_value(
-            group.get("maintainability", {}), section + ".maintainability"
+            group.get("maintainability", {}), str(section + ".maintainability")
         )
         if set(values) - DEFAULTS.keys():
             raise ValueError(
@@ -107,7 +116,11 @@ def initialize_manifest(root: Path) -> None:
     """Add growth configuration to a legacy installation without losing overrides."""
     path = safe_path(root, ".harness/template-manifest.json")
     data = (
-        object_value(json.loads(path.read_text()), "manifest") if path.exists() else {}
+        object_value(
+            json.loads(read_text(root, ".harness/template-manifest.json")), "manifest"
+        )
+        if path.exists()
+        else {}
     )
     if "schema_version" in data and data["schema_version"] != 1:
         raise ValueError("Cannot initialize unsupported manifest schema_version")

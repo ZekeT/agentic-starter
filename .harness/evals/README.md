@@ -41,6 +41,13 @@ One YAML-ish block per file in `cases/`. Fields:
 | `expect` | (prompt) Substrings that must ALL appear, case-insensitive, one per line |
 | `reject` | (prompt) Substrings that must NOT appear |
 
+Doctor and the runner use the same stdlib parser in `factory/eval_config.py`.
+Inline fields and `|`/`>` blocks follow the runner's existing YAML-ish subset;
+this is not a general YAML loader. Required fields must contain non-whitespace
+content, kinds must be `static` or `prompt`, and duplicate field names are
+rejected. Doctor parses cases without importing the inspected runner or executing
+their bodies.
+
 Routing prompt cases cover FAST cosmetic maintenance, STANDARD product behavior,
 and DEEP architectural migration. Static cases cover the artifact split, lazy
 context loading, independent verification, final shipping gate, skill policy,

@@ -20,7 +20,6 @@ Stdlib-only on purpose: this must run in CI without installing the project.
 from __future__ import annotations
 
 import argparse
-import re
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -28,6 +27,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent.parent
 CASES_DIR = Path(__file__).parent / "cases"
+sys.path.insert(0, str(ROOT / ".harness"))
+from factory.eval_config import parse_fields  # noqa: E402
+
 PROMPT_TIMEOUT = 180
 
 GREEN, RED, YELLOW, DIM, BOLD, RESET = (
@@ -70,32 +72,7 @@ def parse_case(path: Path) -> Case:
     Raises:
         ValueError: If required keys are missing.
     """
-    fields: dict[str, str] = {}
-    key: str | None = None
-    buf: list[str] = []
-    mode = ""
-
-    for raw in path.read_text().splitlines():
-        header = re.match(r"^([a-z_]+):\s*(.*)$", raw)
-        # A new key only starts at column 0; indented lines belong to the block.
-        if header and not raw.startswith((" ", "\t")):
-            if key:
-                fields[key] = "\n".join(buf).rstrip()
-            key, rest = header.group(1), header.group(2)
-            buf, mode = [], rest.strip()
-            if mode not in ("|", ">"):
-                buf = [rest]
-                fields[key] = rest
-                key, buf = None, []
-            continue
-        if key is not None:
-            buf.append(raw[2:] if raw.startswith("  ") else raw)
-    if key:
-        fields[key] = "\n".join(buf).rstrip()
-
-    for required in ("id", "kind", "why"):
-        if not fields.get(required):
-            raise ValueError(f"{path.name}: missing required key '{required}'")
+    fields = parse_fields(path.read_text(), path.name)
 
     return Case(
         path=path,

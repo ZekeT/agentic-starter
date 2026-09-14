@@ -40,6 +40,7 @@ case "${1:-all}" in
     run_quiet types types_check
     run_quiet tests tests_check
     # Factory tooling has its own runtime; preserve downstream project environments.
+    run_quiet doctor uv run --no-project --isolated --python 3.12 python factory doctor
     run_quiet maintainability uv run --no-project --isolated --python 3.12 python factory maintainability
     run_quiet feature-docs python3 .harness/scripts/check_feature_docs.py "$CHECK_SRC"
     ;;
