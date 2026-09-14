@@ -6,7 +6,7 @@ import sys
 import tokenize
 from pathlib import Path
 
-from . import graft
+from . import doctor, graft
 from .config import load_config
 from .growth import check_growth
 
@@ -20,6 +20,7 @@ def main(argv: list[str] | None = None) -> int:
         "--root", type=Path, default=Path(__file__).resolve().parents[2]
     )
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("doctor", help="Diagnose installation health offline")
     navigation = sub.add_parser("navigation", help="Pinned application-only Graft CLI")
     navigation.add_argument("arguments", nargs=argparse.REMAINDER)
     growth = sub.add_parser("maintainability", help="Check Python code-line growth")
@@ -33,6 +34,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "doctor":
+            return doctor.run(root)
         if args.command == "navigation":
             return graft.run(root, args.arguments)
         config = load_config(root)

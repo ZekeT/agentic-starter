@@ -7,7 +7,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from .config import object_value, safe_path
+from .config import object_value, read_text, safe_path
 
 PACKAGE = ".harness/graft"
 SKILL = ".claude/skills/graft/SKILL.md"
@@ -51,7 +51,7 @@ def validate_query(command: str, extra: list[str]) -> None:
 def application_roots(root: Path) -> list[str]:
     """Read explicit application inputs; never infer scope from all repository code."""
     manifest = object_value(
-        json.loads(safe_path(root, ".harness/template-manifest.json").read_text()),
+        json.loads(read_text(root, ".harness/template-manifest.json")),
         "manifest",
     )
     if (

@@ -81,6 +81,7 @@ def check_fixture(tmp_path: Path) -> dict[str, str]:
         bin_dir / "uv",
         """printf '%s\n' "$*" >> "$CHECK_CALLS"
 case "$*" in
+  *"factory doctor"*) echo doctor-detail; echo doctor-stderr >&2; exit "${DOCTOR_STATUS:-0}" ;;
   *"factory maintainability"*) echo growth-detail; echo growth-stderr >&2; exit "${GROWTH_STATUS:-0}" ;;
   *--fix*|*"ruff format src"*) echo "mutating command" >&2; exit 97 ;;
   *pytest*) echo test-output; exit "${PYTEST_STATUS:-0}" ;;
@@ -112,6 +113,7 @@ def test_make_check_preserves_test_failures(
             "✓ lint",
             "✓ types",
             "✓ tests",
+            "✓ doctor",
             "✓ maintainability",
             "✓ feature-docs",
         ]
@@ -157,8 +159,8 @@ def test_migrated_python311_project_uses_separate_factory_runtime(
     config = tmp_path / ".venv/pyvenv.cfg"
     original_config = config.read_bytes()
     sys.path.insert(0, str(ROOT / ".harness/scripts"))
-    from migrate_to_framework import copy_framework_files, patch_pyproject
     from factory.config import initialize_manifest
+    from migrate_to_framework import copy_framework_files, patch_pyproject
 
     copy_framework_files(tmp_path, ROOT, False, False)
     patch_pyproject(tmp_path, False)
@@ -291,3 +293,13 @@ def test_shipping_gate_fails_with_complete_output(tmp_path: Path) -> None:
     assert proc.returncode != 0
     assert "\n1\n2\n" in proc.stdout and "\n40\n" in proc.stdout
     assert "final-failure" in proc.stderr
+
+
+def test_doctor_failure_stops_gate_with_complete_output(tmp_path: Path) -> None:
+    env = check_fixture(tmp_path)
+    env["DOCTOR_STATUS"] = "1"
+    proc = run(["make", "check"], tmp_path, env=env)
+    assert proc.returncode != 0
+    assert "✗ doctor" in proc.stderr
+    assert "doctor-detail" in proc.stderr and "doctor-stderr" in proc.stderr
+    assert "factory maintainability" not in (tmp_path / "calls").read_text()

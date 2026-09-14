@@ -247,11 +247,21 @@ reject legacy `--force` when it requests forbidden overwrite behavior.
 Doctor independently validates manifest/version/state consistency, directories,
 commands and hook wiring, applicable executable bits, OpenSpec structure,
 gitignore and secret protections, maintainability settings and exceptions,
-Graft dependency/wiring and local-cache freshness, and eval configuration. Findings identify a path,
-severity, and remediation. Invalid installation structure fails; stale navigation
-is a warning in doctor and a failure in explicit `graft check`. Missing Graft
+Graft dependency/wiring/application paths, and eval configuration. Findings identify a path,
+severity, and remediation. Invalid installation structure fails. Doctor reports
+freshness not assessed and directs users to explicit `graft check`, where stale
+structural navigation fails. The user accepted this offline boundary on 2026-09-12
+because pinned Graft 0.18.0 performs background registry upkeep on CLI checks. Missing Graft
 or incompatible wiring is an installation error. Doctor never builds the cache
 or installs a dependency.
+
+The offline OpenSpec check validates one top-level inline schema name: a letter
+or underscore followed by letters, digits, underscores, dots or hyphens, optionally
+single/double quoted with a trailing comment. Empty values, duplicate declarations
+and unquoted null/booleans fail. Other YAML representations require normalization
+to this documented form; doctor does not parse the whole YAML document or resolve
+custom schema availability. Keep this structural guarantee distinct from OpenSpec
+consumer validation.
 
 The starter uses the same installation contracts; make manifest refreshes both
 distribution metadata and starter baselines deterministically. Doctor validates

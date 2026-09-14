@@ -29,8 +29,10 @@ openspec init --tools claude                # only in a fresh project
 ```
 
 `.harness/setup.sh` **warns** rather than fails when Node or `openspec` is
-missing — formatting, linting, tests, hooks, and every other command work
-without it. Only the change loop needs it.
+missing. Formatting, linting, tests and hooks can run separately, but the full
+`make check` now includes doctor and requires initialized OpenSpec structure plus
+the installed Node/Graft dependency. Doctor does not execute the OpenSpec CLI;
+the change loop uses it for document lifecycle operations.
 
 `openspec init` writes three things, all owned by the CLI and none of them by
 this template: `openspec/`, `.claude/commands/opsx/`, and
@@ -50,6 +52,31 @@ hooks, instructions, statusline and customized skill content. No global agent
 configuration is installed. Set the application roots and agent PATH as described
 in [HARNESS.md](../../HARNESS.md#application-navigation-with-graft). Graph
 preparation is not applicable until application sources are configured.
+
+### Installation diagnosis
+
+Legacy migration installs the doctor runtime, lifecycle preambles, statusline,
+an eval runner with an installation-health case, and missing `evals` targets.
+It records upstream metadata for copied files and appends secret/cache ignore
+rules while preserving project configuration and existing Makefile targets.
+Existing conflicting ignore negations or customized wiring need reconciliation
+when doctor reports them. Initialize OpenSpec and run `make graft-install` before
+doctor or the full gate; migration does not install these external dependencies.
+
+Migration refuses symlinked or non-regular ignore/metadata destinations before
+installation writes. Existing version records must agree: a legacy installed
+version is preserved when filling a missing manifest or stamp; copying missing
+files does not claim that the entire installation was upgraded. Conflicting or
+malformed version records require reconciliation before migration.
+
+After initializing OpenSpec and installing Graft, run
+`uv run --no-project --isolated --python 3.12 python factory doctor`. The same
+offline diagnosis runs in `make check`. Correct each reported installation error
+before verification. Doctor does not execute project checks or Graft; freshness
+remains a separate `.harness/bin/graft check`. Pinned Graft can contact the
+registry during its CLI upkeep, so doctor reports freshness not assessed.
+See [the step-by-step reference](../../HARNESS.md#start-here-the-development-loop)
+for the complete setup-to-review sequence and command responsibilities.
 
 ### Optional Superpowers techniques
 

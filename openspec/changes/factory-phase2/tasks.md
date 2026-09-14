@@ -98,7 +98,9 @@ its verification; earlier independent verdicts do not cover that correction.
 
 ## 3. Ship deterministic installation diagnosis
 
-Branch: `feat/factory-phase2-g3`. Prerequisite: group 2 merged.
+Branch: `feat/factory-phase2-g3`. Prerequisite: group 2 merged (satisfied).
+Offline doctor scope adjustment accepted 2026-09-12: Graft freshness remains
+the separate explicit check; doctor does not invoke the upstream CLI.
 Shipping boundary: usable doctor for the currently shipped installation, with
 actionable checks, CI/full-gate integration, documentation and fixture tests.
 Per-installation ownership baselines become required only when group 4 ships them.
@@ -109,10 +111,31 @@ Context:
 - design.md: Doctor, dogfooding, and validation
 - program-design.md: Group 3; Integration boundaries; Test design
 
-- [ ] 3.1 Implement doctor diagnostics for current manifest/version, directories, command/hook wiring, executable bits, OpenSpec, git protections, configuration/exception paths, Graft availability/version/wiring/cache freshness and eval configuration; verify each failure category in independent filesystem fixtures.
-- [ ] 3.2 Expose factory doctor and integrate it into make check/CI without recursion, while retaining stale-cache warning semantics; verify no source writes, no project-command execution, and no environment-secret reads.
-- [ ] 3.3 Dogfood ordinary installation health against the starter, update lifecycle documentation and manifest packaging, and add credential-free static doctor evals; verify healthy/stale/broken fixtures and starter doctor results.
-- [ ] 3.4 Run targeted tests/formatting, build the Graft structural cache and refresh the manifest, then obtain fresh maintainability and verifier evidence from doctor, graft check, make check, make harness-test and make evals; append the group’s implementation report and stop uncommitted for human review.
+- [x] 3.1 Implement doctor diagnostics for current manifest/version, directories, command/hook wiring, executable bits, OpenSpec, git protections, configuration/exception paths, Graft availability/version/wiring/application paths and eval configuration; verify each failure category in independent filesystem fixtures.
+- [x] 3.2 Expose factory doctor and integrate it into make check/CI without recursion, while explicitly reporting that Graft freshness is not assessed offline; verify no source writes, no project-command execution, and no environment-secret reads.
+- [x] 3.3 Dogfood ordinary installation health against the starter, update lifecycle documentation and manifest packaging, and add credential-free static doctor evals; verify healthy/broken fixtures, deferred freshness and starter doctor results.
+- [x] 3.4 Run targeted tests/formatting, build the Graft structural cache and refresh the manifest, then obtain fresh maintainability and verifier evidence from doctor, graft check, make check, make harness-test and make evals; append the group’s implementation report and stop uncommitted for human review.
+
+2026-09-14 review correction: all three latest findings are addressed; final
+implementer gates pass (361 harness tests, 18 static evals). Version reconciliation
+and eval parsing now have shared implementations and cross-consumer fixtures.
+See the latest implementation-report.md addendum and
+[feasibility assessment](feasibility-assessment.md). Task 3.4 remains unchecked
+until fresh independent maintainability/verifier evidence covers this tree.
+
+2026-09-14 schema review correction: doctor now validates a documented inline
+OpenSpec schema-name form, rejecting empty/null-like values, duplicate declarations
+and next-line spillover. Thirty added cases reproduce 23 pre-fix false passes;
+all now pass. Final implementer checks: make check, 391 harness tests and 18 static
+evals pass. Feasibility reassessment adds explicit group 4 decision gates. Task
+3.4 remains pending fresh independent evidence; group 4 was not implemented.
+
+2026-09-14 eighth review correction: FIFO manifest reads now share the guarded
+configuration reader across doctor and navigation. A timeout-protected CLI matrix
+passes 21 nonregular-input cases; make check, 412 harness tests and 18 static evals
+pass. See implementation-report.md and feasibility-assessment.md for the
+implementation/verifier audit. Independent evidence remains pending; 3.4 stays
+unchecked.
 
 ## 4. Ship shared safe adoption, update, and ownership migration
 

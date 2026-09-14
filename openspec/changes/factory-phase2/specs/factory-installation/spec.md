@@ -26,7 +26,8 @@ commands, hook wiring, relevant executable bits, OpenSpec structure, gitignore
 and environment protections, managed metadata consistency, maintainability
 configuration and exceptions, Graft dependency/wiring configuration, and eval configuration.
 Findings SHALL include severity and remediation. Doctor SHALL NOT mutate source
-or invoke the full gate. The starter SHALL pass as an ordinary installation.
+or invoke the full gate, project commands, or network requests. Graft freshness
+SHALL remain a separate explicit check; doctor SHALL report that it was not assessed. The starter SHALL pass as an ordinary installation.
 
 #### Scenario: Missing structure
 - **WHEN** a required command or hook is missing
@@ -36,9 +37,11 @@ or invoke the full gate. The starter SHALL pass as an ordinary installation.
 - **WHEN** the manifest contains malformed configuration or an unsupported schema
 - **THEN** doctor fails with an actionable diagnostic
 
-#### Scenario: Stale navigation
-- **WHEN** the local Graft graph is stale but installation structure is valid
-- **THEN** doctor reports a warning directing the user to rebuild the local structural graph
+#### Scenario: Offline navigation diagnosis
+- **WHEN** doctor checks an installation with Graft configured
+- **THEN** it validates dependency/version/wiring/application paths without invoking the Graft CLI
+- **AND** it reports freshness not assessed and directs the user to the separate explicit graft check
+- **AND** a missing or stale graph alone does not fail doctor
 
 ### Requirement: Explicit ownership and preserved project configuration
 Managed content SHALL have explicit full-file or bounded ownership and upstream

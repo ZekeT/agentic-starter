@@ -1,0 +1,38 @@
+id: offline-installation-doctor
+kind: static
+why: >
+  Installation diagnosis must ship with its dependencies, retain the offline
+  boundary, and reject malformed installations without executing their code.
+shell: |
+  python3 - <<'PY'
+  import json
+  import subprocess
+  import shutil
+  import sys
+  import tempfile
+  from pathlib import Path
+  root = Path.cwd()
+  python = sys.executable if sys.version_info >= (3, 12) else shutil.which("python3.12")
+  if not python and (root / ".venv/bin/python").is_file():
+      python = str(root / ".venv/bin/python")
+  assert python, "Python 3.12+ required for factory doctor fixtures; activate the factory environment"
+  manifest = json.loads((root / '.harness/template-manifest.json').read_text())
+  for name in ('.harness/factory/doctor.py', '.harness/factory/doctor_wiring.py'):
+      assert name in manifest['files'], name
+  gate = (root / '.harness/scripts/cmd_check.sh').read_text()
+  assert 'run_quiet doctor uv run --no-project --isolated --python 3.12 python factory doctor' in gate
+  harness = (root / 'HARNESS.md').read_text().lower()
+  for phrase in ('freshness not assessed', 'background registry request', 'python factory doctor', 'step 5'):
+      assert phrase in harness, phrase
+  with tempfile.TemporaryDirectory() as temp:
+      target = Path(temp)
+      (target / '.harness').mkdir()
+      path = target / '.harness/template-manifest.json'
+      path.write_text('{malformed')
+      proc = subprocess.run([python, str(root / 'factory'), '--root', temp, 'doctor'], capture_output=True, text=True)
+      assert proc.returncode == 1, proc.stdout + proc.stderr
+      assert 'ERROR manifest' in proc.stdout and 'Restore' in proc.stdout
+      assert 'Freshness not assessed' in proc.stdout
+      assert path.read_text() == '{malformed'
+      assert sorted(p.relative_to(target).as_posix() for p in target.rglob('*')) == ['.harness', '.harness/template-manifest.json']
+  PY

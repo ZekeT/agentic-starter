@@ -28,13 +28,15 @@ All Python runtime modules live in `.harness/factory/`, imported by a thin root
 | Module | Responsibility | Intended public surface |
 |---|---|---|
 | `cli.py` | Argument parsing, root selection, dispatch, exit codes | `main(argv) -> int` |
-| `config.py` | Manifest schema, defaults, project overrides and validation | `load_config(root)`, `validate_config(root, data)` |
+| `config.py` | Manifest schema, defaults, project overrides and validation; shared contained regular-file reads for configuration consumers | `load_config(root)`, `validate_config(root, data)`, `read_text(root, name)` |
 | `source.py` | Safe repository source inventory and Python code-line counting | `discover_sources(root)`, `count_python(source) -> LineCounts` |
 | `growth.py` | Merge-base comparison, rename mapping, threshold decisions | `check_growth(root, config, base) -> list[GrowthFinding]` |
 | `graft.py` | Thin pinned-CLI invocation and non-mutating freshness diagnostics; no source analysis | `run(root, args)`, `application_roots(root)`, `install_skill(root, apply=...)` |
 | `doctor.py` | Independent installation checks and remediation | `diagnose(root) -> list[Diagnostic]` |
+| `doctor_wiring.py` | Read-only command/hook/eval/Git wiring checks used by doctor | `check_commands(root)`, `check_hooks(root)`, `check_evals(root)`, `check_git(root)` |
+| `eval_config.py` | Shared pure parsing/validation for doctor and the eval runner; never executes case bodies | `parse_fields(content, label)` |
 | `ownership.py` | Managed paths, section extraction and structural JSON rules | `validate_ownership(...)`, `owned_content(...)`, `merge_owned(...)` |
-| `installation.py` | Versioned baseline state, fingerprint validation | `load_state(root)`, `build_state(...)` |
+| `installation.py` | Group 3 legacy version reconciliation and metadata completion; group 4 adds versioned baseline state | `installation_version(root)`, `inspect_legacy_metadata(root)`, `complete_installation_metadata(...)`; later `load_state(root)`, `build_state(...)` |
 | `inspection.py` | Conservative target tool/instruction/structure discovery | `inspect_target(root) -> Inspection` |
 | `adoption.py` | Inspection and ownership into read-only adoption actions | `plan_adoption(template, target) -> Plan` |
 | `updates.py` | Baseline comparison and legacy conversion into update actions | `plan_update(template, target) -> Plan` |
@@ -185,7 +187,9 @@ Append actual group results and deviations to implementation-report.md.
 ### Group 3: Installation diagnosis
 
 Doctor reads installed manifest/version → required structure and hook/settings
-checks → configuration/exception validation → Graft dependency/wiring/freshness → findings. Register
+checks → configuration/exception validation → offline Graft dependency/wiring checks → findings.
+Freshness remains explicit `graft check`; doctor reports that freshness was not
+assessed (scope correction accepted 2026-09-12). Register
 only checks for functionality actually shipped at this stage. Baseline ownership
 state is not made mandatory before group 4 installs it. Integrate doctor into
 make check and CI without invoking make check from doctor.
@@ -237,7 +241,7 @@ pytest markers and test conventions.
 | Graft integration | Previewed local wiring, preserved instructions/statusline, hooks disabled, no global agent configuration changes, isolated dependency |
 | Graft checks | Missing executable, incompatible release, missing/stale cache; read-only queries/checks preserve source/config/cache bytes |
 | Reviewer | Read-only tools, restricted inputs, exact PASS/CONCERNS contract, concrete drift output in a prompt eval where useful |
-| Doctor | Missing commands/hooks; invalid manifest/config; absent protections; stale Graft cache warning; normal starter health |
+| Doctor | Missing commands/hooks; invalid manifest/config; absent protections; offline deferred Graft freshness; normal starter health |
 | Adoption | Plan writes nothing; canonical make check and instructions preserved; Python/non-Python detections; unknown commands |
 | Update | Four-way fingerprint table, convergence, local deletion, upstream removal, legacy unknown hashes, section preservation |
 | Apply | Dirty target refusal; conflict preflight writes nothing; changed inputs rejected; failures report recovery paths |

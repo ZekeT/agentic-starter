@@ -40,13 +40,25 @@ import tomllib  # noqa: E402  — must follow the version guard above
 
 # ── source root ───────────────────────────────────────────────────────────────
 STARTER_DIR = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(STARTER_DIR / ".harness"))
+from factory.installation import (  # noqa: E402
+    complete_installation_metadata,
+    inspect_legacy_metadata,
+    installation_version,
+)
 
 # ── files to copy: starter-relative → target-relative ────────────────────────
 FILES_TO_COPY: dict[str, str] = {
+    ".claude/statusline.sh": ".claude/statusline.sh",
+    ".claude/commands/spike.md": ".claude/commands/spike.md",
+    ".harness/scripts/cmd_spike.sh": ".harness/scripts/cmd_spike.sh",
+    ".harness/evals/run_evals.py": ".harness/evals/run_evals.py",
+    ".harness/evals/README.md": ".harness/evals/README.md",
+    ".harness/evals/cases/018-installation-health.yaml": ".harness/evals/cases/018-installation-health.yaml",
     "factory": "factory",
     **{path: path for path in (".harness/bin/graft", ".harness/graft/package.json", ".harness/graft/package-lock.json", ".claude/agents/maintainability-reviewer.md")},
     ".harness/docs/maintainability.md": ".harness/docs/maintainability.md",
-    **{f".harness/factory/{name}.py": f".harness/factory/{name}.py" for name in ("__init__", "cli", "config", "source", "growth", "graft")},
+    **{f".harness/factory/{name}.py": f".harness/factory/{name}.py" for name in ("__init__", "cli", "config", "source", "growth", "graft", "doctor", "doctor_wiring", "installation", "eval_config")},
     ".claude/hooks/pre_tool_dangerous.py": ".claude/hooks/pre_tool_dangerous.py",
     ".claude/hooks/pre_tool_env_guard.py": ".claude/hooks/pre_tool_env_guard.py",
     ".claude/hooks/post_tool_secrets.py": ".claude/hooks/post_tool_secrets.py",
@@ -177,6 +189,7 @@ PYPROJECT_TOOL_SECTIONS: dict[str, str] = {
 MAKEFILE_MARKER = "# ---- Agentic Engineering (added by migrate_to_framework.py) ----"
 
 MAKEFILE_TARGET_BLOCKS: dict[str, str] = {
+    "evals": "evals:\n\tpython3 .harness/evals/run_evals.py\n",
     "graft-install": (
         "graft-install:\n"
         "\tnpm ci --prefix .harness/graft --no-audit --no-fund\n"
@@ -371,6 +384,10 @@ def preflight_checks(target: Path, starter: Path, force: bool) -> Preflight:
         The collected blockers, warnings, and would-be overwrites.
     """
     pf = Preflight()
+    try:
+        inspect_legacy_metadata(target)
+    except (OSError, ValueError) as exc:
+        pf.blockers.append(str(exc))
 
     # A dirty tree is the real hazard: a half-applied migration mixed with the
     # user's own uncommitted work has no clean way to review or undo.
@@ -1308,7 +1325,7 @@ def save_template_version_stamp(target: Path, report: MigrationReport) -> None:
     stamp_path.write_text(
         json.dumps(
             {
-                "template_version": report.starter_version,
+                "template_version": installation_version(target) or report.starter_version,
                 "updated_at": report.timestamp,
             },
             indent=2,
@@ -1331,10 +1348,12 @@ def print_next_steps(audit: AuditResult) -> None:
     if "python" in audit.tech_stacks:
         steps += [
             "uv sync --all-extras          # install dev dependencies",
-            "make check                    # verify toolchain passes",
         ]
     steps += [
         "npm install -g @fission-ai/openspec@latest && openspec init --tools claude",
+        "make graft-install            # requires Node.js 22.12+",
+        "uv run --no-project --isolated --python 3.12 python factory doctor",
+        "make check && make evals       # after project tooling is configured",
         'Write docs/product.md, then /explore "<your idea>" in Claude Code',
     ]
     for i, step in enumerate(steps, 1):
@@ -1367,6 +1386,7 @@ def run_migration(
     Returns:
         Populated MigrationReport.
     """
+    inspect_legacy_metadata(target)
     report = MigrationReport(
         timestamp=datetime.now().isoformat(),
         starter_version=get_starter_version(starter),
@@ -1432,12 +1452,10 @@ def run_migration(
     report.makefile_targets_added = patch_makefile(target, dry)
 
     if not dry:
-        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-        from factory.config import initialize_manifest
-
-        initialize_manifest(target)
+        complete_installation_metadata(target, starter, report.copied)
         save_migration_report(target, report)
-        save_template_version_stamp(target, report)
+        if not (target / ".claude/template-version.json").exists():
+            save_template_version_stamp(target, report)
 
     return report
 

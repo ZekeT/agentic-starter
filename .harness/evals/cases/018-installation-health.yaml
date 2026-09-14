@@ -1,0 +1,7 @@
+id: installation-health
+kind: static
+why: >
+  Migrated projects must retain an executable installation-health eval without
+  depending on starter-only tests or distribution maintenance scripts.
+shell: |
+  uv run --no-project --isolated --python 3.12 python factory doctor
