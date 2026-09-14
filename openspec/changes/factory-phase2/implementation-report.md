@@ -978,3 +978,20 @@ PASS remains applicable: only generated fingerprints and evidence changed after
 that review. Task 3.4 remains complete. Group 4 is unstarted. Current reports
 are in [verification-report.md](verification-report.md). Only evidence files
 were updated after final verification. No commit, push or PR was performed.
+
+
+### PR 20 CI dependency correction — 2026-09-15
+
+Branch: feat/factory-phase2-g3. Task group: 3.
+
+GitHub static evals failed because installation-health invokes uv, but the job
+only installed Python. Added uv, Node 22, and make graft-install before static
+evals, matching the installed-factory prerequisites already used by the tests
+job. Added the workflow itself to its pull-request path filter.
+
+Implementer validation: make evals passed 18 static cases; make manifest refreshed
+107 entries (one workflow fingerprint changed); make check passed all seven gates.
+Initial local uv-cache sandbox failures passed after approved reruns.
+Not covered locally: a fresh GitHub runner, seven prompt evals, or a new independent
+review of this CI-only correction. Previous independent reports cover the earlier
+implementation; remote validation of this follow-up remains pending.

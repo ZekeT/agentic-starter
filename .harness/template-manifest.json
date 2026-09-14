@@ -15,7 +15,7 @@
     }
   },
   "template_version": "1.5.0",
-  "generated_at": "2026-09-14T16:27:30+00:00",
+  "generated_at": "2026-09-14T16:54:24+00:00",
   "files": {
     ".claude/agents/maintainability-reviewer.md": {
       "sha256": "1ef62ad833d42bc552efb5bcf7d4805394d746b192f4c4fae68514686a4faee3",
@@ -293,14 +293,15 @@
       "previous": []
     },
     ".github/workflows/evals.yml": {
-      "sha256": "af8cf044348d1b926d169179c3060ceec5b80198b1f8c37ff66e44c6892b333b",
+      "sha256": "66a3fd8205b0c11b59881cc50a3c06ecedb6e026475d565245d4820d7be037e9",
       "previous": [
         "338694a8fd0557816e34cebb47516c800793fcaaf759444209e622d7e6e2f08a",
         "d17cd8dac93d408581b2892406579202ae417e054c989f3a459656d9ec8a7c11",
         "42717f299334ce75c6de5114c75591e87ffbca46dd81a094270770e7ef648909",
         "76040ed4adaed1d0c42b136e0c62ea2169520edc63ff9590ba179d22bc4254b2",
         "5c81c6cc7c5473c175d6f789c20c9a9509adf700d3455d886362c1484cfa8052",
-        "9a42da71166f8c930d8746d364b3ce3fbbebc36048b02c277244dabe5265e2a5"
+        "9a42da71166f8c930d8746d364b3ce3fbbebc36048b02c277244dabe5265e2a5",
+        "af8cf044348d1b926d169179c3060ceec5b80198b1f8c37ff66e44c6892b333b"
       ]
     },
     ".gitignore": {

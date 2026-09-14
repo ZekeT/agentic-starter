@@ -18,6 +18,7 @@ on:
       - "pyproject.toml"
       - "uv.lock"
       - "Makefile"
+      - ".github/workflows/evals.yml"
       - ".harness/setup.sh"
       - "openspec/config.yaml"
       - ".harness/template-manifest.json"
@@ -37,6 +38,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Installation-health runs doctor against an installed factory.
+      - name: Install Graft skill and isolated CLI
+        run: make graft-install
 
       # The runner is Linux (GNU sed); the eval that checks BSD/GNU sed
       # portability is a static grep, so it is dialect-independent.

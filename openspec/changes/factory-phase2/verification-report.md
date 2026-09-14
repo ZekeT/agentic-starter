@@ -5,7 +5,7 @@ Change: factory-phase2
 Task group: 3
 Branch: feat/factory-phase2-g3
 Reviewed HEAD: e643ff6c96f275361975a2fa19477616af41965c
-Status: PASS
+Status: STALE — CI setup changed after independent verification
 
 Scope: current tracked and non-ignored untracked changes; no staged changes at cycle start.
 
@@ -79,3 +79,11 @@ only evidence files changed after the final verifier. Both reviewers ran as
 fresh subagents with only role instructions and slug/group supplied.
 Prior FAIL is preserved in [implementation-report.md](implementation-report.md).
 Not covered: seven prompt evals, remote CI, and group 4 ownership behavior.
+
+## Post-verification CI correction — 2026-09-15
+
+PR 20 exposed missing uv in the static job. Added uv, Node 22 and Graft
+installation, plus a workflow path trigger; refreshed the workflow fingerprint.
+Prior independent verdicts above are retained verbatim for their original scope.
+Implementer reruns: 18 static evals and all make check gates passed.
+Fresh remote validation and independent coverage of the CI edit are pending.
