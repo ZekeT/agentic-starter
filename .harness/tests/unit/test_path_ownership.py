@@ -6,9 +6,8 @@ filesystem, no subprocess — so it belongs in tests/unit/ per
 .harness/docs/testing.md, while everything else in tests/ drives real files and
 lives in tests/integration/.
 
-The rule is duplicated deliberately in two places — the manifest generator and
-the setup-update script — because each must hold even if the other is absent or
-stale. These tests assert both copies agree.
+The generator excludes OpenSpec paths; the shared lifecycle ownership validator
+independently refuses to claim them. These boundaries must agree.
 """
 
 from __future__ import annotations
@@ -23,7 +22,7 @@ sys.path.insert(0, str(ROOT / ".harness" / "scripts"))
 sys.path.insert(0, str(ROOT / ".claude" / "skills" / "setup-update" / "scripts"))
 
 import generate_template_manifest as gen  # noqa: E402
-import setup_update as upd  # noqa: E402
+from factory import ownership as upd  # noqa: E402
 
 OWNED = [
     "openspec/config.yaml",

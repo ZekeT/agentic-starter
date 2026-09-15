@@ -55,19 +55,17 @@ preparation is not applicable until application sources are configured.
 
 ### Installation diagnosis
 
-Legacy migration installs the doctor runtime, lifecycle preambles, statusline,
-an eval runner with an installation-health case, and missing `evals` targets.
-It records upstream metadata for copied files and appends secret/cache ignore
-rules while preserving project configuration and existing Makefile targets.
-Existing conflicting ignore negations or customized wiring need reconciliation
-when doctor reports them. Initialize OpenSpec and run `make graft-install` before
-doctor or the full gate; migration does not install these external dependencies.
+Adopt/update use shared explicit ownership and installed baselines. Plans are
+read-only; apply requires a clean committed target and refuses all conflicts.
+Existing project tooling and configuration survive. Initialize OpenSpec before
+apply and prepare external Graft prerequisites explicitly; the engine never
+installs dependencies or copies a graph. Missing prerequisites fail the mandatory
+post-apply doctor check and produce recovery instructions. See
+[safe installation](installation.md) for the complete setup and recovery sequence.
 
-Migration refuses symlinked or non-regular ignore/metadata destinations before
-installation writes. Existing version records must agree: a legacy installed
-version is preserved when filling a missing manifest or stamp; copying missing
-files does not claim that the entire installation was upgraded. Conflicting or
-malformed version records require reconciliation before migration.
+Legacy version records are validated during conversion; `.factory/state.json`
+then becomes the installed authority. Conflicts never advance baselines. Starter
+manifest regeneration refreshes distribution hashes and starter state together.
 
 After initializing OpenSpec and installing Graft, run
 `uv run --no-project --isolated --python 3.12 python factory doctor`. The same
@@ -180,12 +178,12 @@ run the migration script from wherever you cloned this repo:
 
 ```bash
 python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/your/project --dry
-python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/your/project
+python /path/to/agentic-starter/.harness/scripts/migrate_to_framework.py /path/to/your/project --apply
 ```
 
-This copies hooks, commands, the security agent, config, scripts, docs, and
-the factory lifecycle skills and conditional/explicit utilities into your project
-without overwriting anything that already exists.
+The script delegates to `factory adopt`. Review the plan first: it adds owned
+factory content and bounded integration while preserving project content. Existing
+conflicting factory scopes require resolution; `--force` cannot overwrite them.
 
 Then open Claude Code in your project and generate planning docs from the existing code:
 
@@ -207,15 +205,15 @@ Upstream framework updates do not touch your customisations:
 - **The rest of the template** (hooks, commands, docs, scripts, our skills) —
   use the **`setup-update`** skill (or `python
   /path/to/agentic-starter/.claude/skills/setup-update/scripts/setup_update.py
-  /path/to/your-project --dry`). It hashes every template-owned file against
-  `template-manifest.json`: files you never touched are auto-updated, files
-  you customised are flagged for a guided merge instead of being overwritten.
+  /path/to/your-project --dry`). It compares owned content against installed upstream fingerprints. Use
+  `--apply` explicitly after resolving any dual-change conflicts; local-only
+  customizations remain preserved.
 - **Your customisations** live in `.claude/agents/`, `.claude/commands/`, `.claude/hooks/`, and `CLAUDE.md` — protected by the same mechanism.
 - **Graphify** (`uv pip install graphifyy --upgrade`) — optional; nothing else in the harness depends on it.
 
-Every project created from this template records the template version it
-started from in `.claude/template-version.json` (or `.claude/migration-report.json`
-for older projects) — that's what `setup-update` diffs against.
+Ownership-enabled installations record installed version and upstream baselines
+in `.factory/state.json`. Legacy stamps are conversion inputs, superseded by
+that state after reconciliation. See [safe installation](installation.md).
 
 ## Updating to factory checks
 
@@ -225,5 +223,6 @@ local customizations; `check_feature_docs.py` now enforces documentation during
 `make check`. Existing feature directories may need a CLAUDE.md before their
 next successful gate. Existing STANDARD tasks need no shape-change migration.
 
-Factory tooling requires Python 3.12+. Use `uv sync --python 3.12 --all-extras`
-and activate that environment before running standalone setup or update scripts.
+Factory tooling requires Python 3.12+. Use
+`uv run --no-project --isolated --python 3.12 python factory ...` without changing
+a downstream application's Python requirements, environment or lockfile.

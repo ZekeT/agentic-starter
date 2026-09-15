@@ -1,3 +1,4 @@
+<!-- factory:integration:begin -->
 # CLAUDE.md
 
 ## Commands
@@ -66,3 +67,4 @@ Python tooling uses `uv` and `pyproject.toml`. Commit/PR conventions are in
 `.harness/docs/commits-and-prs.md`; review policy is `REVIEW.md`. Resolve the
 base from `--base`, `git config harness.baseBranch`, or the remote default
 (`main` fallback), and diff against its merge base, never its moving tip.
+<!-- factory:integration:end -->

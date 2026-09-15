@@ -44,7 +44,9 @@ its actual supported scope rather than promising universal coverage.
 Use Python 3.12+ across tooling, dependency metadata, lockfile, Ruff, mypy, CI,
 setup checks, and documentation. Standalone CLI entry points check the runtime
 and explain how to obtain a supported interpreter. Hooks retain their existing
-security behavior during migration.
+security behavior during migration. Existing downstream application Python
+requirements, environments and lockfiles remain project-owned; use isolated
+Python 3.12+ factory tooling as established by the group 1 review correction.
 
 Provide a repository-root `factory` executable, backed by cohesive modules under
 `.harness/`, with doctor, maintainability, adopt, and update subcommands.

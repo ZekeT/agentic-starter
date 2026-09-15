@@ -39,10 +39,12 @@ def safe_path(root: Path, name: str) -> Path:
     ):
         raise ValueError(f"Unsafe source path: {name}")
     path = root
-    for part in rel.parts:
+    for index, part in enumerate(rel.parts):
         path = path / part
         if path.is_symlink():
             raise ValueError(f"Symlink source path is unsupported: {name}")
+        if index < len(rel.parts) - 1 and path.exists() and not path.is_dir():
+            raise ValueError(f"Non-directory parent in source path: {name}")
     if not path.resolve().is_relative_to(root.resolve()):
         raise ValueError(f"Source path escapes repository: {name}")
     return path
@@ -68,6 +70,11 @@ def load_config(root: Path) -> Config:
     data = object_value(
         json.loads(read_text(root, ".harness/template-manifest.json")), "manifest"
     )
+    return validate_config(root, data)
+
+
+def validate_config(root: Path, data: dict[str, Any]) -> Config:
+    """Validate parsed configuration without requiring a write during legacy conversion."""
     if type(data.get("schema_version")) is not int or data["schema_version"] != 1:
         raise ValueError(
             "Unsupported manifest schema_version; refresh the factory manifest"

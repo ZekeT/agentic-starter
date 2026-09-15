@@ -995,3 +995,462 @@ Initial local uv-cache sandbox failures passed after approved reruns.
 Not covered locally: a fresh GitHub runner, seven prompt evals, or a new independent
 review of this CI-only correction. Previous independent reports cover the earlier
 implementation; remote validation of this follow-up remains pending.
+
+
+## 2026-09-15 — Group 4 claim and congruence corrections
+
+Branch: `feat/factory-phase2-g4`; task group: 4.
+
+User explicitly directed proceeding without refreshing group 3 verification.
+Updated group 4 tasks before running the dev-change preamble: shared readers and
+parsers, runtime isolation, offline doctor, baseline authority, failure injection,
+consumer/CLI matrix and customized adopt/update/repeat checkpoint. Corrected the
+active installation delta and design to preserve downstream Python environments.
+OpenSpec validation passed. The first branch claim failed because the sandbox
+blocked Git metadata writes (the preamble misleadingly reported an existing
+branch); inspection confirmed no claim existed. Approved rerun claimed the branch.
+No implementation task is complete yet.
+
+### Preserved preceding group 3 handoff (verbatim; STALE)
+
+# Verification handoff
+
+Date: 2026-09-15
+Change: factory-phase2
+Task group: 3
+Branch: feat/factory-phase2-g3
+Reviewed HEAD: e643ff6c96f275361975a2fa19477616af41965c
+Status: STALE — CI setup changed after independent verification
+
+Scope: current tracked and non-ignored untracked changes; no staged changes at cycle start.
+
+```text
+ M .claude/commands/dev-change.md
+ M .claude/commands/review.md
+ M .github/workflows/evals.yml
+ M .harness/docs/setup.md
+ M .harness/evals/README.md
+ M .harness/evals/run_evals.py
+ M .harness/factory/cli.py
+ M .harness/factory/config.py
+ M .harness/factory/graft.py
+ M .harness/scripts/cmd_check.sh
+ M .harness/scripts/migrate_to_framework.py
+ M .harness/template-manifest.json
+ M .harness/tests/integration/test_factory_checks.py
+ M HARNESS.md
+ M openspec/changes/factory-phase2/design.md
+ M openspec/changes/factory-phase2/implementation-report.md
+ M openspec/changes/factory-phase2/program-design.md
+ M openspec/changes/factory-phase2/specs/factory-installation/spec.md
+ M openspec/changes/factory-phase2/tasks.md
+?? .harness/evals/cases/017-offline-doctor.yaml
+?? .harness/evals/cases/018-installation-health.yaml
+?? .harness/factory/doctor.py
+?? .harness/factory/doctor_wiring.py
+?? .harness/factory/eval_config.py
+?? .harness/factory/installation.py
+?? .harness/tests/integration/test_doctor.py
+?? .harness/tests/integration/test_doctor_cli.py
+?? .harness/tests/integration/test_legacy_installation.py
+?? openspec/changes/factory-phase2/feasibility-assessment.md
+```
+
+## Maintainability reviewer
+
+PASS
+
+No maintainability concerns requiring review.
+
+## Verifier
+
+Verification — factory-phase2, group 3
+
+Ran:
+
+- `.harness/bin/graft check`: exit 0; no application sources configured.
+- `make check`: exit 0; all gates passed.
+- `make harness-test`: exit 0; lint/format/types passed; 412 tests passed.
+- `make evals`: exit 0; 18 static cases passed.
+- Doctor under Python 3.12: exit 0; zero installation errors; freshness explicitly deferred.
+- Independent manifest assertion: exit 0; all 107 fingerprints match.
+- `git diff --check`: exit 0.
+
+Checked against: tasks 3.1–3.4’s implementation and packaging claims and relevant installation scenarios → HOLDS. Confirmed the expected branch. Regression fixtures exercise malformed/nonregular inputs, schema and eval parsing, wiring, permissions, legacy version reconciliation, offline/non-mutating diagnosis, and gate failure propagation.
+
+Mismatches: none found. Previous stale command fingerprints are corrected. Initial sandbox cache failures resolved through approved reruns. Direct invocation using older Python correctly rejected the unsupported interpreter.
+
+Not covered: seven prompt evals, remote CI, group 4 ownership behavior. Graft structural build was not repeated because verification prohibits refreshing navigation; its check reports no applicable sources. Separate maintainability evidence remains the responsibility of that reviewer. No files edited or committed.
+
+Verdict: PASS.
+
+## Coverage and history
+
+The prior run passed all behavioral gates but found two stale command fingerprints.
+`make manifest` refreshed those entries; no source or command instructions changed.
+Maintainability PASS remains applicable. Fresh verification confirms all 107 hashes.
+Only packaging metadata and evidence files changed after the first reviews;
+only evidence files changed after the final verifier. Both reviewers ran as
+fresh subagents with only role instructions and slug/group supplied.
+Prior FAIL is preserved in [implementation-report.md](implementation-report.md).
+Not covered: seven prompt evals, remote CI, and group 4 ownership behavior.
+
+## Post-verification CI correction — 2026-09-15
+
+PR 20 exposed missing uv in the static job. Added uv, Node 22 and Graft
+installation, plus a workflow path trigger; refreshed the workflow fingerprint.
+Prior independent verdicts above are retained verbatim for their original scope.
+Implementer reruns: 18 static evals and all make check gates passed.
+Fresh remote validation and independent coverage of the CI edit are pending.
+
+
+## 2026-09-15 — Group 4 implementation checkpoint and integration
+
+Branch: `feat/factory-phase2-g4`; task group: 4.
+
+Implemented explicit ownership extraction and merges, shared read-only adopt/update
+planning, installed state authority, hash consistency, legacy evidence conversion,
+clean-Git/input preflight and recovery reporting. Both legacy scripts now delegate
+to the same CLI/engine; default calls plan, apply is explicit, force is refused.
+Retired duplicate mutation/metadata-completion writers. Added bounded starter
+instruction/Makefile/ignore regions, explicit project-preserve inventory and
+deterministic manifest/state regeneration with preserved overrides.
+
+Observed checkpoint: initial adopt → doctor → changed template → update → doctor
+→ repeat succeeds, preserves custom instructions/build/JSON/CI/Python settings, and
+the repeat writes nothing. A separate actual production-manifest round trip passes.
+Both use explicit fixture external setup; fake Graft bytes are structural evidence
+only and are never executed. Conflict fixtures refuse every write.
+
+Checks so far: 33 ownership/checkpoint cases passed; 38 adapter/legacy conversion
+cases passed; 78 gate/manifest/OpenSpec-ownership regressions passed; latest expanded
+checkpoint/recovery/manifest batch passed 57 cases. Ruff and strict mypy passed
+for all 15 runtime modules. Initial broader harness run: 394 passed, one failed
+on a legacy version-only manifest lacking schema_version. Corrected by sharing a
+pure config validator with read-only legacy normalization; all 17 legacy cases
+then passed. No fixture weakened the accepted legacy schema contract.
+
+Earlier test setup corrections fixed fixture import and lint issues before behavior
+execution. Added protection against non-directory ancestors and metadata-baseline
+disagreement, and invalidation on chmod changes. Current targeted tests cover
+postcheck/write failure reporting, 15 bounded public-CLI special-file cases, and
+shared adapter default/force/conflict behavior.
+
+make fmt initially failed on sandbox uv-cache access; approved rerun passed.
+Graft build: not applicable (no application sources configured). make evals:
+19/19 static cases passed; seven prompt cases not run. Source-growth check passed
+for every changed/new Python file. These are implementer results, not independent
+review verdicts. Version 2.0.0 selected after the targeted acceptance matrix passed;
+final regenerated tree still requires fresh independent reviews and full gates.
+
+Compatibility/test changes: retired isolated copy/force/patch/stamp mutation APIs
+and their direct-helper tests; retained their supported preservation/refusal
+contracts through public CLI and shared-engine fixtures. Read-only detection now
+reports supported Python/canonical-check evidence rather than emitting guessed
+Make/Python configuration. OpenSpec ownership and runtime-isolation regressions
+remain. The runtime-isolation fixture installs the complete runtime for its focused
+gate test; actual adoption/copy packaging is exercised in separate round trips.
+
+Recorded limits/deviations: canonical make check recipes remain intact and the
+managed make factory-check target supplies factory checks alongside them. OpenSpec
+configuration and Graft provisioning remain external. Known pristine unmarked
+legacy Makefiles conflict for explicit bounded-region conversion rather than losing
+the canonical recipe; unknown customized legacy scopes also conflict. JSON values
+are preserved structurally but whitespace normalizes. Upstream removals preserve
+local content and historical baseline. No automatic rollback, concurrent-mutator
+guarantee, prompt-eval evidence, remote CI evidence, or implicit archive is claimed.
+
+
+## 2026-09-15 — Independent maintainability review
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+Fresh read-only maintainability-reviewer received only role instructions and
+slug/group. Scope: current tracked/untracked implementation. Reviewer reported
+all changed Python files pass deterministic growth and Graft has the accepted
+no-application disposition. No source changes after this review.
+
+Verbatim report:
+
+PASS
+
+No maintainability concerns requiring review.
+
+Verifier dispatched fresh with only role instructions and slug/group; result pending.
+
+
+## 2026-09-15 — Independent verifier, first cycle
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+Fresh read-only verifier; tracked/untracked tree at dispatch.
+Verbatim report follows. Source correction and fresh affected reviews are required.
+
+Verification — factory-phase2, group 4
+
+Ran:
+
+- Branch check: `feat/factory-phase2-g4` confirmed.
+- `.harness/bin/graft check`: exit 0; no application sources configured.
+- `make check`: exit 0; all seven gates passed.
+- `make harness-test`: exit 0; lint, format, types passed; 400 tests passed.
+- `make evals`: exit 0; 19/19 static cases passed; seven prompt cases skipped.
+- Direct malformed-region probes with `.venv/bin/python`: exit 0, reproduced acceptance below.
+
+Initial gate attempts failed because sandbox access to the uv cache was denied. The escalated rerun completed successfully.
+
+Checked against:
+
+- Adoption/update round trips, preservation, fingerprints, recovery failures, legacy adapters, copied runtime and nonregular-input fixtures → HOLDS under the executed suite.
+- Task 4.1 and recoverable-application requirement: reject malformed ownership regions → MISMATCH.
+
+Mismatch:
+
+[ownership.py:75](/Users/zeke/Workspace/code/self/agentic-starter/.harness/factory/ownership.py:75) checks the beginning marker’s preceding newline but omits that check for the closing marker. This malformed Makefile region is accepted:
+
+```text
+# factory:integration:begin
+local# factory:integration:end
+```
+
+`owned_content` extracts it successfully, and the update classifier returns `PRESERVE` when upstream is unchanged. Thus malformed regions need not stop update planning. Marker suffixes containing bare CR followed by junk are also accepted. Validate complete LF/CRLF-delimited marker lines and add regression cases.
+
+Not covered: prompt evals, remote CI, application Graft graphs, optional enrichment. The malformed-marker finding was exercised directly at the shared ownership/classification boundary, not through a complete CLI apply fixture.
+
+Verdict: **FAIL**. No repository files edited.
+
+
+## 2026-09-15 — Malformed-marker correction after independent FAIL
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+The verifier found incomplete line-boundary validation. Added three negative
+regressions first: embedded closing marker and bare-CR junk after either marker.
+All three failed on the old implementation; both valid LF/CRLF controls passed.
+Replaced offset/character checks with complete line-delimited marker recognition
+and explicit ordering. Added three public update --apply fixtures: each rejects
+malformed markers without changing target bytes or metadata.
+
+After correction, 70 ownership/checkpoint/recovery tests passed. Ruff formatting
+and lint passed; manifest/state regenerated (114 entries, one runtime fingerprint
+changed). Prior independent PASS/FAIL outputs remain in history and do not cover
+the correction. Fresh affected maintainability and verifier reviews are required.
+No application source/navigation scope changed; Graft remains not applicable.
+
+
+## 2026-09-15 — Review resumed after usage limit
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+The fresh post-correction maintainability agent stopped at a usage limit without
+producing a verdict. After the user requested continuation, the same fresh review
+was resumed with only role instructions and slug/group. No source changes were
+made during this interruption. An implementer assertion confirms all 114 current
+distribution hashes and manifest/state version 2.0.0 agree. This assertion does
+not substitute for the pending independent reviews.
+
+
+## 2026-09-15 — Fresh post-correction maintainability review
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5cee2505c261c1cdc213fdc127f7960aa9.
+Reviewer covered current tracked/untracked implementation after the marker fix.
+Deterministic maintainability passed every changed Python file; Graft check
+reported the accepted no-application disposition. Largest new runtime module:
+adoption.py, 233 code lines. No source edits followed this review.
+
+Verbatim report:
+
+PASS
+
+No maintainability concerns requiring review.
+
+A fresh verifier received only role instructions and slug/group; result pending.
+
+
+## 2026-09-15 — Fresh verifier after marker correction
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+Verbatim independent report:
+
+Verification — factory-phase2, group 4
+
+Ran:
+- Graft check: PASS, no application sources configured.
+- `make check`: PASS.
+- `make harness-test`: PASS, 408 tests; lint, formatting and types passed.
+- `make evals`: PASS, 19/19 static cases.
+- Supported-runtime doctor: exit 0, zero installation errors.
+- All 114 distribution hashes match; `git diff --check` passed.
+- System-Python invocation correctly rejected Python below 3.12.
+
+Checked against:
+- Tasks 4.1–4.7 and installation delta scenarios → HOLDS.
+- Adoption/update round trips, instruction/build/JSON preservation, unchanged repeat, fingerprint decisions, local deletion/removal, stale-plan and conflict refusal, failure recovery, adapter agreement and copied runtime → HOLDS through independently executed behavioral fixtures.
+- Timeout-protected CLI special-file checks: 21 doctor and 15 adoption cases; malformed update-marker rejection → HOLDS.
+- Expected branch `feat/factory-phase2-g4` → HOLDS.
+
+Mismatches: None found.
+
+Not covered: Seven model prompt evals, remote CI, real downstream Graft execution and optional enrichment. Fixture Graft prerequisites establish structural diagnosis only. Initial sandbox cache failures were resolved by approved reruns.
+
+Verdict: PASS.
+
+
+Before this verdict arrived, the implementer independently reproduced an additional
+legacy metadata edge case: previous:null raises TypeError in legacy_baseline.
+This was outside the exercised suite and requires an actionable validation error.
+The PASS applies to the reviewed tree and recorded coverage; the following fix
+will supersede it and receive fresh affected reviews.
+
+
+## 2026-09-15 — Shared legacy fingerprint validation correction
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+Added four public update --apply regressions for null/string history and invalid
+history members. Before the fix all four failed their actionable-diagnostic
+assertion: null produced TypeError; other malformed histories reached unrelated
+conflict handling. Each fixture snapshots the target to require zero writes.
+Consolidated fingerprint history validation in ownership.hash_history and reused
+it from doctor, template inspection and legacy conversion. This removes duplicated
+validation and produces ValueError diagnostics consistently across consumers.
+
+After the correction, 199 legacy/ownership/doctor/checkpoint cases passed. Ruff
+lint/format and strict mypy passed; manifest/state regenerated (114 entries, four
+runtime hashes changed). Both preceding independent reports are superseded for
+this source change; fresh affected reviews are pending. No application source or
+navigation scope changed. Previous FAIL/PASS outputs remain verbatim above.
+
+
+## 2026-09-15 — Independent review attempt restarted
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+The post-hash-validation maintainability attempt remained running without a
+verdict or response to a status request. The implementing session interrupted it
+and dispatched a replacement fresh read-only reviewer with only role instructions
+and slug/group. No verdict is attributed to the interrupted attempt and no source
+changed. The independent review and final verifier remain pending.
+
+
+## 2026-09-15 — Fresh maintainability review after shared hash validation
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5cee2505c261c1cdc213fdc127f7960aa9.
+Fresh replacement reviewer covered the current tracked/untracked tree. Required
+maintainability passed every changed Python file; Graft check returned the accepted
+no-application disposition. No source edits followed this verdict.
+
+Verbatim report:
+
+PASS
+
+No maintainability concerns requiring review.
+
+Fresh verifier dispatched with only role instructions and slug/group.
+
+
+## 2026-09-15 — Final independent verifier after shared hash validation
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5cee2505c261c1cdc213fdc127f7960aa9.
+The fresh read-only verifier resumed after user interruption and recovered its
+completed results before repeating commands. Scope: current tracked and non-ignored
+untracked implementation. No source changed during review or after its verdict.
+Verbatim report:
+
+Verification — factory-phase2, group 4
+
+Ran:
+
+- `.harness/bin/graft check`: exit 0; no application sources configured.
+- `make check`: exit 0.
+- `make harness-test`: exit 0; 412 tests passed, lint/format/types passed.
+- `make evals`: exit 0; 19/19 static cases passed.
+- Direct doctor: exit 0, zero installation errors.
+- Targeted lifecycle/ownership tests: exit 0; 70 passed.
+- Independent actual-byte manifest/state assertions: exit 0; 114 distribution hashes and 108 owned baselines matched.
+- `git diff --check`: exit 0.
+
+Checked against: expected branch; ownership boundaries and hashes; adoption/update checkpoint; fingerprint outcomes; preserved surrounding content; conflict refusal; changed-input rejection; recovery reporting; copied runtime; malformed markers and timeout-protected special-file inputs → HOLDS.
+
+Nearest regression paths included local customization/deletion, upstream removal, corrupted metadata, executable changes, and partial writes.
+
+Mismatches: None observed. Initial sandbox/cache failures were resolved through approved escalation; an initial ad-hoc assertion used unsupported system Python and passed when rerun with repository Python.
+
+Not covered: Seven prompt evals were skipped. Remote CI and optional Graft enrichment were not exercised. Tasks 4.8–4.9 remain unchecked; this report does not claim their reporting/review work is completed.
+
+Verdict: PASS for the independently exercised implementation and deterministic gates. No repository files edited.
+
+
+## 2026-09-15 — Group 4 results and final Phase 2 acceptance summary
+
+Branch: `feat/factory-phase2-g4`; task group: 4; HEAD: a8095d5.
+Disposition: implementation complete for human review, uncommitted. Groups 1–3
+are merged. This is not a release, PR, archive, or approval to change canonical
+specs. Historical dated entries above retain the status they reported at the time;
+tasks.md remains the authority for current completion.
+
+### Delivered behavior
+
+| Group | Delivered behavior | Evidence and present boundary |
+|---|---|---|
+| 1 | Python 3.12+ factory runtime; configurable 300/500/150 code-line growth enforcement, merge-base comparisons and reasoned exceptions | Earlier group 1 evidence is retained above; current full gates include growth and the runtime-isolation regression. Downstream Python requirements, environments and locks remain project-owned. |
+| 2 | Pinned isolated Graft integration, unchanged upstream skill, explicit graph preparation and independent maintainability review | Earlier group 2 evidence includes application fixtures and focused prompt evidence. Current starter Graft check is not applicable because no application sources are configured; no factory graph is claimed. |
+| 3 | Offline installation diagnosis with shared config/version/eval parsing, wiring and malformed-input coverage | Current independent doctor and deterministic gates pass. The user's waiver of refreshing the prior CI-specific handoff is retained; remote CI remains unverified here. |
+| 4 | One explicit ownership and adoption/update engine, installed upstream baselines, read-only plans, clean-Git explicit apply, validation/recovery reports, shared legacy adapters and template version 2.0.0 | Fresh maintainability PASS and final independent verifier PASS above cover the corrected implementation. Both discovered input-validation defects are corrected and regression-tested. |
+
+### Group 4 files and integration
+
+- `.harness/factory/ownership.py`, `inspection.py`, `adoption.py`, `updates.py`
+  and `apply.py` implement explicit scopes, conservative inspection, one shared
+  planner, the fingerprint table and recoverable application.
+- `installation.py`, `config.py`, `doctor.py` and `cli.py` integrate installed
+  authority, shared validation, offline baseline checks and public commands.
+- Both legacy script paths delegate to this engine. Independent mutation helpers,
+  unconditional stamps and automatic migration-branch creation are retired.
+- `.factory/state.json`, `.harness/template-manifest.json`, the manifest generator,
+  `.harness/TEMPLATE_VERSION` and bounded CLAUDE/Makefile/gitignore regions establish
+  version 2.0.0 ownership. Project overrides survive deterministic regeneration.
+- Installation/setup/workflow/review documentation and the setup-update skill
+  describe the current boundaries. Static case 019 and lifecycle, ownership,
+  adapter, legacy and recovery fixtures cover the new behavior. Existing gate,
+  OpenSpec-ownership and runtime-isolation regressions remain in the suite.
+
+### Final observed acceptance evidence
+
+Fresh maintainability: PASS, no concerns. Final fresh verifier: make check exit 0;
+make harness-test exit 0 with 412 tests plus lint/format/types; make evals exit 0
+with 19 static cases; doctor exit 0; 70 targeted lifecycle/ownership tests passed;
+all 114 distribution hashes and 108 installed owned baselines matched actual
+bytes; whitespace check passed. Graft check exit 0 with no application scope.
+
+The checkpoint exercises adoption → doctor → changed template → update → doctor
+→ unchanged repeat, custom instruction/build/JSON preservation, production-manifest
+adoption and copied runtime. Regression evidence includes zero-write conflict and
+stale-input refusals, deletion/removal, chmod changes, metadata corruption,
+partial-write/postcheck recovery, complete LF/CRLF markers and malformed legacy
+hash histories. Counts describe the executed suites; retired helper tests and new
+public-contract fixtures make counts across groups non-comparable as coverage measures.
+
+### Limitations, deferred work and explicit deviations
+
+- Adoption is bounded to evidenced Python pyproject/canonical Makefile checks and
+  initialized OpenSpec configuration. It preserves the canonical recipe and offers
+  `make factory-check` alongside it; it does not infer arbitrary build tooling.
+- OpenSpec/Graft provisioning stays external. Fixture Graft prerequisites prove
+  structural diagnosis, not real downstream Graft execution. Missing prerequisites
+  fail the required postcheck with recovery information.
+- Unknown customized legacy scopes conflict. Unmarked pristine legacy Makefiles
+  require explicit bounded-region reconciliation to retain the canonical recipe.
+- JSON unrelated values survive structural merges; whitespace can normalize.
+  Instruction/build/ignore bytes outside owned regions are preserved. Upstream
+  removals preserve local content and historical baselines.
+- Application writes are not transactional and do not automatically roll back.
+  Concurrent target mutation is outside the supported stationary-input model.
+- Seven prompt evals, remote CI and optional enrichment were not exercised in
+  this group. Earlier group 2 prompt evidence remains historical and is not
+  represented as a new group 4 prompt run. Production project commands outside
+  the executed fixtures still require project-specific verification.
+- The accepted conservative conflict fallback and shared planner placement are
+  recorded in program-design.md. No universal stack support, distribution service,
+  automatic semantic merge, hidden workflow state or implicit archive was added.
+
+After the final verifier report, only this history, verification-report.md and
+completion checkboxes changed. Tasks 4.8 and 4.9 are now complete: required fresh
+reviews are recorded, gaps are explicit and the acceptance claims above are tied
+to observed results. All four task groups are checked. Next: human `/review`, then
+`/commit-push-pr` if satisfied. No source or canonical-spec edits, commits or PRs
+were made after the final independent review.

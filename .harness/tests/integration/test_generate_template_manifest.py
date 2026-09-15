@@ -104,3 +104,29 @@ def test_collect_files_still_finds_template_files() -> None:
     assert "CLAUDE.md" in rels
     assert ".env.template" in rels
     assert any(r.startswith(".claude/skills/setup-update/") for r in rels)
+
+
+def test_refresh_is_deterministic_and_preserves_project(tmp_path, monkeypatch):
+    source = tmp_path / "factory"
+    source.write_text("template runtime\n")
+    harness = tmp_path / ".harness"
+    harness.mkdir()
+    manifest = harness / "template-manifest.json"
+    manifest.write_text(
+        json.dumps({"project": {"maintainability": {"max_file_lines": 700}}})
+    )
+    version = harness / "TEMPLATE_VERSION"
+    version.write_text("1.5.0\n")
+    monkeypatch.setattr(g, "ROOT", tmp_path)
+    monkeypatch.setattr(g, "MANIFEST_PATH", manifest)
+    monkeypatch.setattr(g, "VERSION_PATH", version)
+    monkeypatch.setattr(g, "collect_files", lambda: [source])
+    g.main()
+    state = tmp_path / ".factory/state.json"
+    before = manifest.read_bytes(), state.read_bytes()
+    g.main()
+    assert (manifest.read_bytes(), state.read_bytes()) == before
+    data = json.loads(manifest.read_text())
+    assert data["project"]["maintainability"]["max_file_lines"] == 700
+    assert ".factory/state.json" not in data["files"]
+    assert ".harness/template-manifest.json" not in data["files"]

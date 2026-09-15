@@ -53,3 +53,9 @@ and DEEP architectural migration. Static cases cover the artifact split, lazy
 context loading, independent verification, final shipping gate, skill policy,
 and packaging. Record representative workflow costs with
 [workflow-runs.md](workflow-runs.md); routing evals alone do not measure full runs.
+
+The safe-owned-lifecycle static case checks manifest/state agreement, installed
+ownership, shared adapters and the update decision contract without credentials.
+Filesystem round trips, malformed inputs, clean-Git preflight and injected recovery
+failures live in the harness integration tests. A static PASS is not evidence that
+prompt behavior, remote CI or external dependency provisioning was exercised.

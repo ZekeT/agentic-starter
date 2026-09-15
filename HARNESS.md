@@ -82,7 +82,8 @@ Each error includes a stable category, path and remediation. Exit 0 means no
 installation errors; exit 1 means repairs are needed; invalid CLI arguments
 exit 2. Doctor also prints **freshness not assessed**: use the separate graph
 check in step 5. Custom file contents are not compared against distribution
-hashes, and installation ownership baselines are not required yet. Doctor checks
+hashes. Ownership-enabled installations require matching manifest/state baselines;
+valid local customizations remain allowed. Doctor checks
 OpenSpec's directory/schema wiring; use `openspec validate` to validate specs.
 Its offline schema check supports exactly one top-level `schema:` with an inline
 name starting with a letter or underscore, followed by letters, digits,
@@ -132,7 +133,8 @@ For factory Python changes, also format `.harness/factory` with Ruff because
 
 For starter tooling changes, refresh distribution metadata with `make manifest`
 after editing template-owned files. This preserves project overrides and records
-hash history; it does not install dependencies or build the graph.
+hash history, and deterministically refreshes starter installation baselines in
+`.factory/state.json`; it does not install dependencies or build the graph.
 
 ### 5. Prepare navigation and verify
 
@@ -403,7 +405,20 @@ considering removal. Use `/graft` for application navigation as described above.
 boundaries take precedence over upstream skill suggestions to auto-refresh.
 
 `make manifest` records hashes for template-owned instructions, factory docs,
-scripts, and evals. `setup-update` uses that history to distinguish pristine
-files from local customizations. OpenSpec-generated paths are excluded. New
+scripts, and evals. The shared adopt/update engine uses explicit owned scopes and installed
+upstream baselines to distinguish pristine files from local customizations. OpenSpec-generated paths are excluded. New
 helpers and shape-change ship with their callers; see [setup](.harness/docs/setup.md)
 for migration and update commands.
+
+## Adoption and update lifecycle
+
+Use `python factory adopt TARGET` or `python factory update TARGET` for a read-only
+plan, then `--apply` explicitly on a clean committed target. Both legacy scripts
+use this same engine; default calls now plan only and `--force` is refused.
+Existing application tooling, canonical checks, CI and documentation remain
+project-owned. The separate `make factory-check` target supplies factory checks
+for adopted projects whose canonical check does not include them.
+See [safe installation](.harness/docs/installation.md) for prerequisites, named
+regions, JSON preservation, legacy conversion, installed-state authority and
+failure recovery. Apply always reports its offline doctor result; missing external
+prerequisites are failures requiring repair or recovery, not successful installs.

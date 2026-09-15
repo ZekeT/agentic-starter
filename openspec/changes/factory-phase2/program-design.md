@@ -36,10 +36,10 @@ All Python runtime modules live in `.harness/factory/`, imported by a thin root
 | `doctor_wiring.py` | Read-only command/hook/eval/Git wiring checks used by doctor | `check_commands(root)`, `check_hooks(root)`, `check_evals(root)`, `check_git(root)` |
 | `eval_config.py` | Shared pure parsing/validation for doctor and the eval runner; never executes case bodies | `parse_fields(content, label)` |
 | `ownership.py` | Managed paths, section extraction and structural JSON rules | `validate_ownership(...)`, `owned_content(...)`, `merge_owned(...)` |
-| `installation.py` | Group 3 legacy version reconciliation and metadata completion; group 4 adds versioned baseline state | `installation_version(root)`, `inspect_legacy_metadata(root)`, `complete_installation_metadata(...)`; later `load_state(root)`, `build_state(...)` |
+| `installation.py` | Group 3 legacy version reconciliation and metadata completion; group 4 adds versioned baseline state | `installation_version(root)`, `load_state(root)`, `build_state(...)`, `check_state(...)`; obsolete legacy writers removed in group 4 |
 | `inspection.py` | Conservative target tool/instruction/structure discovery | `inspect_target(root) -> Inspection` |
-| `adoption.py` | Inspection and ownership into read-only adoption actions | `plan_adoption(template, target) -> Plan` |
-| `updates.py` | Baseline comparison and legacy conversion into update actions | `plan_update(template, target) -> Plan` |
+| `adoption.py` | Inspection and ownership into read-only adoption actions | `plan_installation(template, target, operation) -> Plan` (shared adoption/update orchestration) |
+| `updates.py` | Baseline comparison and legacy conversion into update actions | `classify(local, incoming, baseline)`, `legacy_baseline(...)`; shared planner lives in adoption.py |
 | `apply.py` | Revalidate plans, apply safe actions, postchecks and recovery report | `apply_plan(plan) -> ApplyResult` |
 
 Introduce each module with its first real caller, not as empty scaffolding. Keep
@@ -327,3 +327,28 @@ This input list is not an alternate graph/configuration store. Supported review
 commands are check, ask, grep, skeleton, callers, map and blast; structural build
 and explicit optional `build --deep` belong to the implementer. Upstream visual
 exports remain optional, outside the required read-only command surface.
+
+### Group 4 implementation clarifications — 2026-09-15
+
+The shared planner lives in adoption.py; updates.py supplies the fingerprint
+truth table and historical evidence rather than duplicating orchestration.
+State schema 1 and manifest ownership_version 1 distinguish installed baselines
+from distribution hashes; owned_sha256 reconciles both records. State supersedes
+legacy version stamps after conversion. The obsolete metadata-completion writer
+is removed along with both legacy mutation algorithms.
+
+Supported adoption requires Python pyproject evidence, a literal canonical check
+and initialized OpenSpec configuration. Graft dependency/skill provisioning stays
+external, as in group 3. Apply reports missing prerequisites as failed postchecks
+with recovery, never as a successful install. Production-fixture checkpoint tests
+provision external structural prerequisites explicitly; they do not establish
+real Graft execution. Existing project check recipes remain byte-preserved;
+make factory-check supplies separate quiet factory checks alongside them.
+
+Known pristine unmarked legacy Makefiles still conflict pending explicit bounded
+region reconciliation, because replacing them with only the incoming managed
+region would lose the canonical recipe. This is the accepted conservative
+conflict fallback, not automatic semantic Make parsing. JSON merges preserve
+unrelated values but normalize whitespace; byte preservation applies outside
+instruction/build/ignore regions. No new automatic dependency/network setup,
+transactional filesystem writes, or concurrent-mutator guarantee is introduced.
