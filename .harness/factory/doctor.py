@@ -17,7 +17,8 @@ from .doctor_wiring import (
     check_hooks,
     external_tool,
 )
-from .installation import installation_version
+from .installation import check_state, installation_version
+from .ownership import hash_history
 
 
 @dataclass(frozen=True)
@@ -41,7 +42,16 @@ def check_manifest(root: Path) -> None:
     files = object_value(data.get("files"), "manifest.files")
     if not files:
         raise ValueError("manifest.files must not be empty")
+    if data.get("ownership_version") == 1:
+        check_state(root, data)
+    elif "ownership_version" in data:
+        raise ValueError("Unsupported ownership_version")
     for name, entry in files.items():
+        entry = object_value(entry, f"files.{name}")
+        if data.get("ownership_version") == 1:
+            # Explicitly project-owned inventory is not an installation requirement.
+            if entry.get("ownership", {}).get("mode") == "preserve":
+                continue
         # The template example is distributed, but doctor never opens env files.
         if name == ".env.template":
             example = root / name
@@ -51,16 +61,10 @@ def check_manifest(root: Path) -> None:
                 )
         else:
             path = safe_path(root, name)
-            if not path.is_file():
+            if data.get("ownership_version") != 1 and not path.is_file():
                 raise ValueError(f"Missing installed manifest file: {name}")
         entry = object_value(entry, f"files.{name}")
-        history = entry.get("previous", [])
-        if not isinstance(history, list) or any(
-            not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value)
-            for value in [entry.get("sha256"), *history]
-        ):
-            raise ValueError(f"{name}: invalid sha256/history metadata")
-    # Ownership fingerprints become mandatory only with group 4's state format.
+        hash_history(entry, name)
     load_config(root)
 
 

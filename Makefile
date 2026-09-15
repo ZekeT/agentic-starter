@@ -54,11 +54,6 @@ check:
 # `evals` is static-only (fast, free, CI default). `evals-full` also runs the
 # prompt cases through `claude -p`, which costs tokens and needs auth.
 
-evals:
-	python3 .harness/evals/run_evals.py
-
-evals-full:
-	python3 .harness/evals/run_evals.py --full
 
 # ---- Clean ------------------------------------------------
 
@@ -80,11 +75,6 @@ manifest:
 setup:
 	bash .harness/setup.sh
 
-.PHONY: graft-install
-graft-install:
-	npm ci --prefix .harness/graft --no-audit --no-fund
-	@.harness/bin/graft install-skill
-	@.harness/bin/graft install-skill --apply
 
 # Starter-repo only: tests of the maintainer scripts. Explicit path, and
 # addopts cleared because the shipped --cov=src does not apply here.
@@ -93,3 +83,23 @@ harness-test:
 	uv run ruff format --check .harness/factory
 	uv run mypy .harness/factory
 	uv run pytest .harness/tests -o addopts="" -q
+
+# factory:integration:begin
+.PHONY: factory-check evals evals-full graft-install
+factory-check:
+	@bash .harness/scripts/cmd_check.sh factory
+
+# Run this alongside the project's canonical make check.
+# The starter already includes these checks in cmd_check.sh.
+
+evals:
+	python3 .harness/evals/run_evals.py
+
+evals-full:
+	python3 .harness/evals/run_evals.py --full
+
+graft-install:
+	npm ci --prefix .harness/graft --no-audit --no-fund
+	@.harness/bin/graft install-skill
+	@.harness/bin/graft install-skill --apply
+# factory:integration:end

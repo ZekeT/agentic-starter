@@ -1,0 +1,31 @@
+id: safe-owned-lifecycle
+kind: static
+why: >
+  Adoption/update must share explicit ownership, installed metadata, preserved
+  project scopes and read-only defaults without requiring model credentials.
+shell: |
+  uv run --no-project --isolated --python 3.12 python - <<'PY'
+  import json
+  import sys
+  from pathlib import Path
+  sys.path.insert(0, '.harness')
+  from factory.ownership import digest, owned_content
+  from factory.updates import classify
+  root = Path.cwd()
+  manifest = json.loads(Path('.harness/template-manifest.json').read_text())
+  state = json.loads(Path('.factory/state.json').read_text())
+  assert manifest['ownership_version'] == state['schema_version'] == 1
+  assert state['installed_version'] == manifest['template_version']
+  for name, entry in manifest['files'].items():
+      assert name not in {'.factory/state.json', '.harness/template-manifest.json'}
+      if entry['ownership']['mode'] == 'preserve':
+          continue
+      assert name in state['entries'], name
+      assert state['entries'][name]['upstream'] == entry['owned_sha256'], name
+  for name in ('.harness/scripts/migrate_to_framework.py', '.claude/skills/setup-update/scripts/setup_update.py'):
+      if Path(name).exists():
+          assert 'legacy_main' in Path(name).read_text(), name
+  assert classify(b'local', b'new', digest(b'old'))[0] == 'CONFLICT'
+  assert classify(None, b'old', digest(b'old'))[0] == 'PRESERVE'
+  assert 'clean committed' in Path('.harness/docs/installation.md').read_text()
+  PY

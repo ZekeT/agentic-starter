@@ -160,10 +160,11 @@ def test_migrated_python311_project_uses_separate_factory_runtime(
     original_config = config.read_bytes()
     sys.path.insert(0, str(ROOT / ".harness/scripts"))
     from factory.config import initialize_manifest
-    from migrate_to_framework import copy_framework_files, patch_pyproject
-
-    copy_framework_files(tmp_path, ROOT, False, False)
-    patch_pyproject(tmp_path, False)
+    # This fixture exercises runtime isolation, independently of the adoption
+    # preflight covered by the public lifecycle round trips. Copy the complete
+    # runtime, not a second hand-maintained migration dependency list.
+    shutil.copytree(ROOT / ".harness/factory", tmp_path / ".harness/factory")
+    shutil.copy2(ROOT / "factory", tmp_path / "factory")
     initialize_manifest(tmp_path)
     migrated_project = pyproject.read_bytes()
     assert pyproject.read_text().startswith(original)

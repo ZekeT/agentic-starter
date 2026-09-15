@@ -139,7 +139,10 @@ unchecked.
 
 ## 4. Ship shared safe adoption, update, and ownership migration
 
-Branch: `feat/factory-phase2-g4`. Prerequisite: group 3 merged.
+Branch: `feat/factory-phase2-g4`. Prerequisite: group 3 merged (satisfied).
+2026-09-15 human decision: proceed without refreshing group 3 verification after
+the CI correction. Preserve its STALE report in history; group 4 receives its own
+fresh independent review cycle. This does not retroactively verify the CI edit.
 Shipping boundary: one ownership engine, per-installation state, both plan/apply
 flows, and both legacy adapters migrate together. Separating their rollout would
 leave entry points with conflicting preservation rules. Include all mutation
@@ -149,16 +152,29 @@ Context:
 - specs/factory-installation/spec.md: all requirements, particularly Explicit ownership and preserved project configuration; Inspection-first non-destructive adoption; Fingerprint-based deterministic updates; Recoverable and validated application
 - design.md: Ownership, adoption, and update; Configuration and installation metadata; Migration Plan
 - program-design.md: Ownership and plan contracts; Group 4; Migration / compatibility; Test design
+- feasibility-assessment.md: Recommended completion sequence; Seventh review round decision gates; Eighth review round input/consumer matrix
 
-- [ ] 4.1 Implement explicit ownership scopes, bounded-section/JSON merges, and versioned installation state while preserving project overrides; verify containment, malformed markers, hash consistency, preserved surrounding bytes and non-self-referential metadata.
-- [ ] 4.2 Extract conservative target inspection and implement read-only adoption plans with ADD/MERGE/PRESERVE/CONFLICT/SKIP; verify plan-only byte preservation, existing instructions/CI/canonical make check, supported tool evidence, and unsupported-stack diagnostics.
-- [ ] 4.3 Implement fingerprint-based update planning and legacy baseline conversion; verify all four update outcomes, convergence, local deletion, upstream removals, historical pristine hashes and unknown customized content.
-- [ ] 4.4 Implement explicit apply with clean committed Git preflight, changed-input detection, all-conflict validation, state handling, doctor and recovery reporting; verify zero writes on preflight failure and honest reporting of write/postcheck failures.
-- [ ] 4.5 Replace legacy migration/update execution paths with shared-engine adapters, retaining supported argument forms and rejecting unsafe force behavior; verify old/new entry-point agreement and replace only tests for intentionally changed overwrite contracts.
-- [ ] 4.6 Convert the starter inventory and mixed-ownership regions, activate doctor baseline validation, set completed template version 2.0.0 and make manifest refresh behavior; verify ordinary starter doctor health, deterministic regeneration and install/update fixture round trips.
-- [ ] 4.7 Update FACTORY/HARNESS/setup/review documentation and lifecycle diagrams, build the Graft structural cache and refresh the manifest, and verify command instructions plus managed dependency completeness through static evals.
-- [ ] 4.8 Run targeted tests and formatting, obtain fresh maintainability review and verifier evidence covering doctor, graft check, make check, make harness-test and full static/behavioral evals; report actual gaps and stop uncommitted for human review.
-- [ ] 4.9 Append group 4 results and the final Phase 2 acceptance summary to implementation-report.md, retaining the earlier group reports and listing delivered behavior, files, evidence, limitations, deferred work and deviations; verify every acceptance claim against recorded results without changing canonical specs or archiving implicitly.
+Carry-forward constraints: reuse config.py guarded readers, installation.py legacy
+version reconciliation, and eval_config.py parsing. Factory tooling requires Python
+3.12+ while downstream Python metadata, environments and locks remain project-owned.
+Doctor stays offline; Graft build/check is separate and no application scope remains
+not applicable. No automatic Graft hooks, cache copying or upstream init.
+
+Implementation checkpoint within this shipping group: before widening adapter and
+inventory coverage, prove clean Python adoption → apply → doctor → template change
+→ update → apply → doctor → unchanged repeat. Include customized instructions,
+Makefile and JSON, preserved surrounding bytes, and conflict refusal with zero writes.
+Stop and clarify if that bounded contract cannot be demonstrated.
+
+- [x] 4.1 Implement explicit ownership scopes, bounded-section/structural JSON merges (JSON whitespace may normalize), and versioned installation state while preserving project overrides; explicitly distinguish distribution version, installed state authority and legacy conversion inputs before any target write; verify containment, malformed markers, hash consistency, preserved surrounding bytes and non-self-referential metadata.
+- [x] 4.2 Extract conservative target inspection and implement read-only adoption plans with ADD/MERGE/PRESERVE/CONFLICT/SKIP; verify plan-only byte preservation, existing instructions/CI/canonical make check, supported tool evidence, and unsupported-stack diagnostics; require initialized OpenSpec and canonical make check, preserve its recipe and offer make factory-check alongside it.
+- [x] 4.3 Implement fingerprint-based update planning and legacy baseline conversion; verify all four update outcomes, convergence, local deletion, upstream removals, historical pristine hashes and unknown customized content; unmarked legacy Makefiles conservatively conflict for explicit region conversion; never advance a conflicted baseline or stamp to satisfy doctor.
+- [x] 4.4 Implement explicit apply with clean committed Git preflight, changed-input detection, all-conflict validation, state handling, doctor and recovery reporting; verify zero writes on preflight failure and honest reporting of write/postcheck failures, including failure between content and state writes, affected paths and usable Git recovery instructions; retain offline doctor and separate Graft/eval follow-up.
+- [x] 4.5 Replace legacy migration/update execution paths with shared-engine adapters, retaining supported argument forms and rejecting unsafe force behavior; verify old/new entry-point agreement using the same preservation/conflict fixtures, copied-runtime dependencies and downstream Python 3.11 isolation; replace only tests for intentionally changed overwrite contracts.
+- [x] 4.6 Convert the starter inventory and mixed-ownership regions, activate doctor baseline validation, set completed template version 2.0.0 and make manifest refresh behavior; verify ordinary starter doctor health, deterministic regeneration and install/update fixture round trips; set 2.0.0 only after the complete acceptance matrix passes, without masking recorded customizations as corruption.
+- [x] 4.7 Update FACTORY/HARNESS/setup/review documentation and lifecycle diagrams, build the Graft structural cache and refresh the manifest, and verify command instructions plus managed dependency completeness through static evals.
+- [x] 4.8 Run targeted tests and formatting, obtain fresh maintainability review and verifier evidence covering doctor, graft check, make check, make harness-test and full static/behavioral evals; exercise timeout-protected public CLI malformed/special-file inputs across shared consumers, distinguish structural checks from consumer validation, report actual gaps and stop uncommitted for human review.
+- [x] 4.9 Append group 4 results and the final Phase 2 acceptance summary to implementation-report.md, retaining the earlier group reports and listing delivered behavior, files, evidence, limitations, deferred work and deviations; verify every acceptance claim against recorded results without changing canonical specs or archiving implicitly.
 
 Group 2 accepted fingerprint correction (2026-09-11): wrapper fingerprint
 inspection removed by user decision; upstream owns cache selection/validation.
@@ -169,3 +185,15 @@ maintainability PASS; verifier PASS. make check, 234 harness tests, 16 static ev
 focused prompt eval 106, all 101 template hashes and whitespace checks passed.
 See the latest implementation-report.md entry for coverage gaps. Group 2 remains
 uncommitted for human /review; groups 3 and 4 remain pending.
+
+
+Group 4 final handoff (2026-09-15): fresh maintainability PASS and fresh verifier
+PASS after both marker-line and legacy hash-history corrections. Independent
+results: make check passed; 412 harness tests plus lint/format/types passed;
+19 static evals passed; doctor passed; 70 targeted lifecycle/ownership tests
+passed; all 114 distribution hashes and 108 owned baselines matched. Graft check
+reports no application sources configured. Seven prompt evals, remote CI and
+optional enrichment were not exercised. See verification-report.md for verbatim
+current reports and implementation-report.md for history and Phase 2 acceptance.
+Group 4 is uncommitted on feat/factory-phase2-g4 for human /review. No groups
+remain unchecked; canonical specs have not been edited or archived.

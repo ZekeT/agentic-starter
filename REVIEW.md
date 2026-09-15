@@ -17,7 +17,7 @@ Reviewing these wastes attention that the passes below need:
 - Anything `make check` already enforces — formatting, import order, docstring
   coverage, `mypy --strict`, test failures. If it passed the gate, don't relitigate it.
 - Anything a hook already blocks — secrets in writes, `.env` reads, dangerous bash.
-- Generated files: `template-manifest.json`, `uv.lock`, `.claude/commands/opsx/`,
+- Generated files: `uv.lock`, `.claude/commands/opsx/`,
   `.claude/skills/openspec-*/`, `openspec/specs/` (only ever written by
   `/archive-change`). The opsx commands and openspec-* skills are gitignored,
   so they should never appear in a diff at all — if they do, someone forced
@@ -123,3 +123,12 @@ End every review with exactly one:
 Never report a finding you have not traced to a specific line. "This might have a
 race condition" is not a finding; "two `/dev-change` sessions on groups 1 and 2
 both write `tasks.md` at line 40" is.
+
+## Installation changes
+
+Review the ownership inventory and `.factory/state.json` baseline transition even
+though the manifest/state are generated. Verify preserved project scopes, no
+self-fingerprints, unchanged project overrides and no baseline advancement on
+conflict. Inspect actual adapter/CLI round trips and partial-write/postcheck recovery
+evidence. Distinguish external Graft/OpenSpec prerequisites and offline structural
+doctor checks from executed project checks. See [.harness/docs/installation.md](.harness/docs/installation.md).

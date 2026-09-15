@@ -7,8 +7,10 @@ content and making every installation mutation reviewable and recoverable.
 
 ### Requirement: Unified versioned factory tooling
 Doctor, maintainability, adopt, and update SHALL share one consistent interface and the
-existing manifest/version convention. Factory tooling and project configuration
-SHALL require Python 3.12+. Existing migration/update entry points SHALL use the
+existing manifest/version convention. Factory tooling and starter project configuration
+SHALL require Python 3.12+. Existing downstream application Python requirements,
+virtual environments and lockfiles SHALL remain project-owned; factory tooling
+SHALL run with an isolated supported interpreter when required. Existing migration/update entry points SHALL use the
 same lifecycle decisions and explain incompatible legacy options. No alternate
 entry point SHALL bypass project-ownership preservation.
 

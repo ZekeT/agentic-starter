@@ -29,6 +29,10 @@ tests_check() {
 }
 
 case "${1:-all}" in
+  factory)
+    run_quiet doctor uv run --no-project --isolated --python 3.12 python factory doctor
+    run_quiet maintainability uv run --no-project --isolated --python 3.12 python factory maintainability
+    ;;
   lint)
     run_quiet format format_check
     run_quiet lint lint_check

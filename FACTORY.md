@@ -131,3 +131,12 @@ factory gate. Retain any existing installation until representative runs show
 whether these remaining techniques justify it; the refactor does not uninstall
 the dependency. Record measurements using
 [the workflow run format](.harness/evals/workflow-runs.md).
+
+## Installation lifecycle
+
+Adoption and updates share read-only ownership plans, explicit clean-Git apply,
+offline doctor validation and uncommitted recovery reports. Root instruction/build
+regions and defined hook settings preserve surrounding project content. Installed
+baselines are metadata, not workflow status; conflicts cannot advance them.
+See [installation](.harness/docs/installation.md). These operations retain the
+existing independent review and human commit/PR gates.

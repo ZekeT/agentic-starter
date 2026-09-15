@@ -21,13 +21,19 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT / ".harness"))
-from factory.config import DEFAULTS
+from factory.config import DEFAULTS  # noqa: E402
+from factory.installation import build_state  # noqa: E402
+from factory.ownership import (  # noqa: E402
+    digest,
+    distribution_ownership,
+    encoded,
+    owned_content,
+)
 
 MANIFEST_PATH = ROOT / ".harness" / "template-manifest.json"
 VERSION_PATH = ROOT / ".harness" / "TEMPLATE_VERSION"
@@ -46,6 +52,7 @@ MANIFEST_FILES = [
     ".harness/graft/package.json",
     ".harness/graft/package-lock.json",
     ".harness/docs/maintainability.md",
+    ".harness/docs/installation.md",
     "CLAUDE.md",
     "REVIEW.md",
     "Makefile",
@@ -208,13 +215,21 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
     files: dict[str, Any] = {}
     for path in collect_files():
         rel = path.relative_to(ROOT).as_posix()
-        digest = sha256_of(path)
+        current_digest = sha256_of(path)
         old_entry = prev_files.get(rel, {})
         history: list[str] = list(old_entry.get("previous", []))
         old_current = old_entry.get("sha256")
-        if old_current and old_current != digest and old_current not in history:
+        if old_current and old_current != current_digest and old_current not in history:
             history.append(old_current)
-        files[rel] = {"sha256": digest, "previous": history}
+        ownership = distribution_ownership(rel)
+        owned = owned_content(path.read_bytes(), rel, ownership)
+        files[rel] = {
+            "sha256": current_digest,
+            "previous": history,
+            "ownership": ownership,
+            "owned_sha256": digest(owned),
+            "executable": bool(path.stat().st_mode & 0o111),
+        }
     version = "unknown"
     if VERSION_PATH.exists():
         version = VERSION_PATH.read_text().strip()
@@ -223,7 +238,7 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
         "defaults": {"maintainability": dict(DEFAULTS)},
         "project": previous.get("project", {}),
         "template_version": version,
-        "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "ownership_version": 1,
         "files": files,
     }
 
@@ -235,7 +250,15 @@ def main() -> None:
         manifest = build_manifest(previous)
     except ValueError as exc:
         sys.exit(str(exc))
-    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n")
+    MANIFEST_PATH.write_bytes(encoded(manifest))
+    entries = {
+        name: {"ownership": entry["ownership"], "upstream": entry["owned_sha256"]}
+        for name, entry in manifest["files"].items()
+        if entry["ownership"]["mode"] != "preserve"
+    }
+    state_path = ROOT / ".factory/state.json"
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    state_path.write_bytes(encoded(build_state(manifest["template_version"], entries)))
     changed = sum(
         1
         for rel, entry in manifest["files"].items()

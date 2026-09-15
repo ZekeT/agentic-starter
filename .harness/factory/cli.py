@@ -21,6 +21,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor", help="Diagnose installation health offline")
+    for operation in ("adopt", "update"):
+        lifecycle = sub.add_parser(
+            operation, help="Plan safe installation changes; apply explicitly"
+        )
+        lifecycle.add_argument("target", type=Path)
+        lifecycle.add_argument("--template", type=Path)
+        lifecycle.add_argument("--apply", action="store_true")
     navigation = sub.add_parser("navigation", help="Pinned application-only Graft CLI")
     navigation.add_argument("arguments", nargs=argparse.REMAINDER)
     growth = sub.add_parser("maintainability", help="Check Python code-line growth")
@@ -34,6 +41,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command in {"adopt", "update"}:
+            from .adoption import plan_installation
+            from .apply import apply_plan, show_plan
+
+            plan = plan_installation(args.template or root, args.target, args.command)
+            show_plan(plan)
+            return apply_plan(plan) if args.apply else int(bool(plan.conflicts))
         if args.command == "doctor":
             return doctor.run(root)
         if args.command == "navigation":
@@ -69,3 +83,30 @@ def main(argv: list[str] | None = None) -> int:
     ) as exc:
         print(f"✗ {args.command}: {exc}", file=sys.stderr)
         return 1
+
+
+def legacy_main(template: Path, operation: str, argv: list[str] | None = None) -> int:
+    """Translate legacy argument forms without a second mutation implementation."""
+    parser = argparse.ArgumentParser(
+        description="Deprecated adapter to factory " + operation
+    )
+    parser.add_argument("target", type=Path)
+    parser.add_argument("--template", type=Path, default=template)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--dry", "--dry-run", action="store_true")
+    mode.add_argument("--apply", action="store_true")
+    parser.add_argument("--force", action="store_true")
+    args = parser.parse_args(argv)
+    if args.force:
+        print(
+            "--force overwrite is unsupported; resolve conflicts explicitly. No files written.",
+            file=sys.stderr,
+        )
+        return 1
+    print(
+        f"Deprecated entry point: use factory {operation}; default is now a read-only plan. Use --apply explicitly."
+    )
+    translated = [operation, str(args.target), "--template", str(args.template)]
+    if args.apply:
+        translated.append("--apply")
+    return main(translated)

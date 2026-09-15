@@ -1,3 +1,4 @@
+# factory:integration:begin
 # Python
 __pycache__/
 *.py[cod]
@@ -64,3 +65,7 @@ Thumbs.db
 # NOTE: openspec/ itself (specs, changes, config.yaml) IS committed.
 .claude/commands/opsx/
 .claude/skills/openspec-*/
+
+.env.*
+!.env.template
+# factory:integration:end
