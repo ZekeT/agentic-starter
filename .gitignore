@@ -53,8 +53,10 @@ Thumbs.db
 .worktrees/
 /.engineering/state/dependencies.json
 /.engineering/tmp/
+/.engineering/migration-work/
 
 .env.*
 !.env.template
-/.claude/skills/
+/.claude/skills/*
+!/.claude/skills/migrate-from-openspec/
 # engineering:integration:end

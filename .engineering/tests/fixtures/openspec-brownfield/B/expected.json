@@ -1,0 +1,20 @@
+{
+  "authored_example": true,
+  "canonical": [
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "CONFLICT_REQUIRES_HUMAN",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "Prose requires five failures; implementation and tests require ten."
+    }
+  ],
+  "active": [],
+  "unresolved_decisions": [
+    "Should the lock threshold be five or ten?"
+  ],
+  "proposed_documents": {}
+}

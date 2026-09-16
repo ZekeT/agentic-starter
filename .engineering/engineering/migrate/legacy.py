@@ -11,13 +11,14 @@ from ..installation import MANIFEST_PATH, STATE_PATH, build_state
 from ..ownership import (
     digest,
     encoded,
+    is_openspec_owned,
     json_object,
     merge_owned,
     owned_content,
     read_bytes,
 )
 from .common import Migration, begin, finish
-from .openspec import extract
+from .openspec import HANDOFF, detected
 
 OLD_MANIFEST = ".harness/template-manifest.json"
 OLD_STATE = ".factory/state.json"
@@ -107,7 +108,9 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
             "migration.installed: v3 state already exists without completion metadata"
         )
         return result
-    sources = extract(result, policy)
+    sources: dict[str, bytes] = {}
+    if detected(root):
+        result.notes.append(HANDOFF)
     sources[OLD_MANIFEST] = previous_raw
     old_files = object_value(previous.get("files", {}), "legacy files")
     old_state_raw = read_bytes(root, OLD_STATE)
@@ -120,6 +123,8 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
     old_files = {**known.get("files", {}), **old_files}
     originals: dict[str, bytes] = {}
     for name, entry in old_files.items():
+        if is_openspec_owned(name) or name.startswith(".agents/skills/openspec-"):
+            continue
         if entry.get("ownership", {}).get("mode") == "preserve":
             continue
         raw = read_bytes(root, name)
@@ -198,6 +203,19 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
                         f"migration.destination_modified: customized managed region in {name}"
                     )
                     continue
+            if name in {"CLAUDE.md", "AGENTS.md"}:
+                from .wiring import preserve_markers
+
+                replacement = preserve_markers(raw, replacement, name)
+            if name in {"Makefile", "CLAUDE.md", "AGENTS.md"} and any(
+                (b"openspec" in line.lower() or b"opsx" in line.lower())
+                and line not in replacement.splitlines()
+                for line in raw.splitlines()
+            ):
+                result.conflicts.append(
+                    f"migration.openspec: preserve OpenSpec integration in {name} before upgrading starter infrastructure"
+                )
+                continue
             if name == ".gitignore" and b"/graphify-out/" in raw.splitlines():
                 if b"/graphify-out/" not in replacement.splitlines():
                     replacement += (
@@ -256,18 +274,19 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
             result.add(name, read_bytes(template, name))
     result.add(MANIFEST_PATH, encoded(offered))
     result.add(STATE_PATH, encoded(build_state(offered["template_version"], entries)))
+    legacy_doc_customizations: bytes = (
+        "# Legacy documentation reconciliation\n\n"
+        + (
+            "Unclassified customized originals preserved in legacy-docs/:\n"
+            + "\n".join("- " + name for name in custom_docs)
+            if custom_docs
+            else "No unclassified root documentation customizations found."
+        )
+        + "\n\nReview preserved copies; unknown prose has not been injected into ENGINEERING.md.\n"
+    ).encode()
     result.add(
         ".engineering/migrations/legacy-doc-customizations.md",
-        (
-            "# Legacy documentation reconciliation\n\n"
-            + (
-                "Unclassified customized originals preserved in legacy-docs/:\n"
-                + "\n".join("- " + name for name in custom_docs)
-                if custom_docs
-                else "No unclassified root documentation customizations found."
-            )
-            + "\n\nReview preserved copies; unknown prose has not been injected into ENGINEERING.md.\n"
-        ).encode(),
+        legacy_doc_customizations,
     )
     result.notes += [
         "CONVERT installation ownership and project configuration to v3.",

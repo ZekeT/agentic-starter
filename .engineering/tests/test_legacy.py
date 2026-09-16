@@ -2,6 +2,7 @@
 
 import json
 
+import pytest
 from engineering.migrate.common import execute
 from engineering.migrate.legacy import old_region, plan
 from engineering.ownership import digest, encoded
@@ -57,8 +58,13 @@ def test_legacy_plan_apply_and_rerun(installation):
     assert "factory" not in after and "FACTORY.md" not in after
     assert "HARNESS.md" not in after and "engineering" in after
     assert "warn_file_lines = 250" in (target / ".engineering/config.toml").read_text()
-    assert (target / "docs/migrations/openspec/in-progress.md").exists()
-    assert not (target / "openspec").exists()
+    assert not (target / "docs/migrations/openspec/in-progress.md").exists()
+    assert (target / "openspec").exists()
+    assert all(
+        after[name] == raw
+        for name, raw in before.items()
+        if name.startswith("openspec/")
+    )
     assert execute(lambda: plan(template, target), apply=True) == 0
     assert snapshot(target) == after
 
@@ -132,3 +138,78 @@ def test_legacy_graphify_ignore_survives_outside_managed_region(installation):
     )
     assert execute(lambda: plan(template, target), apply=True) == 0
     assert ignore.read_text() == migrated
+
+
+def test_legacy_preserves_openspec_commands_markers_and_hooks(installation):
+    template, target = installation
+    legacy(target)
+    command = ".claude/commands/opsx/propose.md"
+    save(target, command, "OpenSpec command\n")
+    markers = "<!-- OPENSPEC:START -->\nUse OpenSpec\n<!-- OPENSPEC:END -->\n"
+    instructions = (
+        (target / "CLAUDE.md")
+        .read_text()
+        .replace("Legacy instructions\n", "Legacy instructions\n" + markers)
+    )
+    save(target, "CLAUDE.md", instructions)
+    hook = {"type": "command", "command": "openspec validate"}
+    save(
+        target,
+        ".claude/settings.json",
+        json.dumps({"hooks": {"Stop": [{"hooks": [hook]}]}}),
+    )
+    manifest_path = target / ".harness/template-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    for name in (command, "CLAUDE.md", ".claude/settings.json"):
+        raw = (target / name).read_bytes()
+        manifest["files"][name] = {"sha256": digest(raw), "ownership": {"mode": "file"}}
+    manifest_path.write_bytes(encoded(manifest))
+    commit(target)
+    proposed = plan(template, target)
+    assert any("/migrate-from-openspec" in note for note in proposed.notes)
+    assert execute(lambda: plan(template, target), apply=True) == 0
+    assert (target / command).read_text() == "OpenSpec command\n"
+    assert markers in (target / "CLAUDE.md").read_text()
+    settings = json.loads((target / ".claude/settings.json").read_text())
+    assert hook in [
+        item for group in settings["hooks"]["Stop"] for item in group["hooks"]
+    ]
+
+
+def test_legacy_refuses_to_discard_openspec_make_targets(installation):
+    template, target = installation
+    legacy(target)
+    makefile = target / "Makefile"
+    raw = makefile.read_bytes() + b"\nopenspec-check:\n\topenspec validate\n"
+    makefile.write_bytes(raw)
+    manifest_path = target / ".harness/template-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["files"]["Makefile"]["sha256"] = digest(raw)
+    manifest_path.write_bytes(encoded(manifest))
+    commit(target)
+    before = snapshot(target)
+    assert execute(lambda: plan(template, target), apply=True) == 1
+    assert snapshot(target) == before
+
+
+@pytest.mark.parametrize("name", ["CLAUDE.md", "AGENTS.md"])
+def test_legacy_refuses_to_discard_unmarked_openspec_instructions(installation, name):
+    template, target = installation
+    legacy(target)
+    raw = (
+        b"<!-- harness:integration:begin -->\n"
+        b"Use openspec validate before delivery\n"
+        b"<!-- harness:integration:end -->\n"
+    )
+    save(target, name, raw.decode())
+    manifest_path = target / ".harness/template-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["files"][name] = {
+        "sha256": digest(raw),
+        "ownership": {"mode": "file"},
+    }
+    manifest_path.write_bytes(encoded(manifest))
+    commit(target)
+    before = snapshot(target)
+    assert execute(lambda: plan(template, target), apply=True) == 1
+    assert snapshot(target) == before

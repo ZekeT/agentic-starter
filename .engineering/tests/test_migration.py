@@ -84,9 +84,8 @@ def test_plan_and_complete_apply_idempotency(repo):
     for name, raw in expected.items():
         assert after.get(name) == raw
     assert after["docs/adr/database.md"] == before["docs/adr/database.md"]
-    assert b"PARTIALLY_IMPLEMENTED" in after["docs/migrations/openspec/active.md"]
-    assert b"Durable constraint" in after["docs/migrations/openspec/active.md"]
-    assert not (repo / "openspec").exists()
+    assert all(after[name] == raw for name, raw in before.items())
+    assert (repo / "openspec").exists()
     assert execute(lambda: plan(repo), apply=True) == 0
     assert snapshot(repo) == after
 
@@ -102,7 +101,11 @@ def test_dirty_refuses_every_write(repo):
 
 def test_destination_conflict(repo):
     fixture(repo)
-    save(repo, "docs/migrations/openspec/active.md", "manual draft")
+    save(
+        repo,
+        ".engineering/migration-work/openspec/active-change-index.md",
+        "manual draft",
+    )
     commit(repo)
     before = snapshot(repo)
     assert execute(lambda: plan(repo), apply=True) == 1
@@ -112,7 +115,11 @@ def test_destination_conflict(repo):
 def test_edited_migration_output_is_not_overwritten(repo):
     fixture(repo)
     assert execute(lambda: plan(repo), apply=True) == 0
-    save(repo, "docs/migrations/openspec/active.md", "revised draft")
+    save(
+        repo,
+        ".engineering/migration-work/openspec/active-change-index.md",
+        "revised draft",
+    )
     before = snapshot(repo)
     assert execute(lambda: plan(repo), apply=True) == 1
     assert snapshot(repo) == before
@@ -123,18 +130,21 @@ def test_git_only_preserves_verified_history(repo):
     assert execute(lambda: plan(repo, "git-only"), apply=True) == 0
     assert not (repo / ".engineering/migrations/legacy-openspec").exists()
     data = json.loads(
-        (repo / ".engineering/state/migrations/openspec.json").read_text()
+        (repo / ".engineering/migration-work/openspec/inventory.json").read_text()
     )
     assert data["source_head"] and data["source_paths"]
 
 
 def test_git_only_refuses_uncommitted_sources(repo):
     save(repo, "openspec/specs/new/spec.md", "not committed")
-    assert plan(repo, "git-only").conflicts
+    before = snapshot(repo)
+    with pytest.raises(ValueError, match="git.dirty"):
+        execute(lambda: plan(repo, "git-only"), apply=True)
+    assert snapshot(repo) == before
 
 
 @pytest.mark.parametrize(
-    "location", ["openspec", "openspec/specs/link", "docs/migrations"]
+    "location", ["openspec", "openspec/specs/link", ".engineering/migration-work"]
 )
 def test_symlink_paths_refuse(repo, tmp_path, location):
     if location != "openspec":
@@ -208,25 +218,21 @@ def test_openspec_wiring_without_source_and_unrelated_dependencies(repo):
     )
     commit(repo)
     assert execute(lambda: plan(repo), apply=True) == 0
-    package = json.loads((repo / "package.json").read_text())
-    assert package == {
-        "devDependencies": {"keep": "2.0.0"},
-        "scripts": {"test": "native"},
-    }
-    lock = json.loads((repo / "package-lock.json").read_text())
-    assert "node_modules/keep" in lock["packages"]
-    assert "node_modules/@fission-ai/openspec" not in lock["packages"]
-    assert (repo / "AGENTS.md").read_text() == "Project rules\nKeep this.\n"
+    assert (
+        "@fission-ai/openspec"
+        in json.loads((repo / "package.json").read_text())["devDependencies"]
+    )
+    assert "OPENSPEC:START" in (repo / "AGENTS.md").read_text()
     assert execute(lambda: plan(repo), apply=True) == 0
 
 
-def test_unsupported_lockfile_surfaces_conflict_without_mutation(repo):
+def test_non_npm_lockfile_is_preserved_during_preparation(repo):
     save(repo, "package.json", '{"devDependencies":{"@fission-ai/openspec":"1.0.0"}}')
     save(repo, "pnpm-lock.yaml", "project-owned lock")
     commit(repo)
     before = snapshot(repo)
-    assert execute(lambda: plan(repo), apply=True) == 1
-    assert snapshot(repo) == before
+    assert execute(lambda: plan(repo), apply=True) == 0
+    assert all(snapshot(repo)[name] == raw for name, raw in before.items())
 
 
 def test_validation_failure_rolls_back(repo):

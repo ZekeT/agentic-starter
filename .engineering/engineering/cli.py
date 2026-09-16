@@ -31,7 +31,9 @@ def main(argv: list[str] | None = None) -> int:
     deps.add_argument("--ref")
     deps.add_argument("--check-remote", action="store_true")
     migrate = sub.add_parser("migrate", help="Plan one-way legacy migrations")
-    migrate.add_argument("migration", choices=["openspec", "legacy-starter"])
+    migrate.add_argument(
+        "migration", choices=["openspec-project", "openspec", "legacy-starter"]
+    )
     migrate.add_argument("--target", type=Path)
     migrate.add_argument("--template", type=Path)
     mode = migrate.add_mutually_exclusive_group()
@@ -94,13 +96,17 @@ def main(argv: list[str] | None = None) -> int:
             policy = args.legacy_history
             if policy is None:
                 policy = (
-                    load(target).get("migration", {}).get("legacy_history", "snapshot")
+                    load(target).get("migration", {}).get("legacy_history", "git-only")
                     if (target / ".engineering/config.toml").is_file()
-                    else "snapshot"
+                    else "git-only"
+                )
+            if args.migration == "openspec":
+                print(
+                    "Deprecated alias: openspec; use openspec-project. --apply prepares inventory only."
                 )
             planner = (
                 (lambda: openspec_plan(target, policy))
-                if args.migration == "openspec"
+                if args.migration in {"openspec", "openspec-project"}
                 else (lambda: legacy_plan(template, target, policy))
             )
             return execute(planner, apply=args.apply)

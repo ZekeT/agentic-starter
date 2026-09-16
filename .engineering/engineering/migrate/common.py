@@ -172,7 +172,7 @@ def execute(planner: Callable[[], Migration], *, apply: bool) -> int:
         )
         raise
     # Remove empty legacy directories only, never caches or unrecognized files.
-    for prefix in ("openspec", ".harness", ".factory", ".claude/commands/opsx"):
+    for prefix in () if plan.name == "openspec-project" else (".harness", ".factory"):
         base = safe_path(plan.root, prefix)
         if base.is_dir():
             for path in sorted(

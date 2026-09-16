@@ -282,58 +282,71 @@ Errors include stable categories, affected paths and remediation. Restore or
 reconcile affected scopes; never overwrite customization merely to silence a
 health check. Unknown schemas fail closed.
 
-## Migrating an earlier starter
+## OpenSpec projects and earlier starters
 
-The old repository-owned workflow, OpenSpec runtime and project Superpowers
-integration are retired. Matt provides discussion, specs, tickets, implementation
-and review without a second methodology. Existing global tools are left alone.
-Migration is one-way; Git history remains the recovery boundary.
-
-Use an external v3 starter checkout against a clean legacy project:
+Use an external Engineering System checkout against any OpenSpec repository,
+including projects that never used Agentic Starter:
 
 ```bash
-engineering migrate openspec --target /path/to/project --plan
-engineering migrate legacy-starter --target /path/to/project --plan
-engineering migrate legacy-starter --target /path/to/project --apply
+./engineering migrate openspec-project --target /path/to/project
+./engineering migrate openspec-project --target /path/to/project --plan
+./engineering migrate openspec-project --target /path/to/project --apply
 ```
 
-The combined legacy-starter migration extracts OpenSpec before retiring known
-old files and converting configuration/ownership metadata. Standalone OpenSpec
-migration is useful for inspecting/extracting source evidence first; it does not
-replace unrelated custom instructions. Default history policy is a byte-complete
-snapshot. `--legacy-history git-only` requires every removed source to match the
-recorded committed version. No source is discarded merely because it looks old.
+The default and `--plan` are non-mutating previews. `--apply` requires a clean,
+committed Git repository and prepares only temporary evidence under
+`.engineering/migration-work/openspec/`. It preserves all OpenSpec source,
+commands, configuration, project documentation and application code.
+`engineering migrate openspec` is a deprecated alias with the same safe behavior.
 
-Outputs:
+The workspace contains `inventory.json`, canonical/active/archived source indexes,
+`detected-integrations.md`, and a `reconciliation/` directory. Inventory records
+source paths and SHA-256 fingerprints, the source commit, local/remote branch
+references, metadata, existing durable docs and detected integration. It does not
+infer code/test relationships or classify requirements from task checkboxes.
 
-- `docs/migrations/openspec/<slug>.md`: active unfinished work, original task
-  evidence and source sections, explicitly requiring human review.
-- `docs/context/legacy-openspec-candidates.md`: one unclassified context candidate;
-  reconcile into a few durable docs, then remove the candidate.
-- `.engineering/migrations/openspec-migration-report.md`: deterministic counts,
-  preserved/converted/unclassified items and follow-up commands.
-- `.engineering/migrations/legacy-openspec/`: source snapshot unless git-only.
-- `.engineering/migrations/legacy-doc-customizations.md`: root-doc reconciliation.
-- `.engineering/state/migrations/`: source/output hashes and recovery commit.
+The migration sequence is inventory → `/migrate-from-openspec` semantic
+reconciliation → human review → approved finalization. Reconciliation must compare
+prose with code and tests, resolve conflicts with the human, and route remaining
+work into Matt's skills. Preparation alone does not complete migration or approve
+removals. No durable replacement docs are created mechanically.
 
-Existing ADRs stay unchanged. Generic design prose is not automatically turned
-into ADRs. Checkbox completion is evidence, not proof of merge. Active work is
-not implemented, made into an approved Matt spec, or published remotely.
-Run `/grill-with-docs` or `/wayfinder` on a migration package; after decisions are
-settled use `/to-spec`. Abandoning old work is also a human choice.
+Git history is the default preservation policy for an unconfigured project.
+An explicit `[migration] legacy_history` setting or `--legacy-history` selection
+is honored. `--legacy-history snapshot` additionally copies inventoried sources
+into the temporary workspace. Preparation records whether sources match HEAD;
+later removal must verify preservation against the recorded commit.
 
-Customized managed code/regions conflict before any write. Customized old root
-docs are preserved as complete originals for manual reconciliation. Unknown
-legacy files remain in place and must be reviewed. Global Superpowers/tool
-installations are never uninstalled. Plan twice produces the same actions;
-apply twice creates no duplicates. Edited migration outputs are never overwritten.
+Identical retries create no duplicate outputs, including after committing the
+workspace. Changed sources or edited evidence produce conflicts rather than
+overwriting review work. Review and remove obsolete temporary evidence explicitly
+before preparing a new inventory. The workspace may be removed after successful
+final validation and human acceptance; normal development never depends on it.
 
-On dirty Git: commit/stash user work and retry. On conflicts: reconcile the named
-paths and re-plan. Ordinary write failures restore affected bytes/modes. Recovery
-instructions print the pre-migration commit and affected paths; inspect Git status
-and restore only appropriate tracked paths. No destructive Git reset is automatic.
-After migration, install dependencies, run doctor and checks, then review before
-committing. Keep source snapshots until reconciliation is complete.
+For an earlier Agentic Starter installation:
+
+```bash
+./engineering migrate legacy-starter --target /path/to/project --plan
+./engineering migrate legacy-starter --target /path/to/project --apply
+```
+
+This upgrades known infrastructure and ownership metadata while preserving
+OpenSpec pending semantic reconciliation. It advertises the separate OpenSpec
+handoff. Explicit OpenSpec instruction blocks, commands, skills and project hooks
+remain. A Makefile conversion that would discard OpenSpec integration conflicts
+before writes so the owner can reconcile the shared file. Unknown project files
+and global installations remain untouched. Customized legacy root docs are saved
+under `.engineering/migrations/legacy-docs/` for manual review.
+
+`engineering adopt` remains ordinary-project installation. When it detects
+OpenSpec it recommends `engineering migrate openspec-project` and preserves the
+existing workflow sources.
+
+On dirty Git, commit or stash user work and retry. On conflicts, reconcile the
+named paths and re-plan. Symlinks and unsafe paths are refused. Ordinary write
+failures restore affected bytes and modes; the report identifies the recovery
+commit. After infrastructure migration, install dependencies, run doctor and
+project checks, then obtain review before committing.
 
 ## Durable knowledge and human explanations
 

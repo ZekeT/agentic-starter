@@ -1,0 +1,55 @@
+{
+  "authored_example": true,
+  "canonical": [
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "REPRESENTED_BY_CODE_OR_TESTS_DROP",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "The five-attempt boundary is executable and covered."
+    },
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "KEEP_AS_CONTEXT",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "Merchant/delegate terminology is a durable business distinction not expressed by the lock function."
+    }
+  ],
+  "active": [
+    {
+      "source": "export-retries",
+      "state": "PARTIALLY_IMPLEMENTED",
+      "route": "to-spec",
+      "evidence": [
+        "openspec/changes/export-retries/proposal.md",
+        "openspec/changes/export-retries/design.md",
+        "openspec/changes/export-retries/tasks.md",
+        "openspec/changes/export-retries/specs/export/spec.md",
+        "src/exports.py",
+        "tests/test_exports.py"
+      ],
+      "implemented": [
+        "Synchronous serialization is covered by tests."
+      ],
+      "remaining": [
+        "Background delivery and retry semantics."
+      ],
+      "missing_tests": [
+        "Transient delivery retry and deduplication acceptance coverage."
+      ],
+      "decisions": []
+    }
+  ],
+  "unresolved_decisions": [],
+  "proposed_documents": {
+    "docs/context/accounts.md": "# Accounts\n\nA merchant owns an account contractually; delegates may operate it.\n",
+    ".scratch/export-retries/migration-input.md": "# Export migration input\n\nPreserve current CSV serialization. Remaining work: background delivery and transient-failure retries. Tenant isolation is required. Kafka was rejected for operational cost.\n\nDecided: database outbox, maximum three retries. Feed remaining work into upstream /to-spec; do not recreate serialization work.\n"
+  }
+}

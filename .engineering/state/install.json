@@ -60,6 +60,18 @@
       },
       "upstream": "b91eab7247b9ca6d0093a089b128be5d7374cd60cd00ada3ef108d41738eff6e"
     },
+    ".claude/skills/migrate-from-openspec/SKILL.md": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "4632650c3d77247ae29a49e8665671a19e4c8b451983ae3c329fe73b502cb188"
+    },
+    ".claude/skills/migrate-from-openspec/references/application-manifest.md": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "42059a59931bde544a1bbbb90c9cbb49c36ed549b1cb3806f444cb64d5065d6b"
+    },
     ".claude/statusline.sh": {
       "ownership": {
         "mode": "file"
@@ -130,7 +142,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "538e355074d3f62f67117c8cbcb4d066a8de5a84a4d6178e60c4b0a4243109b3"
+      "upstream": "57c3d785b92eda9a6b42b677574a2591f1fd580bac966ba61e5516ac9bba8d4b"
     },
     ".engineering/engineering/config.py": {
       "ownership": {
@@ -178,7 +190,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "ce73ba481831df10d7b3757edc0e44d446c5d7450a51f01a278af1ebf9f69439"
+      "upstream": "6ffaa3b6072bdf9866e66af09390a41dc5185ff4947651b9b5ada61f068f3f47"
     },
     ".engineering/engineering/installation.py": {
       "ownership": {
@@ -192,29 +204,35 @@
       },
       "upstream": "f07058ec3465b8df2f65c9e19ce292d32fbfbf6d22014b6e98de1e03fea4333f"
     },
+    ".engineering/engineering/migrate/application.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "d777d981883c655fa43a6a622b9575a14b806e358ce15d5ae5cb3716586e891c"
+    },
     ".engineering/engineering/migrate/common.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "25ec2fb6393a3e4cbeaf0a62d46d395d6e8d20db8d5c3440610668552380538c"
+      "upstream": "6a4bc75f4441d9dcaf5a56ba6bcfb5b86a6a31b3427200b96afc403ff9604fc7"
     },
     ".engineering/engineering/migrate/legacy.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "b9d1f1c7bfc120092a4353b1b661ea7c36b740e487948b25efe79ab1aaee10cc"
+      "upstream": "a2107910a455a98d9de3892366b50e83a35951d04f5762d5e1137f1fbc67a7c4"
     },
     ".engineering/engineering/migrate/openspec.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "0c82c703313e6d0ed3c2716b7b309194e9753506ff420c49bb84f3a1dcb9ccee"
+      "upstream": "022c085f3cc2ed2ab80ba549e1b7976f16db09329e8b3a0dc7c148dafd5e3f45"
     },
     ".engineering/engineering/migrate/wiring.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "8ef82871fb9b21aed11bab4d327cfcf6783665c3e8463451dad7a1bc73a6e1bc"
+      "upstream": "16b08d30815d0dcbc3ed469e6ee8d0c77d7e7f6bab090ee3bb7cfc0aebafeb84"
     },
     ".engineering/engineering/ownership.py": {
       "ownership": {
@@ -294,6 +312,12 @@
       },
       "upstream": "97f5bcc1ee0c184c91e15ed9068760e7762cfda8c8a67e799ffba3deaded3725"
     },
+    ".engineering/evals/cases/006-semantic-migration.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "e095c4f7dcc980d819bb45e95764c533862c0a3904616733b7cb1b069c3e149b"
+    },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
         "mode": "file"
@@ -311,6 +335,12 @@
         "mode": "file"
       },
       "upstream": "8229878db4af5a59232fe25867546a036f67726f9566c21713872413c722ae2d"
+    },
+    ".engineering/evals/check_semantic_migration.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "309a68291ea4240c46e04036289249d6c83c6a94ec86c7efb54ca12c7ac3a2e3"
     },
     ".engineering/evals/run_evals.py": {
       "ownership": {
@@ -359,7 +389,7 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "c2378fddb4953e44a288bd096ab98864fd3863a517210a3bfa1469478e2267b0"
+      "upstream": "815bfd3ada5968380f7909a11e2144b10b45ddcdf495a2f4bcdd9f7d80a95702"
     },
     "AGENTS.md": {
       "ownership": {
@@ -379,7 +409,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "62fdb655e295a6cd3a7118f3da204994cee55b194fb1360838d60c08aa371b49"
+      "upstream": "2cd9187c5d7f4155428192aee753693fd53f163ee3c9b78b476a79ba28d6c123"
     },
     "Makefile": {
       "ownership": {

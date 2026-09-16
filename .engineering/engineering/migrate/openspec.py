@@ -1,190 +1,228 @@
-"""Extract legacy evidence without inventing architecture or implementing tasks."""
+"""Inventory OpenSpec references without interpreting or removing source material."""
 
 import re
 from pathlib import Path
+from typing import Any
 
+from ..apply import baseline
+from ..config import safe_path
+from ..ownership import digest, encoded, json_object, observe, read_bytes
 from ..source import git
-from .common import Migration, begin, finish, tree
-from .wiring import cleanup
+from .common import Migration, tree
 
-REPORT = ".engineering/migrations/openspec-migration-report.md"
-
-
-def task_status(raw: bytes) -> str:
-    """Classify only checkbox evidence; completion never proves merge/archive."""
-    checks = re.findall(rb"(?m)^\s*-\s*\[([ xX])\]", raw)
-    if not checks:
-        return "UNKNOWN"
-    done = sum(item.lower() == b"x" for item in checks)
-    if done == len(checks):
-        return "UNKNOWN (all tasks checked; merge not inferred)"
-    return "PARTIALLY_IMPLEMENTED" if done else "PLANNING"
+WORKSPACE = ".engineering/migration-work/openspec"
+HANDOFF = "OpenSpec preserved. Next: engineering migrate openspec-project --apply, then /migrate-from-openspec for semantic reconciliation and human review."
 
 
-def package(slug: str, sources: dict[str, bytes]) -> bytes:
-    """Preserve source sections verbatim, labelling unresolved interpretation."""
-    status = task_status(sources.get(f"openspec/changes/{slug}/tasks.md", b""))
-    lines = [
-        f"# Legacy OpenSpec Migration: {slug}",
-        "",
-        "## Status",
-        "Unmigrated / Requires review",
-        f"Evidence classification: {status}",
-        "",
-        "## Original sources",
-    ]
-    lines += [f"- `{name}`" for name in sources]
-    roles = {
-        "Original intent": ("intent.md", "proposal.md"),
-        "Decisions already made": ("design.md", "program-design.md"),
-        "Known unresolved questions": (),
-        "Existing design constraints": (),
-        "Existing task status": ("tasks.md",),
-        "Existing behavioral requirements": ("spec.md",),
+def integrations(root: Path) -> dict[str, bytes]:
+    """Find explicit tool references, retaining whole shared files as evidence."""
+    result = tree(root, ".claude/commands/opsx")
+    for prefix in (".claude/skills", ".agents/skills"):
+        base = safe_path(root, prefix)
+        if base.is_dir():
+            for path in sorted(base.glob("openspec-*")):
+                result.update(tree(root, path.relative_to(root).as_posix()))
+    for name in (
+        "CLAUDE.md",
+        "AGENTS.md",
+        ".claude/settings.json",
+        "package.json",
+        "package-lock.json",
+        "npm-shrinkwrap.json",
+        "pnpm-lock.yaml",
+        "yarn.lock",
+        "bun.lock",
+        "Makefile",
+    ):
+        raw = read_bytes(root, name)
+        if raw is not None and (b"openspec" in raw.lower() or b"opsx" in raw.lower()):
+            result[name] = raw
+    return dict(sorted(result.items()))
+
+
+def detected(root: Path) -> bool:
+    """Recognize standalone OpenSpec installations as well as runtime wiring."""
+    return safe_path(root, "openspec").exists() or bool(integrations(root))
+
+
+def capability(name: str, raw: bytes) -> dict[str, Any]:
+    """Capture literal headings and paths, leaving semantic relationships unknown."""
+    match = re.search(r"(?m)^#\s+(.+?)\s*$", raw.decode("utf-8", errors="replace"))
+    return {
+        "path": name,
+        "title": match.group(1) if match else Path(name).parent.name,
+        "status": "canonical",
+        "related_tests": [],
+        "related_code_candidates": [],
+        "related_active_changes": [],
     }
-    for title, names in roles.items():
-        lines += ["", f"## {title}"]
-        matching = [
-            (name, raw) for name, raw in sources.items() if Path(name).name in names
-        ]
-        if not matching:
-            lines += ["Not inferred. Review the original sources and current code."]
-        for name, raw in matching:
-            lines += [
-                "",
-                f"### Source: {name}",
-                "",
-                raw.decode("utf-8", errors="replace"),
-            ]
-    lines += [
-        "",
-        "## Suggested next action",
-        "Run /grill-with-docs on this package. For architectural uncertainty use /wayfinder; once decisions are resolved use /to-spec, then /to-tickets and /implement. A human may instead abandon/archive the work. No tasks have been implemented or published by migration.",
-        "",
-        "This is a migration aid, not an approved spec. Complete originals remain in the snapshot or recorded Git commit.",
-        "",
-    ]
-    return "\n".join(lines).encode()
 
 
-def extract(plan: Migration, policy: str) -> dict[str, bytes]:
-    """Scan legacy source structure and stage candidate docs plus complete history."""
-    sources = tree(plan.root, "openspec")
-    canonical = {
-        name: raw
+def index(title: str, paths: list[str]) -> bytes:
+    """Render source references without copying or classifying their prose."""
+    return (
+        f"# {title}\n\n" + "\n".join(f"- `{name}`" for name in paths) + "\n"
+    ).encode()
+
+
+def plan(root: Path, policy: str = "git-only") -> Migration:
+    """Prepare deterministic temporary evidence; preserve every source byte."""
+    root = root.resolve()
+    result = Migration(root, "openspec-project", baseline(root))
+    if policy not in {"git-only", "snapshot"}:
+        raise ValueError("migration.history: expected git-only or snapshot")
+    sources = tree(root, "openspec")
+    wiring = integrations(root)
+    if not sources and not wiring:
+        result.notes.append("No OpenSpec source or project wiring found.")
+        return result
+    docs = {}
+    for prefix in ("docs/adr", "docs/context", "docs/features"):
+        docs.update(tree(root, prefix))
+    canonical = [
+        capability(name, raw)
         for name, raw in sources.items()
         if name.startswith("openspec/specs/") and name.endswith("/spec.md")
-    }
-    active: dict[str, dict[str, bytes]] = {}
-    archived = set()
-    for name, raw in sources.items():
+    ]
+    active: dict[str, list[str]] = {}
+    archived: dict[str, list[str]] = {}
+    metadata = []
+    for name in sources:
         parts = Path(name).parts
         if len(parts) > 3 and parts[1] == "changes":
-            if parts[2] == "archive":
-                if len(parts) > 4:
-                    archived.add(parts[3])
+            if parts[2] == "archive" and len(parts) > 4:
+                archived.setdefault(parts[3], []).append(name)
+            elif parts[2] != "archive":
+                active.setdefault(parts[2], []).append(name)
             else:
-                active.setdefault(parts[2], {})[name] = raw
-    for slug, files in sorted(active.items()):
-        plan.add(f"docs/migrations/openspec/{slug}.md", package(slug, files))
-    if canonical:
-        lines = [
-            "# Legacy context candidates — requires review",
-            "",
-            "These are unclassified source excerpts, not current behavior documentation. Retain only durable product/domain context that cannot be inferred from code. Promote clear architectural decisions to docs/adr/ after review; deduplicate existing ADRs. Delete this candidate once reconciled.",
-            "",
-        ]
-        for name, raw in canonical.items():
-            lines += [
-                f"## Original source: {name}",
-                "",
-                raw.decode("utf-8", errors="replace"),
-                "",
-            ]
-        plan.add(
-            "docs/context/legacy-openspec-candidates.md", "\n".join(lines).encode()
-        )
-    wiring = tree(plan.root, ".claude/commands/opsx")
-    skills = plan.root / ".claude/skills"
-    if skills.is_dir():
-        for path in sorted(skills.glob("openspec-*")):
-            wiring.update(tree(plan.root, path.relative_to(plan.root).as_posix()))
-    rewrites = cleanup(plan)
-    all_sources = {**sources, **wiring, **rewrites}
-    if not all_sources:
-        plan.notes.append("No OpenSpec source or project wiring found.")
-        return {}
-    if policy == "git-only":
-        if not plan.head:
-            plan.conflicts.append(
-                "migration.history: git-only requires a recorded HEAD"
+                metadata.append(name)
+        elif not name.startswith("openspec/specs/"):
+            metadata.append(name)
+    evidence = dict(sorted({**sources, **wiring, **docs}.items()))
+    committed = {}
+    for name, raw in evidence.items():
+        result.observed[name] = observe(root, name)
+        try:
+            committed[name] = (
+                bool(result.head) and git(root, "show", f"{result.head}:{name}") == raw
             )
-        else:
-            for name, raw in all_sources.items():
-                try:
-                    matches = git(plan.root, "show", f"{plan.head}:{name}") == raw
-                except ValueError:
-                    matches = False
-                if not matches:
-                    plan.conflicts.append(
-                        f"migration.history: {name} is not safely preserved at HEAD"
-                    )
-    else:
-        for name, raw in all_sources.items():
-            plan.add(f".engineering/migrations/legacy-openspec/{name}", raw)
-    for name in {**sources, **wiring}:
-        plan.add(name, None)
-    existing_adrs = tree(plan.root, "docs/adr")
-    summary = f"Canonical capabilities found: {len(canonical)}\nActive changes found: {len(active)}\nArchived changes found: {len(archived)}\nADRs recovered: 0\nContext documents proposed: {int(bool(canonical))}"
-    unknown = [
-        name
-        for name in sources
-        if name not in canonical and not name.startswith("openspec/changes/")
-    ]
-    report = f"""# OpenSpec Migration Report
-
-## Summary
-{summary}
-
-## Preserved
-History policy: {policy}. Recovery/source commit: {plan.head or "uncommitted"}.
-Existing ADRs preserved unchanged: {len(existing_adrs)}. No semantic ADRs manufactured.
-All original bytes are preserved in the snapshot or verified Git history.
-
-## Converted
-Active changes become review packages; canonical sources become one context candidate.
-
-## Active changes requiring human decision
-{chr(10).join("- " + slug + ": " + task_status(files.get(f"openspec/changes/{slug}/tasks.md", b"")) for slug, files in sorted(active.items())) or "None."}
-
-## Not migrated
-Custom/unclassified files retained as source evidence:
-{chr(10).join("- " + name for name in unknown) or "None."}
-Archived records are not promoted into active documentation.
-
-## Removed dependencies/configuration
-OpenSpec source/config, project-generated commands/skills, explicit instruction markers, and direct npm dependencies listed in metadata.
-Global tools remain untouched. Use legacy-starter migration to replace starter-owned instructions and lifecycle wiring; reconcile unrelated custom references manually.
-
-## Follow-up commands
-engineering migrate legacy-starter --plan
-/grill-with-docs docs/migrations/openspec/<slug>.md
-/wayfinder (only for unresolved large architectural questions)
-/to-spec → /to-tickets → /implement
-engineering doctor
-make check
-"""
-    plan.add(REPORT, report.encode())
-    plan.notes.append(summary)
-    return all_sources
-
-
-def plan(root: Path, policy: str = "snapshot") -> Migration:
-    """Build an idempotent read-only extraction plan."""
-    result, completed = begin(root, "openspec")
-    if completed:
-        return result
-    sources = extract(result, policy)
-    if sources:
-        finish(result, sources)
+        except ValueError:
+            committed[name] = False
+    branches = (
+        git(
+            root,
+            "for-each-ref",
+            "--format=%(refname) %(objectname)",
+            "refs/heads",
+            "refs/remotes",
+        )
+        .decode()
+        .splitlines()
+        if result.head
+        else []
+    )
+    # Preserve the preparation commit on identical retries, even after evidence is committed.
+    prior = read_bytes(root, f"{WORKSPACE}/inventory.json")
+    source_head = result.head
+    if prior:
+        previous = json_object(prior)
+        if previous.get("source_paths") == {
+            name: digest(raw) for name, raw in evidence.items()
+        }:
+            source_head = previous.get("source_head")
+            if not isinstance(source_head, str) or not re.fullmatch(
+                r"[0-9a-f]{40}|[0-9a-f]{64}", source_head
+            ):
+                raise ValueError("migration.stale: invalid recorded source commit")
+            try:
+                git(root, "merge-base", "--is-ancestor", source_head, "HEAD")
+                recorded_committed = previous.get("committed_at_head")
+                if not isinstance(recorded_committed, dict) or set(
+                    recorded_committed
+                ) != set(evidence):
+                    raise ValueError("invalid recorded source history")
+                for name, raw in evidence.items():
+                    try:
+                        at_head = git(root, "show", f"{source_head}:{name}") == raw
+                    except ValueError:
+                        at_head = False
+                    if recorded_committed[name] is not at_head:
+                        raise ValueError("recorded source history differs")
+                committed = recorded_committed
+                recorded_branches = previous.get("branches")
+                if not isinstance(recorded_branches, list):
+                    raise ValueError("invalid recorded branches")
+                for branch in recorded_branches:
+                    if not isinstance(branch, str) or not re.fullmatch(
+                        r"refs/(?:heads|remotes)/\S+ [0-9a-f]{40}(?:[0-9a-f]{24})?",
+                        branch,
+                    ):
+                        raise ValueError("invalid recorded branch")
+                    git(root, "cat-file", "-e", branch.rsplit(" ", 1)[1] + "^{commit}")
+            except ValueError as exc:
+                raise ValueError(
+                    "migration.stale: recorded Git evidence is invalid; review inventory"
+                ) from exc
+            branches = previous.get("branches", branches)
+    inventory = {
+        "schema_version": 1,
+        "migration": "openspec-project",
+        "source_head": source_head,
+        "history_policy": policy,
+        "source_paths": {name: digest(raw) for name, raw in evidence.items()},
+        "committed_at_head": committed,
+        "branches": branches,
+        "canonical": canonical,
+        "active_changes": [
+            {"name": name, "paths": paths} for name, paths in sorted(active.items())
+        ],
+        "archived_changes": [
+            {"name": name, "paths": paths} for name, paths in sorted(archived.items())
+        ],
+        "metadata": metadata,
+        "existing_docs": sorted(docs),
+        "integrations": sorted(wiring),
+        "legacy_starter": [
+            name
+            for name in (".factory", ".harness", "FACTORY.md", "HARNESS.md")
+            if safe_path(root, name).exists()
+        ],
+    }
+    result.add(f"{WORKSPACE}/inventory.json", encoded(inventory))
+    for filename, title, indexed_paths in (
+        (
+            "canonical-spec-index.md",
+            "Canonical source references — requires reconciliation",
+            [item["path"] for item in canonical],
+        ),
+        (
+            "active-change-index.md",
+            "Active change source references",
+            [path for paths in active.values() for path in paths],
+        ),
+        (
+            "archived-change-index.md",
+            "Archived change source references",
+            [path for paths in archived.values() for path in paths],
+        ),
+        (
+            "detected-integrations.md",
+            "Detected OpenSpec integration — preserved",
+            sorted(wiring),
+        ),
+    ):
+        result.add(f"{WORKSPACE}/{filename}", index(title, indexed_paths))
+    result.add(
+        f"{WORKSPACE}/reconciliation/README.md",
+        b"# Semantic reconciliation\n\nRun /migrate-from-openspec. Review prose against code and tests; resolve conflicts with the human before finalization. Inventory is not semantic approval.\n",
+    )
+    if policy == "snapshot":
+        for name, raw in evidence.items():
+            result.add(f"{WORKSPACE}/snapshot/{name}", raw)
+    result.notes.extend(
+        [
+            f"Canonical capabilities: {len(canonical)}; active changes: {len(active)}; archived changes: {len(archived)}.",
+            HANDOFF,
+        ]
+    )
     return result
