@@ -41,8 +41,7 @@ PASS / FAIL
 
 ## Notes
 
-- Review policy lives in `REVIEW.md` — you own Pass 2 (Security). Follow its
-  Important-vs-nit split and verdict format so every review reads the same.
+- Review policy lives in `REVIEW.md` — follow its conditional security scope and distinguish material concerns from nits.
 - The `post_tool_secrets.py` hook catches secrets at write-time.
   Your job is to catch **indirect exposure** — secrets passed through
   environment variables but logged, secrets in error messages, etc.

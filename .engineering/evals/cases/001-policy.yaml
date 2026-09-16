@@ -1,0 +1,16 @@
+id: portable-policy-and-removed-workflows
+kind: static
+why: Repository invariants must not recreate upstream workflows or divergent runtime policy.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  policy = Path('CLAUDE.md').read_text()
+  assert len(policy.splitlines()) < 100
+  assert '[CLAUDE.md](CLAUDE.md)' in Path('AGENTS.md').read_text()
+  for token in ('FAST', 'STANDARD', 'DEEP', 'openspec', 'superpowers', '.factory', '.harness'):
+      assert token not in policy, token
+  for command in ('explore', 'crystallize', 'shape-change', 'dev-change', 'archive-change'):
+      assert not Path(f'.claude/commands/{command}.md').exists()
+      assert not Path(f'.claude/skills/{command}/SKILL.md').exists()
+  assert '/wayfinder` → `/to-spec` → `/to-tickets` → `/implement' in policy
+  PY

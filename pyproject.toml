@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]
-# The harness depends on these, not just your local workflow:
+# The Engineering System depends on these, not just your local workflow:
 #   ruff          → post_tool_lint.py hook shells out to it; `make fmt`/`make lint`
 #   mypy, pytest  → `make check`, the gate every agent must pass
 # ruff replaced black + isort + autoflake + interrogate in one binary. Add
@@ -58,10 +58,8 @@ convention = "google"
 # A test's name is its docstring. Requiring both produces restatement, not
 # documentation.
 "**/tests/**" = ["D"]
-# migrate_to_framework.py is run standalone against *other* projects, often with
-# whatever `python3` is on PATH rather than this project's 3.12 venv. Its
-# sys.version_info fallbacks are load-bearing there, not dead code.
-".harness/scripts/migrate_to_framework.py" = ["UP036"]
+# The standalone entrypoint explains an unsupported Python version before import.
+"engineering" = ["UP036"]
 
 # --- Type checker ---
 [tool.mypy]
@@ -80,7 +78,7 @@ ignore_missing_imports = true
 # --cov-fail-under is intentionally omitted: with no src/ yet (template state),
 # coverage always collects 0% and the gate fails before any project code exists.
 # Add `--cov-fail-under=80` back to addopts once src/<your_package>/ exists.
-# See .harness/docs/testing.md for why coverage is a signal, not a gate.
+# See .engineering/docs/testing.md for why coverage is a signal, not a gate.
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=src --cov-report=term-missing --strict-markers"

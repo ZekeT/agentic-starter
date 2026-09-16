@@ -46,12 +46,5 @@
   },
   "permissions": {
     "defaultMode": "auto"
-  },
-  "skillOverrides": {
-    "gauntlet-loop": "user-invocable-only",
-    "handoff": "user-invocable-only",
-    "grilling": "user-invocable-only",
-    "setup-update": "user-invocable-only",
-    "rescan-docs": "user-invocable-only"
   }
 }

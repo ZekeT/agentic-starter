@@ -1,0 +1,13 @@
+#!/usr/bin/env -S uv run --offline --no-project --isolated --python 3.12 python
+"""Run repository-local engineering tooling without installing a package."""
+
+import sys
+from pathlib import Path
+
+if sys.version_info < (3, 12):
+    sys.exit("Python 3.12+ required. Run: uv run --python 3.12 python engineering")
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / ".engineering"))
+from engineering.cli import main
+
+sys.exit(main())

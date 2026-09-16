@@ -1,0 +1,15 @@
+id: independent-readonly-verification-and-human-shipping
+kind: static
+why: Fresh verification and human authorization must survive workflow replacement.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  for name in ('maintainability-reviewer', 'verifier', 'security-reviewer'):
+      text = Path(f'.claude/agents/{name}.md').read_text()
+      assert 'readonly: true' in text
+  verifier = Path('.claude/agents/verifier.md').read_text()
+  assert 'make check' in verifier and 'Never silently fix' in verifier
+  assert 'implementation-session reasoning' in verifier
+  ship = Path('.claude/commands/ship.md').read_text()
+  assert 'unless requested by the human' in ship and 'Run make check' in ship
+  PY

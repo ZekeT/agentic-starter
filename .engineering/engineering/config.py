@@ -1,0 +1,124 @@
+"""Validate engineering configuration while preserving project-owned overrides."""
+
+from dataclasses import dataclass, field
+from pathlib import Path, PurePosixPath
+from typing import Any
+
+DEFAULTS: dict[str, Any] = {
+    "enabled": True,
+    "warn_file_lines": 300,
+    "max_file_lines": 500,
+    "substantial_growth_lines": 150,
+    "exceptions": [],
+}
+
+
+@dataclass(frozen=True)
+class Config:
+    """Validated code-line thresholds and reasoned exceptions."""
+
+    enabled: bool = True
+    warn_file_lines: int = 300
+    max_file_lines: int = 500
+    substantial_growth_lines: int = 150
+    exceptions: dict[str, str] = field(default_factory=dict)
+
+
+def safe_path(root: Path, name: str) -> Path:
+    """Reject ambiguous paths and symlinks before inspecting repository files."""
+    rel = PurePosixPath(name)
+    if (
+        not name
+        or rel.is_absolute()
+        or ".." in rel.parts
+        or rel.as_posix() != name
+        or "\\" in name
+        or any(c in name for c in "*?[]")
+        or any(p == ".git" or p == ".env" or p.startswith(".env.") for p in rel.parts)
+    ):
+        raise ValueError(f"Unsafe source path: {name}")
+    path = root
+    for index, part in enumerate(rel.parts):
+        path = path / part
+        if path.is_symlink():
+            raise ValueError(f"Symlink source path is unsupported: {name}")
+        if index < len(rel.parts) - 1 and path.exists() and not path.is_dir():
+            raise ValueError(f"Non-directory parent in source path: {name}")
+    if not path.resolve().is_relative_to(root.resolve()):
+        raise ValueError(f"Source path escapes repository: {name}")
+    return path
+
+
+def read_text(root: Path, name: str) -> str:
+    """Read only regular, contained, non-secret installation files."""
+    path = safe_path(root, name)
+    if not path.is_file():
+        raise ValueError(f"Missing regular file: {name}")
+    return path.read_text()
+
+
+def object_value(value: Any, label: str) -> dict[str, Any]:
+    """Require a JSON object with a useful diagnostic."""
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} must be an object")
+    return value
+
+
+def load_config(root: Path) -> Config:
+    """Read defaults and project overrides from the existing template manifest."""
+    from .settings import load
+
+    data = load(root)
+    return validate_config(
+        root,
+        {
+            "schema_version": 1,
+            "project": {"maintainability": data.get("maintainability", {})},
+        },
+    )
+
+
+def validate_config(root: Path, data: dict[str, Any]) -> Config:
+    """Validate parsed configuration without requiring a write during legacy conversion."""
+    if type(data.get("schema_version")) is not int or data["schema_version"] != 1:
+        raise ValueError(
+            "Unsupported manifest schema_version; refresh the engineering manifest"
+        )
+    merged = dict(DEFAULTS)
+    for section in ("defaults", "project"):
+        group = object_value(data.get(section, {}), section)
+        if set(group) - {"maintainability", "navigation"}:
+            raise ValueError(
+                f"Unknown {section} configuration: {sorted(set(group) - {'maintainability', 'navigation'})}"
+            )
+        values = object_value(
+            group.get("maintainability", {}), str(section + ".maintainability")
+        )
+        if set(values) - DEFAULTS.keys():
+            raise ValueError(
+                f"Unknown maintainability settings: {sorted(set(values) - DEFAULTS.keys())}"
+            )
+        merged.update(values)
+    if type(merged["enabled"]) is not bool:
+        raise ValueError("maintainability.enabled must be boolean")
+    for key in ("warn_file_lines", "max_file_lines", "substantial_growth_lines"):
+        if type(merged[key]) is not int or merged[key] <= 0:
+            raise ValueError(f"{key} must be a positive integer")
+    if merged["warn_file_lines"] >= merged["max_file_lines"]:
+        raise ValueError("warn_file_lines must be below max_file_lines")
+    if not isinstance(merged["exceptions"], list):
+        raise ValueError("exceptions must be a list of path/reason objects")
+    exceptions: dict[str, str] = {}
+    for entry in merged["exceptions"]:
+        entry = object_value(entry, "exception")
+        name, reason = entry.get("path"), entry.get("reason")
+        if set(entry) != {"path", "reason"} or not isinstance(name, str):
+            raise ValueError("Each exception requires exactly path and reason")
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError(f"Exception {name} requires a nonempty reason")
+        if name in exceptions:
+            raise ValueError(f"Duplicate exception path: {name}")
+        if not safe_path(root, name).is_file():
+            raise ValueError(f"Exception path does not exist: {name}")
+        exceptions[name] = reason.strip()
+    return Config(**{**merged, "exceptions": exceptions})

@@ -1,0 +1,17 @@
+id: dependency-and-tracker-boundaries
+kind: static
+why: Skill upgrades remain explicit; Matt's tracker is authoritative without artifact translators.
+shell: |
+  uv run --offline --no-project --isolated --python 3.12 python - <<'PY'
+  import sys
+  from pathlib import Path
+  sys.path.insert(0, '.engineering')
+  from engineering.registry import registry
+  data = registry(Path.cwd())
+  assert {r['id'] for r in data['dependency']} == {'matt-skills', 'graft', 'show-me', 'karpathy-guidelines'}
+  assert 'local-markdown' in Path('.engineering/config.toml').read_text()
+  guide = Path('ENGINEERING.md').read_text()
+  assert 'MUST NOT maintain a `.scratch/` ↔ `.plan/` translator' in guide
+  assert 'dual-write Wayfinder artifacts' in guide
+  assert 'patch Matt' in guide
+  PY

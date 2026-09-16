@@ -1,0 +1,25 @@
+schema_version = 1
+
+[navigation]
+provider = "graft"
+application_roots = []
+
+[verification]
+base_branch = ""
+
+[documentation]
+require_feature_docs = true
+
+[tracker]
+provider = "local-markdown"
+configuration = "docs/agents/issue-tracker.md"
+
+[maintainability]
+enabled = true
+warn_file_lines = 300
+max_file_lines = 500
+substantial_growth_lines = 150
+exceptions = []
+
+[migration]
+legacy_history = "snapshot"

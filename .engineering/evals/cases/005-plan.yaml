@@ -1,0 +1,13 @@
+id: plans-require-explicit-apply
+kind: static
+why: Default dependency and migration commands must preserve the working tree.
+shell: |
+  python3 - <<'PY'
+  import subprocess
+  before = subprocess.check_output(['git', 'status', '--porcelain=v1', '-uall'])
+  for args in [('deps', 'plan'), ('deps', 'update'), ('migrate', 'openspec', '--plan')]:
+      result = subprocess.run(['./engineering', *args], capture_output=True, text=True)
+      assert result.returncode == 0, result.stderr + result.stdout
+      assert 'No files changed' in result.stdout
+  assert before == subprocess.check_output(['git', 'status', '--porcelain=v1', '-uall'])
+  PY

@@ -1,4 +1,4 @@
-# factory:integration:begin
+# engineering:integration:begin
 # Python
 __pycache__/
 *.py[cod]
@@ -21,13 +21,10 @@ venv/
 htmlcov/
 coverage.xml
 
-# Graphify output — generated, never committed
-graphify-out/
-
 # Graft's application graph, local settings, generated skill and isolated CLI.
 /graft/
 /.graft/
-/.harness/graft/node_modules/
+/.engineering/graft/node_modules/
 /.claude/skills/graft/
 
 # IDE
@@ -52,20 +49,15 @@ Thumbs.db
 *.pem
 *.key
 
-# Superpowers v6 SDD scratch files
-.superpowers/
+# Preserve the retired navigation cache ignore during migration.
+/graphify-out/
 
-# Opt-in worktrees from `/dev-change --worktree`. In-repo so the editor can see
-# them; nothing in `make check` walks here (pyproject testpaths and the Makefile
-# both scope to src/ and tests/).
+# Local build/installation artifacts (tracker Markdown remains trackable).
 .worktrees/
-
-# OpenSpec-generated tool files — written by `openspec init` / `openspec update`,
-# version-stamped by the CLI that wrote them. .harness/setup.sh generates them.
-# NOTE: openspec/ itself (specs, changes, config.yaml) IS committed.
-.claude/commands/opsx/
-.claude/skills/openspec-*/
+/.engineering/state/dependencies.json
+/.engineering/tmp/
 
 .env.*
 !.env.template
-# factory:integration:end
+/.claude/skills/
+# engineering:integration:end

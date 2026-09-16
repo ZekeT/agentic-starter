@@ -1,0 +1,10 @@
+id: tiny-change-needs-no-spec
+kind: prompt
+why: Upstream planning should scale to the task without repository-owned ceremony.
+prompt: |
+  Read CLAUDE.md. Explain the shortest appropriate approach to a one-line typo fix in README. Do not edit or run commands beyond reading policy. Must I create a spec?
+expect: |
+  no
+reject: |
+  openspec new
+  STANDARD

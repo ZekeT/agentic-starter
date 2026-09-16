@@ -1,105 +1,40 @@
-# ============================================================
-# Makefile — single entry point for all dev commands
-# Referenced in CLAUDE.md so agents always use these targets.
-# ============================================================
-
-# harness-test shells out to `make check` from inside pytest, which inherits
-# MAKELEVEL from this process — GNU Make auto-prints Entering/Leaving
-# directory lines for any sub-make (MAKELEVEL > 0), which breaks tests that
-# assert on exact stdout. Suppress it and export so it's inherited.
+# Python application template. Adoption preserves the target's own check recipe.
 MAKEFLAGS += --no-print-directory
 export MAKEFLAGS
-
-.PHONY: install fmt lint test check clean evals evals-full manifest setup harness-test
-
-# Source directory — override with: make fmt SRC=mypackage
+export UV_OFFLINE = 1
+export UV_PYTHON_DOWNLOADS = never
 SRC ?= src
 
-# ---- Setup ------------------------------------------------
-
+.PHONY: install setup fmt lint test check engineering-test manifest
 install:
-	uv sync --all-extras
-
-# ---- Format (mutating — fixes code in place) --------------
-
-# --exit-zero keeps fmt purely mutating: anything ruff cannot auto-fix is
-# printed here and *failed* by lint, one target down.
+	UV_OFFLINE=0 uv sync --all-extras
+setup:
+	UV_OFFLINE=0 bash .engineering/setup.sh
 fmt:
-	@mkdir -p $(SRC)
-	uv run ruff check --fix --exit-zero $(SRC) tests
-	uv run ruff format $(SRC) tests
-
-# ---- Lint (non-mutating — fails if issues found) ----------
-
+	uv run ruff check --fix --exit-zero $(SRC) tests .engineering/engineering .engineering/tests
+	uv run ruff format $(SRC) tests .engineering/engineering .engineering/tests
 lint:
-	@SRC="$(SRC)" bash .harness/scripts/cmd_check.sh lint
-
-# ---- Test -------------------------------------------------
-# Exit 5 = pytest collected zero tests, which is the fork's own tests/ before
-# any product code exists — the same pre-setup state the type check handles.
-# Any other nonzero exit (real failures, errors) still fails the gate.
-
+	@SRC="$(SRC)" bash .engineering/scripts/cmd_check.sh lint
 test:
 	uv run pytest || test $$? -eq 5
-
-# ---- Combined gate (run before every commit) --------------
-# Read-only with respect to source: formatting problems fail, never auto-fix.
-# VERBOSE=1 includes successful command output; failures always show full output.
-
 check:
-	@SRC="$(SRC)" bash .harness/scripts/cmd_check.sh
-
-# ---- Harness evals ----------------------------------------
-# This repo IS agent configuration; tests/ only covers the Python scripts.
-# `evals` is static-only (fast, free, CI default). `evals-full` also runs the
-# prompt cases through `claude -p`, which costs tokens and needs auth.
-
-
-# ---- Clean ------------------------------------------------
-
-clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "dist" -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	@echo "Cleaned."
-
-# ---- Template maintenance (starter repo only) --------------
-# Regenerate after changing any template-owned file, before tagging a release.
-# Powers the setup-update skill's staleness detection in downstream projects.
-
+	@SRC="$(SRC)" bash .engineering/scripts/cmd_check.sh
+engineering-test:
+	uv run ruff check .engineering/engineering .engineering/tests
+	uv run ruff format --check .engineering/engineering .engineering/tests
+	uv run mypy .engineering/engineering
+	uv run pytest .engineering/tests -o addopts="" -q
 manifest:
-	uv run python .harness/scripts/generate_template_manifest.py
+	uv run --no-project --isolated --python 3.12 python .engineering/scripts/generate_template_manifest.py
 
-setup:
-	bash .harness/setup.sh
-
-
-# Starter-repo only: tests of the maintainer scripts. Explicit path, and
-# addopts cleared because the shipped --cov=src does not apply here.
-harness-test:
-	uv run ruff check .harness/factory
-	uv run ruff format --check .harness/factory
-	uv run mypy .harness/factory
-	uv run pytest .harness/tests -o addopts="" -q
-
-# factory:integration:begin
-.PHONY: factory-check evals evals-full graft-install
-factory-check:
-	@bash .harness/scripts/cmd_check.sh factory
-
-# Run this alongside the project's canonical make check.
-# The starter already includes these checks in cmd_check.sh.
-
-evals:
-	python3 .harness/evals/run_evals.py
-
-evals-full:
-	python3 .harness/evals/run_evals.py --full
-
-graft-install:
-	npm ci --prefix .harness/graft --no-audit --no-fund
-	@.harness/bin/graft install-skill
-	@.harness/bin/graft install-skill --apply
-# factory:integration:end
+# engineering:integration:begin
+.PHONY: engineering-check engineering-evals engineering-evals-full
+engineering-check:
+	./engineering doctor
+	./engineering maintainability
+	uv run --no-project --isolated --python 3.12 python .engineering/evals/run_evals.py
+engineering-evals:
+	uv run --no-project --isolated --python 3.12 python .engineering/evals/run_evals.py
+engineering-evals-full:
+	uv run --no-project --isolated --python 3.12 python .engineering/evals/run_evals.py --full
+# engineering:integration:end

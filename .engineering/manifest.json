@@ -1,0 +1,732 @@
+{
+  "defaults": {
+    "maintainability": {
+      "enabled": true,
+      "exceptions": [],
+      "max_file_lines": 500,
+      "substantial_growth_lines": 150,
+      "warn_file_lines": 300
+    }
+  },
+  "files": {
+    ".claude/agents/maintainability-reviewer.md": {
+      "executable": false,
+      "owned_sha256": "1915b7b82e11ec90089c4c809471ebb7c8e26cde74b4fdefc9e9fb5d30d0d6c4",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "1915b7b82e11ec90089c4c809471ebb7c8e26cde74b4fdefc9e9fb5d30d0d6c4"
+    },
+    ".claude/agents/security-reviewer.md": {
+      "executable": false,
+      "owned_sha256": "ae58c77ab5e2e89c8f012c3125f8a21da954e4916404055b847e35992f7d496a",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "ae58c77ab5e2e89c8f012c3125f8a21da954e4916404055b847e35992f7d496a"
+    },
+    ".claude/agents/verifier.md": {
+      "executable": false,
+      "owned_sha256": "550132e29257e4d069d7d6e1934cdac67c29626596dfd1c7186656e46cca67c5",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "550132e29257e4d069d7d6e1934cdac67c29626596dfd1c7186656e46cca67c5"
+    },
+    ".claude/commands/review.md": {
+      "executable": false,
+      "owned_sha256": "7a917cc9ebe1fca4ae11a9d9abc3d909595879e1435cffabfe4947eb07eb3b95",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "7a917cc9ebe1fca4ae11a9d9abc3d909595879e1435cffabfe4947eb07eb3b95"
+    },
+    ".claude/commands/ship.md": {
+      "executable": false,
+      "owned_sha256": "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b"
+    },
+    ".claude/hooks/post_tool_lint.py": {
+      "executable": false,
+      "owned_sha256": "f2861dc6cecacfd7dd5bf5071ef7dd4f59109bda69cb1555fbbe2e6dc736f1f3",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "f2861dc6cecacfd7dd5bf5071ef7dd4f59109bda69cb1555fbbe2e6dc736f1f3"
+    },
+    ".claude/hooks/post_tool_secrets.py": {
+      "executable": false,
+      "owned_sha256": "15943aadb9a8e903fc06659c8dc4472ec7d014e24026777755b4faed18df99cf",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "15943aadb9a8e903fc06659c8dc4472ec7d014e24026777755b4faed18df99cf"
+    },
+    ".claude/hooks/pre_tool_dangerous.py": {
+      "executable": false,
+      "owned_sha256": "c7a5539807cc06c81d8b2d6a5167f77798b873904c9a50894ecd07a5bec669e5",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "c7a5539807cc06c81d8b2d6a5167f77798b873904c9a50894ecd07a5bec669e5"
+    },
+    ".claude/hooks/pre_tool_env_guard.py": {
+      "executable": false,
+      "owned_sha256": "33fcccaad940c6613239790327bde662a906e3a7bcd70abb8d659b40aaef9011",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "33fcccaad940c6613239790327bde662a906e3a7bcd70abb8d659b40aaef9011"
+    },
+    ".claude/settings.json": {
+      "executable": false,
+      "owned_sha256": "b91eab7247b9ca6d0093a089b128be5d7374cd60cd00ada3ef108d41738eff6e",
+      "ownership": {
+        "mode": "hooks"
+      },
+      "previous": [],
+      "sha256": "30fc7259142bf0aa1a7c72a1afa2ef58dc9b4479e4ac8eb18ce18026190fe9e9"
+    },
+    ".claude/statusline.sh": {
+      "executable": true,
+      "owned_sha256": "7347d9d2d35308e6bb437d65c0d64a5e15d15b6f8df745472d703e004bc4a051",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "7347d9d2d35308e6bb437d65c0d64a5e15d15b6f8df745472d703e004bc4a051"
+    },
+    ".engineering/TEMPLATE_VERSION": {
+      "executable": false,
+      "owned_sha256": "2985be8b28d3ade858e8d8fb4bc22f565b1bf6020dff982dce141f7721b9999c",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "2985be8b28d3ade858e8d8fb4bc22f565b1bf6020dff982dce141f7721b9999c"
+    },
+    ".engineering/bin/graft": {
+      "executable": true,
+      "owned_sha256": "8b09bed5dac3e599c5f6cb40cf10c191e124e53cf98c133c13f1b00f0ed18bd7",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "8b09bed5dac3e599c5f6cb40cf10c191e124e53cf98c133c13f1b00f0ed18bd7"
+    },
+    ".engineering/config.toml": {
+      "executable": false,
+      "owned_sha256": "2030200d270c6ec908856b4dd81e680aa4ae94323e7fe4c6db652af0c087380c",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "2030200d270c6ec908856b4dd81e680aa4ae94323e7fe4c6db652af0c087380c"
+    },
+    ".engineering/dependencies.toml": {
+      "executable": false,
+      "owned_sha256": null,
+      "ownership": {
+        "mode": "preserve"
+      },
+      "previous": [],
+      "sha256": "0b7ac4353ca669817aae3fbcc323b5f2379b46b7d73c843ea2f847c5634198d6"
+    },
+    ".engineering/docs/coding-standards.md": {
+      "executable": false,
+      "owned_sha256": "a710863baaac89d4f692e6b8f9fa17e4c809ecf6d3e41e8fd3832682ea03a9b3",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "a710863baaac89d4f692e6b8f9fa17e4c809ecf6d3e41e8fd3832682ea03a9b3"
+    },
+    ".engineering/docs/commits-and-prs.md": {
+      "executable": false,
+      "owned_sha256": "516efa313aa77b98aae2194e48d55181d4f7f65d2b2299843673501e34a1d7f5",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "516efa313aa77b98aae2194e48d55181d4f7f65d2b2299843673501e34a1d7f5"
+    },
+    ".engineering/docs/maintainability.md": {
+      "executable": false,
+      "owned_sha256": "69e7fa416d809ef1681cfd6d5790ddb5c367caacf171d09e6dd36c001a61d7c3",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "25b4c815e061d95ff7dd5ca440f07eaaf98dc8cf6c3ebaf553694f2992a44f3f",
+        "7bc34e95558c73b60c7997167b2e5e3f7f4ba4784d00feb9c2ceac9806f74b24"
+      ],
+      "sha256": "69e7fa416d809ef1681cfd6d5790ddb5c367caacf171d09e6dd36c001a61d7c3"
+    },
+    ".engineering/docs/testing.md": {
+      "executable": false,
+      "owned_sha256": "dace7bb3174e56cba6641c58c2368aa0ca548889cd6617479a94e1b1c7e21c85",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "dace7bb3174e56cba6641c58c2368aa0ca548889cd6617479a94e1b1c7e21c85"
+    },
+    ".engineering/engineering/__init__.py": {
+      "executable": false,
+      "owned_sha256": "2378687041bdaf1b7d8a8f60e486e30bde351d7c5872400ffe84baf8349372a8",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "2378687041bdaf1b7d8a8f60e486e30bde351d7c5872400ffe84baf8349372a8"
+    },
+    ".engineering/engineering/adoption.py": {
+      "executable": false,
+      "owned_sha256": "4c77916e4f26f4557f9d124a0ee23aca9938f1d58bd096478fc0113e86443038",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "74b125fae823695260ed407bc46133ce11d93112b8af16ff168ab09ab3e16ec5",
+        "4f2b9240097b2d85a858052b37f9b6dddbffe0f09a54bb632d5f498fc477bd54",
+        "030b22730d6f947dc95832fe0795b27f20a987192cdb4dd6b33e52ea8d3f1212"
+      ],
+      "sha256": "4c77916e4f26f4557f9d124a0ee23aca9938f1d58bd096478fc0113e86443038"
+    },
+    ".engineering/engineering/apply.py": {
+      "executable": false,
+      "owned_sha256": "e42975f089502a9b5801b9a89f11660160927fd044bb3cb0ff282624a6232987",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "1b1fa0f7b59f4b5d9fad186bed68dc3bfe83f752e64b045fc365ebeee02a0bd0"
+      ],
+      "sha256": "e42975f089502a9b5801b9a89f11660160927fd044bb3cb0ff282624a6232987"
+    },
+    ".engineering/engineering/cli.py": {
+      "executable": false,
+      "owned_sha256": "81195f33a1755cbaefbda283d97353285cc3457128a8554edb07cfbfa6131c82",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "c271ffecb1decd5ebcb2cafb5f6ae5ac7b6c33c3c920b1ded42f627dd380e8d3",
+        "3cea2bb54f5c7fdd35e70a44edcb729beabbfdfcafd34dc6dd1c4120ea22ab87",
+        "76e450348d2338e61cd3fc6ec27af4163e5331fe64655ce3eafb8b2d0396a7b2",
+        "9ffcd46bdfcdb8a2606b287b8c60dbf0b9f5019b3f36e2ee67b2773bc439193a"
+      ],
+      "sha256": "81195f33a1755cbaefbda283d97353285cc3457128a8554edb07cfbfa6131c82"
+    },
+    ".engineering/engineering/config.py": {
+      "executable": false,
+      "owned_sha256": "8c61fc11fc9a544b7a6b72a815207ed506324b10e48c4f5501808c7333e4cf46",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "0ccd3f7472d59ba691f90666e58c22b6ee2fff5506b6d469379d88b97f772fa0"
+      ],
+      "sha256": "8c61fc11fc9a544b7a6b72a815207ed506324b10e48c4f5501808c7333e4cf46"
+    },
+    ".engineering/engineering/deps.py": {
+      "executable": false,
+      "owned_sha256": "1d49ad88515ed7cd11f2aa6c956a1ecad3bfd7ee3ffe684d22500403445bc8e7",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "e51f964fb5b9e2d97aad76bcc036af38ff0f3b871992d2bdac53a1525999a099",
+        "e4037a83d876e9731d0c47a37c42dd312a81dc385f55eabbe30a5a6a1f3ec3c8"
+      ],
+      "sha256": "1d49ad88515ed7cd11f2aa6c956a1ecad3bfd7ee3ffe684d22500403445bc8e7"
+    },
+    ".engineering/engineering/doctor.py": {
+      "executable": false,
+      "owned_sha256": "9acfb2eabcfc84b79e0f19c3f6d778ed19584579eb5212aac10db3bde0bb84be",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "75c930b2d37599ba4b09e205fd136b86adf7c7941d0d7fa349e25db0741843e8",
+        "98aac611eaf639c27e6b355ddae5343a84ba3d967eb9613df6ed4e53f191cc48",
+        "3c67077f7c1751ce2cfc5594087aa1d062749ebf1c0cf5e7530b12fcea04eb54"
+      ],
+      "sha256": "9acfb2eabcfc84b79e0f19c3f6d778ed19584579eb5212aac10db3bde0bb84be"
+    },
+    ".engineering/engineering/doctor_wiring.py": {
+      "executable": false,
+      "owned_sha256": "7e1ba332d2d64c2523fd7d68d7a38a23f02bbbe41000faf23c5fe920ec1e7920",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "14730dbd77d6082dcc0f12b1bbce8cde7c3496d77fcefd726ab21218c206c3b2"
+      ],
+      "sha256": "7e1ba332d2d64c2523fd7d68d7a38a23f02bbbe41000faf23c5fe920ec1e7920"
+    },
+    ".engineering/engineering/eval_config.py": {
+      "executable": false,
+      "owned_sha256": "de0906579a396215289ed825f14e46d964fc05fc53903123af2f3db00f4c881f",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "de0906579a396215289ed825f14e46d964fc05fc53903123af2f3db00f4c881f"
+    },
+    ".engineering/engineering/graft.py": {
+      "executable": false,
+      "owned_sha256": "676e101c4e5b7985fe766814601b1e5935437251b09c554657b124fb317b8489",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "3d4d07ecb9ab0afe1a452f1fedcf5117ab60c8bd05fe225deeb3135ddee79552",
+        "cca3f609e84325e3d8d69ab90e020a98eb573004f7862abc73005a6dede5385a"
+      ],
+      "sha256": "676e101c4e5b7985fe766814601b1e5935437251b09c554657b124fb317b8489"
+    },
+    ".engineering/engineering/growth.py": {
+      "executable": false,
+      "owned_sha256": "83fd631b6bbe49ae7b8780b093a4c424dd3cbaf5ceb0073c5a4def8046b6e988",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "83fd631b6bbe49ae7b8780b093a4c424dd3cbaf5ceb0073c5a4def8046b6e988"
+    },
+    ".engineering/engineering/inspection.py": {
+      "executable": false,
+      "owned_sha256": "ce73ba481831df10d7b3757edc0e44d446c5d7450a51f01a278af1ebf9f69439",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "d786f66d3f054c61f2d7b06e573f3bd7ca907b87af1e12054fc149306cfd10a1",
+        "5debbfb812387ddeca13df31afff3d0cea775ce6ae597e6490c3245d2abb21c2",
+        "a3217a83839d243abc8582adcc466f4a722219f58c62db907a4e894f1f4ef4ec"
+      ],
+      "sha256": "ce73ba481831df10d7b3757edc0e44d446c5d7450a51f01a278af1ebf9f69439"
+    },
+    ".engineering/engineering/installation.py": {
+      "executable": false,
+      "owned_sha256": "092754dde2a37798911aefeb76e7bb1ff546f8053b5892454f08ca4b88f2f361",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "9c76e05ca59a407ea1fcc34f567038aaba1b84f14725b3b9fb5287b9d1af1d93"
+      ],
+      "sha256": "092754dde2a37798911aefeb76e7bb1ff546f8053b5892454f08ca4b88f2f361"
+    },
+    ".engineering/engineering/migrate/__init__.py": {
+      "executable": false,
+      "owned_sha256": "f07058ec3465b8df2f65c9e19ce292d32fbfbf6d22014b6e98de1e03fea4333f",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "f07058ec3465b8df2f65c9e19ce292d32fbfbf6d22014b6e98de1e03fea4333f"
+    },
+    ".engineering/engineering/migrate/common.py": {
+      "executable": false,
+      "owned_sha256": "25ec2fb6393a3e4cbeaf0a62d46d395d6e8d20db8d5c3440610668552380538c",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "4d2a71783701f8c24894be3b08e5ec724e3d93061ffb0fb7117c21a1aba29646",
+        "1cc0268ff621068540d4ed5144194d367a27920653c193a541a09881972cf8b4",
+        "2937e17830b7bb64e87b023fc051d2826a6bf767aaf56113ae853f8dda77bcca"
+      ],
+      "sha256": "25ec2fb6393a3e4cbeaf0a62d46d395d6e8d20db8d5c3440610668552380538c"
+    },
+    ".engineering/engineering/migrate/legacy.py": {
+      "executable": false,
+      "owned_sha256": "72bddceee08d70d286ecb409315c8e1e63b8401b0e95c84954673960b0a47948",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "cb5ecc619778b65d36a062138ef5f07838b6a2e4c282c3d0835ee8b438bd7199",
+        "c4f707470d503bde32e35bc719ed0ca350b8c257cc79ed6eba360bbe2a46f41b",
+        "d8b7328e13a21667005abc93ed12e547df4ae3f46abdf89a1631c206af89c4a8",
+        "47f6a4a666c24247c1c10fe41e699958e28844b7710e67b46b7ac604fadfa0dd"
+      ],
+      "sha256": "72bddceee08d70d286ecb409315c8e1e63b8401b0e95c84954673960b0a47948"
+    },
+    ".engineering/engineering/migrate/openspec.py": {
+      "executable": false,
+      "owned_sha256": "0c82c703313e6d0ed3c2716b7b309194e9753506ff420c49bb84f3a1dcb9ccee",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "4dbf8284c897b8ecfdde357e95fbd985aef600343818d1ba983125d72d2bf420",
+        "01e8fffe0f7e19e43b7965215759761381bb5e7775b2faf22a1cd5a2779cb90a",
+        "4caf485a690678290e8404132a3b18ead92cbba3e65b5c4987eae97035db31ec"
+      ],
+      "sha256": "0c82c703313e6d0ed3c2716b7b309194e9753506ff420c49bb84f3a1dcb9ccee"
+    },
+    ".engineering/engineering/migrate/wiring.py": {
+      "executable": false,
+      "owned_sha256": "8ef82871fb9b21aed11bab4d327cfcf6783665c3e8463451dad7a1bc73a6e1bc",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "8ef82871fb9b21aed11bab4d327cfcf6783665c3e8463451dad7a1bc73a6e1bc"
+    },
+    ".engineering/engineering/ownership.py": {
+      "executable": false,
+      "owned_sha256": "860f0d5f22e7334b707c9b416c4ac4228593eea76e2fe26a11ab551cd8fbea10",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "45e0c49cd75c4aca1c7e7e06ae5d7fe7f9af5c05998be7226180d405d4d892d4"
+      ],
+      "sha256": "860f0d5f22e7334b707c9b416c4ac4228593eea76e2fe26a11ab551cd8fbea10"
+    },
+    ".engineering/engineering/registry.py": {
+      "executable": false,
+      "owned_sha256": "42f2a18b3cea11a6e263508b18a2ccfdf653ab3916b6fe4d9cb565b2bb1b2bd2",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "673ffb5cfd617d25b3e1f2e19cd94a0edb2e939c47a3d88d6fc39a414307ab62"
+      ],
+      "sha256": "42f2a18b3cea11a6e263508b18a2ccfdf653ab3916b6fe4d9cb565b2bb1b2bd2"
+    },
+    ".engineering/engineering/settings.py": {
+      "executable": false,
+      "owned_sha256": "174cac97c527ef60075e095f00559a8a14e9ea839f0f6dfac9ed0f467104a3fa",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "df7364a27c4e80f40ce7cd94dfdbf0c5868ad27c7e81a6b424d864239144c7e8"
+      ],
+      "sha256": "174cac97c527ef60075e095f00559a8a14e9ea839f0f6dfac9ed0f467104a3fa"
+    },
+    ".engineering/engineering/skill_install.py": {
+      "executable": false,
+      "owned_sha256": "ca1caed1763538cf1f386442d3937041e1cc9f340e204013cc2ad3bbafc5e2d9",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "0e9d7ecf07eb0fa66d76476eee25c660ad139fcba4191b816aac9dff546dedc5"
+      ],
+      "sha256": "ca1caed1763538cf1f386442d3937041e1cc9f340e204013cc2ad3bbafc5e2d9"
+    },
+    ".engineering/engineering/source.py": {
+      "executable": false,
+      "owned_sha256": "6a51e8cc0194c1de2616cdbd9217b0baeee67c815ab9a88dc8800f8bdee1f62d",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "f1476eeedc96b803483858b431fe8c395e7150a53902ca20303c54c5b2698e42"
+      ],
+      "sha256": "6a51e8cc0194c1de2616cdbd9217b0baeee67c815ab9a88dc8800f8bdee1f62d"
+    },
+    ".engineering/engineering/transaction.py": {
+      "executable": false,
+      "owned_sha256": "30619f428945138e730e90c9bce480db6cbcc7ed4821bc449e26e654f8d9f67e",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "e13145943b93afe87c0a849b1f095ec09666df5ec2e0a8ec9adc632f4c2b7ac5"
+      ],
+      "sha256": "30619f428945138e730e90c9bce480db6cbcc7ed4821bc449e26e654f8d9f67e"
+    },
+    ".engineering/engineering/updates.py": {
+      "executable": false,
+      "owned_sha256": "2459cdbb63e3a1a5ad9514294332d88a5a5e28aaca3a25dbe2a48ebf85073601",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "2459cdbb63e3a1a5ad9514294332d88a5a5e28aaca3a25dbe2a48ebf85073601"
+    },
+    ".engineering/evals/README.md": {
+      "executable": false,
+      "owned_sha256": "271187ec472143475990c8874c5717be4a4b8929e8a9fb4e66f1b2a29ddaf8e6",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "271187ec472143475990c8874c5717be4a4b8929e8a9fb4e66f1b2a29ddaf8e6"
+    },
+    ".engineering/evals/cases/001-policy.yaml": {
+      "executable": false,
+      "owned_sha256": "9f8f62c3ed7bcfb22b33a2a777a09ac884ed42fbece2cc42c90b2fd1e346d40f",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "9f8f62c3ed7bcfb22b33a2a777a09ac884ed42fbece2cc42c90b2fd1e346d40f"
+    },
+    ".engineering/evals/cases/002-verification.yaml": {
+      "executable": false,
+      "owned_sha256": "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe"
+    },
+    ".engineering/evals/cases/003-boundaries.yaml": {
+      "executable": false,
+      "owned_sha256": "22e66193a921242f7857dbcb4320253dee0f43103f0aec3690cebfc7e0c9a961",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "22e66193a921242f7857dbcb4320253dee0f43103f0aec3690cebfc7e0c9a961"
+    },
+    ".engineering/evals/cases/004-health.yaml": {
+      "executable": false,
+      "owned_sha256": "080de65a108b8ed4d2e69daa8af499480501879bb13118c92c3f798a64f4508e",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "080de65a108b8ed4d2e69daa8af499480501879bb13118c92c3f798a64f4508e"
+    },
+    ".engineering/evals/cases/005-plan.yaml": {
+      "executable": false,
+      "owned_sha256": "97f5bcc1ee0c184c91e15ed9068760e7762cfda8c8a67e799ffba3deaded3725",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "97f5bcc1ee0c184c91e15ed9068760e7762cfda8c8a67e799ffba3deaded3725"
+    },
+    ".engineering/evals/cases/101-small-change.yaml": {
+      "executable": false,
+      "owned_sha256": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339"
+    },
+    ".engineering/evals/cases/102-wayfinder.yaml": {
+      "executable": false,
+      "owned_sha256": "65738dbabb5a5f3c8f8148890cb2a535f48978bce421f82e0d23de4aac88fe7b",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "65738dbabb5a5f3c8f8148890cb2a535f48978bce421f82e0d23de4aac88fe7b"
+    },
+    ".engineering/evals/cases/103-ship.yaml": {
+      "executable": false,
+      "owned_sha256": "8229878db4af5a59232fe25867546a036f67726f9566c21713872413c722ae2d",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "8229878db4af5a59232fe25867546a036f67726f9566c21713872413c722ae2d"
+    },
+    ".engineering/evals/run_evals.py": {
+      "executable": false,
+      "owned_sha256": "9f552bef16cce7195c6b2594d57125d08315ec30b279c047d7b4c2e252a59be6",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "59b4b93a8c6695b2c89d41b0039578aea05300586db6846a0b2ad81cf5cabe69"
+      ],
+      "sha256": "9f552bef16cce7195c6b2594d57125d08315ec30b279c047d7b4c2e252a59be6"
+    },
+    ".engineering/graft/package-lock.json": {
+      "executable": false,
+      "owned_sha256": null,
+      "ownership": {
+        "mode": "preserve"
+      },
+      "previous": [],
+      "sha256": "48e08f5eac6c8a722dea6c0d969c80fd005b42fed79de7748528556c898464c9"
+    },
+    ".engineering/graft/package.json": {
+      "executable": false,
+      "owned_sha256": null,
+      "ownership": {
+        "mode": "preserve"
+      },
+      "previous": [
+        "4d2115f252c6359eb43f38d5fe3f2554558f60c7b9ee05c97166c132aad8a743"
+      ],
+      "sha256": "c59d431629ad780f1c5029b1137e29e16850d87379b8756fdbd022cc41c31a63"
+    },
+    ".engineering/migrations/baselines/v2-manifest.json": {
+      "executable": false,
+      "owned_sha256": "47528767f142b90442877efe32df7912baead4d83f3a405a869cd3f8672e43be",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "47528767f142b90442877efe32df7912baead4d83f3a405a869cd3f8672e43be"
+    },
+    ".engineering/scripts/check_feature_docs.py": {
+      "executable": false,
+      "owned_sha256": "946b34646c9c930c508533f04f0b320f7e596e893428977e8910beb752cfb0f1",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "67dde257866bf2fcd97c0b69e5439f6bc658063eaffe543f845af9a8020e9e38"
+      ],
+      "sha256": "946b34646c9c930c508533f04f0b320f7e596e893428977e8910beb752cfb0f1"
+    },
+    ".engineering/scripts/cmd_check.sh": {
+      "executable": false,
+      "owned_sha256": "c5c22cc3595b1d21b9541500db6c576f10eb4e96b1b694965b28b08a10006e3e",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "aef8dd779a5627f24e37b807a274abdc9a43aee64c8d1d9a1051f38cd25fe963"
+      ],
+      "sha256": "c5c22cc3595b1d21b9541500db6c576f10eb4e96b1b694965b28b08a10006e3e"
+    },
+    ".engineering/scripts/lib/change.sh": {
+      "executable": false,
+      "owned_sha256": "15f997535dc038ac5f396e37e6b6b0466612197d45268a11a663e93888569a59",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "15f997535dc038ac5f396e37e6b6b0466612197d45268a11a663e93888569a59"
+    },
+    ".engineering/scripts/lib/run_quiet.sh": {
+      "executable": false,
+      "owned_sha256": "1f7e7973255f5cbdb3a1734e5b7457441fae8f57ae92dcdd04cb08a7f37f7d1f",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "1f7e7973255f5cbdb3a1734e5b7457441fae8f57ae92dcdd04cb08a7f37f7d1f"
+    },
+    ".engineering/setup.sh": {
+      "executable": true,
+      "owned_sha256": "ccfbce6a063ade2f833ed8d51d95393e4d36dbbfa11cec9d65725424cefc85e6",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "ccfbce6a063ade2f833ed8d51d95393e4d36dbbfa11cec9d65725424cefc85e6"
+    },
+    ".gitignore": {
+      "executable": false,
+      "owned_sha256": "4b921fd824d7873e0dee2a1d35b77b8e169702132e7ea82b32370b77fdea02e4",
+      "ownership": {
+        "marker": "integration",
+        "mode": "section"
+      },
+      "previous": [
+        "c2378fddb4953e44a288bd096ab98864fd3863a517210a3bfa1469478e2267b0"
+      ],
+      "sha256": "4b921fd824d7873e0dee2a1d35b77b8e169702132e7ea82b32370b77fdea02e4"
+    },
+    "AGENTS.md": {
+      "executable": false,
+      "owned_sha256": "a9e188ea860cd4df5561de632f0975bb4b51c900999ae7eed8b44fb18edc8073",
+      "ownership": {
+        "marker": "integration",
+        "mode": "section"
+      },
+      "previous": [],
+      "sha256": "a9e188ea860cd4df5561de632f0975bb4b51c900999ae7eed8b44fb18edc8073"
+    },
+    "CLAUDE.md": {
+      "executable": false,
+      "owned_sha256": "b263a9e7a246f977424b5b503d25a5b8a4d6b1eaece050ff2c29c3006e9aa39b",
+      "ownership": {
+        "marker": "integration",
+        "mode": "section"
+      },
+      "previous": [],
+      "sha256": "b263a9e7a246f977424b5b503d25a5b8a4d6b1eaece050ff2c29c3006e9aa39b"
+    },
+    "ENGINEERING.md": {
+      "executable": false,
+      "owned_sha256": "82bc15f32808f56c9f3e567a50d414f965cf69825b966dabbc5d462c9ec8dd95",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "50aaa4fd6ad6100f670112a2a6c2d00948f09cdc23bacd657fa66f3c364b3c10",
+        "4053f7e90ffa2d41c4624301bcf1369134b7c2c9ab17045821fc9ee7ec02070c"
+      ],
+      "sha256": "82bc15f32808f56c9f3e567a50d414f965cf69825b966dabbc5d462c9ec8dd95"
+    },
+    "Makefile": {
+      "executable": false,
+      "owned_sha256": "500abb12e38c5f15ce37d7fd0e9885736b227bca83718296a9de84bba5adb417",
+      "ownership": {
+        "marker": "integration",
+        "mode": "section"
+      },
+      "previous": [],
+      "sha256": "c7a1de6b9291cd784f9ae9693f53b305a6fa4c0ff290a333f14b5cac87ff0531"
+    },
+    "REVIEW.md": {
+      "executable": false,
+      "owned_sha256": "2dad7c277442f5b3f2e6b3fbae8baf1fdfed1c72e62ad2106734241982df8517",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "2dad7c277442f5b3f2e6b3fbae8baf1fdfed1c72e62ad2106734241982df8517"
+    },
+    "docs/agents/domain.md": {
+      "executable": false,
+      "owned_sha256": null,
+      "ownership": {
+        "mode": "preserve"
+      },
+      "previous": [],
+      "sha256": "6925d3b33f86860095bf6973766afc3b7121ec3565ee361c464717b31ec935a9"
+    },
+    "docs/agents/issue-tracker.md": {
+      "executable": false,
+      "owned_sha256": null,
+      "ownership": {
+        "mode": "preserve"
+      },
+      "previous": [],
+      "sha256": "1ffd859ce5d211bdf879df1ee442e481033c4701860c415d9f07824722a6628c"
+    },
+    "engineering": {
+      "executable": true,
+      "owned_sha256": "1e6c6c4adcee67b086704fd2cdca72ae2bb9cc8db9709fd2e283f221e2c9780b",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "1e6c6c4adcee67b086704fd2cdca72ae2bb9cc8db9709fd2e283f221e2c9780b"
+    }
+  },
+  "ownership_version": 1,
+  "project": {},
+  "schema_version": 1,
+  "template_version": "3.0.0"
+}

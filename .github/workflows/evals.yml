@@ -1,104 +1,32 @@
-name: harness evals
-
-# This repo is agent configuration. A broken skill frontmatter or a stale rule
-# in CLAUDE.md changes how every downstream project behaves, and neither shows
-# up in `make check`. Gate on the static cases; they need no API key.
+name: Engineering System checks
 on:
   push:
     branches: [main]
   pull_request:
-    paths:
-      - "CLAUDE.md"
-      - "REVIEW.md"
-      - "HARNESS.md"
-      - "FACTORY.md"
-      - ".claude/**"
-      - ".harness/**"
-      - "factory"
-      - "pyproject.toml"
-      - "uv.lock"
-      - "Makefile"
-      - ".github/workflows/evals.yml"
-      - ".harness/setup.sh"
-      - "openspec/config.yaml"
-      - ".harness/template-manifest.json"
-  schedule:
-    # Weekly, to catch drift from merges that skipped the path filter.
-    - cron: "0 9 * * 1"
   workflow_dispatch:
-
 jobs:
-  static:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+      - uses: astral-sh/setup-uv@v5
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - uses: astral-sh/setup-uv@v5
-
+          python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-
-      # Installation-health runs doctor against an installed factory.
-      - name: Install Graft skill and isolated CLI
-        run: make graft-install
-
-      # The runner is Linux (GNU sed); the eval that checks BSD/GNU sed
-      # portability is a static grep, so it is dialect-independent.
-      - name: Run static evals
-        run: python3 .harness/evals/run_evals.py
-
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: astral-sh/setup-uv@v5
-
-      # Exercise migration from a real 3.11 environment to separate factory tooling.
-      - uses: actions/setup-python@v5
-        with:
-          python-version: |
-            3.11
-            3.12
-
-      - name: Install
-        run: uv sync --all-extras
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Install Graft skill and isolated CLI
-        run: make graft-install
-
-      - name: Prepare application navigation
-        run: .harness/bin/graft build
-
-      - name: Check application navigation
-        run: .harness/bin/graft check
-
-      # make check includes offline factory doctor; freshness is checked above.
-      - name: make check
+          node-version: '22'
+      - name: Explicit dependency installation
+        run: make setup
+      - name: Project checks
         run: make check
-
-      - name: make harness-test
-        run: make harness-test
-
-      - name: Manifest is current
+      - name: Engineering tests
+        run: make engineering-test
+      - name: Static integration evals
+        run: make engineering-evals
+      - name: Distribution metadata is current
         run: |
-          uv run python .harness/scripts/generate_template_manifest.py
-          # generated_at always changes; only a real content change matters.
-          if ! git diff --quiet -I'"generated_at"' -- .harness/template-manifest.json; then
-            echo ".harness/template-manifest.json is stale — run 'make manifest' and commit."
-            git diff -I'"generated_at"' -- .harness/template-manifest.json
-            exit 1
-          fi
+          make manifest
+          git diff --exit-code -- .engineering/manifest.json .engineering/state/install.json

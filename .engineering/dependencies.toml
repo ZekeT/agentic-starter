@@ -1,0 +1,33 @@
+schema_version = 1
+skills_installer = "1.5.26"
+
+[[dependency]]
+id = "matt-skills"
+kind = "skills"
+source = "mattpocock/skills"
+version = "959a8e9f1edc3adbe2f7e3054bb6fbefa6696260"
+required = true
+skills = ["setup-matt-pocock-skills", "ask-matt", "grill-with-docs", "grilling", "grill-me", "domain-modeling", "codebase-design", "writing-for-agents", "to-spec", "to-tickets", "implement", "tdd", "code-review", "diagnosing-bugs", "research", "prototype", "wayfinder"]
+
+[[dependency]]
+id = "graft"
+kind = "npm"
+source = "@nanonets/graft"
+version = "0.18.0"
+required = true
+
+[[dependency]]
+id = "show-me"
+kind = "skills"
+source = "humanlayer/skills"
+version = "3c2629142c5d437428269b1b722b08c0b87f574d"
+required = false
+skills = ["show-me"]
+
+[[dependency]]
+id = "karpathy-guidelines"
+kind = "skills"
+source = "multica-ai/andrej-karpathy-skills"
+version = "2c606141936f1eeef17fa3043a72095b4765b9c2"
+required = false
+skills = ["karpathy-guidelines"]

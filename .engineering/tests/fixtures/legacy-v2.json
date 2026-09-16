@@ -1,0 +1,11 @@
+{
+  "FACTORY.md": "# Factory\nLegacy development workflow.\n",
+  "HARNESS.md": "# Harness\nLegacy runtime integration.\n",
+  "factory": "#!/bin/sh\necho legacy\n",
+  ".harness/scripts/tool.py": "print('legacy tool')\n",
+  "CLAUDE.md": "<!-- factory:integration:begin -->\nLegacy instructions\n<!-- factory:integration:end -->\n",
+  "Makefile": "check:\n\t@echo native-check\n# factory:integration:begin\nfactory-check:\n\t@echo old-check\n# factory:integration:end\n",
+  ".gitignore": "# factory:integration:begin\n.env\n.env.*\n!.env.template\n*.pem\n*.key\n# factory:integration:end\n",
+  "openspec/changes/in-progress/tasks.md": "- [x] initial work\n- [ ] pending work\n",
+  "openspec/changes/in-progress/program-design.md": "# Program design\nExisting boundary decisions.\n"
+}

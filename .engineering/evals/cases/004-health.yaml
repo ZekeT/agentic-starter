@@ -1,0 +1,5 @@
+id: offline-installation-health
+kind: static
+why: Installed policy, hooks, pins and metadata must agree without model calls or graph rebuilds.
+shell: |
+  ./engineering doctor

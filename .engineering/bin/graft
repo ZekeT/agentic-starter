@@ -1,0 +1,4 @@
+#!/bin/sh
+# Select engineering Python independently of the downstream application's runtime.
+root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+exec "$root/engineering" navigation "$@"

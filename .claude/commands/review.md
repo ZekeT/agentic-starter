@@ -1,56 +1,10 @@
-# /review
-
-Verify an implementation against the change it claims to implement. This is
-the **human's gate**: `/dev-change` stops without committing and hands the
-branch over, and this is what you run before deciding to `/commit-push-pr`.
-
-No agent calls this command. Running it is the decision to look.
-
-Usage:
-- `/review` — review the checked-out branch, uncommitted work included
-- `/review <branch>` — review that branch (e.g. `feat/add-auth-g2`)
-- `/review <slug>` — review the checked-out branch against that change slug
-
+---
+description: Summarize the diff and evidence for human review.
 ---
 
-```bash
-bash .harness/scripts/cmd_review.sh $ARGUMENTS
-```
-
-Run the passes defined in `REVIEW.md`. The compliance pass is the one this
-harness exists to enable: check the diff against the delta specs and the task
-group above, not just against general good taste.
-
-For STANDARD/DEEP, read
-`openspec/changes/<slug>/verification-report.md` as the current evidence handoff.
-It contains the latest cycle's verifier and maintainability reports; consult
-`implementation-report.md` only when historical context is needed. Confirm the
-reported branch, group, reviewed HEAD and uncommitted scope match the work under
-review, including untracked files. Check any changes made since those reports;
-the file's existence or a PASS heading alone does not establish freshness.
-For a named branch that is not checked out, read its evidence from that branch,
-not from the current checkout.
-
-PENDING, STALE, missing required results or unresolved failures prevent approval.
-For older changes without this handoff file, accept fresh reports supplied in
-the conversation or explicitly located in the implementation history, applying
-the same scope/freshness checks. A missing handoff file alone does not invalidate
-otherwise available evidence. FAST continues to use its branch-specific reports
-without requiring an OpenSpec directory or either report file.
-
-`make check` is not run here — `REVIEW.md`'s **Skip entirely** section says not
-to relitigate what the gate decides. Use the fresh verifier's result for this branch. If absent or stale, request
-fresh verification before approval. For FAST, verify the diff and existing
-behavior contracts without requiring an OpenSpec change or task group.
-
-Also check the independent maintainability verdict and disposition of any
-CONCERNS under REVIEW.md. Use the local Graft launcher for read-only application
-evidence; never rebuild a missing/stale graph during review.
-
-Produce: Summary / Must Fix / Should Fix / Notes / Verdict.
-
-For security-sensitive changes, also dispatch the `security-reviewer` agent.
-
-End by telling the user what the verdict means for the next command: nothing
-is committed yet, so **REQUEST CHANGES** means fix the branch and re-run this,
-and **APPROVE** means they can run `/commit-push-pr`.
+Read REVIEW.md. Discover the merge base, changed and untracked files, and the
+agreed request/ticket/spec. Use .engineering/scripts/lib/change.sh for the base.
+Summarize changed behavior, risks, automated results, independent reviewer and
+verifier results if present, and coverage gaps. Missing results are missing
+proof, not PASS. Use show-me if it makes the result easier to understand.
+Do not rerun an upstream development methodology. Do not edit or ship.

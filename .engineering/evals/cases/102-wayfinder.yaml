@@ -1,0 +1,13 @@
+id: uncertain-architecture-uses-wayfinder
+kind: prompt
+why: Unresolved large decisions should precede specs and implementation.
+prompt: |
+  Read CLAUDE.md and ENGINEERING.md. We need a large multi-session data architecture change but have not settled consistency requirements or storage choices. In a short answer, name the suitable upstream skill sequence. Do not implement or create tracker files.
+expect: |
+  wayfinder
+  to-spec
+  to-tickets
+  implement
+reject: |
+  shape-change
+  Wayfinder Maps is required

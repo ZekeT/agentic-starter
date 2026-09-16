@@ -1,70 +1,54 @@
-<!-- factory:integration:begin -->
-# CLAUDE.md
+<!-- engineering:integration:begin -->
+# Project agent instructions
 
-## Commands
+## Read first
 
-```bash
-make fmt        # automatic formatting/import fixes; run before verification
-make check      # non-mutating source gate: format, lint, types, tests, feature docs
-make evals      # static factory evals (starter configuration changes)
-make harness-test  # maintainer script tests (starter tooling changes)
-make manifest   # after editing template-owned files
-```
+[ENGINEERING.md](ENGINEERING.md) explains setup, upstream skills, verification,
+updates and migration. `.claude/` is a runtime adapter; core policy is portable.
+Read relevant feature instructions and ADRs as needed, not entire doc trees.
 
-A non-zero gate is a failure to fix, never to bypass. Use targeted tests while
-coding; the fresh verifier owns the full gate, and `/commit-push-pr` repeats it
-before committing. Run `make fmt` again if later edits need formatting.
+## Implementation defaults
 
-## Rules
+- Understand the existing code before editing. Use `.engineering/bin/graft`
+  for non-trivial application navigation; inspect tooling source directly.
+- Surface material assumptions. Stop for contradictory requirements,
+  unresolved architecture, security tradeoffs, or two unsuccessful bug fixes.
+  Explain what, why, how, and your recommendation with its reason.
+- Prefer the minimum sufficient design, surgical changes, coherent modules,
+  and verifiable results. Avoid unrelated refactors and speculative abstractions.
+- Matt's upstream skills own discussion, planning, TDD, implementation and review.
+  For large coding work: `/wayfinder` → `/to-spec` → `/to-tickets` → `/implement`.
+  Inspect Wayfinder through the configured tracker. Use a fresh implementation
+  session per ticket. Create/switch to the intended branch before `/implement`.
+- Follow [.engineering/docs/maintainability.md](.engineering/docs/maintainability.md).
+- Never read `.env` or secret variants. Read `.env.template` for names only;
+  use environment/settings objects. Never bypass protection hooks or failed gates.
 
-- `openspec/specs/` is **canonical** current-state product/system truth.
-  **Never edit `openspec/specs/` directly.** Changes live in
-  `openspec/changes/` and reach canonical specs only via `/archive-change`.
-- Choose FAST for behavior-neutral maintenance, STANDARD for normal behavior
-  changes, DEEP for architecture/risk/important unknowns. Cosmetic wording with
-  unchanged meaning can be FAST; contractual output changes cannot. Routing,
-  lifecycle and human gates: [FACTORY.md](FACTORY.md), loaded when needed.
-- One independently shippable task group = one branch = one PR.
-  **Branch existence is the mutex**: claim `feat/<slug>-g<N>` by creating it.
-  FAST uses `fix/<slug>`, `chore/<slug>`, or `docs/<slug>` without OpenSpec.
-  Worktrees are opt-in. Never take over an existing claim silently.
-- The task group is the plan. Implement it directly, update its checkboxes and
-  any changed task text with the implementation. Stop before commit/PR for
-  human review; archive also requires human confirmation.
-- If a spec assumption proves wrong, amend the active delta for a small
-  correction or propose a new change for a large one. If unclear, stop and ask.
-  Stop for unresolved architecture, contradictory requirements, security
-  tradeoffs, or a bug attempted twice unsuccessfully. Explain what, why and a
-  suggested next step. Never silently demote a DEEP change.
-- **Never read `.env`.** Read `.env.template` for variable names; use
-  `os.environ` or settings objects. Never bypass security/env/git hooks.
+## Verification and human control
 
-Source growth follows [.harness/docs/maintainability.md](.harness/docs/maintainability.md).
+Use targeted tests while building. Run `make fmt` before fresh independent
+maintainability review and behavioral verification. The verifier runs `make check`;
+it is non-mutating and authoritative. Starter tooling changes also require
+`make engineering-test` and `make engineering-evals`. Graft build/check are
+explicit preparation steps, outside `make check`.
 
-Application navigation uses `/graft`; setup and read-only commands are in
-[HARNESS.md](HARNESS.md#application-navigation-with-graft). Use the local launcher
-(`export PATH="$PWD/.harness/bin:$PATH"`) so the pinned CLI and non-refreshing
-queries apply. Factory workflow gates take precedence over upstream skill
-instructions to auto-refresh or use Graft for tooling outside application scope.
+Reviewers are read-only and receive only a branch/ticket/spec/request pointer.
+Do not pass implementation-session reasoning or a self-review narrative to them.
+Security review applies to security-sensitive changes, including dependency
+execution and destructive operations. Human review follows [REVIEW.md](REVIEW.md).
+Do not commit, push, create a PR/MR, or merge unless requested by the human.
+`/ship` honors existing explicit authorization and runs the final gate.
 
-## Simplicity and retrieval
+## Agent skills
 
-Build the minimum solution. No speculative features, single-use abstractions,
-extra configuration, or error handling for impossible cases.
+### Issue tracker
 
-For current behavior, start with `openspec list --specs`, then read only named
-relevant capabilities. Never bulk-read `openspec/` or `docs/`. Implementation
-loads only the claimed group, relevant spec/design/program-design sections,
-local feature instructions, and needed code. Each feature under `src/` has a
-small `CLAUDE.md`: purpose, entry points, invariants, gotchas, never task status.
-Do not import feature instructions into this file.
+Local Markdown is the default, independent of Git hosting provider.
+See [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md).
 
-Skills are progressive disclosure. Load specialized skills only when their
-trigger applies. The factory workflow owns planning, implementation stages,
-verification, and shipping. Runtime mechanics: [HARNESS.md](HARNESS.md).
+### Domain docs
 
-Python tooling uses `uv` and `pyproject.toml`. Commit/PR conventions are in
-`.harness/docs/commits-and-prs.md`; review policy is `REVIEW.md`. Resolve the
-base from `--base`, `git config harness.baseBranch`, or the remote default
-(`main` fallback), and diff against its merge base, never its moving tip.
-<!-- factory:integration:end -->
+Durable context lives in `docs/context/`; architectural reasons in `docs/adr/`.
+See [docs/agents/domain.md](docs/agents/domain.md). Tests and code establish
+current executable behavior. Keep feature-local instructions small and stable.
+<!-- engineering:integration:end -->

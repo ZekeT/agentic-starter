@@ -1,0 +1,42 @@
+{
+  "migration": "openspec",
+  "outputs": {
+    ".engineering/migrations/openspec-migration-report.md": "0b19ddf83f5ad698ac90a74d03e3d6ec54b1400774dcc95bc7d0a8b359ef8ae1",
+    "docs/context/legacy-openspec-candidates.md": "7bd84abc3324d330cdf9d3857320e3583652890789261e40a777bbe968e4cbe4",
+    "docs/migrations/openspec/factory-phase2.md": "6e3a1cf5f276dbeb59796b13bf5d7c00a15d5e5587cfe28e0fedc6a7da1990a8",
+    "docs/migrations/openspec/software-factory.md": "58e8d1bedcc827cee6eec314df747b8fae453528a42e3be7e9595374d786d3d4"
+  },
+  "schema_version": 1,
+  "source_head": "154425666f98b6045f9cad1d3e9c7ca6eef4dc64",
+  "source_paths": {
+    "openspec/changes/archive/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "openspec/changes/factory-phase2/.openspec.yaml": "2a52e9c6669beaf79129adb7d7843db88cd99fe4e3a1ece75baa3dfc41ded489",
+    "openspec/changes/factory-phase2/design.md": "5640c8368edb89753a44e7f4b2800510bdac5247f01d79eac7f431ba9752d50c",
+    "openspec/changes/factory-phase2/feasibility-assessment.md": "a5e7254be4c72626d37ce2dc0ba797a8e4dd9a052c512b203827bee6479c5ef4",
+    "openspec/changes/factory-phase2/implementation-report.md": "fc3a476ef1f4aaa60f912b07ac8f54e39982f86ea1dc4b7b0ac610da82bcca1c",
+    "openspec/changes/factory-phase2/intent.md": "29a09630b48608bcd9358c515ddc042624726ef606da3c2bbf22c08377084a62",
+    "openspec/changes/factory-phase2/program-design.md": "aebfb70648bc857c9325ed743d02094a28c4c9829e098226b028b31ce0c948fb",
+    "openspec/changes/factory-phase2/proposal.md": "a0b4359d92598b3220b5a6b4d89dbaa780509b987294d72f6ac5413fc6919511",
+    "openspec/changes/factory-phase2/specs/factory-installation/spec.md": "aa46927123ccc6e26dfc7da15b59241d4039dc4cc6197e0f9a52776cd0204b6a",
+    "openspec/changes/factory-phase2/specs/factory-maintainability/spec.md": "853c8658806a35f80fbbd4821dcfe27acac774177a3eb7e43d1c512ec190754d",
+    "openspec/changes/factory-phase2/specs/factory-navigation/spec.md": "b2298eceb072123c263383d027cd62dab173673fb1259abb5d14d8c8c419eed2",
+    "openspec/changes/factory-phase2/tasks.md": "c993c31465c5b0bfcec23f94bd23fe91762046e5b33463b9eb0273909185b9aa",
+    "openspec/changes/factory-phase2/verification-report.md": "873e02af7913938703f8517d5dd5287fd635d505504c492e47cb6052e3a4dae7",
+    "openspec/changes/software-factory/.openspec.yaml": "8119cfe5ad04f1801d3027066b1b671140c63203d1b9ea7592d49018a901fa91",
+    "openspec/changes/software-factory/design.md": "6ecc6994a71c1944259b13954077ef490fe35cf43969da264e7f85f2994a4cb8",
+    "openspec/changes/software-factory/idea.md": "f9c4641b1b871e6a5656400d8ffbf24a05190e6c606580c2bd6c1f2365070b49",
+    "openspec/changes/software-factory/implementation-report.md": "4179339194511c9aed5a3fb5a228e932e22ab270fa13d27afa2b782ed73c0795",
+    "openspec/changes/software-factory/intent.md": "b5f5ed7f5d877bf6cc5020d4cd8cc919f49c5d5e074903054f7a712ef1c77f95",
+    "openspec/changes/software-factory/program-design.md": "6d2ba4123d8b14cf852f6164ad3fbc06bedd9ce9b36248a9489c2d8c7fb6e36a",
+    "openspec/changes/software-factory/proposal.md": "6059c2e7cb81eed43cb0588ad16f8b6aa619a3b98546fe716946359c31b39e1a",
+    "openspec/changes/software-factory/specs/factory-verification/spec.md": "e8825f9e2f4151d6d736e1851b621d651b3f5370d457e1f12aabbffbce894637",
+    "openspec/changes/software-factory/specs/factory-workflow/spec.md": "7a66b3e594363a99beda3b591b6986d33c7ef24173e943af4e1b488481b60395",
+    "openspec/changes/software-factory/tasks.md": "c5b7f97f0c1ce05a3775f554fdcdffd7beebe0bbb196ea2d41165302714e0821",
+    "openspec/config.yaml": "8b293aeb029b6e34b967b7bf167989dd2aed8c3ad25a2d0f9afea61f6bfe59c9",
+    "openspec/specs/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "openspec/specs/change-submission/spec.md": "928fe693fc091743a06146aa7168f9bb53dfbb16927355c6037bf63075efa581",
+    "openspec/specs/harness-evals/spec.md": "1cc545a4ba865dc0f39f60ca71a8470eb449c8d45ec77870c661b6148fc4b0b3",
+    "openspec/specs/test-organisation/spec.md": "2a87f28a2c85a3b4ffadb2e9f47f10fc00eb0838a97f3f77ba4db10554384c29"
+  },
+  "source_version": "unknown"
+}

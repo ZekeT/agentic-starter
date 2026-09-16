@@ -1,134 +1,32 @@
-# Review Policy
+# Human review
 
-What every review of this repo checks, in what order. `/review` and the
-`security-reviewer` agent both follow this file — they hold the *procedure*, this
-holds the *policy*, so tuning review behaviour means editing one file rather than
-three.
+Automate formatting, lint, types, tests, documentation and size checks. Spend
+human attention on correctness, design judgment, assumptions and consequences.
 
-Tune it monthly. If a class of bug keeps reaching `main`, add a pass. If a pass
-never finds anything in three months, delete it.
+Review in this order:
 
----
+1. What behavior changed?
+2. Does it match the agreed ticket, spec, or request?
+3. What architectural boundaries changed?
+4. What could break? Use Graft blast-radius evidence when useful.
+5. Were unnecessary abstractions introduced?
+6. Were unrelated files touched?
+7. What did automated and independent verification prove?
+8. What remains unverified?
 
-## Skip entirely
+Require a fresh read-only maintainability review (PASS / CONCERNS) and behavioral
+verification (PASS / FAIL). They independently discover the diff, expected
+behavior, source and relevant tests. Never substitute an implementation agent's
+narrative for their evidence. Record and resolve material concerns; label nits.
 
-Reviewing these wastes attention that the passes below need:
+Run a read-only security review for authentication, authorization, secrets,
+cryptography, untrusted input, privilege boundaries, payments, destructive
+operations, sensitive storage, network exposure or dependency execution.
+Trivial documentation changes do not require a security review.
 
-- Anything `make check` already enforces — formatting, import order, docstring
-  coverage, `mypy --strict`, test failures. If it passed the gate, don't relitigate it.
-- Anything a hook already blocks — secrets in writes, `.env` reads, dangerous bash.
-- Generated files: `uv.lock`, `.claude/commands/opsx/`,
-  `.claude/skills/openspec-*/`, `openspec/specs/` (only ever written by
-  `/archive-change`). The opsx commands and openspec-* skills are gitignored,
-  so they should never appear in a diff at all — if they do, someone forced
-  them in.
+Use `/show-me` for a design, request path, module boundary or diff that is hard
+to understand. Visual explanations are normally ephemeral. No diagram is a gate.
 
-## Pass 1 — Correctness
-
-Bugs, in rough order of how often they actually bite:
-
-- Off-by-one, boundary, and empty-collection handling
-- Unhandled error paths; bare `except:`; swallowed exceptions
-- Concurrency: two sessions, two worktrees, or two processes hitting the same file
-- Shell portability in commands and hooks — **BSD vs GNU** `sed`/`awk` differ, and
-  this harness runs on both. `sed -E`, not `\+`. (This has already caused one bug.)
-- Resource cleanup on the failure path, not just the happy one
-
-## Pass 2 — Security
-
-Full detail is the `security-reviewer` agent's remit; dispatch it for anything
-touching auth, input handling, subprocess, or deserialization. At minimum:
-
-- External data validated at the boundary (pydantic/marshmallow), never trusted inward
-- No credential, token, or key material in code, logs, or error messages
-- Subprocess calls never interpolate unsanitised input
-- Dependency versions with known CVEs
-
-## Pass 3 — Compliance against spec and plan
-
-**This is the pass this harness exists to enable**, and the one no generic
-reviewer can run. It is only possible because the delta specs and `tasks.md` are
-durable artifacts. For FAST maintenance there is no required change or task
-group: compare the diff with relevant existing contracts and verify that meaning
-and behavior remain unchanged. Contractual output changes require STANDARD.
-
-- Does the diff satisfy every `#### Scenario:` in the change's delta specs?
-- Does it do anything the specs *don't* describe? Unspecced behaviour is either
-  scope creep or a missing requirement — say which.
-- Does it match the claimed task group, and only that group? Work bleeding across
-  groups is what makes the one-group-per-PR split stop working.
-- If implementation departed from `tasks.md`, was `tasks.md` updated in the same
-  commit?
-- Did anything edit `openspec/specs/` directly? That is always wrong outside
-  `/archive-change`.
-
-## Maintainability evidence
-
-For STANDARD/DEEP, require a fresh maintainability reviewer’s PASS or explicit
-human disposition of CONCERNS. Compare accepted Code Shape with relevant source,
-nearby modules, and application Graft evidence; report structural drift with
-location, consequence and a specific direction. Missing/stale required graphs
-return to the implementer. With no application sources configured, navigation is
-not applicable and tooling is reviewed directly. FAST may skip the semantic
-reviewer; growth checks remain required. See
-[maintainability policy](.harness/docs/maintainability.md).
-
-## Pass 4 — Tests
-
-Before a PR exists, start from the fresh verifier's report and actual test
-results. For an existing PR, use its **How this was tested** section. Check the
-recorded claims against evidence.
-
-- New behaviour has a test that fails without the change
-- Tests assert on observable behaviour, not implementation detail
-- The failure path is tested, not just the happy path
-- Tests are in the right suite: no I/O, network, or subprocess in `tests/unit/`,
-  and anything crossing a real boundary carries `@pytest.mark.integration`
-  (see `.harness/docs/testing.md`)
-- Manual verification records the steps **and the observed result**. "Tested
-  locally" is not evidence, and should be sent back.
-- The **Not covered** line is filled in. An empty one usually means unexamined,
-  not fully covered.
-
----
-
-## Important vs nit
-
-**Important** — block the merge:
-
-- Any Pass 1 or Pass 2 finding
-- A delta-spec scenario the diff does not satisfy
-- Behaviour with no test
-- `openspec/specs/` edited outside `/archive-change`
-
-**Nit** — mention at most **three**, prefixed `nit:`, and never block on them:
-
-- Naming, comment wording, formatting `make check` allows
-- Structural preferences with no behavioural difference
-
-The cap is deliberate. A review with twenty nits and one real bug gets the bug
-skimmed past.
-
----
-
-## Verdict
-
-End every review with exactly one:
-
-- **APPROVE** — no Important findings
-- **APPROVE WITH COMMENTS** — no Important findings, nits worth fixing
-- **REQUEST CHANGES** — at least one Important finding, each with file:line and a
-  concrete failure scenario
-
-Never report a finding you have not traced to a specific line. "This might have a
-race condition" is not a finding; "two `/dev-change` sessions on groups 1 and 2
-both write `tasks.md` at line 40" is.
-
-## Installation changes
-
-Review the ownership inventory and `.factory/state.json` baseline transition even
-though the manifest/state are generated. Verify preserved project scopes, no
-self-fingerprints, unchanged project overrides and no baseline advancement on
-conflict. Inspect actual adapter/CLI round trips and partial-write/postcheck recovery
-evidence. Distinguish external Graft/OpenSpec prerequisites and offline structural
-doctor checks from executed project checks. See [.harness/docs/installation.md](.harness/docs/installation.md).
+Only the human authorizes shipping. Scope approval to the commit/push/PR or MR/
+merge requested. Existing authorization need not be requested again. `/ship`
+runs a final `make check` and respects the project's Git hosting provider.
