@@ -14,7 +14,7 @@ Never edit, format, commit, switch branches, install tooling, or refresh Graft.
 Read .engineering/docs/maintainability.md and REVIEW.md. Run:
 
 ```bash
-python3 engineering maintainability --verbose
+./engineering maintainability --verbose
 .engineering/bin/graft check
 ```
 

@@ -8,10 +8,11 @@ domain logic, circular dependencies, deeply nested control flow, and functions
 with unrelated responsibilities. Prefer local/simple abstractions over global
 frameworks; do not create speculative interfaces or meaningless tiny files.
 
-Run `python3 engineering maintainability` (or `./engineering maintainability` with
-Python 3.12+ on PATH). The normal full gate includes this check. `--base BRANCH`
+Run `./engineering maintainability`. The normal full gate includes this check. `--base BRANCH`
 uses that branch's merge base; otherwise existing engineering base resolution applies.
-The stdlib-only gate uses Python 3.12+ on PATH, independently of the application environment. It never downloads an interpreter during checks.
+The stdlib-only gate uses the launcher’s offline, isolated uv Python 3.12
+interpreter, independently of the application environment. It never downloads
+an interpreter during checks.
 Missing history fails visibly; `--all` explicitly requests size-only warnings.
 `--verbose` includes counts and status for passing changed files. The full gate
 uses its standard quiet wrapper; `VERBOSE=1 make check` also shows successful

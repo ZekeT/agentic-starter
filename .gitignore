@@ -49,9 +49,6 @@ Thumbs.db
 *.pem
 *.key
 
-# Preserve the retired navigation cache ignore during migration.
-/graphify-out/
-
 # Local build/installation artifacts (tracker Markdown remains trackable).
 .worktrees/
 /.engineering/state/dependencies.json

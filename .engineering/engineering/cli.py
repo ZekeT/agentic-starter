@@ -20,6 +20,7 @@ def main(argv: list[str] | None = None) -> int:
         "--root", type=Path, default=Path(__file__).resolve().parents[2]
     )
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("version", help="Print the Engineering System template version")
     sub.add_parser("doctor", help="Diagnose installation health offline")
     deps = sub.add_parser("deps", help="Manage pinned upstream capabilities")
     deps.add_argument("operation", choices=["status", "plan", "install", "update"])
@@ -61,6 +62,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "version":
+            print((root / ".engineering/TEMPLATE_VERSION").read_text().strip())
+            return 0
         if args.command == "deps":
             from .deps import operate, status
 

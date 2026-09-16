@@ -268,6 +268,9 @@ managed dependencies remain a separate explicit setup step.
 
 ## Doctor and diagnostics
 
+`engineering version` prints `.engineering/TEMPLATE_VERSION` for migration and
+support diagnostics without checking installation health.
+
 `engineering doctor` is offline. It checks repository protections, Python,
 required files, executable launchers, policy, tracker pointers, hook wiring,
 reviewer definitions, Graft pin wiring, dependency evidence and migration/state

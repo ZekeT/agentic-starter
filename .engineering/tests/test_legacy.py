@@ -108,3 +108,27 @@ def test_global_and_unknown_local_files_untouched(installation, tmp_path):
     assert execute(lambda: plan(template, target), apply=True) == 0
     assert global_skill.read_text() == "global skill untouched"
     assert (target / ".harness/custom.txt").read_text() == "local unknown file"
+
+
+def test_legacy_graphify_ignore_survives_outside_managed_region(installation):
+    template, target = installation
+    legacy(target)
+    ignore = target / ".gitignore"
+    raw = ignore.read_bytes().replace(
+        b"# factory:integration:end", b"/graphify-out/\n# factory:integration:end"
+    )
+    ignore.write_bytes(raw)
+    manifest_path = target / ".harness/template-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["files"][".gitignore"]["sha256"] = digest(raw)
+    manifest_path.write_bytes(encoded(manifest))
+    commit(target)
+    assert b"/graphify-out/" not in (template / ".gitignore").read_bytes()
+    assert execute(lambda: plan(template, target), apply=True) == 0
+    migrated = ignore.read_text()
+    assert migrated.count("/graphify-out/") == 1
+    assert migrated.index("/graphify-out/") > migrated.index(
+        "# engineering:integration:end"
+    )
+    assert execute(lambda: plan(template, target), apply=True) == 0
+    assert ignore.read_text() == migrated

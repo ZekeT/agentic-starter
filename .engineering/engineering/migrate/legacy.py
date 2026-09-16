@@ -198,6 +198,11 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
                         f"migration.destination_modified: customized managed region in {name}"
                     )
                     continue
+            if name == ".gitignore" and b"/graphify-out/" in raw.splitlines():
+                if b"/graphify-out/" not in replacement.splitlines():
+                    replacement += (
+                        b"\n# Preserved legacy navigation cache.\n/graphify-out/\n"
+                    )
             result.add(name, replacement, replace=True)
         elif name in new_files and new_files[name]["ownership"]["mode"] == "file":
             incoming = read_bytes(template, name)
