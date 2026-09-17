@@ -68,6 +68,7 @@ def semantics(root: Path, data: dict[str, Any], inventory: dict[str, Any]) -> No
     canonical = {item["path"] for item in inventory["canonical"]}
     for item in data["canonical"]:
         fields(item, {"source", "classification", "evidence", "reason"})
+        strings([item["source"], item["classification"]], nonempty=True)
         if item["source"] not in canonical or item["classification"] not in CANONICAL:
             raise ValueError(
                 "migration.manifest: invalid canonical classification/source"
@@ -95,6 +96,7 @@ def semantics(root: Path, data: dict[str, Any], inventory: dict[str, Any]) -> No
                 "decisions",
             },
         )
+        strings([item["source"], item["state"], item["route"]], nonempty=True)
         if item["source"] not in active or item["source"] in covered:
             raise ValueError("migration.coverage: invalid/duplicate active source")
         if item["state"] not in ROUTES or item["route"] not in ROUTES[item["state"]]:
@@ -137,10 +139,9 @@ def changes(
     sources = {
         name for name in inventory["source_paths"] if name.startswith("openspec/")
     }
-    local = (
-        load(root).get("tracker", {}).get("provider", "local-markdown")
-        == "local-markdown"
-    )
+    local = (load(root) if (root / ".engineering/config.toml").exists() else {}).get(
+        "tracker", {}
+    ).get("provider", "local-markdown") == "local-markdown"
     for operation in ("writes", "deletes"):
         for item in data[operation]:
             fields(

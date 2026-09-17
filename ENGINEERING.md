@@ -318,9 +318,42 @@ without slash-command discovery can read it directly. It stages a readable
 the evidence, classifications, remaining-work handoffs, complete diff and manifest
 digest. Conflicts require human answers; unresolved design may be handed to
 Wayfinder only with explicit acceptance of that deferral. Staging changes neither
-applies them nor approves removal. This release supports preparation and semantic
-handoffs; the finalization CLI is a subsequent implementation ticket. The skill
-must stop at the handoff when `migrate --help` does not expose finalization.
+applies them nor approves removal. Preview the complete readable plan, file diffs and manifest SHA-256 with:
+
+```bash
+./engineering migrate openspec-project --target /path/to/project --finalize --plan
+```
+
+After the human accepts those exact bytes, apply with `--finalize --apply`.
+Neither preview nor a generated approval field authorizes removal. Finalization
+uses the inventory's history policy; changing it requires a new inventory/review.
+The target must already have Engineering installed, required dependencies available,
+and its native `make check`. Prepare applicable Graft graphs explicitly beforehand.
+
+Finalization requires current `reviewed_head`, unchanged inventory/source/evidence,
+exact destination hashes and clean Git. Keep temporary review artifacts ignored
+(the starter ignores `.engineering/migration-work/`); on arbitrary projects,
+configure that exclusion before preparing the final review. Do not force-add the
+manifest: committing a manifest that embeds `reviewed_head` changes that HEAD.
+Shared integration files receive exact reviewed replacements, never whole-file
+deletion. All inventoried OpenSpec files and runtime wiring require explicit removal.
+
+Apply runs offline doctor, the native `make check`, and Graft check (not applicable
+when application roots are empty). It does not build graphs or install dependencies.
+Ordinary write or validation failure restores affected file bytes/modes, prints the
+failure and recovery commit, and creates no success receipt. Project checks are
+project-owned executable code: inspect their output/status for any additional
+artifacts they create; the transaction only restores its own affected files.
+A process kill or power loss still requires manual recovery inspection.
+
+Successful validation writes a temporary `validation.json` with the recovery
+commit, exact output/evidence fingerprints and gate results. Exact retries make
+no changes, including before committing; changed outputs or reappeared OpenSpec
+files conflict. A repeat acknowledges the original checks, not a fresh validation
+of subsequent development. Changes remain uncommitted for human review. After
+successful validation and human acceptance, remove the temporary workspace when
+requested; retain explicitly requested snapshots. No normal project gate depends
+on this workspace or its receipt.
 
 Git history is the default preservation policy for an unconfigured project.
 An explicit `[migration] legacy_history` setting or `--legacy-history` selection

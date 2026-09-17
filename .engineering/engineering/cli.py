@@ -39,6 +39,11 @@ def main(argv: list[str] | None = None) -> int:
     mode = migrate.add_mutually_exclusive_group()
     mode.add_argument("--plan", action="store_true")
     mode.add_argument("--apply", action="store_true")
+    migrate.add_argument(
+        "--finalize",
+        action="store_true",
+        help="Preview or apply an exact human-reviewed OpenSpec proposal",
+    )
     migrate.add_argument("--legacy-history", choices=["snapshot", "git-only"])
     for operation in ("adopt", "update"):
         lifecycle = sub.add_parser(
@@ -93,6 +98,18 @@ def main(argv: list[str] | None = None) -> int:
             template = (args.template or root).resolve()
             from .settings import load
 
+            if args.finalize:
+                if (
+                    args.migration == "legacy-starter"
+                    or args.legacy_history
+                    or args.template
+                ):
+                    parser.error(
+                        "--finalize is only for OpenSpec and uses the inventoried history policy"
+                    )
+                from .migrate.finalize import execute as finalize
+
+                return finalize(target, apply=args.apply)
             policy = args.legacy_history
             if policy is None:
                 policy = (

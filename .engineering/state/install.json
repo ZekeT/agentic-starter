@@ -64,13 +64,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9c1414e0975d38f4f3cca2606a0d46c823f329f3afcb899de2ee451d597cdee6"
+      "upstream": "6732314a1ec4455781bd0b15190889345eef9654a370b9fe9d7aa6af3213c5f5"
     },
     ".claude/skills/migrate-from-openspec/references/application-manifest.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "f05c586f5f9e16e8f30ef839acf57c287460d871b635d350d86cbef0ed456eea"
+      "upstream": "8adf650b539185be8d209ba831abcff4c462e8052b8d96c0a63917d775c56b4f"
     },
     ".claude/statusline.sh": {
       "ownership": {
@@ -142,7 +142,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "57c3d785b92eda9a6b42b677574a2591f1fd580bac966ba61e5516ac9bba8d4b"
+      "upstream": "794adbdf043889b329a9cc91c0c405b6a8b464191790e381f1fb4fcf9a4aff37"
     },
     ".engineering/engineering/config.py": {
       "ownership": {
@@ -208,13 +208,19 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d777d981883c655fa43a6a622b9575a14b806e358ce15d5ae5cb3716586e891c"
+      "upstream": "d9c18ce19cc5fa02f5c41a308af96d725d1e5843d66625957a48a963fb49639d"
     },
     ".engineering/engineering/migrate/common.py": {
       "ownership": {
         "mode": "file"
       },
       "upstream": "6a4bc75f4441d9dcaf5a56ba6bcfb5b86a6a31b3427200b96afc403ff9604fc7"
+    },
+    ".engineering/engineering/migrate/finalize.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "b4606d0e9f437e8cd0a211c8b5784e10d70a08de73074154bf8dac765d2533e5"
     },
     ".engineering/engineering/migrate/legacy.py": {
       "ownership": {
@@ -227,6 +233,12 @@
         "mode": "file"
       },
       "upstream": "022c085f3cc2ed2ab80ba549e1b7976f16db09329e8b3a0dc7c148dafd5e3f45"
+    },
+    ".engineering/engineering/migrate/validation.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "cbec755968f4e8768e6bcb0f2413c3b257736682e665acc7138a537327430046"
     },
     ".engineering/engineering/migrate/wiring.py": {
       "ownership": {
@@ -268,7 +280,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "30619f428945138e730e90c9bce480db6cbcc7ed4821bc449e26e654f8d9f67e"
+      "upstream": "bd1f3d4544d8df383172a0bed2a3c1928af5bc49d7c907c4126cc4022b3b88cb"
     },
     ".engineering/engineering/updates.py": {
       "ownership": {
@@ -409,7 +421,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "13332c9cb9b428faedbe6a47dddd7992bbed863484d85c5abf5947a70351599d"
+      "upstream": "1263a7773770f7e87e7011255f1eeef3bfb7f22c4ae1e623298ff0d34d550bac"
     },
     "Makefile": {
       "ownership": {

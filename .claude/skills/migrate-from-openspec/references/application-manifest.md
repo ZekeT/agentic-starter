@@ -82,3 +82,13 @@ SHA-256. There is deliberately no `approved: true` field that an agent can asser
 The agent obtains that approval before invoking `--finalize --apply`; this explicit
 command is the apply boundary. Any edits after review require renewed review.
 The finalizer checks integrity and scope, not whether prose is semantically true.
+
+Preview with `--finalize --plan`; `--finalize --apply` applies the exact proposal
+and runs doctor, the project check and applicable Graft check. Required Engineering
+dependencies must already be installed. Keep this temporary workspace ignored
+before recording `reviewed_head`; committing the manifest would invalidate that
+HEAD binding. Successful validation creates a temporary `validation.json` receipt.
+Unchanged retries acknowledge that receipt without mutating files; edited outputs
+or reappeared integration conflict. After human acceptance, the entire workspace
+may be removed (retain snapshots when explicitly requested). Normal development
+has no dependency on these temporary artifacts.

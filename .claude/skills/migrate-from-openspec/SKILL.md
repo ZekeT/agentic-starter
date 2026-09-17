@@ -89,6 +89,16 @@ and metadata even when they produce no new durable document.
 Do not assert approval in a generated field. Resolve conflicts with explicit human
 answers and regenerate the proposal before asking for approval of changed bytes.
 
+Preview with `./engineering migrate openspec-project --finalize --plan` when
+supported. Keep temporary evidence ignored before recording `reviewed_head`;
+committing the manifest itself changes HEAD and makes that review stale.
+Finalization requires installed Engineering dependencies and a prepared Graft graph
+when application roots are configured. It runs doctor, the native project check
+and Graft check, rolls back its affected files on ordinary failures, and writes
+`validation.json` only after successful validation. Check output for any additional
+artifacts produced by project-owned checks. Exact retries acknowledge the original
+validation without overwriting changed outputs.
+
 After human approval of the exact proposal, use
 `./engineering migrate openspec-project --finalize --apply` when supported by the
 installed CLI. Check `migrate --help` first; if finalization is unavailable, stop

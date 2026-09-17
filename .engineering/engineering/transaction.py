@@ -56,7 +56,7 @@ def write_files(
                 else:
                     path.write_bytes(before)
                     path.chmod(modes[name])
-            except OSError:
+            except (OSError, ValueError):
                 failures.append(name)
         for path in reversed(created):
             try:
