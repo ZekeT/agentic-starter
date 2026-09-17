@@ -311,6 +311,17 @@ prose with code and tests, resolve conflicts with the human, and route remaining
 work into Matt's skills. Preparation alone does not complete migration or approve
 removals. No durable replacement docs are created mechanically.
 
+The project-owned skill is `.claude/skills/migrate-from-openspec/SKILL.md`; runtimes
+without slash-command discovery can read it directly. It stages a readable
+`reconciliation/plan.md` and exact proposed changes in
+`reconciliation/application.json`, using the linked versioned contract. Review
+the evidence, classifications, remaining-work handoffs, complete diff and manifest
+digest. Conflicts require human answers; unresolved design may be handed to
+Wayfinder only with explicit acceptance of that deferral. Staging changes neither
+applies them nor approves removal. This release supports preparation and semantic
+handoffs; the finalization CLI is a subsequent implementation ticket. The skill
+must stop at the handoff when `migrate --help` does not expose finalization.
+
 Git history is the default preservation policy for an unconfigured project.
 An explicit `[migration] legacy_history` setting or `--legacy-history` selection
 is honored. `--legacy-history snapshot` additionally copies inventoried sources

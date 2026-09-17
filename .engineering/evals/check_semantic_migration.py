@@ -18,6 +18,7 @@ REQUIRED = (
     "PARTIALLY_IMPLEMENTED",
     "IMPLEMENTED_NOT_CLOSED",
     "UNKNOWN",
+    "`OBSOLETE`",
     "CONFLICT_REQUIRES_HUMAN",
     "UNCERTAIN_REQUIRES_HUMAN",
     "Do not implement unfinished changes",
@@ -28,6 +29,11 @@ REQUIRED = (
     "temporary migration state",
     "application-manifest.md",
     "arbitrary OpenSpec projects",
+    "Task checkboxes are historical claims, not evidence of implementation",
+    "Do not emulate finalization",
+    "docs/agents/issue-tracker.md",
+    "useful source references",
+    "complete diff and manifest digest",
 )
 
 

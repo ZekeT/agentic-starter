@@ -64,13 +64,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4632650c3d77247ae29a49e8665671a19e4c8b451983ae3c329fe73b502cb188"
+      "upstream": "9c1414e0975d38f4f3cca2606a0d46c823f329f3afcb899de2ee451d597cdee6"
     },
     ".claude/skills/migrate-from-openspec/references/application-manifest.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "42059a59931bde544a1bbbb90c9cbb49c36ed549b1cb3806f444cb64d5065d6b"
+      "upstream": "f05c586f5f9e16e8f30ef839acf57c287460d871b635d350d86cbef0ed456eea"
     },
     ".claude/statusline.sh": {
       "ownership": {
@@ -340,7 +340,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "309a68291ea4240c46e04036289249d6c83c6a94ec86c7efb54ca12c7ac3a2e3"
+      "upstream": "b27f88fb60f0ae8f493c76a7b250fd238b1c809d2b1d2d18a0f3011c490ea831"
     },
     ".engineering/evals/run_evals.py": {
       "ownership": {
@@ -409,7 +409,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "2cd9187c5d7f4155428192aee753693fd53f163ee3c9b78b476a79ba28d6c123"
+      "upstream": "13332c9cb9b428faedbe6a47dddd7992bbed863484d85c5abf5947a70351599d"
     },
     "Makefile": {
       "ownership": {

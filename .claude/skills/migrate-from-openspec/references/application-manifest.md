@@ -29,6 +29,10 @@ symlink or `.git` path is permitted. Writes are restricted to durable docs under
 `docs/context/`, `docs/adr/`, `docs/features/`, accepted Markdown handoffs under the
 configured tracker (`.scratch/` by default), or inventoried integration files being
 edited to remove OpenSpec wiring. The plan must explain why each output is needed.
+Version 1 represents local Markdown tracker writes only. For an external tracker,
+keep the proposed upstream input in the readable plan, outside `writes`; publish
+through the configured adapter only when authorized. Do not redirect external
+tracker work to `.scratch/` or claim that staging a handoff published a ticket.
 Deletes may only name inventoried OpenSpec tree files or dedicated generated
 OpenSpec integration files. Every OpenSpec tree file and detected runtime
 integration must have an explicit reviewed delete or integration replacement;
@@ -51,6 +55,8 @@ as partial. All evidence references name regular repository files present at
 `reviewed_head`; cite precise claims/lines in the readable plan. Evidence must
 include actual code/tests when available; record their absence honestly otherwise.
 The string arrays describe evidence-backed statements, not boolean assertions.
+Record known gaps with their evidence in the readable plan; do not add an
+unrecognized `gaps` field to the manifest. A task checkbox alone is not evidence.
 Active `decisions` describes remaining design questions for the handoff. Questions
 explicitly accepted by the human for deferral to `wayfinder` may remain there;
 other unresolved questions must also appear in `unresolved_decisions` and block
