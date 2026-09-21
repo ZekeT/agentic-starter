@@ -36,8 +36,18 @@ Reviewers are read-only and receive only a branch/ticket/spec/request pointer.
 Do not pass implementation-session reasoning or a self-review narrative to them.
 Security review applies to security-sensitive changes, including dependency
 execution and destructive operations. Human review follows [REVIEW.md](REVIEW.md).
-Do not commit, push, create a PR/MR, or merge unless requested by the human.
+Invocation of `/implement` authorizes local commits within the requested scope;
+a commit is neither verification nor human acceptance. Never infer push, PR/MR
+or merge authorization from implementation. Other commits require human request.
 `/ship` honors existing explicit authorization and runs the final gate.
+
+After implementation, automatically hand off to fresh independent reviewers when
+the runtime supports them. Keep pinned upstream skills unchanged. Their committed
+diff review alone cannot certify uncommitted work. Follow
+[verification evidence](.engineering/docs/verification.md): prepare exact scope,
+have the verifier run recorded checks, and record independent reports. `/review`
+obtains missing/stale proof and reuses current evidence. If fresh reviewers are
+unavailable, report INCOMPLETE and give a fresh-session handoff; never self-certify.
 
 ## Agent skills
 

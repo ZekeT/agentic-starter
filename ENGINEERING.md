@@ -148,10 +148,21 @@ secrets, cryptography, untrusted input, payments, privilege boundaries,
 destructive operations, sensitive storage, network exposure and dependency
 execution. It is unnecessary for a trivial prose change.
 
-`/review` is a thin summary of scope, evidence and risks. `/ship` runs the final
+`/implement` authorizes scoped local commits, not acceptance or publication.
+After implementation, automatically hand off to fresh independent reviewers when
+supported by the runtime. Pinned upstream skills stay unchanged; their committed-only
+review does not prove coverage of uncommitted work. When fresh execution is
+unavailable, give an explicit fresh-session handoff; never self-certify.
+
+`/review` obtains missing/stale independent verification, then summarizes scope,
+evidence and risks. Current proof is reused across sessions using the local
+`engineering verify` commands described in
+[verification evidence](.engineering/docs/verification.md). Records cover actual
+content and check inputs rather than just HEAD. Ordinary application commits do
+not carry this bookkeeping. `/ship` runs the final
 gate, shows intended commit scope and honors explicit human authorization for
 each shipping action. It supports the project's hosting provider; `gh` is not
-required. Invocation of `/implement` does not authorize commits, pushes or PRs.
+required. Invocation of `/implement` does not authorize pushes or PRs.
 
 ## Deterministic checks
 

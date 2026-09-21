@@ -66,9 +66,16 @@ def main(argv: list[str] | None = None) -> int:
     growth.add_argument(
         "--all", action="store_true", help="Inspect sizes without growth history"
     )
+    from .verification import add_parser
+
+    add_parser(sub)
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "verify":
+            from .verification import operate as verify
+
+            return verify(root, args)
         if args.command == "version":
             print((root / ".engineering/TEMPLATE_VERSION").read_text().strip())
             return 0
@@ -169,5 +176,10 @@ def main(argv: list[str] | None = None) -> int:
         tokenize.TokenError,
         subprocess.SubprocessError,
     ) as exc:
+        if args.command == "verify":
+            import json
+
+            print(json.dumps({"status": "INCOMPLETE", "error": str(exc)}))
+            return 1
         print(f"✗ {args.command}: {exc}", file=sys.stderr)
         return 1

@@ -52,6 +52,7 @@ Thumbs.db
 # Local build/installation artifacts (tracker Markdown remains trackable).
 .worktrees/
 /.engineering/state/dependencies.json
+/.engineering/state/verification/
 /.engineering/tmp/
 /.engineering/migration-work/
 
