@@ -149,11 +149,11 @@ def test_untracked_and_deleted_content_survives_commit(repo):
     assert cli(repo, "status", "--change", "example")["status"] == "PASS"
 
 
-def test_unrelated_edits_refuse_without_changing_files(repo):
+def test_unrelated_edits_preserve_current_evidence(repo):
     complete(repo)
     (repo / "unrelated.txt").write_text("must survive\n")
-    result = cli(repo, "status", "--change", "example", status=1)
-    assert "Unrelated" in result["error"]
+    result = cli(repo, "status", "--change", "example")
+    assert result["status"] == "PASS"
     assert (repo / "unrelated.txt").read_text() == "must survive\n"
 
 
@@ -203,7 +203,11 @@ def test_check_mutations_never_produce_current_proof(repo):
     token = prepare(repo)["snapshot"]
     result = cli(repo, "check", "--change", "example", "--snapshot", token, status=1)
     assert "mutated" in result["error"]
-    assert cli(repo, "status", "--change", "example", status=1)["status"] == "STALE"
+    assert (
+        cli(repo, "status", "--change", "example", status=1)["status"] == "INCOMPLETE"
+    )
+    assert (repo / "app.txt").read_text() == "after\n"
+    assert prepare(repo)["status"] == "INCOMPLETE"
 
 
 @pytest.mark.parametrize("kind", ["secret", "symlink", "bad-record"])
@@ -256,7 +260,116 @@ def test_status_and_reprepare_do_not_rerun_checks(repo):
     )
     change_plan(repo, paths=["app.txt", "Makefile"])
     complete(repo)
+    checkout = repo / prepare(repo)["checkout"]
     for _ in range(2):
         assert cli(repo, "status", "--change", "example")["status"] == "PASS"
         assert prepare(repo)["status"] == "PASS"
-    assert (repo / ".engineering/state/verification/calls").read_text() == "check\n"
+    assert (checkout / ".engineering/state/verification/calls").read_text() == "check\n"
+
+
+def test_unrelated_local_fix_cannot_make_proposal_pass(repo):
+    (repo / "Makefile").write_text("check:\n\t@test -f unrelated.txt\n")
+    change_plan(repo, paths=["app.txt", "Makefile"])
+    (repo / "unrelated.txt").write_text("local rescue\n")
+    subprocess.run(["make", "check"], cwd=repo, check=True)
+    before = git(repo, "status", "--porcelain=v1")
+    token = prepare(repo)["snapshot"]
+    result = cli(repo, "check", "--change", "example", "--snapshot", token, status=1)
+    assert result["status"] == "FAIL"
+    assert (repo / "unrelated.txt").read_text() == "local rescue\n"
+    assert git(repo, "status", "--porcelain=v1") == before
+
+
+def test_checkout_contains_intended_layers_and_preserves_index(repo):
+    (repo / "committed.txt").write_text("committed\n")
+    git(repo, "add", "committed.txt")
+    git(repo, "commit", "-m", "intended commit")
+    (repo / "staged.txt").write_text("staged\n")
+    git(repo, "add", "staged.txt")
+    (repo / "new.sh").write_text("#!/bin/sh\nexit 0\n")
+    (repo / "new.sh").chmod(0o755)
+    (repo / "Makefile").write_text(
+        "check:\n\t@test -s committed.txt && test -s staged.txt && "
+        'test -x new.sh && test "`cat app.txt`" = after\n'
+    )
+    change_plan(
+        repo, paths=["app.txt", "Makefile", "committed.txt", "staged.txt", "new.sh"]
+    )
+    (repo / ".gitignore").write_text(
+        "unrelated staged edit\n.engineering/state/verification/\n"
+    )
+    git(repo, "add", ".gitignore")
+    (repo / ".gitignore").write_text(
+        "unrelated unstaged edit\n.engineering/state/verification/\n"
+    )
+    before = git(repo, "diff", "--cached", "--binary")
+    working = git(repo, "diff", "--binary")
+    token = complete(repo)
+    assert cli(repo, "status", "--change", "example")["snapshot"] == token
+    checkout = repo / prepare(repo)["checkout"]
+    assert (checkout / ".gitignore").read_text() == ".engineering/state/verification/\n"
+    assert git(repo, "diff", "--cached", "--binary") == before
+    assert git(repo, "diff", "--binary") == working
+
+
+def test_committed_changes_cannot_be_omitted_from_proposed_pr(repo):
+    (repo / "omitted.txt").write_text("part of PR\n")
+    git(repo, "add", "omitted.txt")
+    git(repo, "commit", "-m", "cannot exclude committed content")
+    result = cli(
+        repo,
+        "prepare",
+        "--change",
+        "example",
+        "--plan",
+        ".engineering/state/verification/plan.json",
+        status=1,
+    )
+    assert "Committed PR changes missing" in result["error"]
+    assert (repo / "app.txt").read_text() == "after\n"
+
+
+def test_review_checkout_mutation_invalidates_reports_and_reprepare_recovers(repo):
+    token = complete(repo)
+    checkout = repo / prepare(repo)["checkout"]
+    (checkout / "unexpected.txt").write_text("review mutation\n")
+    assert (
+        cli(repo, "status", "--change", "example", status=1)["status"] == "INCOMPLETE"
+    )
+    assert report(repo, token, "maintainability", expected=1)["status"] == "INCOMPLETE"
+    assert prepare(repo)["status"] == "INCOMPLETE"
+    assert (repo / "app.txt").read_text() == "after\n"
+
+
+def test_failed_preparation_preserves_unrelated_work(repo):
+    (repo / "unrelated.txt").write_text("preserved\n")
+    change_plan(repo, tools=[["missing-verification-tool", "--version"]])
+    before = git(repo, "status", "--porcelain=v1")
+    result = cli(
+        repo,
+        "prepare",
+        "--change",
+        "example",
+        "--plan",
+        ".engineering/state/verification/plan.json",
+        status=1,
+    )
+    assert result["status"] == "INCOMPLETE"
+    assert git(repo, "status", "--porcelain=v1") == before
+    assert (repo / "unrelated.txt").read_text() == "preserved\n"
+
+
+def test_legacy_evidence_is_reprepared_without_reusing_reports(repo):
+    complete(repo)
+    path = repo / ".engineering/state/verification/example.json"
+    legacy = json.loads(path.read_text())
+    del legacy["checkout"]
+    path.write_text(json.dumps(legacy))
+    assert (
+        cli(repo, "status", "--change", "example", status=1)["status"] == "INCOMPLETE"
+    )
+    result = prepare(repo)
+    assert result["status"] == "INCOMPLETE"
+    assert result["reports"] == {}
+    assert result["checks"] == []
+    assert (repo / result["checkout"] / "app.txt").read_text() == "after\n"

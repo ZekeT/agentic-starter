@@ -11,49 +11,53 @@
   "files": {
     ".claude/agents/maintainability-reviewer.md": {
       "executable": false,
-      "owned_sha256": "ec1edbe7f7af8df51cb3d51283abaff44e82d360f9b89899e7d5b5afbcb925f3",
+      "owned_sha256": "a6a6abd24b43dd41c7a508a9337f1ef12cf0f1398789b06f0e12442f773e1080",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "1915b7b82e11ec90089c4c809471ebb7c8e26cde74b4fdefc9e9fb5d30d0d6c4",
-        "58d7b822fac9d3191e8f3402ac9b32e13a947c67f6b1b217be6723bd517e61e5"
+        "58d7b822fac9d3191e8f3402ac9b32e13a947c67f6b1b217be6723bd517e61e5",
+        "ec1edbe7f7af8df51cb3d51283abaff44e82d360f9b89899e7d5b5afbcb925f3"
       ],
-      "sha256": "ec1edbe7f7af8df51cb3d51283abaff44e82d360f9b89899e7d5b5afbcb925f3"
+      "sha256": "a6a6abd24b43dd41c7a508a9337f1ef12cf0f1398789b06f0e12442f773e1080"
     },
     ".claude/agents/security-reviewer.md": {
       "executable": false,
-      "owned_sha256": "19c8ca86c40bf2a11550a2035434026cc0f43a30a2aa623d8d1eb2f556ee17f1",
+      "owned_sha256": "14a6268a817ddd6f30f6b9d12aa2771a5c37477eadc1b0273558487d24831e32",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "ae58c77ab5e2e89c8f012c3125f8a21da954e4916404055b847e35992f7d496a",
-        "d40df782f7555a4d140c8ab6d0dfee4ba2e53760aa010f5b0ebd417bbbb3f44a"
+        "d40df782f7555a4d140c8ab6d0dfee4ba2e53760aa010f5b0ebd417bbbb3f44a",
+        "19c8ca86c40bf2a11550a2035434026cc0f43a30a2aa623d8d1eb2f556ee17f1"
       ],
-      "sha256": "19c8ca86c40bf2a11550a2035434026cc0f43a30a2aa623d8d1eb2f556ee17f1"
+      "sha256": "14a6268a817ddd6f30f6b9d12aa2771a5c37477eadc1b0273558487d24831e32"
     },
     ".claude/agents/verifier.md": {
       "executable": false,
-      "owned_sha256": "1942b3d789a33b6f47d53578a337f4c8e01f9d61aaec3ccf24467b5f872b1519",
+      "owned_sha256": "a510d582669271c4d37eba5f9e825230b9c1315a082a40f53bd7719dd42c4530",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "550132e29257e4d069d7d6e1934cdac67c29626596dfd1c7186656e46cca67c5"
+        "550132e29257e4d069d7d6e1934cdac67c29626596dfd1c7186656e46cca67c5",
+        "1942b3d789a33b6f47d53578a337f4c8e01f9d61aaec3ccf24467b5f872b1519"
       ],
-      "sha256": "1942b3d789a33b6f47d53578a337f4c8e01f9d61aaec3ccf24467b5f872b1519"
+      "sha256": "a510d582669271c4d37eba5f9e825230b9c1315a082a40f53bd7719dd42c4530"
     },
     ".claude/commands/review.md": {
       "executable": false,
-      "owned_sha256": "3bc7b5868b219d3631addbc43792653eee1e69b1f5bca4c5dec0ae1588bd9393",
+      "owned_sha256": "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "7a917cc9ebe1fca4ae11a9d9abc3d909595879e1435cffabfe4947eb07eb3b95"
+        "7a917cc9ebe1fca4ae11a9d9abc3d909595879e1435cffabfe4947eb07eb3b95",
+        "3bc7b5868b219d3631addbc43792653eee1e69b1f5bca4c5dec0ae1588bd9393"
       ],
-      "sha256": "3bc7b5868b219d3631addbc43792653eee1e69b1f5bca4c5dec0ae1588bd9393"
+      "sha256": "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0"
     },
     ".claude/commands/ship.md": {
       "executable": false,
@@ -220,12 +224,14 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6",
+      "owned_sha256": "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6"
+      "previous": [
+        "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6"
+      ],
+      "sha256": "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -566,21 +572,48 @@
     },
     ".engineering/engineering/verification.py": {
       "executable": false,
-      "owned_sha256": "14d501d468a93be9857692411a5b521c992d83879f55ac19bc1c06540ab73fb4",
+      "owned_sha256": "a7682dbc4f69fc577cfecefd1a8aad5ff68769ccc50b49e778c4c682dd3ccf47",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "14d501d468a93be9857692411a5b521c992d83879f55ac19bc1c06540ab73fb4",
+        "888f4e369a75635017e6982b2cceabf86dc09875e7b79f10cf9cf2c6a224abb7",
+        "478d80ec02a268ba417155254e1511e4ad7a0094d97430cabc51fad85ffc13f8"
+      ],
+      "sha256": "a7682dbc4f69fc577cfecefd1a8aad5ff68769ccc50b49e778c4c682dd3ccf47"
+    },
+    ".engineering/engineering/verification_checkout.py": {
+      "executable": false,
+      "owned_sha256": "9c15fda7c7b2eb303b18763ca5f0857d0d28a2af5b3c10b4f07566a479c30bce",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "4e77a1bdca12f534241d060f39c63749cee5d9b20fc384e272e535afebd18507"
+      ],
+      "sha256": "9c15fda7c7b2eb303b18763ca5f0857d0d28a2af5b3c10b4f07566a479c30bce"
+    },
+    ".engineering/engineering/verification_inputs.py": {
+      "executable": false,
+      "owned_sha256": "a5e52e6d19ed4df4fc52c625fd8b1383bd9feec99a076e37e4dd2198a7336a2d",
       "ownership": {
         "mode": "file"
       },
       "previous": [],
-      "sha256": "14d501d468a93be9857692411a5b521c992d83879f55ac19bc1c06540ab73fb4"
+      "sha256": "a5e52e6d19ed4df4fc52c625fd8b1383bd9feec99a076e37e4dd2198a7336a2d"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,
-      "owned_sha256": "7b23766ec71fab3e3ee4ab23fe000390945eaf42e9b138cef58799b08352b2e7",
+      "owned_sha256": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "7b23766ec71fab3e3ee4ab23fe000390945eaf42e9b138cef58799b08352b2e7"
+      "previous": [
+        "7b23766ec71fab3e3ee4ab23fe000390945eaf42e9b138cef58799b08352b2e7",
+        "6552cc89f794f136a38fb3382986591af803b1e1724d5ce5d431e2e89253d09f"
+      ],
+      "sha256": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a"
     },
     ".engineering/evals/README.md": {
       "executable": false,
@@ -647,12 +680,14 @@
     },
     ".engineering/evals/cases/007-reusable-verification.yaml": {
       "executable": false,
-      "owned_sha256": "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07",
+      "owned_sha256": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07"
+      "previous": [
+        "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07"
+      ],
+      "sha256": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "executable": false,

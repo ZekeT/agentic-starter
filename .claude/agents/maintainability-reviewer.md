@@ -33,3 +33,9 @@ For reusable evidence read .engineering/docs/verification.md and independently
 validate the prepared scope against the request. Capture the snapshot before
 review and submit your maintainability report with that same snapshot. Do not
 relabel stale findings. Local evidence output is allowed, application edits are not.
+
+For prepared evidence inspect the reported isolated `checkout` path, including
+its staged, unstaged and new content against the comparison base. Run evidence
+commands from the original repository; `verify check` executes in that checkout.
+Never use unrelated working-tree edits to support PASS. Missing or modified
+checkout content requires fresh preparation and review.

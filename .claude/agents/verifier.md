@@ -34,3 +34,9 @@ your behavioral report with that same snapshot and observed coverage/gaps.
 If inputs change, do not relabel old findings with a new token: reverify. Local
 evidence output is allowed, application edits are not. Never substitute implementer
 self-review for independent evidence.
+
+For prepared evidence inspect the reported isolated `checkout` path, including
+its staged, unstaged and new content against the comparison base. Run evidence
+commands from the original repository; `verify check` executes in that checkout.
+Never use unrelated working-tree edits to support PASS. Missing or modified
+checkout content requires fresh preparation and review.

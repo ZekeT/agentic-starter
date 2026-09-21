@@ -13,5 +13,8 @@ shell: |
   guide = Path('.engineering/docs/verification.md').read_text()
   for phrase in ('does not authenticate', 'never relabel', 'Human acceptance remains separate', 'Unrelated'):
       assert phrase.lower() in guide.lower(), phrase
+  assert 'isolated `checkout` path' in Path('.claude/agents/verifier.md').read_text()
+  assert 'Preparation failures leave proof INCOMPLETE' in review
+  assert 'Committed changes outside `paths` fail preparation' in guide
   assert '/.engineering/state/verification/' in Path('.gitignore').read_text()
   PY
