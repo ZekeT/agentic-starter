@@ -373,3 +373,32 @@ def test_legacy_evidence_is_reprepared_without_reusing_reports(repo):
     assert result["reports"] == {}
     assert result["checks"] == []
     assert (repo / result["checkout"] / "app.txt").read_text() == "after\n"
+
+
+def test_bounded_correction_preserves_history_but_requires_fresh_proof(repo):
+    old_token = complete(repo)
+    (repo / "app.txt").write_text("authorized correction\n")
+    current = prepare(repo)
+    assert current["snapshot"] != old_token
+    assert current["status"] == "INCOMPLETE"
+    assert current["checks"] == []
+    assert current["reports"] == {}
+    history = repo / current["previous_evidence"]
+    previous = json.loads(history.read_text())
+    assert previous["snapshot"] == old_token
+    assert previous["reports"]["behavioral"]["verdict"] == "PASS"
+    assert "STALE report" in report(repo, old_token, "behavioral", expected=1)["error"]
+    assert (
+        "successful recorded"
+        in report(repo, current["snapshot"], "behavioral", expected=1)["error"]
+    )
+    cli(repo, "check", "--change", "example", "--snapshot", current["snapshot"])
+    report(repo, current["snapshot"], "behavioral")
+    assert cli(repo, "status", "--change", "example", status=1)["missing"] == [
+        "maintainability"
+    ]
+    report(repo, current["snapshot"], "maintainability")
+    assert prepare(repo)["status"] == "PASS"
+    assert prepare(repo)["previous_evidence"] == current["previous_evidence"]
+    assert json.loads(history.read_text()) == previous
+    assert git(repo, "diff", "--name-only") == "app.txt"

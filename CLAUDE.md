@@ -35,7 +35,10 @@ explicit preparation steps, outside `make check`.
 Reviewers are read-only and receive only a branch/ticket/spec/request pointer.
 Do not pass implementation-session reasoning or a self-review narrative to them.
 Security review applies to security-sensitive changes, including dependency
-execution and destructive operations. Human review follows [REVIEW.md](REVIEW.md).
+execution and destructive operations. Human review follows [REVIEW.md](REVIEW.md). Wait for human fix instructions;
+preserve settled decisions. Pause after two unsuccessful attempts at one finding
+or before undoing a settled decision; use focused `/grill-me` and record the
+agreed resolution. Independently reverify authorized corrections.
 Invocation of `/implement` authorizes local commits within the requested scope;
 a commit is neither verification nor human acceptance. Never infer push, PR/MR
 or merge authorization from implementation. Other commits require human request.

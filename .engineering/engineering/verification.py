@@ -100,6 +100,7 @@ def outcome(data: dict[str, Any]) -> dict[str, Any]:
         "status": status,
         "snapshot": data["snapshot"],
         "checkout": data.get("checkout"),
+        "previous_evidence": data.get("previous_evidence"),
         "missing": missing,
         "reports": data["reports"],
         "checks": checks,
@@ -169,6 +170,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             "checks": [],
             "reports": {},
         }
+        previous = None
         if path.exists():
             previous = read_record(root, name)
             if previous["snapshot"] == token and previous["inputs"] == inputs:
@@ -189,6 +191,10 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 shutil.rmtree(folder)
                 raise
             data["checkout"] = str(checkout.relative_to(root))
+            if previous is not None:
+                history = str((folder / "previous.json").relative_to(root))
+                write_files(root, {history: encoded(previous)})
+                data["previous_evidence"] = history
         else:
             validate_checkout(safe_path(root, data["checkout"]), inputs)
         write_files(root, {name: encoded(data)})

@@ -4,25 +4,25 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a6a6abd24b43dd41c7a508a9337f1ef12cf0f1398789b06f0e12442f773e1080"
+      "upstream": "80ffe285123ee854fa5b5326a370b3c8eb81ea47592d84aec35aa04fb96a66c0"
     },
     ".claude/agents/security-reviewer.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "14a6268a817ddd6f30f6b9d12aa2771a5c37477eadc1b0273558487d24831e32"
+      "upstream": "ac3b6b4e8847da1903ddc61e200def9ec2bd6f7e297a9f69e92cd92c697d4856"
     },
     ".claude/agents/verifier.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a510d582669271c4d37eba5f9e825230b9c1315a082a40f53bd7719dd42c4530"
+      "upstream": "c626f6ca62ea3069315c167b53473c080619eb525984d10ada247dacaf2b40f7"
     },
     ".claude/commands/review.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0"
+      "upstream": "9a36f64baefcbd9173861cabcf9902d24e682c22d3c9f689c2e10734dbaa1676"
     },
     ".claude/commands/ship.md": {
       "ownership": {
@@ -124,7 +124,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0"
+      "upstream": "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -298,7 +298,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a7682dbc4f69fc577cfecefd1a8aad5ff68769ccc50b49e778c4c682dd3ccf47"
+      "upstream": "1aa510bd0f66df4d3863c9facea654a4a9d2b9f452e4bcf91a9b58159390e3e8"
     },
     ".engineering/engineering/verification_checkout.py": {
       "ownership": {
@@ -366,6 +366,12 @@
       },
       "upstream": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424"
     },
+    ".engineering/evals/cases/008-bounded-corrections.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+    },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
         "mode": "file"
@@ -383,6 +389,18 @@
         "mode": "file"
       },
       "upstream": "6c1f30c9795687222dc28ba825794f487d2ac07ee02da3c9460cec2a61deaed5"
+    },
+    ".engineering/evals/cases/104-review-direction.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "ba985b5e651dd8f0114ab0669279e11d9022f8b3924aa5b10b1222affd94c8c9"
+    },
+    ".engineering/evals/cases/105-settled-decision.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "071260bc88193840aa1af27be82b84bfed915b7457580259cb2dc20274d10b6e"
     },
     ".engineering/evals/check_semantic_migration.py": {
       "ownership": {
@@ -451,13 +469,13 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "35af26b399f2eee01c4157aeb8a92da158a783982f0e9be2c371d1d08bbec2a1"
+      "upstream": "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61"
     },
     "ENGINEERING.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "6b43db2d68dad7e9e3beead9ea9240ab529606403a6ff483cd4900da44b8b3cf"
+      "upstream": "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0"
     },
     "Makefile": {
       "ownership": {
@@ -470,7 +488,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "97e39010d899fbb48cc5b94f55ddaef43d535264d05add59888f4df7a0a2c2ca"
+      "upstream": "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94"
     },
     "engineering": {
       "ownership": {

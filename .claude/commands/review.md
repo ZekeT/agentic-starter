@@ -26,3 +26,11 @@ and gaps. Missing proof is not PASS; PASS is not human acceptance. Use show-me
 when useful. Do not edit application content, format, refresh Graft, rerun
 upstream development methodology or ship. Local evidence/check artifacts are
 permitted. Ship retains its existing final gate.
+
+Apply REVIEW.md's finding format and bounded correction policy. Consult settled
+decisions; keep preference-only alternatives non-blocking. Wait for human
+instructions identifying fixes before editing. Subsequent authorized corrections
+follow the incremental evidence procedure; present updated acceptance scope.
+Pause after two unsuccessful attempts at one finding or before undoing a settled
+decision, use focused `/grill-me`, and record the human-agreed resolution first.
+Material scope expansion returns to `/to-spec` and `/to-tickets`.
