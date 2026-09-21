@@ -40,3 +40,11 @@ its staged, unstaged and new content against the comparison base. Run evidence
 commands from the original repository; `verify check` executes in that checkout.
 Never use unrelated working-tree edits to support PASS. Missing or modified
 checkout content requires fresh preparation and review.
+
+Follow REVIEW.md for actionable findings and settled decisions. Preference-only
+alternatives are non-blocking. Do not fix findings; wait for human direction.
+For authorized corrections use the review-corrections procedure in
+.engineering/docs/verification.md: independently inspect the fix and affected
+behavior, explicitly justify retained unchanged-area evidence in your new report,
+and broaden inspection when scope or architecture changes. Prior acceptance does
+not transfer. The behavioral verifier reruns authoritative checks after code fixes.

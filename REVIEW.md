@@ -33,3 +33,32 @@ Invoking `/implement` authorizes scoped local commits, not acceptance or
 publication. Only the human authorizes shipping. Scope approval to the commit/push/PR or MR/
 merge requested. Existing authorization need not be requested again. `/ship`
 runs a final `make check` and respects the project's Git hosting provider.
+
+## Findings and human-directed corrections
+
+Review is read-only for application content. Present changed behavior, requirement
+coverage, consequences, risks and gaps. For each finding provide **what** is wrong,
+**why** it matters, **how** to address it, your **recommendation and rationale**,
+and concrete evidence (path/line, observed failure or requirement). Identify a
+violated requirement, demonstrated defect or concrete risk. Consult the settled
+spec, ADRs and recorded human decisions. Label preference-only alternatives as
+non-blocking; they do not justify a CONCERNS/FAIL verdict by themselves.
+Wait for human instructions identifying which fixes to make before editing.
+
+Authorized ordinary corrections need no new spec, tickets or dedicated fix
+command. Preserve agreed behavior and decisions; corrections may remain
+uncommitted. After code fixes, format and prepare current evidence, rerun
+authoritative checks and obtain independent inspection of the fix and affected
+behavior. Reviewers may retain evidence for unchanged areas only with an explicit
+scope justification; scope or architecture changes require broader review.
+Follow the incremental evidence procedure in
+[verification.md](.engineering/docs/verification.md#review-corrections).
+Present updated acceptance scope, checks, findings and gaps. Prior acceptance
+does not automatically transfer to changed content.
+
+Pause edits after two unsuccessful attempts at one finding, or before a fix would
+undo a settled decision. Explain the conflict, evidence, alternatives and behavior
+to preserve; route to focused `/grill-me`. Record the human-agreed resolution in
+the relevant decision/spec or ticket before resuming and reverifying. Material
+scope expansion returns to `/to-spec` and `/to-tickets`. This bounds attempts at a
+finding, not the number of legitimate findings reviewers may raise.

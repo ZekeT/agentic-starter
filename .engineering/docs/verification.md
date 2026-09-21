@@ -139,7 +139,9 @@ PASS; required missing roles remain INCOMPLETE.
 Serialize evidence writes: run checks before recording the behavioral report and
 record reports one at a time. Never edit stored records manually. If inputs change,
 prepare again and obtain fresh proof; never relabel old findings with a new token.
-Incremental fix review is a later slice; changed inputs currently clear all reports.
+Changed inputs clear active reports and checks. Preparation saves the previous
+record in the new checkout's sibling `previous.json`, exposed as
+`previous_evidence`. This is historical reference only, never current proof.
 
 ## Interpret proof honestly
 
@@ -155,3 +157,30 @@ checks. PASS for the wrong requirement or omitted relevant input is insufficient
 Human acceptance remains separate. Put a concise scope/evidence/gaps summary in
 the eventual PR, not local bookkeeping. Another checkout without records
 regenerates verification. This is not a ticket tracker or workflow database.
+
+## Review corrections
+
+After human-directed fixes, prepare the same change with its current complete
+scope. The previous evidence reference preserves the old snapshot, reports,
+checks and checkout pointer for comparison, including findings still unresolved.
+Never edit history or relabel an old report with the current token. Missing or
+untrustworthy history requires fresh review of the relevant areas.
+
+Fresh independent reviewers compare the prior and current proposed content and
+inspect the fix and affected behavior. In each new report's `summary`, identify
+resolved and remaining finding evidence, the correction inspected, and any retained
+unchanged-area evidence by previous record path, snapshot and role. Explain why
+that coverage remains applicable, including relevant dependencies and call sites;
+unchanged file bytes alone do not prove unaffected behavior. Use `coverage_gaps`
+for limits. Each required role supplies a current independent attestation; a
+reviewer can incorporate justified prior coverage without repeating that inspection.
+Changed requirements, scope, architecture, check configuration or tools require
+broader inspection as appropriate. Historical failures cannot be ignored: explain
+resolution or retain the finding and a non-PASS verdict.
+
+The behavioral reviewer reruns `verify check` for the current snapshot after code
+fixes, then records observed behavior. Old checks cannot satisfy the new snapshot.
+The tool validates freshness, not the semantic validity of retention justifications
+or human fix authorization. Follow REVIEW.md for human direction, the two-attempt
+pause and settled-decision escalation. Present the corrected scope and evidence
+for human acceptance; history does not transfer acceptance to changed content.

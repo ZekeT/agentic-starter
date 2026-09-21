@@ -164,6 +164,17 @@ gate, shows intended commit scope and honors explicit human authorization for
 each shipping action. It supports the project's hosting provider; `gh` is not
 required. Invocation of `/implement` does not authorize pushes or PRs.
 
+## Review corrections
+
+`/review` explains findings with evidence and waits for your fix instructions.
+Ordinary corrections need no new planning cycle and may remain uncommitted.
+Fresh reviewers inspect the correction and affected behavior, justify retained
+evidence for unchanged areas, and rerun authoritative checks after code fixes.
+The updated scope comes back for acceptance. Preference-only alternatives are
+non-blocking. After two unsuccessful attempts at a finding, or before undoing a
+settled decision, pause for focused `/grill-me` and record the agreed resolution.
+Material expansion returns to `/to-spec` and `/to-tickets`. See [REVIEW.md](REVIEW.md).
+
 ## Deterministic checks
 
 | Command | Purpose |

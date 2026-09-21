@@ -1,0 +1,20 @@
+id: bounded-human-directed-corrections
+kind: static
+why: Check instruction consistency; static assertions do not prove model judgment.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  review = Path('REVIEW.md').read_text()
+  for phrase in ('recommendation and rationale', 'concrete evidence', 'preference-only',
+                 'Wait for human instructions', 'two unsuccessful attempts',
+                 'undo a settled decision', '/grill-me', 'human-agreed resolution',
+                 '/to-spec', '/to-tickets', 'Prior acceptance'):
+      assert phrase in review, phrase
+  guide = Path('.engineering/docs/verification.md').read_text()
+  for phrase in ('previous_evidence', 'historical reference only', 'scope justification',
+                 'Old checks cannot satisfy', 'semantic validity'):
+      assert phrase in guide or phrase in review, phrase
+  for name in ('maintainability-reviewer', 'verifier', 'security-reviewer'):
+      text = Path(f'.claude/agents/{name}.md').read_text()
+      assert 'Preference-only' in text and 'retained unchanged-area evidence' in text
+  PY
