@@ -13,6 +13,8 @@ from .source import git
 from .verification_checkout import baseline_content
 from .verification_inputs import paths_from_git, source_path
 
+ORIGINAL_GIT_PARAMETERS = "ENGINEERING_PUBLISH_ORIGINAL_GIT_CONFIG_PARAMETERS"
+
 
 def validate_tree(root: Path, data: dict[str, Any]) -> None:
     """Compare committed bytes/modes, not merely working bytes or a new commit ID."""
@@ -56,6 +58,14 @@ def pre_push_guard(
     root: Path, change: str, head: str, original: str, args: list[str]
 ) -> int:
     """Run the original hook, then validate content before Git sends any objects."""
+    # This process is the temporary guard. Remove only our command-line override
+    # before running project hooks or their nested Git commands, preserving the
+    # caller's original parameters and all other Git configuration mechanisms.
+    parameters = os.environ.pop(ORIGINAL_GIT_PARAMETERS, None)
+    if parameters is None:
+        os.environ.pop("GIT_CONFIG_PARAMETERS", None)
+    else:
+        os.environ["GIT_CONFIG_PARAMETERS"] = parameters
     if Path(original).is_file() and os.access(original, os.X_OK):
         result = subprocess.run([original, *args], cwd=root)
         if result.returncode:
@@ -99,12 +109,24 @@ def guard_push(
             f'#!/bin/sh\nexec {shlex.quote(sys.executable)} {shlex.quote(str(runner))} "$@"\n'
         )
         hook.chmod(0o755)
-        git(
-            root,
-            "-c",
-            f"core.hooksPath={folder}",
-            "push",
-            "--",
-            plan["remote"],
-            f"{head}:refs/heads/{plan['branch']}",
+        environment = dict(os.environ)
+        environment.pop(ORIGINAL_GIT_PARAMETERS, None)
+        if "GIT_CONFIG_PARAMETERS" in environment:
+            environment[ORIGINAL_GIT_PARAMETERS] = environment["GIT_CONFIG_PARAMETERS"]
+        subprocess.run(
+            [
+                "git",
+                "-c",
+                f"core.hooksPath={folder}",
+                "push",
+                "--no-follow-tags",
+                "--",
+                plan["remote"],
+                f"{head}:refs/heads/{plan['branch']}",
+            ],
+            cwd=root,
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=True,
         )

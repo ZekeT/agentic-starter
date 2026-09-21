@@ -228,3 +228,56 @@ def test_successful_pre_push_hook_receives_arguments_and_stdin(repo, hosting):
         str(hosting[0]),
     ]
     assert "refs/heads/feature" in (repo / STATE / "hook-input").read_text()
+
+
+def test_scoped_push_does_not_follow_unrelated_annotated_tags(repo, hosting):
+    review(repo, hosting)
+    git(repo, "tag", "-a", "private-release", "-m", "unrelated annotation")
+    git(repo, "config", "push.followTags", "true")
+    publish(repo, "run", "--authorize", "pr")
+    assert git(hosting[0], "show-ref", "--heads") == (
+        f"{git(repo, 'rev-parse', 'HEAD')} refs/heads/feature\n"
+        f"{git(repo, 'rev-parse', 'main')} refs/heads/main"
+    )
+    assert git(repo, "ls-remote", "--tags", "origin") == ""
+    assert git(repo, "tag", "--list") == "private-release"
+
+
+@pytest.mark.parametrize("custom_hooks", [False, True])
+@pytest.mark.parametrize("inherited_parameters", [False, True])
+def test_original_pre_push_nested_commit_keeps_configured_hooks(
+    repo, hosting, monkeypatch, custom_hooks, inherited_parameters
+):
+    # Commit before adding a rejecting hook so only the nested commit exercises it.
+    git(repo, "add", "app.txt")
+    git(repo, "commit", "-m", "implementation")
+    review(repo, hosting)
+    head = git(repo, "rev-parse", "HEAD")
+    hooks = repo / (f"{STATE}/custom-hooks" if custom_hooks else ".git/hooks")
+    hooks.mkdir(exist_ok=True)
+    if custom_hooks:
+        git(repo, "config", "core.hooksPath", str(hooks))
+    pre_commit = hooks / "pre-commit"
+    pre_commit.write_text(f"#!/bin/sh\necho rejected > {STATE}/nested-hook\nexit 9\n")
+    pre_commit.chmod(0o755)
+    pre_push = hooks / "pre-push"
+    pre_push.write_text(
+        f"#!/bin/sh\ngit config fixture.inherited > {STATE}/inherited-config\n"
+        "git commit --allow-empty -m nested\n"
+    )
+    pre_push.chmod(0o755)
+    git(repo, "config", "fixture.inherited", "repository value")
+    if inherited_parameters:
+        monkeypatch.setenv(
+            "GIT_CONFIG_PARAMETERS", "'fixture.inherited=preserved value'"
+        )
+    else:
+        monkeypatch.delenv("GIT_CONFIG_PARAMETERS", raising=False)
+    result = publish(repo, "run", "--authorize", "pr", status=1)
+    assert (repo / STATE / "nested-hook").read_text() == "rejected\n"
+    expected = "preserved value\n" if inherited_parameters else "repository value\n"
+    assert (repo / STATE / "inherited-config").read_text() == expected
+    assert git(repo, "rev-parse", "HEAD") == head
+    assert "push" not in result["completed"]
+    assert git(hosting[0], "branch", "--list", "feature") == ""
+    assert not (repo / STATE / "created.json").exists()

@@ -61,8 +61,12 @@ only for accepted paths; `git commit --only` preserves unrelated index entries.
 Committed bytes and executable modes must equal the verified proposed tree.
 An enforced pre-push guard runs the configured pre-push hook with its original
 arguments and stdin, then validates content before Git transmits objects. It does
-not skip hooks or rewrite repository hook configuration. Failed hooks stop the
-flow. Changes caused by filters/hooks require evidence reassessment.
+not skip hooks or rewrite repository hook configuration. The guard restores the
+caller's Git configuration before invoking the original hook, so nested Git
+commands retain their configured hooks. Scoped pushes explicitly disable tag
+following; unrelated annotated tags remain local even when `push.followTags` is
+enabled. Failed hooks stop the flow. Changes caused by filters/hooks require
+evidence reassessment.
 
 ## Hosting providers and results
 
