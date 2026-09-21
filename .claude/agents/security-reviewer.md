@@ -59,3 +59,9 @@ PASS / FAIL
   Your job is to catch **indirect exposure** — secrets passed through
   environment variables but logged, secrets in error messages, etc.
 - Both layers are intentional (defense-in-depth).
+
+For prepared evidence inspect the reported isolated `checkout` path, including
+its staged, unstaged and new content against the comparison base. Run evidence
+commands from the original repository; `verify check` executes in that checkout.
+Never use unrelated working-tree edits to support PASS. Missing or modified
+checkout content requires fresh preparation and review.

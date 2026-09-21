@@ -16,9 +16,10 @@ independently. Record their actual reports using the prepared snapshot; never
 fabricate independent reports or turn implementer reasoning into proof.
 
 If fresh execution is unavailable, report INCOMPLETE with the branch/request
-pointer, plan and missing roles for a fresh session. Unrelated edits that could
-affect checks currently require a separate clean checkout: refuse proof rather
-than stashing, committing or excluding them silently.
+pointer, plan and missing roles for a fresh session. Prepare creates an isolated
+checkout of the exact proposed content, excluding unrelated working edits. All
+reviewers inspect its reported checkout path; verify check runs there. Do not
+stash or commit unrelated work. Preparation failures leave proof INCOMPLETE.
 
 Summarize changed behavior, coverage, risks, actual checks, independent findings
 and gaps. Missing proof is not PASS; PASS is not human acceptance. Use show-me

@@ -61,15 +61,34 @@ comparison base/tip, plan and tool-version outputs. Content-preserving commits
 retain proof; changed inputs do not. Base movement is assessed locally without
 fetching. Elapsed time and failed transport alone do not invalidate proof.
 
-Unrelated changed/untracked files outside the declared scope currently prevent
-verification; this slice cannot construct an isolated proposed tree. Do not
-stash, commit or delete unrelated work to manufacture proof. Use an already
-separate clean checkout or report the limitation. Symlinks, submodules/nonregular
-inputs, unmerged entries and secret paths are unsupported and fail closed;
-the public `.env.template` is permitted. Ignored caches and secret/environment
-values are not fingerprinted. If they materially affect results, disclose the
-gap and obtain appropriate fresh verification. This is not a hermetic snapshot
-of the machine or external services.
+Verification always prepares an isolated temporary checkout under ignored local
+state. The JSON `checkout` path identifies the tree all reviewers inspect and
+where `verify check` runs commands. It contains comparison-base context plus
+intended working bytes and executable modes (committed, staged, unstaged and new
+files, including deletions). A path's working bytes are the proposed final version;
+index-only intermediate versions are not a second version of the PR. Unrelated
+local edits and new files are excluded without stash, commit or workspace writes.
+Committed changes outside `paths` fail preparation: they cannot be omitted from
+the proposed PR. Include each side of a rename.
+
+Version probes also run in isolation. Explicit `inputs` and installed dependency
+evidence are copied and fingerprinted; tracked explicit inputs must be in `paths`.
+Ignored environments, installed tool directories and caches are not silently
+copied or linked from the working tree. Checks needing additional regular files
+must declare them as inputs. Missing tools/dependencies or preparation failures
+leave proof INCOMPLETE, never PASS. Install/prepare dependencies explicitly before
+verification as needed; no command installs them on your behalf. This is content
+isolation, not a security sandbox: approved project executables can access the
+machine and absolute paths. Inspect commands and probes accordingly.
+
+The isolated checkout remains available for independent inspection and check
+artifacts. Source mutations there invalidate proof; prepare again to build a
+fresh checkout and clear reports. Old ignored checkouts can be removed when no
+review is using them. Missing local checkouts require preparing fresh evidence.
+Symlinks, submodules/nonregular inputs, unmerged entries and secret paths fail
+closed; the public `.env.template` is permitted. Secret/environment values are
+not fingerprinted. Disclose material external/environment gaps; this is not a
+hermetic snapshot of the machine or external services.
 
 ## Obtain fresh evidence
 
@@ -78,7 +97,10 @@ the branch/request/spec/ticket pointer. They independently discover requirements
 actual scope and prepared plan; no implementer reasoning/self-review is handed
 over. The plan is a discoverable scope/execution contract, not proof.
 
-Capture the snapshot before inspecting or running anything. The behavioral
+Capture the snapshot and `checkout` path before inspecting or running anything.
+Inspect source and diffs inside that checkout, including its uncommitted/new
+files relative to the comparison base. Invoke evidence commands from the original
+repository, where the plan and records live. The behavioral
 verifier executes required checks once through:
 
 ```bash

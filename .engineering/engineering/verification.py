@@ -3,6 +3,8 @@
 import argparse
 import json
 import re
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -10,12 +12,12 @@ from .config import safe_path
 from .ownership import encoded, json_object
 from .source import git
 from .transaction import write_files
+from .verification_checkout import materialize, validate_checkout
+from .verification_inputs import STATE, strings
 from .verification_snapshot import (
-    STATE,
     read_plan,
     run_command,
     snapshot,
-    strings,
     validate_plan,
 )
 
@@ -97,6 +99,7 @@ def outcome(data: dict[str, Any]) -> dict[str, Any]:
     return {
         "status": status,
         "snapshot": data["snapshot"],
+        "checkout": data.get("checkout"),
         "missing": missing,
         "reports": data["reports"],
         "checks": checks,
@@ -169,7 +172,25 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         if path.exists():
             previous = read_record(root, name)
             if previous["snapshot"] == token and previous["inputs"] == inputs:
-                data = previous
+                try:
+                    validate_checkout(
+                        safe_path(root, previous.get("checkout", "")), inputs
+                    )
+                except (ValueError, OSError):
+                    pass  # A fresh checkout requires fresh independent proof.
+                else:
+                    data = previous
+        if "checkout" not in data:
+            folder = Path(tempfile.mkdtemp(prefix=f"{args.change}-", dir=path.parent))
+            checkout = folder / "checkout"
+            try:
+                materialize(root, checkout, inputs)
+            except (ValueError, OSError):
+                shutil.rmtree(folder)
+                raise
+            data["checkout"] = str(checkout.relative_to(root))
+        else:
+            validate_checkout(safe_path(root, data["checkout"]), inputs)
         write_files(root, {name: encoded(data)})
     else:
         if not path.exists():
@@ -194,6 +215,8 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 )
             )
             return 1
+        checkout = safe_path(root, data.get("checkout", ""))
+        validate_checkout(checkout, inputs)
         if args.operation == "check":
             if args.snapshot != token:
                 raise ValueError("STALE check request: obtain the current snapshot")
@@ -202,7 +225,8 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             data["reports"].pop("behavioral", None)
             write_files(root, {name: encoded(data)})
             for command in data["inputs"]["plan"]["checks"]:
-                data["checks"].append(run_command(root, command, timeout=900))
+                data["checks"].append(run_command(checkout, command, timeout=900))
+            validate_checkout(checkout, inputs)
             after, _ = snapshot(root, data["inputs"]["plan"])
             if after != token:
                 raise ValueError(

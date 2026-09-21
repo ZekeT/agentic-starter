@@ -4,25 +4,25 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "ec1edbe7f7af8df51cb3d51283abaff44e82d360f9b89899e7d5b5afbcb925f3"
+      "upstream": "a6a6abd24b43dd41c7a508a9337f1ef12cf0f1398789b06f0e12442f773e1080"
     },
     ".claude/agents/security-reviewer.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "19c8ca86c40bf2a11550a2035434026cc0f43a30a2aa623d8d1eb2f556ee17f1"
+      "upstream": "14a6268a817ddd6f30f6b9d12aa2771a5c37477eadc1b0273558487d24831e32"
     },
     ".claude/agents/verifier.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1942b3d789a33b6f47d53578a337f4c8e01f9d61aaec3ccf24467b5f872b1519"
+      "upstream": "a510d582669271c4d37eba5f9e825230b9c1315a082a40f53bd7719dd42c4530"
     },
     ".claude/commands/review.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "3bc7b5868b219d3631addbc43792653eee1e69b1f5bca4c5dec0ae1588bd9393"
+      "upstream": "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0"
     },
     ".claude/commands/ship.md": {
       "ownership": {
@@ -124,7 +124,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6"
+      "upstream": "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -298,13 +298,25 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "14d501d468a93be9857692411a5b521c992d83879f55ac19bc1c06540ab73fb4"
+      "upstream": "a7682dbc4f69fc577cfecefd1a8aad5ff68769ccc50b49e778c4c682dd3ccf47"
+    },
+    ".engineering/engineering/verification_checkout.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "9c15fda7c7b2eb303b18763ca5f0857d0d28a2af5b3c10b4f07566a479c30bce"
+    },
+    ".engineering/engineering/verification_inputs.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "a5e52e6d19ed4df4fc52c625fd8b1383bd9feec99a076e37e4dd2198a7336a2d"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "7b23766ec71fab3e3ee4ab23fe000390945eaf42e9b138cef58799b08352b2e7"
+      "upstream": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a"
     },
     ".engineering/evals/README.md": {
       "ownership": {
@@ -352,7 +364,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07"
+      "upstream": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
