@@ -1,0 +1,22 @@
+id: accepted-content-publication
+kind: static
+why: Publication must reuse current proof, require prior review and create an actual PR/MR.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  ship = Path('.claude/commands/ship.md').read_text()
+  guide = Path('.engineering/docs/publication.md').read_text()
+  assert 'authorization to commit remaining accepted fixes, push and create' in ship
+  assert 'invoking /ship cannot supply missing review' in ship
+  assert 'Honor narrower requests and existing' in ship
+  assert 'Never merge or force-push' in ship
+  assert 'Hooks remain enforced' in ship
+  assert 'A PR body draft is not publication' in ship
+  assert 'engineering publish run' in ship
+  assert '"gitlab"' in guide and 'Bitbucket' in guide
+  for name in ('CLAUDE.md', 'REVIEW.md', '.claude/commands/review.md', '.engineering/docs/verification.md'):
+      text = Path(name).read_text()
+      assert 'runs a final `make check`' not in text
+      assert 'runs the final gate' not in text
+      assert 'existing final gate' not in text
+  PY

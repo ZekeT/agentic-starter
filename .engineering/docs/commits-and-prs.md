@@ -1,6 +1,6 @@
 # Commits and PRs
 
-The conventions `/commit-push-pr` follows. Both exist so that six months from
+The conventions `/ship` follows. Both exist so that six months from
 now, `git log` and the PR list answer "why is this like this?" without anyone
 having to remember.
 
@@ -66,9 +66,9 @@ Fill every section; delete one only with a one-line reason.
 **Title.** Same format as a commit subject. It becomes the squash-merge commit,
 so it is what `git log` shows on `main` forever.
 
-**Base branch.** `/commit-push-pr` never assumes `main`. It resolves the target
-from `--base <branch>`, else `git config engineering.baseBranch`, else the remote's
-default branch, else `main` — and prints which. If this project merges to
+**Base branch.** Review discovers the comparison base using the repository base
+helper and records it in the verification plan. Publication requires an explicit
+provider target branch with the same verified remote tip. If this project merges to
 anything but its remote default, set it once:
 
 ```bash
@@ -79,12 +79,11 @@ That same value is what every command diffs against — via `origin/<branch>`
 rather than your possibly-stale local copy — so `/review` shows the branch
 relative to the trunk it will actually merge into.
 
-**Scope.** One task group per PR. `/dev-change <slug> <group>` enforces this by
-giving each group its own branch. A PR spanning groups is a review-fatigue
-problem and a merge-conflict problem at once.
+**Scope.** Publish the bounded, reviewed and accepted proposed PR scope. Reuse
+implementation commits and commit remaining accepted fixes, preserving unrelated
+local work. See [publication](publication.md) for preflight and provider setup.
 
-**The test evidence is the point.** `REVIEW.md` Pass 4 checks whether new
-behaviour has a test; the template's "How this was tested" is where the author
+**The test evidence is the point.** `REVIEW.md` asks what verification proved; the template's "How this was tested" is where the author
 answers it in advance. "Tested locally" is not an answer — name the tests, or
 record the manual steps and what was observed.
 

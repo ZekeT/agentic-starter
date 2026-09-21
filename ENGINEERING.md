@@ -159,10 +159,12 @@ evidence and risks. Current proof is reused across sessions using the local
 `engineering verify` commands described in
 [verification evidence](.engineering/docs/verification.md). Records cover actual
 content and check inputs rather than just HEAD. Ordinary application commits do
-not carry this bookkeeping. `/ship` runs the final
-gate, shows intended commit scope and honors explicit human authorization for
-each shipping action. It supports the project's hosting provider; `gh` is not
-required. Invocation of `/implement` does not authorize pushes or PRs.
+not carry this bookkeeping. After completed acceptance review, `/ship` accepts
+the unchanged presented scope and authorizes remaining scoped commits, push and
+actual PR/MR creation. It reuses current proof without duplicate checks and honors
+narrower requests; merge/force-push remain separate. See
+[publication](.engineering/docs/publication.md) for preflight and provider setup.
+GitHub is optional. Invocation of `/implement` does not authorize pushes or PRs.
 
 ## Review corrections
 

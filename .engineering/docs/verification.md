@@ -3,8 +3,8 @@
 Build, Verify, Accept and Publish are separate responsibilities. A local commit
 is not proof or human acceptance. After implementation, hand off automatically to
 fresh independent reviewers when supported. Review obtains missing evidence and
-consumes current evidence. Ship still runs its existing final check until the
-publishing slice changes that policy.
+consumes current evidence. [Publication](publication.md) reuses current proof
+without repeating semantic review or authoritative checks.
 
 ## Prepare the intended change
 

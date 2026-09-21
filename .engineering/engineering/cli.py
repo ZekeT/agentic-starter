@@ -69,9 +69,16 @@ def main(argv: list[str] | None = None) -> int:
     from .verification import add_parser
 
     add_parser(sub)
+    from .publication import add_parser as add_publication_parser
+
+    add_publication_parser(sub)
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "publish":
+            from .publication import operate as publish
+
+            return publish(root, args)
         if args.command == "verify":
             from .verification import operate as verify
 

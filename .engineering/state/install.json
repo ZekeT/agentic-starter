@@ -22,13 +22,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9a36f64baefcbd9173861cabcf9902d24e682c22d3c9f689c2e10734dbaa1676"
+      "upstream": "3e19607ff4e294ea1b8d1cb06f6f8947fa1dfa524f98c7cac5bd0f62b5ad4d56"
     },
     ".claude/commands/ship.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b"
+      "upstream": "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d"
     },
     ".claude/hooks/post_tool_lint.py": {
       "ownership": {
@@ -106,13 +106,19 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "516efa313aa77b98aae2194e48d55181d4f7f65d2b2299843673501e34a1d7f5"
+      "upstream": "283533e65e71ae295c878133f320c66cf52ec3d3551f2fa3c3b57e1835d5fb1c"
     },
     ".engineering/docs/maintainability.md": {
       "ownership": {
         "mode": "file"
       },
       "upstream": "581d03104c423f5834c172273563e69953449109ba13ba4289930450e81e9fd6"
+    },
+    ".engineering/docs/publication.md": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "cf082a38ad39353c734edd40a8845f9605c3921de0e8bbd60351a35677f0e79e"
     },
     ".engineering/docs/testing.md": {
       "ownership": {
@@ -124,7 +130,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1"
+      "upstream": "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -148,7 +154,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "74b514801e31a170fdb3a52fc32490fe55cc63de7a719c60d77f546eb3989751"
+      "upstream": "86c9946f0553518acc072cca3192ba3cdb0368107e6eca1653cde696c0ab8ef6"
     },
     ".engineering/engineering/config.py": {
       "ownership": {
@@ -258,6 +264,18 @@
       },
       "upstream": "860f0d5f22e7334b707c9b416c4ac4228593eea76e2fe26a11ab551cd8fbea10"
     },
+    ".engineering/engineering/publication.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5"
+    },
+    ".engineering/engineering/publication_git.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "78134d767038032ce708e5b935ab38b96897b9fc3d73c0116337e1441f1058a6"
+    },
     ".engineering/engineering/registry.py": {
       "ownership": {
         "mode": "file"
@@ -334,7 +352,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe"
+      "upstream": "87ce396d0a22ca57f8a6217e0e8f4c587378356d62e7877334da81e1862da8f7"
     },
     ".engineering/evals/cases/003-boundaries.yaml": {
       "ownership": {
@@ -371,6 +389,12 @@
         "mode": "file"
       },
       "upstream": "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+    },
+    ".engineering/evals/cases/009-publication.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
@@ -469,13 +493,13 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61"
+      "upstream": "e5c846a3d3d87ddfa51a7d17434df3f2485a22d65625dbb365df505e1b9fbc30"
     },
     "ENGINEERING.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0"
+      "upstream": "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6"
     },
     "Makefile": {
       "ownership": {
@@ -488,7 +512,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94"
+      "upstream": "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948"
     },
     "engineering": {
       "ownership": {
