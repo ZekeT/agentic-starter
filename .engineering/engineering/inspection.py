@@ -77,4 +77,10 @@ def inspect_target(root: Path) -> list[str]:
             if not path.is_dir():
                 raise ValueError(f"{name} must be a directory")
             findings.append(f"Existing {name}: preserve project-owned content")
+    from .migrate.openspec import detected
+
+    if detected(root):
+        findings.append(
+            "OpenSpec detected. Recommended: ./engineering migrate openspec-project"
+        )
     return findings

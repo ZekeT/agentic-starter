@@ -4,6 +4,7 @@ export MAKEFLAGS
 export UV_OFFLINE = 1
 export UV_PYTHON_DOWNLOADS = never
 SRC ?= src
+FORMAT_PATHS = $(wildcard $(SRC) tests .engineering/engineering .engineering/tests)
 
 .PHONY: install setup fmt lint test check engineering-test manifest
 install:
@@ -11,8 +12,8 @@ install:
 setup:
 	UV_OFFLINE=0 bash .engineering/setup.sh
 fmt:
-	uv run ruff check --fix --exit-zero $(SRC) tests .engineering/engineering .engineering/tests
-	uv run ruff format $(SRC) tests .engineering/engineering .engineering/tests
+	uv run ruff check --fix --exit-zero $(FORMAT_PATHS)
+	uv run ruff format $(FORMAT_PATHS)
 lint:
 	@SRC="$(SRC)" bash .engineering/scripts/cmd_check.sh lint
 test:

@@ -52,9 +52,12 @@ Thumbs.db
 # Local build/installation artifacts (tracker Markdown remains trackable).
 .worktrees/
 /.engineering/state/dependencies.json
+/.engineering/state/verification/
 /.engineering/tmp/
+/.engineering/migration-work/
 
 .env.*
 !.env.template
-/.claude/skills/
+/.claude/skills/*
+!/.claude/skills/migrate-from-openspec/
 # engineering:integration:end

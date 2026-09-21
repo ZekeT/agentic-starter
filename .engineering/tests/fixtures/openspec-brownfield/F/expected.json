@@ -1,0 +1,30 @@
+{
+  "authored_example": true,
+  "canonical": [
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "REPRESENTED_BY_CODE_OR_TESTS_DROP",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "The five-attempt boundary is executable and covered."
+    },
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "KEEP_AS_CONTEXT",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "Merchant/delegate terminology is a durable business distinction not expressed by the lock function."
+    }
+  ],
+  "active": [],
+  "unresolved_decisions": [],
+  "proposed_documents": {
+    "docs/context/accounts.md": "# Accounts\n\nA merchant owns an account contractually; delegates may operate it.\n"
+  }
+}

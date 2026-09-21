@@ -1,0 +1,17 @@
+id: reusable-verification-without-self-certification
+kind: static
+why: Local commits and reusable evidence must not imply acceptance or publication.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  policy = Path('CLAUDE.md').read_text()
+  assert 'authorizes local commits within the requested scope' in policy
+  assert 'never self-certify' in policy
+  review = Path('.claude/commands/review.md').read_text()
+  for phrase in ('Reuse current complete evidence', 'missing/stale', 'INCOMPLETE', 'Do not edit application content'):
+      assert phrase in review, phrase
+  guide = Path('.engineering/docs/verification.md').read_text()
+  for phrase in ('does not authenticate', 'never relabel', 'Human acceptance remains separate', 'Unrelated'):
+      assert phrase.lower() in guide.lower(), phrase
+  assert '/.engineering/state/verification/' in Path('.gitignore').read_text()
+  PY

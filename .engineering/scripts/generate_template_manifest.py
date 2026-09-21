@@ -79,7 +79,7 @@ MANIFEST_GLOBS = [
     ".claude/commands/*.md",
     ".claude/agents/*.md",
 ]
-MANIFEST_SKILL_DIRS = []
+MANIFEST_SKILL_DIRS = ["migrate-from-openspec"]
 
 EXCLUDED_PARTS = {"__pycache__", ".pytest_cache"}
 EXCLUDED_NAMES = {".DS_Store"}

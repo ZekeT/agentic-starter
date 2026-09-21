@@ -88,3 +88,26 @@ def cleanup(plan: Migration) -> dict[str, bytes]:
         "Remove the direct OpenSpec npm dependency; preserve unrelated packages and scripts. Review custom script references manually."
     )
     return originals
+
+
+def preserve_markers(original: bytes, replacement: bytes, name: str) -> bytes:
+    """Keep explicit OpenSpec instructions when replacing legacy starter regions."""
+    start, end = b"<!-- OPENSPEC:START -->", b"<!-- OPENSPEC:END -->"
+    if start not in original and end not in original:
+        return replacement
+    match = re.search(
+        rb"(?ms)^"
+        + re.escape(start)
+        + rb"\r?\n.*?^"
+        + re.escape(end)
+        + rb"(?:\r?\n|\Z)",
+        original,
+    )
+    if original.count(start) != 1 or original.count(end) != 1 or match is None:
+        raise ValueError(f"migration.markers: malformed OpenSpec region in {name}")
+    block = match.group()
+    if block in replacement:
+        return replacement
+    if start in replacement or end in replacement:
+        raise ValueError(f"migration.markers: partial OpenSpec region in {name}")
+    return replacement.rstrip(b"\n") + b"\n\n" + block

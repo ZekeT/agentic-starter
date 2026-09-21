@@ -1,0 +1,7 @@
+id: 006-semantic-migration
+kind: static
+why: |
+  Protect the semantic migration boundary and upstream routing, not model judgment
+  or Matt internals. Authored fixtures are not model behavioral validation.
+shell: |
+  python3 .engineering/evals/check_semantic_migration.py

@@ -1,0 +1,59 @@
+{
+  "authored_example": true,
+  "canonical": [
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "REPRESENTED_BY_CODE_OR_TESTS_DROP",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "The five-attempt boundary is executable and covered."
+    },
+    {
+      "source": "openspec/specs/access/spec.md",
+      "classification": "KEEP_AS_CONTEXT",
+      "evidence": [
+        "openspec/specs/access/spec.md",
+        "src/accounts.py",
+        "tests/test_accounts.py"
+      ],
+      "reason": "Merchant/delegate terminology is a durable business distinction not expressed by the lock function."
+    }
+  ],
+  "active": [
+    {
+      "source": "export-retries",
+      "state": "PLANNING",
+      "route": "wayfinder",
+      "evidence": [
+        "openspec/changes/export-retries/proposal.md",
+        "openspec/changes/export-retries/design.md",
+        "openspec/changes/export-retries/tasks.md",
+        "openspec/changes/export-retries/specs/export/spec.md",
+        "src/exports.py",
+        "tests/test_exports.py"
+      ],
+      "implemented": [
+        "Pre-existing newline-separated row serialization is covered by tests; delivery work has not started."
+      ],
+      "remaining": [
+        "Background delivery and retry semantics."
+      ],
+      "missing_tests": [
+        "Transient delivery retry and deduplication acceptance coverage."
+      ],
+      "decisions": [
+        "Queue vendor or database outbox?"
+      ]
+    }
+  ],
+  "unresolved_decisions": [
+    "Choose the delivery architecture or explicitly accept deferral into Wayfinder."
+  ],
+  "proposed_documents": {
+    "docs/context/accounts.md": "# Accounts\n\nA merchant owns an account contractually; delegates may operate it.\n",
+    ".scratch/export-retries/migration-input.md": "# Export migration input\n\nPreserve current newline-separated row serialization. Remaining work: background delivery and transient-failure retries. Tenant isolation is required. Kafka was rejected for operational cost.\n\nUnresolved: queue vendor versus database outbox. Continue with /wayfinder.\n\nMissing tests: transient retry and deduplication acceptance coverage.\nKnown gaps: no background delivery worker or retry path exists.\n\nSources: `openspec/changes/export-retries/proposal.md`, `openspec/changes/export-retries/design.md`, `openspec/changes/export-retries/specs/export/spec.md`, `src/exports.py`, `tests/test_exports.py`.\n"
+  }
+}

@@ -31,12 +31,19 @@ def main(argv: list[str] | None = None) -> int:
     deps.add_argument("--ref")
     deps.add_argument("--check-remote", action="store_true")
     migrate = sub.add_parser("migrate", help="Plan one-way legacy migrations")
-    migrate.add_argument("migration", choices=["openspec", "legacy-starter"])
+    migrate.add_argument(
+        "migration", choices=["openspec-project", "openspec", "legacy-starter"]
+    )
     migrate.add_argument("--target", type=Path)
     migrate.add_argument("--template", type=Path)
     mode = migrate.add_mutually_exclusive_group()
     mode.add_argument("--plan", action="store_true")
     mode.add_argument("--apply", action="store_true")
+    migrate.add_argument(
+        "--finalize",
+        action="store_true",
+        help="Preview or apply an exact human-reviewed OpenSpec proposal",
+    )
     migrate.add_argument("--legacy-history", choices=["snapshot", "git-only"])
     for operation in ("adopt", "update"):
         lifecycle = sub.add_parser(
@@ -59,9 +66,16 @@ def main(argv: list[str] | None = None) -> int:
     growth.add_argument(
         "--all", action="store_true", help="Inspect sizes without growth history"
     )
+    from .verification import add_parser
+
+    add_parser(sub)
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "verify":
+            from .verification import operate as verify
+
+            return verify(root, args)
         if args.command == "version":
             print((root / ".engineering/TEMPLATE_VERSION").read_text().strip())
             return 0
@@ -91,16 +105,32 @@ def main(argv: list[str] | None = None) -> int:
             template = (args.template or root).resolve()
             from .settings import load
 
+            if args.finalize:
+                if (
+                    args.migration == "legacy-starter"
+                    or args.legacy_history
+                    or args.template
+                ):
+                    parser.error(
+                        "--finalize is only for OpenSpec and uses the inventoried history policy"
+                    )
+                from .migrate.finalize import execute as finalize
+
+                return finalize(target, apply=args.apply)
             policy = args.legacy_history
             if policy is None:
                 policy = (
-                    load(target).get("migration", {}).get("legacy_history", "snapshot")
+                    load(target).get("migration", {}).get("legacy_history", "git-only")
                     if (target / ".engineering/config.toml").is_file()
-                    else "snapshot"
+                    else "git-only"
+                )
+            if args.migration == "openspec":
+                print(
+                    "Deprecated alias: openspec; use openspec-project. --apply prepares inventory only."
                 )
             planner = (
                 (lambda: openspec_plan(target, policy))
-                if args.migration == "openspec"
+                if args.migration in {"openspec", "openspec-project"}
                 else (lambda: legacy_plan(template, target, policy))
             )
             return execute(planner, apply=args.apply)
@@ -146,5 +176,10 @@ def main(argv: list[str] | None = None) -> int:
         tokenize.TokenError,
         subprocess.SubprocessError,
     ) as exc:
+        if args.command == "verify":
+            import json
+
+            print(json.dumps({"status": "INCOMPLETE", "error": str(exc)}))
+            return 1
         print(f"✗ {args.command}: {exc}", file=sys.stderr)
         return 1
