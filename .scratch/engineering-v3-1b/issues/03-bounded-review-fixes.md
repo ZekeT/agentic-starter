@@ -8,7 +8,7 @@ planning or silently undoing agreed behavior and decisions.
 
 **Blocked by:** 01 — Verify a shippable change once and reuse its evidence.
 
-**Status:** implemented and verified
+**Status:** completed — merged in [PR #24](https://github.com/ZekeT/agentic-starter/pull/24)
 
 - [x] Explain changed behavior, requirements coverage, consequences, risks and
   gaps. Each finding states what, why, how, recommendation and its rationale with
@@ -55,3 +55,10 @@ be demonstrated without unrelated local edits and therefore does not depend on 0
   instruction consistency, not model judgment. The isolated checkout required
   explicit local dependency installation and native parser compilation before
   the successful gate. No remote publication or human acceptance is implied.
+
+## Delivery reconciliation — 2026-09-22
+
+- Merged in [PR #24](https://github.com/ZekeT/agentic-starter/pull/24)
+  on 2026-09-22; local merge commit `d07969d` is in the current checkout history.
+- GitHub API access was unavailable during reconciliation; the merge record
+  and landed repository content establish delivery.
