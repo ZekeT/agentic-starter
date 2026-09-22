@@ -46,6 +46,11 @@ def hosting(repo, tmp_path):
     adapter.write_text(
         "import json, pathlib, sys\n"
         "p = json.loads(pathlib.Path(sys.argv[2]).read_text())\n"
+        f"receipt = pathlib.Path({str(repo / STATE / 'created.json')!r})\n"
+        "if p['action'] == 'lookup':\n"
+        "    old = json.loads(receipt.read_text()) if receipt.exists() else None\n"
+        "    print(json.dumps({'url': 'https://hosting.invalid/project/pulls/1', 'head': old['head'], 'state': 'open'} if old else {'url': None}))\n"
+        "    sys.exit()\n"
         "p['body'] = pathlib.Path(p['body_file']).read_text()\n"
         f"pathlib.Path({str(repo / STATE / 'created.json')!r}).write_text(json.dumps(p))\n"
         "print(json.dumps({'url': 'https://hosting.invalid/project/pulls/1'}))\n"

@@ -130,3 +130,19 @@ def guard_push(
             text=True,
             check=True,
         )
+
+
+def pushed(root: Path, plan: dict[str, Any]) -> bool:
+    """Consult the actual push destination, never a possibly stale tracking ref."""
+    refs = (
+        git(
+            root,
+            "ls-remote",
+            "--heads",
+            plan["remote_url"],
+            f"refs/heads/{plan['branch']}",
+        )
+        .decode()
+        .split()
+    )
+    return bool(refs) and refs[0] == git(root, "rev-parse", "HEAD").decode().strip()

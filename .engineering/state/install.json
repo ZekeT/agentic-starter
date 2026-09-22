@@ -28,7 +28,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d"
+      "upstream": "caa2433f24739b8b04a921e89cdc9099d9bf31ae6502086fbcc81f603d0c7d6b"
     },
     ".claude/hooks/post_tool_lint.py": {
       "ownership": {
@@ -118,7 +118,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "f81a714a2a588c0b32e840db778a3b7def7f71181c670b59a656676e4274f182"
+      "upstream": "372d4e7aff12cf3377de56b5fdcd00856f17d241f758b68986323e176bc7b4e1"
     },
     ".engineering/docs/testing.md": {
       "ownership": {
@@ -268,13 +268,19 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5"
+      "upstream": "a3718ee1698328f19bc1bdbe01ac8c7839fa8429a8487c72fee7c796421ee094"
     },
     ".engineering/engineering/publication_git.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87"
+      "upstream": "2ffac975065fe1dbff458f8096aa9ff41ef9e3097406ac5ea4dad9a5ff543eb7"
+    },
+    ".engineering/engineering/publication_provider.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "3f7ce180d1ec2ab72f5c3eb7af98ad0042003ac87258af34447a7ab2b122c6aa"
     },
     ".engineering/engineering/registry.py": {
       "ownership": {
@@ -394,7 +400,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14"
+      "upstream": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
@@ -499,7 +505,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6"
+      "upstream": "fe213b7bea13cf79936c4dca1d7b937a4c8c6395ba0493d25ea1941c59dfe292"
     },
     "Makefile": {
       "ownership": {

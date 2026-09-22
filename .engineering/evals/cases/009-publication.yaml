@@ -13,6 +13,12 @@ shell: |
   assert 'Hooks remain enforced' in ship
   assert 'A PR body draft is not publication' in ship
   assert 'engineering publish run' in ship
+  assert 'saved scoped authorization and current evidence' in ship
+  assert 'transport failure alone does not repeat verification' in ship
+  assert 'never recover with automatic force-push' in ship
+  assert '`"lookup"`' in guide
+  assert 'An existing accepted commit is reused' in guide
+  assert 'successful response was lost' in guide
   assert '"gitlab"' in guide and 'Bitbucket' in guide
   for name in ('CLAUDE.md', 'REVIEW.md', '.claude/commands/review.md', '.engineering/docs/verification.md'):
       text = Path(name).read_text()

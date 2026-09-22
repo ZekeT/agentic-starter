@@ -66,14 +66,15 @@
     },
     ".claude/commands/ship.md": {
       "executable": false,
-      "owned_sha256": "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d",
+      "owned_sha256": "caa2433f24739b8b04a921e89cdc9099d9bf31ae6502086fbcc81f603d0c7d6b",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b"
+        "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b",
+        "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d"
       ],
-      "sha256": "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d"
+      "sha256": "caa2433f24739b8b04a921e89cdc9099d9bf31ae6502086fbcc81f603d0c7d6b"
     },
     ".claude/hooks/post_tool_lint.py": {
       "executable": false,
@@ -224,14 +225,15 @@
     },
     ".engineering/docs/publication.md": {
       "executable": false,
-      "owned_sha256": "f81a714a2a588c0b32e840db778a3b7def7f71181c670b59a656676e4274f182",
+      "owned_sha256": "372d4e7aff12cf3377de56b5fdcd00856f17d241f758b68986323e176bc7b4e1",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "cf082a38ad39353c734edd40a8845f9605c3921de0e8bbd60351a35677f0e79e"
+        "cf082a38ad39353c734edd40a8845f9605c3921de0e8bbd60351a35677f0e79e",
+        "f81a714a2a588c0b32e840db778a3b7def7f71181c670b59a656676e4274f182"
       ],
-      "sha256": "f81a714a2a588c0b32e840db778a3b7def7f71181c670b59a656676e4274f182"
+      "sha256": "372d4e7aff12cf3377de56b5fdcd00856f17d241f758b68986323e176bc7b4e1"
     },
     ".engineering/docs/testing.md": {
       "executable": false,
@@ -530,25 +532,36 @@
     },
     ".engineering/engineering/publication.py": {
       "executable": false,
-      "owned_sha256": "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5",
+      "owned_sha256": "a3718ee1698328f19bc1bdbe01ac8c7839fa8429a8487c72fee7c796421ee094",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "1da24587c761fb6673bbbedaf3f513c0cd04b53242beea56cc49f2b99c53554e"
+        "1da24587c761fb6673bbbedaf3f513c0cd04b53242beea56cc49f2b99c53554e",
+        "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5"
       ],
-      "sha256": "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5"
+      "sha256": "a3718ee1698328f19bc1bdbe01ac8c7839fa8429a8487c72fee7c796421ee094"
     },
     ".engineering/engineering/publication_git.py": {
       "executable": false,
-      "owned_sha256": "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87",
+      "owned_sha256": "2ffac975065fe1dbff458f8096aa9ff41ef9e3097406ac5ea4dad9a5ff543eb7",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "78134d767038032ce708e5b935ab38b96897b9fc3d73c0116337e1441f1058a6"
+        "78134d767038032ce708e5b935ab38b96897b9fc3d73c0116337e1441f1058a6",
+        "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87"
       ],
-      "sha256": "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87"
+      "sha256": "2ffac975065fe1dbff458f8096aa9ff41ef9e3097406ac5ea4dad9a5ff543eb7"
+    },
+    ".engineering/engineering/publication_provider.py": {
+      "executable": false,
+      "owned_sha256": "3f7ce180d1ec2ab72f5c3eb7af98ad0042003ac87258af34447a7ab2b122c6aa",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "3f7ce180d1ec2ab72f5c3eb7af98ad0042003ac87258af34447a7ab2b122c6aa"
     },
     ".engineering/engineering/registry.py": {
       "executable": false,
@@ -748,12 +761,14 @@
     },
     ".engineering/evals/cases/009-publication.yaml": {
       "executable": false,
-      "owned_sha256": "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14",
+      "owned_sha256": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14"
+      "previous": [
+        "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14"
+      ],
+      "sha256": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "executable": false,
@@ -942,7 +957,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6",
+      "owned_sha256": "fe213b7bea13cf79936c4dca1d7b937a4c8c6395ba0493d25ea1941c59dfe292",
       "ownership": {
         "mode": "file"
       },
@@ -955,9 +970,10 @@
         "13332c9cb9b428faedbe6a47dddd7992bbed863484d85c5abf5947a70351599d",
         "1263a7773770f7e87e7011255f1eeef3bfb7f22c4ae1e623298ff0d34d550bac",
         "6b43db2d68dad7e9e3beead9ea9240ab529606403a6ff483cd4900da44b8b3cf",
-        "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0"
+        "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0",
+        "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6"
       ],
-      "sha256": "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6"
+      "sha256": "fe213b7bea13cf79936c4dca1d7b937a4c8c6395ba0493d25ea1941c59dfe292"
     },
     "Makefile": {
       "executable": false,

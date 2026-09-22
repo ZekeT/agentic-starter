@@ -164,6 +164,9 @@ the unchanged presented scope and authorizes remaining scoped commits, push and
 actual PR/MR creation. It reuses current proof without duplicate checks and honors
 narrower requests; merge/force-push remain separate. See
 [publication](.engineering/docs/publication.md) for preflight and provider setup.
+After a transport failure, restore connectivity and rerun `engineering publish
+run --change <change>`: it retains scoped authorization, checks actual remote and
+provider state, and reuses completed commits/pushes/PRs and unchanged verification.
 GitHub is optional. Invocation of `/implement` does not authorize pushes or PRs.
 
 ## Review corrections

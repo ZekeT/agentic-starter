@@ -1,6 +1,6 @@
 # Approved v3.1b implementation slices
 
-Status: in progress — tickets 01–04 merged; tickets 05–08 remain open
+Status: in progress — tickets 01–04 merged; ticket 05 implemented and reviewed, awaiting acceptance/publication; tickets 06–08 remain open
 
 Source: [specification](spec.md).
 
@@ -12,7 +12,7 @@ Source: [specification](spec.md).
 | 02 | Completed / merged | [#23](https://github.com/ZekeT/agentic-starter/pull/23) |
 | 03 | Completed / merged | [#24](https://github.com/ZekeT/agentic-starter/pull/24) |
 | 04 | Completed / merged | [#25](https://github.com/ZekeT/agentic-starter/pull/25) |
-| 05 | Ready; dependency 04 delivered | — |
+| 05 | Implemented and reviewed; acceptance/publication pending | — |
 | 06 | Open; confirm external prerequisite below | — |
 | 07 | Open; confirm external prerequisite below | — |
 | 08 | Blocked by 05, 06, 07 and external prerequisite below | — |

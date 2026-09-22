@@ -79,14 +79,54 @@ for example `"provider": ["project-publish"]`. Inspect this project-owned adapte
 before execution. It is invoked without a shell as `project-publish --request
 <temporary-json-file>`. The request contains the review fields, exact committed
 `head` and a `body_file` containing scope, checks, independent summaries and gaps.
-The adapter must create the actual PR/MR and print only `{"url":"https://..."}`
-on success; a drafted body is insufficient. Adapters own their provider API calls.
-Fake adapters in disposable repositories test this contract without publishing
-real PRs. Built-in providers must return a PR/MR URL as their final stdout line.
+The adapter receives an `action` field. For `"create"`, it must create the actual
+PR/MR and print only `{"url":"https://..."}` on success; a drafted body is
+insufficient. For `"lookup"`, it must read hosting state for the exact repository,
+source branch and target branch, without creating anything. Return exactly
+`{"url":null}` only when absence is established. For an existing request, return
+`{"url":"https://...","head":"<commit SHA>","state":"open"}`. An ambiguous,
+failed or incomplete lookup must exit nonzero. Closed/merged requests or a
+mismatched head stop recovery for inspection. Update older create-only adapters
+before use: lookup is now required and cannot be treated as creation. Adapters
+own their provider API calls. Fake adapters in disposable repositories test this
+contract without publishing real PRs. Built-in providers must return a PR/MR URL
+as their final creation stdout line.
 
-A successful result reports the URL. Failure reports the steps already completed
-(preflight, commit, push, PR). Failed hooks may have changed local content or even
-created a commit, and a provider may have created a PR before losing its response.
-Inspect Git and hosting state before retrying; automatic resumable recovery and
-duplicate detection belong to the follow-on recovery slice. Do not claim a failed
-or ambiguous response as successful publication.
+## Resume a partial publication
+
+A successful result reports the URL. A stopped result reports `completed` steps
+confirmed during this invocation, the `failed` operation, its error and a concrete
+retry command. A failed push or creation response can be uncertain: the server
+may have completed it before the response was lost. Do not interpret a missing
+step in `completed` as proof that no remote change occurred.
+
+After restoring connectivity or fixing the reported hook/provider failure, run:
+
+```bash
+./engineering publish run --change example
+```
+
+The first authorized run saves its scope in ignored local verification storage,
+bound to the exact presented review. Retry reuses that scope; it does not require
+another human authorization for unchanged work. Passing an explicitly authorized
+narrower scope replaces the saved scope. A changed review cannot inherit it.
+Missing records require supplying the human-authorized scope again; flags and
+local records remain attestations, not authentication of human intent.
+
+Every retry checks current content, evidence, branch, push URL and comparison
+base. Content-preserving commits and transport failure do not rerun review or
+checks. Changed content or relevant evidence inputs return to verification and
+acceptance review. An existing accepted commit is reused. The actual push
+destination is queried, so a completed push is skipped even after an uncertain
+response. A divergent branch gets an ordinary push rejection, never an automatic
+force-push. A push that is still needed runs all existing hooks.
+
+Before creating a PR/MR, a read-only provider lookup finds matching requests,
+including closed/merged ones. GitHub and GitLab lookup syntax follows their
+[GitHub CLI](https://cli.github.com/manual/gh_pr_list) and
+[GitLab CLI](https://docs.gitlab.com/cli/mr/list/) documentation. An open request
+with the exact committed head is reused and its URL reported. Ambiguous,
+truncated, malformed, unavailable or conflicting results stop publication;
+resolve the reported condition before retrying. This also recovers a creation
+whose successful response was lost. Provider consistency and accurate adapter
+lookups are required; serialize publication for a branch across checkouts.
