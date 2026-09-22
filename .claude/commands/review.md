@@ -25,7 +25,10 @@ Summarize changed behavior, coverage, risks, actual checks, independent findings
 and gaps. Missing proof is not PASS; PASS is not human acceptance. Use show-me
 when useful. Do not edit application content, format, refresh Graft, rerun
 upstream development methodology or ship. Local evidence/check artifacts are
-permitted. Ship retains its existing final gate.
+permitted. Record the actually presented acceptance summary using engineering
+publish review as documented in .engineering/docs/publication.md. Include current
+snapshot, explicit target and unresolved blockers; this record is not acceptance
+or authorization. Ship reuses current proof without duplicate checks.
 
 Apply REVIEW.md's finding format and bounded correction policy. Consult settled
 decisions; keep preference-only alternatives non-blocking. Wait for human

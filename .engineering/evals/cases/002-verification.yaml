@@ -11,5 +11,8 @@ shell: |
   assert 'make check' in verifier and 'Never silently fix' in verifier
   assert 'implementation-session reasoning' in verifier
   ship = Path('.claude/commands/ship.md').read_text()
-  assert 'unless requested by the human' in ship and 'Run make check' in ship
+  assert 'Completed' in ship and 'acceptance review is required' in ship
+  assert 'Honor narrower requests' in ship and 'Never merge or force-push' in ship
+  assert 'do not rerun unchanged authoritative checks' in ship
+  assert 'engineering publish preflight' in ship and 'actual PR/MR URL' in ship
   PY

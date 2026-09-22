@@ -30,9 +30,12 @@ Use `/show-me` for a design, request path, module boundary or diff that is hard
 to understand. Visual explanations are normally ephemeral. No diagram is a gate.
 
 Invoking `/implement` authorizes scoped local commits, not acceptance or
-publication. Only the human authorizes shipping. Scope approval to the commit/push/PR or MR/
-merge requested. Existing authorization need not be requested again. `/ship`
-runs a final `make check` and respects the project's Git hosting provider.
+publication. After completed acceptance review, `/ship` accepts the unchanged
+presented scope and authorizes remaining scoped commits, push and actual PR/MR
+creation when blockers are resolved. It cannot supply missing review. Honor
+narrower requests and existing authorization; merge/force-push remain separate.
+Reuse current proof without duplicate checks. See
+[publication](.engineering/docs/publication.md) for the provider-independent flow.
 
 ## Findings and human-directed corrections
 

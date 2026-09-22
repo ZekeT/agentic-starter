@@ -42,7 +42,10 @@ agreed resolution. Independently reverify authorized corrections.
 Invocation of `/implement` authorizes local commits within the requested scope;
 a commit is neither verification nor human acceptance. Never infer push, PR/MR
 or merge authorization from implementation. Other commits require human request.
-`/ship` honors existing explicit authorization and runs the final gate.
+`/ship` after completed review accepts the unchanged presented scope and authorizes
+remaining scoped commits, push and PR/MR creation. Honor narrower requests and
+existing authorization; reuse current proof without duplicate checks. See
+[publication](.engineering/docs/publication.md). Merge/force-push remain separate.
 
 After implementation, automatically hand off to fresh independent reviewers when
 the runtime supports them. Keep pinned upstream skills unchanged. Their committed

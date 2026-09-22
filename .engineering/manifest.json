@@ -52,25 +52,28 @@
     },
     ".claude/commands/review.md": {
       "executable": false,
-      "owned_sha256": "9a36f64baefcbd9173861cabcf9902d24e682c22d3c9f689c2e10734dbaa1676",
+      "owned_sha256": "3e19607ff4e294ea1b8d1cb06f6f8947fa1dfa524f98c7cac5bd0f62b5ad4d56",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "7a917cc9ebe1fca4ae11a9d9abc3d909595879e1435cffabfe4947eb07eb3b95",
         "3bc7b5868b219d3631addbc43792653eee1e69b1f5bca4c5dec0ae1588bd9393",
-        "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0"
+        "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0",
+        "9a36f64baefcbd9173861cabcf9902d24e682c22d3c9f689c2e10734dbaa1676"
       ],
-      "sha256": "9a36f64baefcbd9173861cabcf9902d24e682c22d3c9f689c2e10734dbaa1676"
+      "sha256": "3e19607ff4e294ea1b8d1cb06f6f8947fa1dfa524f98c7cac5bd0f62b5ad4d56"
     },
     ".claude/commands/ship.md": {
       "executable": false,
-      "owned_sha256": "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b",
+      "owned_sha256": "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b"
+      "previous": [
+        "d60024019fdab63dd0c8547ad11ed2f8c5b2a1c17d7463b32cbac088009bf80b"
+      ],
+      "sha256": "9b32fd9dd66e7d0631c24752be2117856170199c497043106ae4729d9596b16d"
     },
     ".claude/hooks/post_tool_lint.py": {
       "executable": false,
@@ -197,12 +200,14 @@
     },
     ".engineering/docs/commits-and-prs.md": {
       "executable": false,
-      "owned_sha256": "516efa313aa77b98aae2194e48d55181d4f7f65d2b2299843673501e34a1d7f5",
+      "owned_sha256": "283533e65e71ae295c878133f320c66cf52ec3d3551f2fa3c3b57e1835d5fb1c",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "516efa313aa77b98aae2194e48d55181d4f7f65d2b2299843673501e34a1d7f5"
+      "previous": [
+        "516efa313aa77b98aae2194e48d55181d4f7f65d2b2299843673501e34a1d7f5"
+      ],
+      "sha256": "283533e65e71ae295c878133f320c66cf52ec3d3551f2fa3c3b57e1835d5fb1c"
     },
     ".engineering/docs/maintainability.md": {
       "executable": false,
@@ -217,6 +222,17 @@
       ],
       "sha256": "581d03104c423f5834c172273563e69953449109ba13ba4289930450e81e9fd6"
     },
+    ".engineering/docs/publication.md": {
+      "executable": false,
+      "owned_sha256": "f81a714a2a588c0b32e840db778a3b7def7f71181c670b59a656676e4274f182",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "cf082a38ad39353c734edd40a8845f9605c3921de0e8bbd60351a35677f0e79e"
+      ],
+      "sha256": "f81a714a2a588c0b32e840db778a3b7def7f71181c670b59a656676e4274f182"
+    },
     ".engineering/docs/testing.md": {
       "executable": false,
       "owned_sha256": "dace7bb3174e56cba6641c58c2368aa0ca548889cd6617479a94e1b1c7e21c85",
@@ -228,15 +244,16 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1",
+      "owned_sha256": "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6",
-        "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0"
+        "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0",
+        "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1"
       ],
-      "sha256": "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1"
+      "sha256": "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -273,7 +290,7 @@
     },
     ".engineering/engineering/cli.py": {
       "executable": false,
-      "owned_sha256": "74b514801e31a170fdb3a52fc32490fe55cc63de7a719c60d77f546eb3989751",
+      "owned_sha256": "86c9946f0553518acc072cca3192ba3cdb0368107e6eca1653cde696c0ab8ef6",
       "ownership": {
         "mode": "file"
       },
@@ -286,9 +303,10 @@
         "538e355074d3f62f67117c8cbcb4d066a8de5a84a4d6178e60c4b0a4243109b3",
         "9d2e4301a7b2443f0ad2d33133b8896eb2aedd38554743e88ac5758a12fc6d07",
         "57c3d785b92eda9a6b42b677574a2591f1fd580bac966ba61e5516ac9bba8d4b",
-        "794adbdf043889b329a9cc91c0c405b6a8b464191790e381f1fb4fcf9a4aff37"
+        "794adbdf043889b329a9cc91c0c405b6a8b464191790e381f1fb4fcf9a4aff37",
+        "74b514801e31a170fdb3a52fc32490fe55cc63de7a719c60d77f546eb3989751"
       ],
-      "sha256": "74b514801e31a170fdb3a52fc32490fe55cc63de7a719c60d77f546eb3989751"
+      "sha256": "86c9946f0553518acc072cca3192ba3cdb0368107e6eca1653cde696c0ab8ef6"
     },
     ".engineering/engineering/config.py": {
       "executable": false,
@@ -510,6 +528,28 @@
       ],
       "sha256": "860f0d5f22e7334b707c9b416c4ac4228593eea76e2fe26a11ab551cd8fbea10"
     },
+    ".engineering/engineering/publication.py": {
+      "executable": false,
+      "owned_sha256": "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "1da24587c761fb6673bbbedaf3f513c0cd04b53242beea56cc49f2b99c53554e"
+      ],
+      "sha256": "5ef499686f2a468e7631a05c5f3fdc8a6e5a044fe23698a2a8588aaf47ef4eb5"
+    },
+    ".engineering/engineering/publication_git.py": {
+      "executable": false,
+      "owned_sha256": "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [
+        "78134d767038032ce708e5b935ab38b96897b9fc3d73c0116337e1441f1058a6"
+      ],
+      "sha256": "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87"
+    },
     ".engineering/engineering/registry.py": {
       "executable": false,
       "owned_sha256": "42f2a18b3cea11a6e263508b18a2ccfdf653ab3916b6fe4d9cb565b2bb1b2bd2",
@@ -641,12 +681,14 @@
     },
     ".engineering/evals/cases/002-verification.yaml": {
       "executable": false,
-      "owned_sha256": "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe",
+      "owned_sha256": "87ce396d0a22ca57f8a6217e0e8f4c587378356d62e7877334da81e1862da8f7",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe"
+      "previous": [
+        "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe"
+      ],
+      "sha256": "87ce396d0a22ca57f8a6217e0e8f4c587378356d62e7877334da81e1862da8f7"
     },
     ".engineering/evals/cases/003-boundaries.yaml": {
       "executable": false,
@@ -703,6 +745,15 @@
       },
       "previous": [],
       "sha256": "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+    },
+    ".engineering/evals/cases/009-publication.yaml": {
+      "executable": false,
+      "owned_sha256": "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "executable": false,
@@ -877,20 +928,21 @@
     },
     "CLAUDE.md": {
       "executable": false,
-      "owned_sha256": "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61",
+      "owned_sha256": "e5c846a3d3d87ddfa51a7d17434df3f2485a22d65625dbb365df505e1b9fbc30",
       "ownership": {
         "marker": "integration",
         "mode": "section"
       },
       "previous": [
         "b263a9e7a246f977424b5b503d25a5b8a4d6b1eaece050ff2c29c3006e9aa39b",
-        "35af26b399f2eee01c4157aeb8a92da158a783982f0e9be2c371d1d08bbec2a1"
+        "35af26b399f2eee01c4157aeb8a92da158a783982f0e9be2c371d1d08bbec2a1",
+        "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61"
       ],
-      "sha256": "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61"
+      "sha256": "e5c846a3d3d87ddfa51a7d17434df3f2485a22d65625dbb365df505e1b9fbc30"
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0",
+      "owned_sha256": "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6",
       "ownership": {
         "mode": "file"
       },
@@ -902,9 +954,10 @@
         "2cd9187c5d7f4155428192aee753693fd53f163ee3c9b78b476a79ba28d6c123",
         "13332c9cb9b428faedbe6a47dddd7992bbed863484d85c5abf5947a70351599d",
         "1263a7773770f7e87e7011255f1eeef3bfb7f22c4ae1e623298ff0d34d550bac",
-        "6b43db2d68dad7e9e3beead9ea9240ab529606403a6ff483cd4900da44b8b3cf"
+        "6b43db2d68dad7e9e3beead9ea9240ab529606403a6ff483cd4900da44b8b3cf",
+        "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0"
       ],
-      "sha256": "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0"
+      "sha256": "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6"
     },
     "Makefile": {
       "executable": false,
@@ -920,15 +973,16 @@
     },
     "REVIEW.md": {
       "executable": false,
-      "owned_sha256": "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94",
+      "owned_sha256": "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "2dad7c277442f5b3f2e6b3fbae8baf1fdfed1c72e62ad2106734241982df8517",
-        "97e39010d899fbb48cc5b94f55ddaef43d535264d05add59888f4df7a0a2c2ca"
+        "97e39010d899fbb48cc5b94f55ddaef43d535264d05add59888f4df7a0a2c2ca",
+        "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94"
       ],
-      "sha256": "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94"
+      "sha256": "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948"
     },
     "docs/agents/domain.md": {
       "executable": false,
