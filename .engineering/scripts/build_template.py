@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build a consumer directory from the reviewed positive inclusion manifest."""
 
+from __future__ import annotations
+
 import argparse
 import shutil
 import sys
