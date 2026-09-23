@@ -3,13 +3,13 @@
 import argparse
 import json
 import subprocess
-import tempfile
 from pathlib import Path
 from typing import Any
 
 from .config import safe_path
 from .ownership import encoded, json_object
-from .publication_git import commit_scope, guard_push, validate_tree
+from .publication_git import commit_scope, guard_push, pushed, validate_tree
+from .publication_provider import create_pr, find_pr
 from .source import git
 from .transaction import write_files
 from .verification import location, outcome, read_record
@@ -127,97 +127,32 @@ def reviewed(root: Path, change: str) -> tuple[dict[str, Any], dict[str, Any]]:
     return plan, data
 
 
-def body(plan: dict[str, Any], data: dict[str, Any]) -> str:
-    """Carry human-useful scope, observed checks, independent evidence and gaps."""
-    lines = [
-        plan["summary"],
-        "",
-        "## Scope",
-        *[f"- `{p}`" for p in data["inputs"]["plan"]["paths"]],
-        "",
-        "## Verification",
-    ]
-    lines += [
-        f"- `{' '.join(c['command'])}`: exit {c['exit_code']}" for c in data["checks"]
-    ]
-    for role, report in data["reports"].items():
-        lines += [f"- {role}: {report['verdict']} — {report['summary']}"]
-        lines += [f"  - Finding: {finding}" for finding in report["findings"]]
-        lines += [f"  - Not covered: {gap}" for gap in report["coverage_gaps"]]
-    return "\n".join(lines) + "\n"
-
-
-def create_pr(root: Path, plan: dict[str, Any], data: dict[str, Any]) -> str:
-    """Invoke actual provider creation; custom adapters return a JSON URL receipt."""
-    with tempfile.TemporaryDirectory(prefix="engineering-pr-") as folder:
-        description = Path(folder) / "body.md"
-        description.write_text(body(plan, data))
-        provider = plan["provider"]
-        if provider == "github":
-            command = [
-                "gh",
-                "pr",
-                "create",
-                "--repo",
-                plan["remote_url"],
-                "--head",
-                plan["branch"],
-                "--base",
-                plan["base"],
-                "--title",
-                plan["title"],
-                "--body-file",
-                str(description),
-            ]
-        elif provider == "gitlab":
-            command = [
-                "glab",
-                "mr",
-                "create",
-                "--repo",
-                plan["remote_url"],
-                "--source-branch",
-                plan["branch"],
-                "--target-branch",
-                plan["base"],
-                "--title",
-                plan["title"],
-                "--description",
-                description.read_text(),
-                "--yes",
-            ]
-        else:
-            request = Path(folder) / "request.json"
-            request.write_bytes(
-                encoded(
-                    {
-                        **plan,
-                        "body_file": str(description),
-                        "head": git(root, "rev-parse", "HEAD").decode().strip(),
-                    }
-                )
-            )
-            command = [*provider, "--request", str(request)]
-        proc = subprocess.run(
-            command, cwd=root, capture_output=True, text=True, check=True
-        )
-        url = proc.stdout.strip().splitlines()[-1] if proc.stdout.strip() else ""
-        if isinstance(provider, list):
-            url = json_object(proc.stdout.encode()).get("url", "")
-        if (
-            not isinstance(url, str)
-            or not url.startswith(("https://", "http://"))
-            or any(c.isspace() for c in url)
+def authorize_scope(
+    root: Path, change: str, plan: dict[str, Any], scope: str | None
+) -> str:
+    """Retain only explicitly authorized scope bound to the exact presented review."""
+    name = location(root, change).removesuffix(".json") + "-publication.json"
+    path = safe_path(root, name)
+    if scope is None and path.exists():
+        saved = json_object(path.read_bytes())
+        if saved.get("review") == plan and saved.get("authorization") in (
+            "commit",
+            "push",
+            "pr",
         ):
-            raise ValueError(
-                "Provider returned no PR/MR URL; creation may have completed, inspect provider before retry"
-            )
-        return url
+            return str(saved["authorization"])
+    if scope is None:
+        raise ValueError(
+            "Missing human authorization: specify only the authorized commit/push/pr scope"
+        )
+    write_files(root, {name: encoded({"review": plan, "authorization": scope})})
+    return scope
 
 
 def operate(root: Path, args: argparse.Namespace) -> int:
-    """Report completed steps on any failure; transport recovery is a separate slice."""
+    """Reconcile completed work and reuse current proof under scoped authorization."""
     completed: list[str] = []
+    step = "preflight"
     try:
         if bool(args.plan) != (args.operation == "review") or (
             args.operation != "run" and args.authorize
@@ -261,22 +196,29 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 )
             )
             return 0
-        if not args.authorize:
-            raise ValueError(
-                "Missing human authorization: specify only the authorized commit/push/pr scope"
-            )
+        step = "authorization"
+        scope = authorize_scope(root, args.change, plan, args.authorize)
+        step = "commit"
         commit_scope(root, data, plan["title"])
         completed.append("commit")
+        step = "reassessment"
         reviewed(root, args.change)
         validate_tree(root, data)
-        if args.authorize in ("push", "pr"):
-            guard_push(root, args.change, plan, data)
+        if scope in ("push", "pr"):
+            step = "push"
+            if not pushed(root, plan):
+                guard_push(root, args.change, plan, data)
             completed.append("push")
+            step = "reassessment"
             reviewed(root, args.change)
             validate_tree(root, data)
         url = None
-        if args.authorize == "pr":
-            url = create_pr(root, plan, data)
+        if scope == "pr":
+            step = "pr lookup"
+            url = find_pr(root, plan)
+            if url is None:
+                step = "pr creation"
+                url = create_pr(root, plan, data)
             completed.append("pr")
         print(
             json.dumps(
@@ -297,8 +239,15 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 {
                     "status": "STOPPED",
                     "completed": completed,
+                    "failed": step,
                     "error": detail,
-                    "handoff": "Inspect Git and provider state before retry; changed content returns to verification and acceptance review.",
+                    "handoff": (
+                        f"Resolve the {step} failure, then run engineering publish run --change {args.change}. "
+                        "The retry checks current evidence and reconciles Git/provider state before changes; "
+                        "stored authorization applies only to the unchanged review. "
+                        "Changed content or evidence returns to verification and acceptance review. "
+                        "A failed push or PR creation response may be uncertain; no automatic force-push."
+                    ),
                 }
             )
         )

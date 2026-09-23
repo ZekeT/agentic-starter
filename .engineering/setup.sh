@@ -10,6 +10,7 @@ if [ "$#" -ne 0 ]; then
 fi
 echo 'Setup will install Python development tools and required pinned Matt/Graft dependencies from the network.'
 echo 'Optional dependencies and machine-wide settings are unchanged.'
+./engineering init-installation
 uv sync --all-extras
 ./engineering deps install --apply
 ./engineering doctor

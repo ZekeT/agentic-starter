@@ -28,6 +28,10 @@ engineering-test:
 manifest:
 	uv run --no-project --isolated --python 3.12 python .engineering/scripts/generate_template_manifest.py
 
+.PHONY: template
+template:
+	uv run --no-project --isolated --python 3.12 python .engineering/scripts/build_template.py "$(DEST)"
+
 # engineering:integration:begin
 .PHONY: engineering-check engineering-evals engineering-evals-full
 engineering-check:

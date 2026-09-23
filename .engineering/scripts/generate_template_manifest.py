@@ -159,11 +159,15 @@ def load_previous_manifest() -> dict[str, Any]:
     return json.loads(MANIFEST_PATH.read_text())  # type: ignore[no-any-return]
 
 
-def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
+def build_manifest(
+    previous: dict[str, Any], *, root: Path = ROOT, files: list[Path] | None = None
+) -> dict[str, Any]:
     """Build the new manifest, carrying hash history forward.
 
     Args:
         previous: The previously generated manifest (may be empty).
+        root: Distribution root for resolving selected paths and release version.
+        files: Explicit payload files, or the maintainer's default owned inventory.
 
     Returns:
         The new manifest dict ready to serialise.
@@ -176,9 +180,9 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
             "with this manifest before regenerating it"
         )
     prev_files: dict[str, Any] = previous.get("files", {})
-    files: dict[str, Any] = {}
-    for path in collect_files():
-        rel = path.relative_to(ROOT).as_posix()
+    entries: dict[str, Any] = {}
+    for path in collect_files() if files is None else sorted(files):
+        rel = path.relative_to(root).as_posix()
         current_digest = sha256_of(path)
         old_entry = prev_files.get(rel, {})
         history: list[str] = list(old_entry.get("previous", []))
@@ -187,7 +191,7 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
             history.append(old_current)
         ownership = distribution_ownership(rel)
         owned = owned_content(path.read_bytes(), rel, ownership)
-        files[rel] = {
+        entries[rel] = {
             "sha256": current_digest,
             "previous": history,
             "ownership": ownership,
@@ -195,15 +199,16 @@ def build_manifest(previous: dict[str, Any]) -> dict[str, Any]:
             "executable": bool(path.stat().st_mode & 0o111),
         }
     version = "unknown"
-    if VERSION_PATH.exists():
-        version = VERSION_PATH.read_text().strip()
+    version_path = root / ".engineering/TEMPLATE_VERSION"
+    if version_path.exists():
+        version = version_path.read_text().strip()
     return {
         "schema_version": 1,
         "defaults": {"maintainability": dict(DEFAULTS)},
         "project": previous.get("project", {}),
         "template_version": version,
         "ownership_version": 1,
-        "files": files,
+        "files": entries,
     }
 
 

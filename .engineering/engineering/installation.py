@@ -84,6 +84,35 @@ def build_state(version: str, entries: dict[str, Any]) -> dict[str, Any]:
     return {"schema_version": 1, "installed_version": version, "entries": entries}
 
 
+def initialize(root: Path) -> None:
+    """Seed missing state from verified distribution bytes, never reset a baseline."""
+    from .adoption import template_manifest
+    from .ownership import encoded, json_object, read_bytes
+
+    if load_state(root) is not None:
+        check_state(root, json_object(read_bytes(root, MANIFEST_PATH) or b"{}"))
+        print("Existing installation baseline preserved")
+        return
+    manifest = template_manifest(root)
+    entries = {
+        name: {"ownership": entry["ownership"], "upstream": entry["owned_sha256"]}
+        for name, entry in manifest["files"].items()
+        if entry["ownership"]["mode"] != "preserve"
+    }
+    content = encoded(build_state(manifest["template_version"], entries))
+    destination = safe_path(root, STATE_PATH)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    # Exclusive creation also protects a baseline created by concurrent setup.
+    with destination.open("xb") as stream:
+        try:
+            stream.write(content)
+            stream.flush()
+        except OSError:
+            destination.unlink()
+            raise
+    print("Initialized installation baseline from the distribution manifest")
+
+
 def check_state(root: Path, manifest: dict[str, Any]) -> None:
     """Check baseline consistency while allowing intentional local customization."""
     from .ownership import owned_content, read_bytes, validate_ownership

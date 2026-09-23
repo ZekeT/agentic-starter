@@ -43,6 +43,13 @@ then offline doctor. It does not install optional skills. With Python 3.12+
 available through uv, `./engineering` selects an isolated tooling interpreter
 without installing a Python package.
 
+Setup first runs `engineering init-installation`. A fresh generated distribution
+has no populated installation state: initialization verifies its owned distribution
+bytes and creates the missing baseline. Existing baselines are validated and
+preserved, including intentional local customization. Invalid state or altered
+uninitialized distribution files fail before dependency installation. Reconcile
+the installation rather than deleting its baseline or regenerating fingerprints.
+
 1. Read `CLAUDE.md` (the shared invariants); `AGENTS.md` points to it.
 2. Set `[navigation].application_roots` in `.engineering/config.toml` to your
    application directories, for example `["src"]`. Empty means no application
@@ -164,6 +171,9 @@ the unchanged presented scope and authorizes remaining scoped commits, push and
 actual PR/MR creation. It reuses current proof without duplicate checks and honors
 narrower requests; merge/force-push remain separate. See
 [publication](.engineering/docs/publication.md) for preflight and provider setup.
+After a transport failure, restore connectivity and rerun `engineering publish
+run --change <change>`: it retains scoped authorization, checks actual remote and
+provider state, and reuses completed commits/pushes/PRs and unchanged verification.
 GitHub is optional. Invocation of `/implement` does not authorize pushes or PRs.
 
 ## Review corrections
@@ -190,6 +200,7 @@ Material expansion returns to `/to-spec` and `/to-tickets`. See [REVIEW.md](REVI
 | `make engineering-evals-full` | Optional authenticated prompt evals; costs model tokens |
 | `make engineering-check` | Offline installation, maintainability and static integration checks |
 | `make manifest` | Starter-maintainer distribution fingerprints; never repair a customized installation with this |
+| `make template DEST=/path/to/new-project` | Maintainer-only deterministic consumer directory build |
 
 `make check` does not mutate source, fetch dependencies, update pins, build a
 Graft graph or invoke a model. Test/cache files may be produced. Run setup first;
@@ -197,8 +208,39 @@ ordinary gates use offline uv with Python downloads disabled.
 Adopted projects keep their own `make check`; run `make engineering-check`
 alongside it. Their application environment, package manager and CI stay theirs.
 The starter's Python application targets are a template, not an adoption rule.
-`engineering-test` and `manifest` are maintainer targets in the starter checkout;
+`engineering-test`, `engineering-evals`, `manifest` and `template` are maintainer targets in the starter checkout;
 run the self-tests there before distributing an update to adopted projects.
+Generated consumer Makefiles omit these targets; their `engineering-check`
+runs doctor and maintainability without the upstream eval suite.
+
+## Build a clean application template
+
+In an Engineering maintainer checkout, run
+`make template DEST=/path/to/new-project`. The parent must exist and the destination
+must not exist. The build is offline, creates no Git history and never overwrites
+an existing directory. In the output, run `git init -b main`, `make setup`, and
+commit the initialized project before running `make check`. For another default
+branch, configure `git config engineering.baseBranch <branch>`.
+
+`.engineering/template/files.json` is the authoritative positive payload inclusion
+list: exact destination/source mappings separate managed runtime from application
+seed files. Consumer README, Makefile and configuration inputs live beside it.
+Review additions explicitly; merely tracking a file never ships it. The builder
+reuses the distribution fingerprint generator for the selected managed files and
+validates the resulting manifest. That generated manifest describes update
+ownership; it is distinct from the maintainer's packaging inclusion list.
+
+The payload includes migration runtime, the project-owned reconciliation skill
+and its legacy recognition baseline. It excludes upstream tracker artifacts,
+maintainer tests/evals/build scripts, historical project documentation, caches,
+installed dependency outputs and populated installation/migration state.
+Downstream `.scratch/` tickets remain trackable. Application README, project
+metadata and lockfile are seed content outside Engineering update ownership.
+The consumer migration history default is `git-only`.
+
+Repeated builds of identical inputs produce identical file bytes and executable
+modes. Build from reviewed source; run the maintainer's required checks and review
+before distributing it. This command does not publish a remote template branch.
 
 Maintainability checks count Python code lines: warn above 300, maximum 500,
 substantial growth 150. A new oversized module fails; existing oversized modules
