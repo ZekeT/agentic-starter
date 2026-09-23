@@ -9,6 +9,24 @@ Matt Pocock's upstream skills supply the development workflow.
 
 Install Git, Python 3.12+, uv and Node.js 22.12+ with npm, then:
 
+For a new application, build a clean directory from this Engineering checkout:
+
+```bash
+make template DEST=/path/to/new-application
+cd /path/to/new-application
+git init -b main
+make setup
+git add .
+git commit -m "Initialize application"
+make check
+```
+
+The destination must not exist and its parent must exist. The generated README
+belongs to your application. Maintainer suites, tracker history, installed skills
+and populated local state are excluded; setup installs dependencies from pins.
+
+To work on the Engineering System itself, use this checkout:
+
 ```bash
 make setup
 ./engineering doctor

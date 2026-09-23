@@ -22,6 +22,9 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("version", help="Print the Engineering System template version")
     sub.add_parser("doctor", help="Diagnose installation health offline")
+    sub.add_parser(
+        "init-installation", help="Initialize missing distribution installation state"
+    )
     deps = sub.add_parser("deps", help="Manage pinned upstream capabilities")
     deps.add_argument("operation", choices=["status", "plan", "install", "update"])
     deps.add_argument("name", nargs="?")
@@ -75,6 +78,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
+        if args.command == "init-installation":
+            from .installation import initialize
+
+            initialize(root)
+            return 0
         if args.command == "publish":
             from .publication import operate as publish
 

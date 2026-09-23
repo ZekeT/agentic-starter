@@ -1,0 +1,34 @@
+# Your application
+
+Describe the application, its users and how to run it here.
+
+## Start development
+
+Prerequisites: Git, Python 3.12+, uv, Node.js 22.12+ and npm/npx.
+From this generated directory:
+
+```bash
+git init -b main
+make setup
+git add .
+git commit -m "Initialize application"
+make check
+```
+
+Setup initializes missing Engineering installation state and explicitly installs
+pinned development dependencies. It preserves existing installation baselines.
+No global agent settings are changed. Repeating setup is supported.
+
+Add application code in `src/` and tests in `tests/`. Set
+`[navigation].application_roots` in `.engineering/config.toml` when code exists,
+then explicitly run `.engineering/bin/graft build` before verification. Add
+feature instructions as described in `docs/agents/domain.md`.
+
+Run `make fmt` while developing, then `make check` for the ordinary gate.
+`./engineering doctor` diagnoses installation health offline. Local Markdown
+specs and tickets under `.scratch/` remain trackable in Git.
+
+Read [CLAUDE.md](CLAUDE.md) for agent policy, [ENGINEERING.md](ENGINEERING.md)
+for setup and workflows, and [REVIEW.md](REVIEW.md) for human review.
+Starter release scripts, self-tests and evals belong in a separate Engineering
+maintainer checkout; this application does not need them for normal checks.

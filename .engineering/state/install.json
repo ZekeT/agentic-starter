@@ -154,7 +154,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "86c9946f0553518acc072cca3192ba3cdb0368107e6eca1653cde696c0ab8ef6"
+      "upstream": "92220f86f711e599ae71063ea8ea73316f62e7fc6a2108bd0c06c7b050486815"
     },
     ".engineering/engineering/config.py": {
       "ownership": {
@@ -166,7 +166,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1d49ad88515ed7cd11f2aa6c956a1ecad3bfd7ee3ffe684d22500403445bc8e7"
+      "upstream": "d7f4057fe4934293452dd1ca00a8cbe5b3fb309d88c67b8ae6286bb05668f4ee"
     },
     ".engineering/engineering/doctor.py": {
       "ownership": {
@@ -208,7 +208,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "092754dde2a37798911aefeb76e7bb1ff546f8053b5892454f08ca4b88f2f361"
+      "upstream": "2547ce676863c8cb5570487dd85fa622ed1fa47990996c0fe7b6c7574016e311"
     },
     ".engineering/engineering/migrate/__init__.py": {
       "ownership": {
@@ -478,7 +478,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "ccfbce6a063ade2f833ed8d51d95393e4d36dbbfa11cec9d65725424cefc85e6"
+      "upstream": "85022dc0c43ed1935d4f822ec8d238471acb58a50c88e62b60492aba6051c188"
     },
     ".gitignore": {
       "ownership": {
@@ -505,7 +505,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "fe213b7bea13cf79936c4dca1d7b937a4c8c6395ba0493d25ea1941c59dfe292"
+      "upstream": "93566d6c2d635e59b408388fbd736d971080e7966b6311dae9af59f2bc6c643e"
     },
     "Makefile": {
       "ownership": {

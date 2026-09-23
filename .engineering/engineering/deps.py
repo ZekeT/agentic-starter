@@ -142,9 +142,11 @@ def operate(
     print(
         "Apply installs from the network using pinned sources. Global installations are not managed."
     )
-    print(
-        "After apply: engineering doctor; make engineering-test; make engineering-evals."
-    )
+    print("After apply: engineering doctor; make check.")
+    if (root / ".engineering/tests").is_dir():
+        print(
+            "Starter maintainers also run make engineering-test; make engineering-evals."
+        )
     if not apply:
         print("No files changed. Select --apply to install/update the displayed pins.")
         return 0
