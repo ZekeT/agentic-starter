@@ -23,7 +23,10 @@ make check
 
 The destination must not exist and its parent must exist. The generated README
 belongs to your application. Maintainer suites, tracker history, installed skills
-and populated local state are excluded; setup installs dependencies from pins.
+migration implementations, migration skills, legacy baselines and populated local
+state are excluded; setup installs dependencies from pins. Application changes
+need no `make manifest` or fingerprint repair. Use a separate Engineering checkout
+for brownfield migration; existing installations retain their migration files.
 
 To work on the Engineering System itself, use this checkout:
 

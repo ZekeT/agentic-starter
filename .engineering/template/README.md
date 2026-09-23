@@ -32,3 +32,16 @@ Read [CLAUDE.md](CLAUDE.md) for agent policy, [ENGINEERING.md](ENGINEERING.md)
 for setup and workflows, and [REVIEW.md](REVIEW.md) for human review.
 Starter release scripts, self-tests and evals belong in a separate Engineering
 maintainer checkout; this application does not need them for normal checks.
+
+Application development never requires `make manifest` or fingerprint repair.
+Engineering owns its managed scopes; application code, tests, README, package
+metadata and the application portions of shared files remain yours.
+
+Fresh applications omit migration implementations, migration skills and legacy
+baselines. For a brownfield project, use a separate Engineering checkout:
+
+```bash
+/path/to/engineering-checkout/engineering migrate openspec-project --target /path/to/project --plan
+```
+
+See the migration guidance in [ENGINEERING.md](ENGINEERING.md) before applying.

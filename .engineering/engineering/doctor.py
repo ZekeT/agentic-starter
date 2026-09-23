@@ -74,12 +74,6 @@ def metadata(root: Path) -> None:
         if entry["ownership"]["mode"] != "preserve" and read_bytes(root, name) is None:
             raise ValueError(f"Managed file missing: {name}")
     state(root)
-    base = safe_path(root, ".engineering/state/migrations")
-    if base.exists():
-        from .migrate.common import read_metadata
-
-        for path in base.glob("*.json"):
-            read_metadata(root, path.relative_to(root).as_posix())
     overlays = safe_path(root, ".engineering/overlays")
     if overlays.exists():
         raise ValueError(

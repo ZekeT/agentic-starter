@@ -230,13 +230,20 @@ reuses the distribution fingerprint generator for the selected managed files and
 validates the resulting manifest. That generated manifest describes update
 ownership; it is distinct from the maintainer's packaging inclusion list.
 
-The payload includes migration runtime, the project-owned reconciliation skill
-and its legacy recognition baseline. It excludes upstream tracker artifacts,
+The payload excludes migration implementations, migration skills and legacy
+baselines. Run brownfield migration from a separate Engineering checkout; existing
+installations are not automatically stripped of their migration files. It also
+excludes upstream tracker artifacts,
 maintainer tests/evals/build scripts, historical project documentation, caches,
 installed dependency outputs and populated installation/migration state.
 Downstream `.scratch/` tickets remain trackable. Application README, project
 metadata and lockfile are seed content outside Engineering update ownership.
-The consumer migration history default is `git-only`.
+Application edits and project-owned portions of shared files pass ordinary gates
+without `make manifest` or fingerprint repair. Setup verifies distribution bytes
+before first initialization; later setup preserves the installation baseline.
+Maintainers retain distribution integrity checks and migration runtime in the
+Engineering checkout. External OpenSpec migration defaults to `git-only` for
+projects without a migration policy.
 
 Repeated builds of identical inputs produce identical file bytes and executable
 modes. Build from reviewed source; run the maintainer's required checks and review
@@ -339,8 +346,9 @@ support diagnostics without checking installation health.
 
 `engineering doctor` is offline. It checks repository protections, Python,
 required files, executable launchers, policy, tracker pointers, hook wiring,
-reviewer definitions, Graft pin wiring, dependency evidence and migration/state
-schemas. It does not inspect tickets, run tests, contact remotes, assess graph
+reviewer definitions, Graft pin wiring, dependency evidence and installation-state
+schemas. Migration receipts are validated by migration commands, not ordinary
+development gates. It does not inspect tickets, run tests, contact remotes, assess graph
 freshness or ask for credentials. Optional missing skills warn.
 
 Exit codes: 0 healthy, 1 configuration/installation failure, 2 invalid CLI usage.

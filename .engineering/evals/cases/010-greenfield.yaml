@@ -1,0 +1,21 @@
+id: greenfield-ownership-and-external-migration
+kind: static
+why: Fresh applications omit migration payloads and leave distribution maintenance to Engineering maintainers.
+shell: |
+  python3 - <<'PY'
+  import json
+  from pathlib import Path
+  payload = json.loads(Path('.engineering/template/files.json').read_text())
+  prefixes = ('.engineering/engineering/migrate/', '.engineering/migrations/', '.claude/skills/migrate-from-openspec/')
+  assert not any(name.startswith(prefixes) for name in payload['managed'])
+  distribution = json.loads(Path('.engineering/manifest.json').read_text())['files']
+  assert '.engineering/engineering/migrate/openspec.py' in distribution
+  assert '.claude/skills/migrate-from-openspec/SKILL.md' in distribution
+  assert '.engineering/migrations/baselines/v2-manifest.json' in distribution
+  assert {'README.md', 'pyproject.toml', 'uv.lock'} <= payload['application'].keys()
+  for name in ('README.md', 'ENGINEERING.md', '.engineering/template/README.md'):
+      guide = Path(name).read_text()
+      assert 'separate Engineering checkout' in guide
+      assert 'fingerprint repair' in guide
+  assert 'manifest:' not in Path('.engineering/template/Makefile').read_text()
+  PY

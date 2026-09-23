@@ -43,12 +43,12 @@ def test_reproducible_consumer_payload(tmp_path):
         "pyproject.toml",
         "uv.lock",
         ".engineering/manifest.json",
-        ".engineering/engineering/migrate/openspec.py",
-        ".claude/skills/migrate-from-openspec/SKILL.md",
-        ".engineering/migrations/baselines/v2-manifest.json",
     ):
         assert name in files
     for prefix in (
+        ".engineering/engineering/migrate/",
+        ".claude/skills/migrate-from-openspec/",
+        ".engineering/migrations/",
         ".git/",
         ".scratch/",
         ".engineering/tests/",
@@ -71,7 +71,7 @@ def test_reproducible_consumer_payload(tmp_path):
 
 
 def cli(root, *args):
-    return run(sys.executable, str(root / "engineering"), *args, cwd=root)
+    return run(sys.executable, "-B", str(root / "engineering"), *args, cwd=root)
 
 
 def test_initialize_missing_state_and_preserve_customization(tmp_path):
@@ -115,6 +115,7 @@ def test_generated_project_setup_doctor_and_normal_gates(tmp_path):
     command("git", "config", "user.email", "fixture@example.invalid")
     command("make", "setup")
     state = (root / ".engineering/state/install.json").read_bytes()
+    manifest = (root / ".engineering/manifest.json").read_bytes()
     command("./engineering", "doctor")
     command("git", "add", ".")
     command("git", "commit", "-m", "Initialize application")
@@ -133,8 +134,25 @@ def test_generated_project_setup_doctor_and_normal_gates(tmp_path):
         "from src.greeting import greet\n\n\n"
         'def test_greeting():\n    assert greet("Ada") == "Hello, Ada!"\n'
     )
+    # Application-owned portions of shared files and seed content remain editable.
+    for name, addition in (
+        ("README.md", "\nRun the greeting application.\n"),
+        ("pyproject.toml", "\n[tool.application]\ngreeting = 'Hello'\n"),
+        ("Makefile", "\nhello:\n\t@echo Hello\n"),
+        ("CLAUDE.md", "\nApplication rule: greet users by name.\n"),
+        (".gitignore", "\napplication-output/\n"),
+    ):
+        path = root / name
+        path.write_text(path.read_text() + addition)
+    # Migration receipts are external workflow evidence, not development gates.
+    receipt = root / ".engineering/state/migrations/openspec.json"
+    receipt.parent.mkdir()
+    receipt.write_text('{"schema_version": 999}')
     command("make", "check")
+    command("make", "engineering-check")
     command("make", "setup")
+    assert receipt.read_text() == '{"schema_version": 999}'
+    assert (root / ".engineering/manifest.json").read_bytes() == manifest
     assert (root / ".engineering/state/install.json").read_bytes() == state
     (root / ".scratch").mkdir()
     (root / ".scratch/ticket.md").write_text("Application work\n")
@@ -165,8 +183,8 @@ def test_setup_refuses_invalid_baseline_before_network_install(tmp_path):
     assert '"sync"' not in calls and '"npm"' not in calls and '"npx"' not in calls
 
 
-def test_payload_migration_command_works_without_maintainer_checkout(tmp_path):
-    root = build(tmp_path / "project")
+def test_migration_runs_from_external_engineering_checkout(tmp_path):
+    root = ROOT
     target = tmp_path / "brownfield"
     (target / "openspec/specs/accounts").mkdir(parents=True)
     (target / "openspec/config.yaml").write_text("schema: spec-driven\n")
@@ -191,15 +209,25 @@ def test_payload_migration_command_works_without_maintainer_checkout(tmp_path):
     assert source.read_text() == "# Accounts\nUsers can sign in.\n"
 
 
+def test_consumer_migration_directs_to_external_checkout_without_writes(tmp_path):
+    root = build(tmp_path / "project")
+    before = contents(root)
+    result = cli(root, "migrate", "openspec-project", "--apply")
+    assert result.returncode == 1
+    assert "separate Engineering checkout" in result.stderr
+    assert "Traceback" not in result.stderr
+    assert contents(root) == before
+
+
 def test_inclusion_list_accounts_for_runtime_without_collecting_new_files():
     data = json.loads((ROOT / ".engineering/template/files.json").read_text())
     runtime = {
         path.relative_to(ROOT).as_posix()
         for path in (ROOT / ".engineering/engineering").rglob("*.py")
     }
-    assert set(data["managed"]) & runtime == runtime - {
-        ".engineering/engineering/eval_config.py"
-    }
+    excluded = {name for name in runtime if "/migrate/" in name}
+    excluded.add(".engineering/engineering/eval_config.py")
+    assert set(data["managed"]) & runtime == runtime - excluded
 
 
 @pytest.mark.parametrize("origin", ["../outside", "linked.md", "missing.md", ".env"])
