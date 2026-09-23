@@ -20,6 +20,3 @@ warn_file_lines = 300
 max_file_lines = 500
 substantial_growth_lines = 150
 exceptions = []
-
-[migration]
-legacy_history = "git-only"

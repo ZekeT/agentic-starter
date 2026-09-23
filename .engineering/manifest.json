@@ -292,7 +292,7 @@
     },
     ".engineering/engineering/cli.py": {
       "executable": false,
-      "owned_sha256": "92220f86f711e599ae71063ea8ea73316f62e7fc6a2108bd0c06c7b050486815",
+      "owned_sha256": "61628c1b144341a035f19185ea7fb4ba057a50f28ee8f691f7f4bd4f2bfdb7b7",
       "ownership": {
         "mode": "file"
       },
@@ -307,9 +307,10 @@
         "57c3d785b92eda9a6b42b677574a2591f1fd580bac966ba61e5516ac9bba8d4b",
         "794adbdf043889b329a9cc91c0c405b6a8b464191790e381f1fb4fcf9a4aff37",
         "74b514801e31a170fdb3a52fc32490fe55cc63de7a719c60d77f546eb3989751",
-        "86c9946f0553518acc072cca3192ba3cdb0368107e6eca1653cde696c0ab8ef6"
+        "86c9946f0553518acc072cca3192ba3cdb0368107e6eca1653cde696c0ab8ef6",
+        "92220f86f711e599ae71063ea8ea73316f62e7fc6a2108bd0c06c7b050486815"
       ],
-      "sha256": "92220f86f711e599ae71063ea8ea73316f62e7fc6a2108bd0c06c7b050486815"
+      "sha256": "61628c1b144341a035f19185ea7fb4ba057a50f28ee8f691f7f4bd4f2bfdb7b7"
     },
     ".engineering/engineering/config.py": {
       "executable": false,
@@ -337,16 +338,17 @@
     },
     ".engineering/engineering/doctor.py": {
       "executable": false,
-      "owned_sha256": "9acfb2eabcfc84b79e0f19c3f6d778ed19584579eb5212aac10db3bde0bb84be",
+      "owned_sha256": "1b97b9a977843e5b7a397d26d7b3d52f0965b5591f6cd879ee35f101c1ce7be9",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "75c930b2d37599ba4b09e205fd136b86adf7c7941d0d7fa349e25db0741843e8",
         "98aac611eaf639c27e6b355ddae5343a84ba3d967eb9613df6ed4e53f191cc48",
-        "3c67077f7c1751ce2cfc5594087aa1d062749ebf1c0cf5e7530b12fcea04eb54"
+        "3c67077f7c1751ce2cfc5594087aa1d062749ebf1c0cf5e7530b12fcea04eb54",
+        "9acfb2eabcfc84b79e0f19c3f6d778ed19584579eb5212aac10db3bde0bb84be"
       ],
-      "sha256": "9acfb2eabcfc84b79e0f19c3f6d778ed19584579eb5212aac10db3bde0bb84be"
+      "sha256": "1b97b9a977843e5b7a397d26d7b3d52f0965b5591f6cd879ee35f101c1ce7be9"
     },
     ".engineering/engineering/doctor_wiring.py": {
       "executable": false,
@@ -773,6 +775,15 @@
       ],
       "sha256": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb"
     },
+    ".engineering/evals/cases/010-greenfield.yaml": {
+      "executable": false,
+      "owned_sha256": "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01"
+    },
     ".engineering/evals/cases/101-small-change.yaml": {
       "executable": false,
       "owned_sha256": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339",
@@ -962,7 +973,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "93566d6c2d635e59b408388fbd736d971080e7966b6311dae9af59f2bc6c643e",
+      "owned_sha256": "b3bfb373098562caa7c88bc6962b459b53d887fa6a8f0d87535ef6b665014065",
       "ownership": {
         "mode": "file"
       },
@@ -977,9 +988,10 @@
         "6b43db2d68dad7e9e3beead9ea9240ab529606403a6ff483cd4900da44b8b3cf",
         "9f4ee1d969f1215123dd71a85ed4ba529d1df517d7458355915b62feaed2fcc0",
         "d2b509307c9ea74e0b2ee381c64a264c45f4cfb5572fcfee9d07e42ed883bdb6",
-        "fe213b7bea13cf79936c4dca1d7b937a4c8c6395ba0493d25ea1941c59dfe292"
+        "fe213b7bea13cf79936c4dca1d7b937a4c8c6395ba0493d25ea1941c59dfe292",
+        "93566d6c2d635e59b408388fbd736d971080e7966b6311dae9af59f2bc6c643e"
       ],
-      "sha256": "93566d6c2d635e59b408388fbd736d971080e7966b6311dae9af59f2bc6c643e"
+      "sha256": "b3bfb373098562caa7c88bc6962b459b53d887fa6a8f0d87535ef6b665014065"
     },
     "Makefile": {
       "executable": false,

@@ -112,6 +112,11 @@ def main(argv: list[str] | None = None) -> int:
                 check_remote=args.check_remote,
             )
         if args.command == "migrate":
+            if not Path(__file__).with_name("migrate").is_dir():
+                raise ValueError(
+                    "Migration is available from a separate Engineering checkout; "
+                    "run its ./engineering migrate command with --target /path/to/project."
+                )
             from .migrate.common import execute
             from .migrate.legacy import plan as legacy_plan
             from .migrate.openspec import plan as openspec_plan

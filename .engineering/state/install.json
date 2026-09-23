@@ -154,7 +154,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "92220f86f711e599ae71063ea8ea73316f62e7fc6a2108bd0c06c7b050486815"
+      "upstream": "61628c1b144341a035f19185ea7fb4ba057a50f28ee8f691f7f4bd4f2bfdb7b7"
     },
     ".engineering/engineering/config.py": {
       "ownership": {
@@ -172,7 +172,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9acfb2eabcfc84b79e0f19c3f6d778ed19584579eb5212aac10db3bde0bb84be"
+      "upstream": "1b97b9a977843e5b7a397d26d7b3d52f0965b5591f6cd879ee35f101c1ce7be9"
     },
     ".engineering/engineering/doctor_wiring.py": {
       "ownership": {
@@ -402,6 +402,12 @@
       },
       "upstream": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb"
     },
+    ".engineering/evals/cases/010-greenfield.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01"
+    },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
         "mode": "file"
@@ -505,7 +511,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "93566d6c2d635e59b408388fbd736d971080e7966b6311dae9af59f2bc6c643e"
+      "upstream": "b3bfb373098562caa7c88bc6962b459b53d887fa6a8f0d87535ef6b665014065"
     },
     "Makefile": {
       "ownership": {
