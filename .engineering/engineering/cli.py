@@ -42,10 +42,28 @@ def main(argv: list[str] | None = None) -> int:
     mode = migrate.add_mutually_exclusive_group()
     mode.add_argument("--plan", action="store_true")
     mode.add_argument("--apply", action="store_true")
-    migrate.add_argument(
+    stage = migrate.add_mutually_exclusive_group()
+    stage.add_argument(
         "--finalize",
         action="store_true",
         help="Preview or apply an exact human-reviewed OpenSpec proposal",
+    )
+    stage.add_argument(
+        "--accept", action="store_true", help="Record human acceptance after validation"
+    )
+    stage.add_argument(
+        "--cleanup",
+        action="store_true",
+        help="Preview or apply accepted migration cleanup",
+    )
+    migrate.add_argument(
+        "--retain",
+        action="append",
+        default=[],
+        help="Workspace-relative file/directory to retain; repeatable, '.' retains all",
+    )
+    migrate.add_argument(
+        "--approved-cleanup", help="SHA-256 of the human-approved cleanup preview"
     )
     migrate.add_argument("--legacy-history", choices=["snapshot", "git-only"])
     for operation in ("adopt", "update"):
@@ -125,6 +143,26 @@ def main(argv: list[str] | None = None) -> int:
             template = (args.template or root).resolve()
             from .settings import load
 
+            if (args.retain or args.approved_cleanup) and not args.cleanup:
+                parser.error("--retain and --approved-cleanup require --cleanup")
+            if args.accept or args.cleanup:
+                if (
+                    args.migration == "legacy-starter"
+                    or args.legacy_history
+                    or args.template
+                ):
+                    parser.error(
+                        "acceptance/cleanup is only for an existing OpenSpec finalization"
+                    )
+                from .migrate.closure import execute as close
+
+                return close(
+                    target,
+                    accept=args.accept,
+                    apply=args.apply,
+                    retain=args.retain,
+                    approved=args.approved_cleanup,
+                )
             if args.finalize:
                 if (
                     args.migration == "legacy-starter"

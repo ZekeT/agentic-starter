@@ -64,7 +64,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "6732314a1ec4455781bd0b15190889345eef9654a370b9fe9d7aa6af3213c5f5"
+      "upstream": "cb68c5bb11db6a2301c720ef3683d431f7bfd8dae7b32ed02da18897ff2c3772"
     },
     ".claude/skills/migrate-from-openspec/references/application-manifest.md": {
       "ownership": {
@@ -154,7 +154,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "61628c1b144341a035f19185ea7fb4ba057a50f28ee8f691f7f4bd4f2bfdb7b7"
+      "upstream": "cb7d2384b757d49d8975e1c7d353010b2c63df6248303dacf8ba7bcd9c4fd8f1"
     },
     ".engineering/engineering/config.py": {
       "ownership": {
@@ -222,6 +222,12 @@
       },
       "upstream": "d9c18ce19cc5fa02f5c41a308af96d725d1e5843d66625957a48a963fb49639d"
     },
+    ".engineering/engineering/migrate/closure.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "b796bc6978b41688b1fa884538e8c044fcf468616d1a5948aee9bc3f0b7fe5a4"
+    },
     ".engineering/engineering/migrate/common.py": {
       "ownership": {
         "mode": "file"
@@ -232,7 +238,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "50b936b457d2c36a2a62b8948586bf1087b7c69a09e9b28d6ae4db2adf72db82"
+      "upstream": "c62b745be8dab5588a5efcbfd50d2fcc71dfe44fe6c22344f131998e3202b136"
     },
     ".engineering/engineering/migrate/legacy.py": {
       "ownership": {
@@ -250,7 +256,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "cbec755968f4e8768e6bcb0f2413c3b257736682e665acc7138a537327430046"
+      "upstream": "95a83bd79812e01d233c9a71b6bc8d7fd5937b7a08e7ad5658cf5ff861d5fda7"
     },
     ".engineering/engineering/migrate/wiring.py": {
       "ownership": {
@@ -442,7 +448,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "b27f88fb60f0ae8f493c76a7b250fd238b1c809d2b1d2d18a0f3011c490ea831"
+      "upstream": "c98958a46dac4de559ef15fe2d5783a35a24a2dbb7557c8bbecef6dc3bab645f"
     },
     ".engineering/evals/run_evals.py": {
       "ownership": {
@@ -511,7 +517,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "b3bfb373098562caa7c88bc6962b459b53d887fa6a8f0d87535ef6b665014065"
+      "upstream": "61ebb140de17fa3cd159020e9684575f691107369d3932474577b3f384a2e3cf"
     },
     "Makefile": {
       "ownership": {

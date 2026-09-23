@@ -34,6 +34,14 @@ REQUIRED = (
     "docs/agents/issue-tracker.md",
     "useful source references",
     "complete diff and manifest digest",
+    "migration accepted from migration closed",
+    "cleanup pending",
+    "--accept --apply",
+    "--cleanup --plan",
+    "--approved-cleanup",
+    "Changed artifacts must be preserved",
+    "Pending cleanup never blocks ordinary development",
+    "A generated digest is not human removal authorization",
 )
 
 

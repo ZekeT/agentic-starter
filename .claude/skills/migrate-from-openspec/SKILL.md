@@ -107,7 +107,25 @@ with direct writes or deletions. Finalization must
 refuse unresolved decisions, stale evidence, dirty Git or changed output bytes.
 The finalizer validates application safety, not semantic truth. Never bypass a gate.
 Run doctor, the project's `make check`, and applicable Graft checks; report failures
-without claiming completion. After successful validation and human acceptance,
-remove temporary migration state when requested. Git history is the default
-preservation; retained snapshots require explicit selection. Normal development
-must not depend on the inventory or a permanent compatibility layer.
+without claiming completion. Distinguish migration accepted from migration closed.
+After successful validation and human acceptance, record `--accept --apply`.
+Report cleanup pending until temporary migration state is removed or explicitly
+retained. Pending cleanup never blocks ordinary development.
+
+Use `--cleanup --plan` to show the exact removal scope, file fingerprints and
+retention choices. Use repeatable workspace-relative `--retain` paths (for example
+`--retain snapshot`) for requested snapshots; `--retain .` explicitly retains all.
+Git history is the default preservation. Obtain human approval of this exact
+cleanup preview, then repeat the choices with `--cleanup --apply --approved-cleanup
+<SHA-256>`. A generated digest is not human removal authorization. Do not run these
+acceptance/removal commands based only on approval to implement a migration tool.
+Changed artifacts must be preserved; review and explicitly retain them. Missing
+artifacts require restoration before retry. Ordinary cleanup errors roll back;
+exact retries acknowledge recorded closure. Never emulate cleanup using recursive
+deletions. If these flags are unavailable, leave cleanup pending with a handoff.
+
+Disclose the retained local `.engineering/migration-work/openspec-closure.json`
+record: it supports retries but is optional, outside workspace cleanup, and can
+be removed manually after closure. Normal development must not depend on the
+inventory, migration evidence or receipts, or a permanent compatibility layer.
+Never claim acceptance/closure for unresolved semantic decisions or failed validation.
