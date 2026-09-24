@@ -424,10 +424,41 @@ Successful validation writes a temporary `validation.json` with the recovery
 commit, exact output/evidence fingerprints and gate results. Exact retries make
 no changes, including before committing; changed outputs or reappeared OpenSpec
 files conflict. A repeat acknowledges the original checks, not a fresh validation
-of subsequent development. Changes remain uncommitted for human review. After
-successful validation and human acceptance, remove the temporary workspace when
-requested; retain explicitly requested snapshots. No normal project gate depends
-on this workspace or its receipt.
+of subsequent development. Changes remain uncommitted for human review. Validation alone is not human acceptance. After the human accepts these validated
+outputs, record it explicitly:
+
+```bash
+./engineering migrate openspec-project --target /path/to/project --accept --apply
+./engineering migrate openspec-project --target /path/to/project --cleanup --plan
+```
+
+**Migration accepted** means validation passed and the human accepted the outputs.
+The handoff now says **cleanup pending**; ordinary development may continue.
+**Migration closed** means the temporary workspace files were removed or explicitly
+retained by the human. Cleanup is bounded to `.engineering/migration-work/openspec/`.
+The preview lists every file, fingerprint and mode with REMOVE or RETAIN. Use
+repeatable workspace-relative `--retain <file-or-directory>` selections, such as
+`--retain snapshot`; `--retain .` explicitly retains all artifacts. Repeat those
+choices when applying the exact human-approved cleanup digest:
+
+```bash
+./engineering migrate openspec-project --target /path/to/project --cleanup --plan --retain snapshot
+./engineering migrate openspec-project --target /path/to/project --cleanup --apply --retain snapshot --approved-cleanup <SHA-256>
+```
+
+Omit `--retain snapshot` when no snapshot exists or none is requested. The preview
+is not removal authorization: obtain human approval before applying its digest.
+Changed/new artifacts are never silently deleted; explicitly retain them after
+review. Missing artifacts conflict; restore them before retrying. Ordinary write
+failure rolls back cleanup, and exact retries are read-only acknowledgements.
+Post-acceptance application development does not invalidate temporary cleanup;
+this acknowledges the original migration acceptance, not validation of new work.
+
+The small local `.engineering/migration-work/openspec-closure.json` record is kept
+outside the cleanup scope for acceptance and retry reporting. The preview discloses
+it; it is optional bookkeeping, not a permanent migration service. Removing it
+manually loses automatic retry recognition and does not affect normal development.
+No normal project gate depends on migration evidence, acceptance or cleanup records.
 
 Git history is the default preservation policy for an unconfigured project.
 An explicit `[migration] legacy_history` setting or `--legacy-history` selection

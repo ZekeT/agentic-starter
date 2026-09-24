@@ -12,6 +12,11 @@ from .common import tree
 from .openspec import WORKSPACE, integrations
 
 REPORT = f"{WORKSPACE}/validation.json"
+CHECK_LABELS = (
+    "doctor",
+    "project check",
+    "Graft check (NOT APPLICABLE when no application roots)",
+)
 
 
 def unchanged(root: Path, expected: dict[str, Any]) -> None:
@@ -42,6 +47,12 @@ def completed(root: Path) -> bool:
         raise ValueError("migration.report: invalid completion receipt")
     if not isinstance(data["files"], dict) or not data["files"]:
         raise ValueError("migration.report: missing output fingerprints")
+    if data["checks"] != [
+        {"check": label, "exit_code": 0} for label in CHECK_LABELS
+    ] or any(type(item["exit_code"]) is not int for item in data["checks"]):
+        raise ValueError(
+            "migration.report: successful results for every validation gate required"
+        )
     unchanged(root, data["files"])
     if tree(root, "openspec") or integrations(root):
         raise ValueError("migration.stale: OpenSpec sources or integration reappeared")
@@ -58,10 +69,10 @@ def run(root: Path) -> list[dict[str, str | int]]:
     cli = [sys.executable, str(launcher), "--root", str(root)]
     checks: list[dict[str, str | int]] = []
     for label, command in (
-        ("doctor", [*cli, "doctor"]),
-        ("project check", ["make", "check"]),
+        (CHECK_LABELS[0], [*cli, "doctor"]),
+        (CHECK_LABELS[1], ["make", "check"]),
         (
-            "Graft check (NOT APPLICABLE when no application roots)",
+            CHECK_LABELS[2],
             [*cli, "navigation", "check"],
         ),
     ):

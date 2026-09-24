@@ -7,7 +7,7 @@ from ..config import safe_path
 from ..ownership import digest, encoded, read_bytes
 from ..source import git
 from ..transaction import write_files
-from . import application, openspec, validation
+from . import application, closure, openspec, validation
 from .common import Migration, tree
 
 
@@ -81,6 +81,16 @@ def execute(root: Path, *, apply: bool) -> int:
     """Preview without mutation; explicit apply is the human authorization boundary."""
     root = root.resolve()
     if validation.completed(root):
+        acceptance = closure.read(root)
+        if acceptance and acceptance["status"] == "closed":
+            return closure.execute(
+                root, accept=False, apply=False, retain=[], approved=None
+            )
+        print(
+            closure.PENDING
+            if acceptance and acceptance["status"] == "accepted"
+            else "Human acceptance and temporary cleanup pending; use --accept --plan."
+        )
         return 0
     proposal = plan(root)
     show(proposal)
@@ -144,7 +154,7 @@ def execute(root: Path, *, apply: bool) -> int:
         raise
     remove_empty_directories(root, proposal.changes)
     print(
-        f"Finalization validation PASS. Report: {validation.REPORT}. Changes remain uncommitted for human review. Temporary migration evidence may be removed after human acceptance; retain snapshots when requested."
+        f"Finalization validation PASS. Report: {validation.REPORT}. Changes remain uncommitted for human review. Human acceptance and temporary cleanup pending. After human acceptance use --accept --apply, then --cleanup --plan; retain snapshots when requested."
     )
     return 0
 

@@ -40,9 +40,11 @@ Reuse current proof without duplicate checks. See
 ## Findings and human-directed corrections
 
 Review is read-only for application content. Present changed behavior, requirement
-coverage, consequences, risks and gaps. For each finding provide **what** is wrong,
-**why** it matters, **how** to address it, your **recommendation and rationale**,
-and concrete evidence (path/line, observed failure or requirement). Identify a
+coverage, consequences, risks and gaps. For each finding, the human needs **what**
+is wrong, **why** it matters, **how** to address it, your **recommendation and rationale**
+(what you recommend and why), and **options next** (available next actions and
+their tradeoffs). Include concrete evidence (path/line, observed failure or
+requirement). Identify a
 violated requirement, demonstrated defect or concrete risk. Consult the settled
 spec, ADRs and recorded human decisions. Label preference-only alternatives as
 non-blocking; they do not justify a CONCERNS/FAIL verdict by themselves.
