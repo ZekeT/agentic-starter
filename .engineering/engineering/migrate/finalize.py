@@ -82,6 +82,10 @@ def execute(root: Path, *, apply: bool) -> int:
     root = root.resolve()
     if validation.completed(root):
         acceptance = closure.read(root)
+        if acceptance and acceptance["status"] == "closed":
+            return closure.execute(
+                root, accept=False, apply=False, retain=[], approved=None
+            )
         print(
             closure.PENDING
             if acceptance and acceptance["status"] == "accepted"

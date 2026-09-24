@@ -191,3 +191,31 @@ def test_cleanup_requires_exact_approved_choices_and_refuses_reappeared_files(
     assert closure(root, "--cleanup", "--apply", "--approved-cleanup", token) == 1
     assert snapshot(root) == before
     assert "Migration closed" not in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("mode", ["--plan", "--apply"])
+def test_finalization_retry_reports_retained_closure_without_changes(
+    validated, capsys, mode
+):
+    root = validated
+    capsys.readouterr()
+    assert invoke(root, mode) == 0
+    assert "Human acceptance and temporary cleanup pending" in capsys.readouterr().out
+    assert closure(root, "--accept", "--apply") == 0
+    capsys.readouterr()
+    assert invoke(root, mode) == 0
+    assert "Migration accepted; cleanup pending" in capsys.readouterr().out
+    token = preview(root, capsys, "--retain", ".")
+    assert (
+        closure(
+            root, "--cleanup", "--apply", "--retain", ".", "--approved-cleanup", token
+        )
+        == 0
+    )
+    capsys.readouterr()
+    before = snapshot(root)
+    assert invoke(root, mode) == 0
+    output = capsys.readouterr().out
+    assert "Migration closed" in output
+    assert "pending" not in output
+    assert snapshot(root) == before

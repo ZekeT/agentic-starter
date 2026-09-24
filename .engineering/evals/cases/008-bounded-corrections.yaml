@@ -5,7 +5,7 @@ shell: |
   python3 - <<'PY'
   from pathlib import Path
   review = Path('REVIEW.md').read_text()
-  for phrase in ('recommendation and rationale', 'concrete evidence', 'preference-only',
+  for phrase in ('recommendation and rationale', 'options next', 'concrete evidence', 'preference-only',
                  'Wait for human instructions', 'two unsuccessful attempts',
                  'undo a settled decision', '/grill-me', 'human-agreed resolution',
                  '/to-spec', '/to-tickets', 'Prior acceptance'):

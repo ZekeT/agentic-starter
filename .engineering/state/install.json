@@ -238,7 +238,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c62b745be8dab5588a5efcbfd50d2fcc71dfe44fe6c22344f131998e3202b136"
+      "upstream": "efeb24348eb73e5e5e1ca4fa1f558e90c6424a212d3131c666f4505cc6e2ac66"
     },
     ".engineering/engineering/migrate/legacy.py": {
       "ownership": {
@@ -400,7 +400,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+      "upstream": "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3"
     },
     ".engineering/evals/cases/009-publication.yaml": {
       "ownership": {
@@ -530,7 +530,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948"
+      "upstream": "0acb56b012327e1bba53a60ba5c107b28f66e5189c83232b1980141cc4284f5b"
     },
     "engineering": {
       "ownership": {

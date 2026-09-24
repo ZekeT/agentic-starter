@@ -467,15 +467,16 @@
     },
     ".engineering/engineering/migrate/finalize.py": {
       "executable": false,
-      "owned_sha256": "c62b745be8dab5588a5efcbfd50d2fcc71dfe44fe6c22344f131998e3202b136",
+      "owned_sha256": "efeb24348eb73e5e5e1ca4fa1f558e90c6424a212d3131c666f4505cc6e2ac66",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "b4606d0e9f437e8cd0a211c8b5784e10d70a08de73074154bf8dac765d2533e5",
-        "50b936b457d2c36a2a62b8948586bf1087b7c69a09e9b28d6ae4db2adf72db82"
+        "50b936b457d2c36a2a62b8948586bf1087b7c69a09e9b28d6ae4db2adf72db82",
+        "c62b745be8dab5588a5efcbfd50d2fcc71dfe44fe6c22344f131998e3202b136"
       ],
-      "sha256": "c62b745be8dab5588a5efcbfd50d2fcc71dfe44fe6c22344f131998e3202b136"
+      "sha256": "efeb24348eb73e5e5e1ca4fa1f558e90c6424a212d3131c666f4505cc6e2ac66"
     },
     ".engineering/engineering/migrate/legacy.py": {
       "executable": false,
@@ -771,12 +772,14 @@
     },
     ".engineering/evals/cases/008-bounded-corrections.yaml": {
       "executable": false,
-      "owned_sha256": "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713",
+      "owned_sha256": "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+      "previous": [
+        "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+      ],
+      "sha256": "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3"
     },
     ".engineering/evals/cases/009-publication.yaml": {
       "executable": false,
@@ -1024,16 +1027,17 @@
     },
     "REVIEW.md": {
       "executable": false,
-      "owned_sha256": "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948",
+      "owned_sha256": "0acb56b012327e1bba53a60ba5c107b28f66e5189c83232b1980141cc4284f5b",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "2dad7c277442f5b3f2e6b3fbae8baf1fdfed1c72e62ad2106734241982df8517",
         "97e39010d899fbb48cc5b94f55ddaef43d535264d05add59888f4df7a0a2c2ca",
-        "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94"
+        "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94",
+        "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948"
       ],
-      "sha256": "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948"
+      "sha256": "0acb56b012327e1bba53a60ba5c107b28f66e5189c83232b1980141cc4284f5b"
     },
     "docs/agents/domain.md": {
       "executable": false,
