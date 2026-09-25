@@ -23,52 +23,124 @@ reduce reader load, respect boundaries, model the domain, use verifiable units,
 and encode lessons in structure) are useful reference material. No Pstack
 workflow package is installed.
 
-## First day
+## Onboarding
 
-Prerequisites: Git, Python 3.12+, uv, Node.js 22.12+ and npm/npx. Install these
-through your normal toolchain management before setup. Setup never installs
-machine-wide tools or edits global agent settings.
+Use a separate checkout of the Engineering source repository for generation,
+adoption and migration. A generated application is the consumer payload, not a
+copy of this repository's development history. Install Git, Python 3.12+, uv and
+Node.js 22.12+ with npm through your normal toolchain management first.
+
+### New application
+
+From the Engineering source checkout, run `make template DEST=/absolute/new-app`.
+The parent must exist and the destination must not exist. In the generated directory:
 
 ```bash
-git clone <your-repository-url>
-cd <your-repository>
+git init -b main
 make setup
-export PATH="$PWD:$PWD/.engineering/bin:$PATH"
-engineering doctor
+git add .
+git commit -m "Initialize application"
+make check
+./engineering doctor
 ```
 
-`make setup` explicitly performs network installation: `uv sync --all-extras`,
-then `engineering deps install --apply` for required managed dependencies,
-then offline doctor. It does not install optional skills. With Python 3.12+
-available through uv, `./engineering` selects an isolated tooling interpreter
-without installing a Python package.
+Setup explicitly installs pinned dependencies over the network and initializes
+missing installation state after verifying distribution bytes. Repeating setup
+preserves the baseline. Application code, tests, README and project metadata are
+yours; ordinary edits never need `make manifest`. The generated README is the
+application's starting guide. Remote template publication is not provided.
 
-Setup first runs `engineering init-installation`. A fresh generated distribution
-has no populated installation state: initialization verifies its owned distribution
-bytes and creates the missing baseline. Existing baselines are validated and
-preserved, including intentional local customization. Invalid state or altered
-uninitialized distribution files fail before dependency installation. Reconcile
-the installation rather than deleting its baseline or regenerating fingerprints.
+### Existing project without Engineering
 
-1. Read `CLAUDE.md` (the shared invariants); `AGENTS.md` points to it.
-2. Set `[navigation].application_roots` in `.engineering/config.toml` to your
-   application directories, for example `["src"]`. Empty means no application
-   graph is needed. Never point Graft at all repository tooling.
-3. The default tracker is **local Markdown**, independent of GitHub, GitLab or
-   Bitbucket. `docs/agents/issue-tracker.md` points to Matt's installed local
-   adapter. It owns `.scratch/` conventions. Keep durable specs/tickets in Git.
-   Existing projects retain their tracker configuration on adoption/update.
-4. Run `engineering deps status`. Claude Code discovers the project skills;
-   another runtime can read their `.claude/skills/<name>/SKILL.md` directly.
-5. Choose a branch, make one small change with `/implement` or `/tdd`, and verify.
-6. Install optional show-me when useful:
-   `engineering deps install show-me` previews;
-   `engineering deps install show-me --apply` installs.
+Start with a clean, committed project and a working project-native `make check`.
+Keep its language, package manager, CI and application checks. From the external
+Engineering source checkout:
 
-To switch trackers, run upstream `/setup-matt-pocock-skills`. It supports GitHub
-Issues as well as local Markdown and other documented tracker choices. Change
-only the repository's pointer/configuration; the starter does not implement a
-tracker. No remote issues are created by setup or migration scripts.
+```bash
+./engineering adopt /absolute/existing-project
+./engineering adopt /absolute/existing-project --apply
+```
+
+The first command previews exact actions without writes. Inspect the plan and
+resolve conflicts before applying. Adoption adds managed regions around shared
+files and preserves project-owned content; it does not replace native tooling
+with the Python template. If OpenSpec is detected, its sources and integration
+remain until the separate semantic migration below.
+
+In the target project, install managed tools explicitly, then verify:
+
+```bash
+./engineering deps install --apply
+./engineering doctor
+make check
+make engineering-check
+```
+
+Install the target's own development dependencies with its existing package
+manager before running its native check. Inspect the resulting diff and record
+it in Git before another adoption/update/migration operation requiring clean Git.
+Do not copy the maintainer checkout over an existing project.
+
+### Earlier Agentic Starter
+
+Use the external Engineering source checkout against a clean, committed target:
+
+```bash
+./engineering migrate legacy-starter --target /absolute/legacy-project --plan
+./engineering migrate legacy-starter --target /absolute/legacy-project --apply
+```
+
+Review the preview before apply. Resolve customized managed-file conflicts rather
+than forcing replacement. Inspect preserved custom policy under
+`.engineering/migrations/legacy-docs/`. Upgrade changes infrastructure; OpenSpec
+sources, commands and hooks stay available pending semantic reconciliation.
+Install managed dependencies and run the target's native and Engineering checks
+as in adoption above. Review and commit the infrastructure change before preparing
+the final OpenSpec inventory.
+
+### OpenSpec project
+
+This works for arbitrary OpenSpec repositories, including ones that never used
+Agentic Starter. Use an external Engineering source checkout; fresh consumer
+applications intentionally contain no migration implementation or migration skill.
+If Engineering is absent, first adopt it and install its dependencies as above.
+For earlier starters, perform the infrastructure upgrade first. Preserve the
+project's native check and commit the reviewed infrastructure changes.
+
+```bash
+./engineering migrate openspec-project --target /absolute/project --plan
+./engineering migrate openspec-project --target /absolute/project --apply
+```
+
+The preview writes nothing. Apply prepares temporary inventory and indexes only;
+source and integration remain intact. In an agent session with access to both
+checkouts, use the external source checkout's
+`.claude/skills/migrate-from-openspec/SKILL.md` against the target. It compares prose,
+code and tests, stages exact durable-document proposals and remaining-work
+handoffs, and asks the owner to resolve conflicts. A task checkbox does not prove
+implementation, and a prepared inventory does not complete migration.
+
+Review the complete finalization diff and digest before authorizing apply. After
+successful validation, explicitly accept the outputs; then review and authorize
+cleanup or retention. Follow the commands and safeguards in
+[OpenSpec finalization and closure](#openspec-projects-and-earlier-starters).
+Pending cleanup does not block ordinary development. Do not run acceptance or
+removal commands merely because inventory preparation succeeded.
+
+### Configure your first change
+
+Read `CLAUDE.md` for shared policy. Set `[navigation].application_roots` in
+`.engineering/config.toml` to actual application directories; never point Graft
+at all repository tooling. Empty means no application graph is needed. Build and
+check an applicable graph explicitly before verification.
+
+Local Markdown is the default tracker regardless of hosting provider. Existing
+projects retain their configured tracker. Read `docs/agents/issue-tracker.md`;
+keep durable specs and tickets in Git. Run `engineering deps status`. Claude Code
+discovers project skills; other runtimes can read their `SKILL.md` files directly.
+Choose a branch before `/implement` or `/tdd`, then follow the review and shipping
+policy below. Optional show-me installs only when explicitly requested:
+`engineering deps install show-me --apply`.
 
 ## Mental model
 
@@ -198,7 +270,7 @@ Material expansion returns to `/to-spec` and `/to-tickets`. See [REVIEW.md](REVI
 | `make engineering-test` | Starter Python/script/update/migration tests, lint and types |
 | `make engineering-evals` | Static integration checks |
 | `make engineering-evals-full` | Optional authenticated prompt evals; costs model tokens |
-| `make engineering-check` | Offline installation, maintainability and static integration checks |
+| `make engineering-check` | Offline installation and maintainability checks |
 | `make manifest` | Starter-maintainer distribution fingerprints; never repair a customized installation with this |
 | `make template DEST=/path/to/new-project` | Maintainer-only deterministic consumer directory build |
 
@@ -210,8 +282,9 @@ alongside it. Their application environment, package manager and CI stay theirs.
 The starter's Python application targets are a template, not an adoption rule.
 `engineering-test`, `engineering-evals`, `manifest` and `template` are maintainer targets in the starter checkout;
 run the self-tests there before distributing an update to adopted projects.
-Generated consumer Makefiles omit these targets; their `engineering-check`
-runs doctor and maintainability without the upstream eval suite.
+Generated consumer Makefiles omit these targets. The shared `engineering-check`
+runs doctor and maintainability without the upstream eval suite, including after
+adoption and legacy upgrade. Maintainers run `engineering-evals` explicitly.
 
 ## Build a clean application template
 

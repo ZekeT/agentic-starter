@@ -37,7 +37,6 @@ template:
 engineering-check:
 	./engineering doctor
 	./engineering maintainability
-	uv run --no-project --isolated --python 3.12 python .engineering/evals/run_evals.py
 engineering-evals:
 	uv run --no-project --isolated --python 3.12 python .engineering/evals/run_evals.py
 engineering-evals-full:
