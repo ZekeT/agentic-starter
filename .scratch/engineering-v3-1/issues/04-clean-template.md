@@ -1,6 +1,6 @@
 # 04: Build and initialize a clean consumer template
 
-**Status:** implemented — review pending
+**Status:** completed — merged in [PR #26](https://github.com/ZekeT/agentic-starter/pull/26)
 
 **Spec:** ../spec.md
 
@@ -54,3 +54,9 @@ Published after explicit user approval of the breakdown. No commit or shipping a
 
 The current `/implement` invocation authorizes scoped local commits under
 CLAUDE.md; it does not authorize push, PR creation or merge.
+
+## Delivery reconciliation — 2026-09-25
+
+Local merge commit `0f4d2af` records PR #26, including template implementation
+`db8108f` and integration `79ec159`. The earlier review-pending status is
+superseded by this delivery evidence; this is not a new verification claim.

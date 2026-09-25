@@ -1,6 +1,6 @@
 # Proposed implementation slices
 
-Status: approved — published as individual implementation tickets
+Status: in progress — issues 01–03 recorded as implemented and verified; issue 04 merged; issue 05 remains open
 
 The architecture decisions are recorded in spec.md. These slices preserve the
 guide's implementation order while making each slice independently verifiable.
@@ -40,6 +40,16 @@ guide's implementation order while making each slice independently verifiable.
      semantic migration and fresh-template setup. Run required gates and fresh
      independent reviews. Record actual evidence and any remaining human decisions.
    - Remote template publication remains deferred by the accepted decision.
+
+## Delivery status — reconciled 2026-09-25
+
+| Ticket | Status |
+| --- | --- |
+| 01–03 | Implemented and verified per ticket evidence; human-review status not independently reconciled |
+| 04 | Completed / merged in [PR #26](https://github.com/ZekeT/agentic-starter/pull/26), local merge `0f4d2af` |
+| 05 | Open; prerequisite 04 delivered |
+
+This updates delivery tracking only; the approved slice scope below is unchanged.
 
 ## Approval
 
