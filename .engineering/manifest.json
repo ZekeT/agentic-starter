@@ -247,7 +247,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035",
+      "owned_sha256": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731",
       "ownership": {
         "mode": "file"
       },
@@ -255,9 +255,10 @@
         "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6",
         "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0",
         "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1",
-        "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0"
+        "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0",
+        "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035"
       ],
-      "sha256": "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035"
+      "sha256": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,

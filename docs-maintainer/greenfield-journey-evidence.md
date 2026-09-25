@@ -115,6 +115,17 @@ removal/retention, changed-artifact protection and safe retries. This ticket add
 no migration runtime, deletes no existing installation artifacts and does not
 claim acceptance/closure of the earlier onboarding trial.
 
+## Maintainer verification preparation
+
+The initial independent branch run passed `make check` and all 11 static evals
+(5 optional prompt cases skipped). `make engineering-test` reported 302 passed
+and 15 failed: the Graft integration cases require the actual installed runtime,
+but the first plan declared only its package metadata, sufficient for doctor.
+The new journey integration case passed. The full regular installed Graft runtime
+is now being declared for a fresh isolated checkout and independent rerun. This
+is an explicit preparation correction, not a test bypass; the failed run remains
+historical evidence. Consult `complete-journey` for current authoritative results.
+
 ## Limits
 
 The live greeting is deliberately tiny, with navigation roots explicitly empty;

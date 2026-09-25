@@ -87,8 +87,10 @@ This installs locked development tools from the existing cache; `uv run` alone
 does not select optional development dependencies in a new environment. If the
 cache is missing packages, explicit dependency installation is needed before
 the offline gate can pass. Declare the installed Matt skill outputs and required
-Graft files as inputs for doctor/navigation; do not copy a populated working-tree
-environment or treat a missing executable as successful verification.
+Graft files as inputs for doctor/navigation. Maintainer Graft integration tests
+need the full installed runtime, not just its package metadata. Do not copy a
+populated working-tree Python environment or treat a missing executable as
+successful verification.
 
 The isolated checkout remains available for independent inspection and check
 artifacts. Source mutations there invalidate proof; prepare again to build a
