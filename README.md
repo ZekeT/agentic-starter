@@ -5,7 +5,17 @@ repository instructions, deterministic quality gates, Graft navigation, fresh
 independent verification, safe dependency management, adoption and migration.
 Matt Pocock's upstream skills supply the development workflow.
 
-## Start
+## Choose your starting point
+
+| Your project | Start here |
+| --- | --- |
+| New application | Generate a clean directory below |
+| Existing project without Engineering | [Adopt it](ENGINEERING.md#existing-project-without-engineering) while preserving its native checks |
+| Earlier Agentic Starter | [Upgrade the infrastructure](ENGINEERING.md#earlier-agentic-starter), then reconcile OpenSpec separately if present |
+| OpenSpec project | [Prepare semantic migration](ENGINEERING.md#openspec-project) from an external Engineering checkout |
+| Engineering maintainer | [Build, verify and release](docs-maintainer/README.md) |
+
+## New application
 
 Install Git, Python 3.12+, uv and Node.js 22.12+ with npm, then:
 
@@ -22,7 +32,7 @@ make check
 ```
 
 The destination must not exist and its parent must exist. The generated README
-belongs to your application. Maintainer suites, tracker history, installed skills
+belongs to your application. Maintainer suites, tracker history, installed skills,
 migration implementations, migration skills, legacy baselines and populated local
 state are excluded; setup installs dependencies from pins. Application changes
 need no `make manifest` or fingerprint repair. Use a separate Engineering checkout

@@ -45,3 +45,9 @@ baselines. For a brownfield project, use a separate Engineering checkout:
 ```
 
 See the migration guidance in [ENGINEERING.md](ENGINEERING.md) before applying.
+
+For an existing application, follow [adoption](ENGINEERING.md#existing-project-without-engineering)
+from a separate Engineering source checkout. Do not overlay this generated
+project onto it. Earlier starters use [the legacy upgrade](ENGINEERING.md#earlier-agentic-starter)
+before any OpenSpec reconciliation. Each target keeps its own language, package
+manager and native checks.

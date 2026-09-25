@@ -56,6 +56,7 @@ def test_reproducible_consumer_payload(tmp_path):
         ".engineering/state/",
         ".engineering/template/",
         "docs/migrations/",
+        "docs-maintainer/",
         "docs/context/",
         "node_modules/",
         ".agent/",
