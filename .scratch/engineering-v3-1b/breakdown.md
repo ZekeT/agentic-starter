@@ -1,6 +1,6 @@
 # Approved v3.1b implementation slices
 
-Status: in progress — tickets 01–07 merged; ticket 08 remains blocked by v3.1 issue 05
+Status: in progress — tickets 01–07 merged; ticket 08 implementing with all prerequisites integrated
 
 Source: [specification](spec.md).
 
@@ -15,7 +15,7 @@ Source: [specification](spec.md).
 | 05 | Completed / merged | [#26](https://github.com/ZekeT/agentic-starter/pull/26) |
 | 06 | Completed / merged | [#27](https://github.com/ZekeT/agentic-starter/pull/27) |
 | 07 | Completed / merged | [#28](https://github.com/ZekeT/agentic-starter/pull/28) |
-| 08 | Blocked by v3.1 issue 05; 05–07 delivered | — |
+| 08 | In progress; v3.1 issue 05 merged in #30, 05–07 delivered | — |
 
 Merge evidence comes from local Git history. Individual tickets retain the
 implementation evidence and delivery links.

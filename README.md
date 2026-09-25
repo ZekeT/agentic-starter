@@ -38,20 +38,30 @@ state are excluded; setup installs dependencies from pins. Application changes
 need no `make manifest` or fingerprint repair. Use a separate Engineering checkout
 for brownfield migration; existing installations retain their migration files.
 
-To work on the Engineering System itself, use this checkout:
+## Daily development
 
-```bash
-make setup
-./engineering doctor
-```
+Choose a branch, then use `/implement → /review → /ship`. Implementation produces
+working behavior, a runnable example, scoped local commits and independent
+verification. Review presents current evidence, findings and gaps; try the example
+and direct any corrections. After completed review, ship accepts the unchanged
+presented result and creates the actual PR/MR. Merge remains a separate decision.
 
-Setup installs required pinned dependencies through the network. Optional
-show-me and Karpathy skills are explicit choices. Local Markdown is the default
-tracker; GitHub, GitLab or Bitbucket hosting does not determine your workflow.
+Current verification is reused. Missing independent execution produces an explicit
+INCOMPLETE fresh-session handoff; a local commit is neither verification nor human
+acceptance. If a push fails after committing, restore connectivity and use the
+reported retry command without duplicating commits or checks. Follow the
+[daily development guide](ENGINEERING.md#daily-development-implement--review--ship)
+for examples, corrections, provider setup and recovery.
 
-For a small change: choose a branch → `/implement` or `/tdd` → `make fmt` →
-fresh independent verification → human review → authorized `/ship`.
 For large coding work: `/wayfinder` → `/to-spec` → `/to-tickets` → `/implement`.
+Local Markdown is the default tracker regardless of hosting provider.
+
+## Work on Engineering itself
+
+In this maintainer checkout, use `make setup` then `./engineering doctor`.
+Setup installs required pinned dependencies through the network. Optional
+show-me and Karpathy skills are explicit choices. See the
+[maintainer guide](docs-maintainer/README.md) for distribution checks and releases.
 
 Read [ENGINEERING.md](ENGINEERING.md) for onboarding, skill selection, navigation,
 verification, system/dependency updates, adoption and legacy migration.

@@ -38,6 +38,16 @@ retry and closure. The six scenarios in
 [the semantic fixtures](../.engineering/tests/fixtures/openspec-brownfield/README.md)
 are authored acceptance/refusal examples, not proof of model judgment.
 
+## Complete daily journey
+
+[Greenfield journey evidence](greenfield-journey-evidence.md) separates the
+repeatable generated-application command test from the live independent-review
+trial. Run `.engineering/tests/integration/test_greenfield_journey.py` through
+pytest to exercise scoped correction, unrelated-work preservation, evidence reuse
+and failed-push recovery with local fake hosting. Reviewer attestations in that
+test are scripted fixtures; only the recorded fresh-session trial establishes
+actual reviewer execution. No real test PRs are needed.
+
 ## Retained history
 
 [Historical migration material](history/README.md) preserves this starter's old

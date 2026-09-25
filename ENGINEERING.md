@@ -50,6 +50,112 @@ preserves the baseline. Application code, tests, README and project metadata are
 yours; ordinary edits never need `make manifest`. The generated README is the
 application's starting guide. Remote template publication is not provided.
 
+## Daily development: implement → review → ship
+
+After setup, use `/implement → /review → /ship` for each agreed change. For a
+small change, a concrete request is enough. Larger or uncertain work can use
+`/grill-with-docs`, `/wayfinder`, `/to-spec` and `/to-tickets` first.
+
+```bash
+git switch -c feat/greeting
+```
+
+In your agent session, give an observable request, for example:
+
+```text
+/implement Add a greeting command with tests. Running it for Ada should print
+Hello, Ada! Include the command I can run to try it.
+/review
+```
+
+| Step | What you should receive | What you do next |
+| --- | --- | --- |
+| `/implement` | Working behavior, a runnable example, scoped local commits and independent verification results or an explicit INCOMPLETE handoff | Try the example and use `/review` to inspect the change |
+| `/review` | Current scope, check/reviewer results, explained findings, risks and unverified areas; current proof is reused, missing/stale proof is obtained | Direct any corrections, or accept the unchanged presented result with `/ship` |
+| `/ship` after completed review | Remaining accepted fixes committed, branch pushed, and an actual PR/MR URL, or precise partial progress and a retry command | Review the PR/MR; merging requires separate authorization |
+
+The agent formats with `make fmt` before independent verification. A fresh
+behavioral verifier runs `make check`; the maintainability reviewer inspects the
+same proposed content, with security review when applicable. You do not need to
+run the full gate again merely to invoke review or ship. A local commit records
+implementation; it proves neither verification nor human acceptance. `/implement`
+authorizes local commits only. `/ship` after completed review accepts the unchanged
+presented scope and authorizes scoped commits, push and PR/MR creation; explicit
+narrower instructions still apply.
+
+### Try it and direct corrections
+
+Run the supplied example and compare its output with your request. Read the
+findings before asking for a fix. Each finding should identify what is wrong,
+why it matters, evidence, how to address it, a recommendation with its rationale,
+and your available next actions. Preference-only alternatives are non-blocking.
+
+For example, if the demonstration reveals unwanted surrounding spaces, say:
+“Trim surrounding whitespace in the greeting name, keep the current punctuation,
+and add a regression test.” The agent waits for that direction, makes the bounded
+correction without new tickets, reruns authoritative checks and obtains fresh
+independent inspection of affected behavior. Justified evidence for unchanged
+areas can be retained. Review the updated output and acceptance summary before
+shipping; acceptance of old content does not transfer to the correction.
+
+After two unsuccessful attempts at one finding, or before undoing a settled
+decision, pause for focused `/grill-me` and record the human-agreed resolution.
+Materially expanded scope returns to planning. See [human review](REVIEW.md).
+
+### Continue in another session
+
+Current verification is kept in ignored local Engineering state and covers the
+complete proposed content, including intended new/uncommitted files. Verification
+uses an isolated checkout so unrelated working or staged files stay intact and
+cannot make the proposed change pass. Content-preserving commits retain proof;
+changed code, base, configuration or relevant tool inputs require reassessment.
+
+If independent reviewers cannot run, the result is **INCOMPLETE**, with a
+fresh-session handoff identifying the requirement, prepared plan and missing
+roles. Open that handoff in a fresh session and use `/review`; the implementer's
+self-review cannot fill it. A different checkout without the local evidence must
+regenerate it. Missing proof must be resolved before publication.
+
+### Publish and recover from an interrupted attempt
+
+Configure the intended remote and hosting provider before shipping. GitHub uses
+`gh`, GitLab uses `glab`, and other providers use an explicitly configured adapter;
+install and authenticate the selected tool separately. Git hosting does not change
+the local Markdown tracker. See [provider setup](.engineering/docs/publication.md#hosting-providers-and-results)
+for the adapter contract and [publication preflight](.engineering/docs/publication.md)
+for exact configuration.
+
+After completed review, invoke `/ship`. If a push fails after the local commit,
+keep that commit, restore connectivity and follow the reported retry command:
+
+```bash
+./engineering publish run --change <change-name-from-handoff>
+```
+
+The retry retains the existing authorization for unchanged content, reuses current
+verification and checks the actual remote/provider state before doing missing
+steps. It avoids duplicate commits and PRs even when a response was lost. A local
+commit or drafted PR body is not a published PR: success includes the PR/MR URL.
+Changed content returns to verification and review. Failed hooks require resolving
+the failure; they are never bypassed. Merge and force-push remain separate decisions.
+
+### Before the first change
+
+Read `CLAUDE.md` for shared policy. Set `[navigation].application_roots` in
+`.engineering/config.toml` to actual application directories; never point Graft
+at all repository tooling. Empty means no application graph is needed. Build and
+check an applicable graph explicitly before verification.
+
+Local Markdown is the default tracker regardless of hosting provider. Existing
+projects retain their configured tracker. Read `docs/agents/issue-tracker.md`;
+keep durable specs and tickets in Git. Run `engineering deps status`. Claude Code
+discovers project skills; other runtimes can read their `SKILL.md` files directly.
+Choose a branch before `/implement` or `/tdd`, then follow the review and shipping
+policy below. Optional show-me installs only when explicitly requested:
+`engineering deps install show-me --apply`.
+
+## Other onboarding paths
+
 ### Existing project without Engineering
 
 Start with a clean, committed project and a working project-native `make check`.
@@ -126,21 +232,6 @@ cleanup or retention. Follow the commands and safeguards in
 [OpenSpec finalization and closure](#openspec-projects-and-earlier-starters).
 Pending cleanup does not block ordinary development. Do not run acceptance or
 removal commands merely because inventory preparation succeeded.
-
-### Configure your first change
-
-Read `CLAUDE.md` for shared policy. Set `[navigation].application_roots` in
-`.engineering/config.toml` to actual application directories; never point Graft
-at all repository tooling. Empty means no application graph is needed. Build and
-check an applicable graph explicitly before verification.
-
-Local Markdown is the default tracker regardless of hosting provider. Existing
-projects retain their configured tracker. Read `docs/agents/issue-tracker.md`;
-keep durable specs and tickets in Git. Run `engineering deps status`. Claude Code
-discovers project skills; other runtimes can read their `SKILL.md` files directly.
-Choose a branch before `/implement` or `/tdd`, then follow the review and shipping
-policy below. Optional show-me installs only when explicitly requested:
-`engineering deps install show-me --apply`.
 
 ## Mental model
 

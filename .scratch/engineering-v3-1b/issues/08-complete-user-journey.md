@@ -11,7 +11,7 @@ in a disposable generated application, recording observed behavior and limits.
 v3.1 issue 05 — Document and prove all onboarding paths
 ([external prerequisite](../../engineering-v3-1/issues/05-onboarding-verification.md)).
 
-**Status:** blocked — v3.1 issue 05 remains open; v3.1b issues 05–07 are merged
+**Status:** in progress — prerequisites merged; implementing on `docs/complete-greenfield-journey`
 
 - [ ] Integrate v3.1 onboarding documentation. Lead the guide with onboarding,
   `/implement → /review → /ship`, expected observable outcomes, findings fixes and
@@ -33,6 +33,11 @@ v3.1 issue 05 — Document and prove all onboarding paths
   integration findings without reopening settled decisions silently.
 
 ## Comments
+
+Started 2026-09-25. v3.1 issue 05 is integrated by PR #30 (local merge
+`92d7e3e`); v3.1b issues 05–07 were already merged. The former external blocker
+is resolved. The approved test seams are public commands in disposable Git
+repositories, generated templates/external migration, and workflow evaluation.
 
 Published following human approval of the eight-ticket breakdown. Earlier slices
 own their incremental documentation and eval updates; this ticket assembles and

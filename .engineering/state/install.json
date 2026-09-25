@@ -130,7 +130,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0"
+      "upstream": "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -414,6 +414,12 @@
       },
       "upstream": "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01"
     },
+    ".engineering/evals/cases/011-complete-journey.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871"
+    },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
         "mode": "file"
@@ -517,7 +523,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "753607dc45948e480ce85fe1f93a8f1c96dfa2e2d757f6c4cea28c4c25adafca"
+      "upstream": "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc"
     },
     "Makefile": {
       "ownership": {
