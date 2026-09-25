@@ -1,10 +1,10 @@
 # Approved v3.1b implementation slices
 
-Status: in progress — tickets 01–04 merged; ticket 05 implemented and reviewed, awaiting acceptance/publication; tickets 06–08 remain open
+Status: in progress — tickets 01–07 merged; ticket 08 remains blocked by v3.1 issue 05
 
 Source: [specification](spec.md).
 
-## Delivery status — reconciled 2026-09-22
+## Delivery status — reconciled 2026-09-25
 
 | Ticket | Status | PR |
 | --- | --- | --- |
@@ -12,10 +12,10 @@ Source: [specification](spec.md).
 | 02 | Completed / merged | [#23](https://github.com/ZekeT/agentic-starter/pull/23) |
 | 03 | Completed / merged | [#24](https://github.com/ZekeT/agentic-starter/pull/24) |
 | 04 | Completed / merged | [#25](https://github.com/ZekeT/agentic-starter/pull/25) |
-| 05 | Implemented and reviewed; acceptance/publication pending | — |
-| 06 | Open; confirm external prerequisite below | — |
-| 07 | Open; confirm external prerequisite below | — |
-| 08 | Blocked by 05, 06, 07 and external prerequisite below | — |
+| 05 | Completed / merged | [#26](https://github.com/ZekeT/agentic-starter/pull/26) |
+| 06 | Completed / merged | [#27](https://github.com/ZekeT/agentic-starter/pull/27) |
+| 07 | Completed / merged | [#28](https://github.com/ZekeT/agentic-starter/pull/28) |
+| 08 | Blocked by v3.1 issue 05; 05–07 delivered | — |
 
 Merge evidence comes from local Git history. Individual tickets retain the
 implementation evidence and delivery links.

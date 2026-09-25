@@ -60,7 +60,13 @@ unavailable, report INCOMPLETE and give a fresh-session handoff; never self-cert
 ### Issue tracker
 
 Local Markdown is the default, independent of Git hosting provider.
-See [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md).
+See [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md). During ticket-based
+implementation, update task checkboxes as acceptance criteria are satisfied and
+keep ticket status and the existing breakdown in sync before each handoff. Record
+evidence and remaining work; distinguish implementation, verification, human
+acceptance, publication and merge. Update delivery links after authorized shipping
+and observed merges. This is agent bookkeeping, not an automatic tracker service;
+keep pinned upstream skills unchanged.
 
 ### Domain docs
 

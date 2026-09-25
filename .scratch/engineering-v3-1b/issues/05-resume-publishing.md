@@ -7,7 +7,7 @@ failure without recreating completed work or repeating unchanged verification.
 
 **Blocked by:** 04 — Publish accepted content as an actual PR/MR.
 
-**Status:** implemented and reviewed — awaiting human acceptance and publication
+**Status:** completed — merged in [PR #26](https://github.com/ZekeT/agentic-starter/pull/26)
 
 - [x] Report exactly which commit/push/PR steps succeeded, what failed, and the
   concrete next recovery action.
@@ -46,3 +46,10 @@ after successful local commit is the primary user-reported recovery scenario.
   implementation reviewed, not fresh verification of these tracking edits.
 - Human acceptance, publication and merge remain pending; implementation and
   review completion do not establish delivery.
+
+## Delivery reconciliation — 2026-09-25
+
+- Local merge commit `0f4d2af` records [PR #26](https://github.com/ZekeT/agentic-starter/pull/26) in this checkout history.
+- Implementation `91e400d` landed with the clean consumer template in PR #26. The earlier pending-publication note is historical.
+- This reconciliation records delivered work and historical evidence, not fresh
+  verification of the current checkout or these tracking edits.

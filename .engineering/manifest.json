@@ -977,7 +977,7 @@
     },
     "CLAUDE.md": {
       "executable": false,
-      "owned_sha256": "e5c846a3d3d87ddfa51a7d17434df3f2485a22d65625dbb365df505e1b9fbc30",
+      "owned_sha256": "e3cfe41acde60beb654bd3713aee953afa276bb685d6880d8f632081d5c916f2",
       "ownership": {
         "marker": "integration",
         "mode": "section"
@@ -985,9 +985,10 @@
       "previous": [
         "b263a9e7a246f977424b5b503d25a5b8a4d6b1eaece050ff2c29c3006e9aa39b",
         "35af26b399f2eee01c4157aeb8a92da158a783982f0e9be2c371d1d08bbec2a1",
-        "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61"
+        "baf9682b700a4764bf66d1e8ed3a9f97446de00f97cb73bffb94f05faa014e61",
+        "e5c846a3d3d87ddfa51a7d17434df3f2485a22d65625dbb365df505e1b9fbc30"
       ],
-      "sha256": "e5c846a3d3d87ddfa51a7d17434df3f2485a22d65625dbb365df505e1b9fbc30"
+      "sha256": "e3cfe41acde60beb654bd3713aee953afa276bb685d6880d8f632081d5c916f2"
     },
     "ENGINEERING.md": {
       "executable": false,
@@ -1054,8 +1055,10 @@
       "ownership": {
         "mode": "preserve"
       },
-      "previous": [],
-      "sha256": "1ffd859ce5d211bdf879df1ee442e481033c4701860c415d9f07824722a6628c"
+      "previous": [
+        "1ffd859ce5d211bdf879df1ee442e481033c4701860c415d9f07824722a6628c"
+      ],
+      "sha256": "21436b4ad8a82cf6dfc7f5fa1a40b6af2b9ebe80a4419a2695bd55915f8629fd"
     },
     "engineering": {
       "executable": true,
