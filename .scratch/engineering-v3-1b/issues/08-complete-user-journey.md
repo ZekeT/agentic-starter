@@ -11,7 +11,7 @@ in a disposable generated application, recording observed behavior and limits.
 v3.1 issue 05 — Document and prove all onboarding paths
 ([external prerequisite](../../engineering-v3-1/issues/05-onboarding-verification.md)).
 
-**Status:** in progress — guide and command fixture implemented; live correction awaits human direction; independent verification in progress
+**Status:** implemented — revised acceptance scope approved; fresh verification and publication pending; remaining live trial deferred
 
 - [x] Integrate v3.1 onboarding documentation. Lead the guide with onboarding,
   `/implement → /review → /ship`, expected observable outcomes, findings fixes and
@@ -19,9 +19,10 @@ v3.1 issue 05 — Document and prove all onboarding paths
 - [x] Explain local commits versus verification, acceptance and publication;
   reusable evidence, fresh-session fallback, human-directed fixes and focused
   grilling. Keep external brownfield access and closure guidance accurate.
-- [ ] Exercise a disposable generated application from setup through implementation,
-  independent verification, human review, an authorized fix, reverification and
-  publication handoff. Demonstrate runnable behavior for human assessment.
+- [x] Exercise live setup, implementation and initial independent verification in a
+  disposable generated application; demonstrate runnable behavior and record limits.
+  The remaining live correction, reverification and publication handoff are
+  explicitly deferred by the 2026-09-26 acceptance revision.
 - [x] Demonstrate absence of migration scaffolding and manifest chores, preservation
   of unrelated work, evidence reuse and failed-push recovery through safe fixtures
   and fake hosting tools; do not publish real test PRs.
@@ -31,6 +32,20 @@ v3.1 issue 05 — Document and prove all onboarding paths
   explicit and optional under repository policy.
 - [ ] Pass required checks and fresh independent reviews; resolve material
   integration findings without reopening settled decisions silently.
+
+## Accepted scope and deferred follow-up — 2026-09-26
+
+The human approved the [spec acceptance revision](../spec.md#acceptance-revision--2026-09-26)
+and authorized fresh verification followed by shipping this scope. The prior
+behavioral CONCERNS remains historical evidence under the original requirement;
+this revision does not relabel that report or claim completion of the live trial.
+
+Deferred live-trial work (not a blocker for this revised publication scope):
+
+- [ ] Move the trial subprocess tests into `tests/integration/` and add the
+  integration marker, preserving greeting behavior, when that correction is authorized.
+- [ ] Obtain fresh independent verification of the corrected live application.
+- [ ] Record its publication handoff without publishing a real test PR.
 
 ## Comments
 
@@ -63,5 +78,6 @@ proves the complete journey.
 - Independent Standards and Security reports passed for the implementation scope.
   The initial behavioral run passed `make check`, but maintainer tests lacked the
   full Graft runtime in isolation (302 passed / 15 failed). Verification preparation
-  is being corrected; use change `complete-journey` for current evidence, not this
-  historical summary. No publication or merge is authorized or claimed.
+  was corrected and the subsequent run passed 317 tests and 11 static evals.
+  Use change `complete-journey` for fresh evidence of the revised scope. Publication
+  is authorized after that verification; no merge is authorized or claimed.

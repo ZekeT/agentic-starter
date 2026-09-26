@@ -5,6 +5,17 @@ Scope: v3.1b issue 08, based on `92d7e3e` with the changes on
 publication of the Engineering branch. Current branch verification belongs to
 change `complete-journey` in ignored `.engineering/state/verification/`.
 
+## Accepted publication scope — 2026-09-26
+
+The human approved deferring the unfinished live correction, independent
+reverification and publication handoff, retaining that limitation in the PR, and
+obtaining fresh verification before shipping. See the
+[spec acceptance revision](../.scratch/engineering-v3-1b/spec.md#acceptance-revision--2026-09-26).
+The observed trial below is unchanged: its test-category finding is unresolved,
+and scripted fixtures do not establish completion of the deferred live steps.
+This is a revision to this slice's acceptance scope, not a change to runtime
+verification or publication safeguards. The ticket retains deferred follow-up.
+
 ## Repeatable command integration
 
 ```bash
@@ -90,7 +101,8 @@ suite selection would still include them. Its CONCERNS report was recorded
 alongside behavioral PASS; overall proof correctly remained FAIL. The human was
 shown the finding and asked to direct a bounded correction to
 `tests/integration/` plus the integration marker, preserving greeting behavior.
-Human direction and subsequent correction/reverification are pending.
+Those live steps remain unperformed and are now explicitly deferred under the
+2026-09-26 acceptance revision.
 
 ## Assembled policy and brownfield boundaries
 
@@ -122,7 +134,8 @@ The initial independent branch run passed `make check` and all 11 static evals
 and 15 failed: the Graft integration cases require the actual installed runtime,
 but the first plan declared only its package metadata, sufficient for doctor.
 The new journey integration case passed. The full regular installed Graft runtime
-is now being declared for a fresh isolated checkout and independent rerun. This
+was subsequently declared; that independent rerun passed all 317 tests, all seven
+ordinary check stages and 11 static evals. This
 is an explicit preparation correction, not a test bypass; the failed run remains
 historical evidence. Consult `complete-journey` for current authoritative results.
 
