@@ -223,6 +223,23 @@ conditional security review for sensitive operations. Tests should establish use
 behavior and failure recovery, not mirror implementation structure or Matt's
 internal workflow.
 
+## Acceptance revision — 2026-09-26
+
+The human explicitly approved deferring the unfinished live trial, retaining its
+limitation in the PR, obtaining fresh verification of this revised scope, and
+then shipping. For issue 08, Testing Decision 3 now requires the observed live
+setup, implementation and initial independent reviews plus honest recording of
+their limits. The live human-directed correction, independent reverification and
+publication handoff are deferred follow-up work, not publication prerequisites
+for this slice. This supersedes only that completion requirement; it does not
+claim those steps occurred or that scripted fixture attestations are live proof.
+
+The guide, command integration fixture and static consistency coverage remain in
+scope. Fresh independent reviews and all required checks of the revised content
+remain mandatory. Preserve the outstanding trial test-category finding and the
+unobserved steps in the ticket, evidence and PR. Runtime review, authorization and
+publication safeguards remain unchanged.
+
 ## Out of Scope
 
 Another framework rewrite; a new tracker or application lifecycle database;

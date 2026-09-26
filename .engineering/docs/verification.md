@@ -81,6 +81,17 @@ verification as needed; no command installs them on your behalf. This is content
 isolation, not a security sandbox: approved project executables can access the
 machine and absolute paths. Inspect commands and probes accordingly.
 
+For the generated Python application, the implementer prepares the reported
+checkout with `uv sync --offline --all-extras` before handing it to reviewers.
+This installs locked development tools from the existing cache; `uv run` alone
+does not select optional development dependencies in a new environment. If the
+cache is missing packages, explicit dependency installation is needed before
+the offline gate can pass. Declare the installed Matt skill outputs and required
+Graft files as inputs for doctor/navigation. Maintainer Graft integration tests
+need the full installed runtime, not just its package metadata. Do not copy a
+populated working-tree Python environment or treat a missing executable as
+successful verification.
+
 The isolated checkout remains available for independent inspection and check
 artifacts. Source mutations there invalidate proof; prepare again to build a
 fresh checkout and clear reports. Old ignored checkouts can be removed when no

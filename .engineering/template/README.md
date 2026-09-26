@@ -24,9 +24,39 @@ Add application code in `src/` and tests in `tests/`. Set
 then explicitly run `.engineering/bin/graft build` before verification. Add
 feature instructions as described in `docs/agents/domain.md`.
 
-Run `make fmt` while developing, then `make check` for the ordinary gate.
+Run `make fmt` while developing. The independent verifier runs `make check`
+for the completed change; review and ship reuse current evidence.
 `./engineering doctor` diagnoses installation health offline. Local Markdown
 specs and tickets under `.scratch/` remain trackable in Git.
+
+## Make your first change
+
+Choose a branch (`git switch -c feat/greeting`), then use your agent session:
+
+```text
+/implement Add a greeting command with tests and a runnable example.
+/review
+```
+
+Try the example. Review shows the intended scope, checks, independent findings
+and gaps. Tell the agent which findings to fix; it waits for your direction and
+reverifies the correction. After completed review, `/ship` accepts the unchanged
+presented scope, commits remaining accepted fixes, pushes and creates a PR/MR.
+Success includes its URL. Local implementation commits are neither verification
+nor human acceptance. Merge and force-push require separate authorization.
+
+Current evidence is reused, including after content-preserving commits. Unrelated
+work stays intact while verification runs in an isolated checkout. An INCOMPLETE
+result includes a fresh-session handoff; use `/review` there to obtain missing
+independent proof before shipping. After a failed push, restore connectivity and
+retry with the reported `./engineering publish run --change <change-name>` command;
+unchanged work retains authorization and does not repeat completed checks or commits.
+
+Follow the [daily development guide](ENGINEERING.md#daily-development-implement--review--ship)
+for observable examples, human-directed corrections, focused `/grill-me`, provider
+setup and recovery. Application development never requires `make manifest`.
+
+## Engineering reference
 
 Read [CLAUDE.md](CLAUDE.md) for agent policy, [ENGINEERING.md](ENGINEERING.md)
 for setup and workflows, and [REVIEW.md](REVIEW.md) for human review.

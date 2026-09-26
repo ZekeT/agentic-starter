@@ -1,10 +1,10 @@
 # Approved v3.1b implementation slices
 
-Status: in progress — tickets 01–07 merged; ticket 08 remains blocked by v3.1 issue 05
+Status: in progress — tickets 01–07 merged; ticket 08 revised scope implemented; fresh verification/publication pending; remaining live trial deferred
 
 Source: [specification](spec.md).
 
-## Delivery status — reconciled 2026-09-25
+## Delivery status — reconciled 2026-09-26
 
 | Ticket | Status | PR |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ Source: [specification](spec.md).
 | 05 | Completed / merged | [#26](https://github.com/ZekeT/agentic-starter/pull/26) |
 | 06 | Completed / merged | [#27](https://github.com/ZekeT/agentic-starter/pull/27) |
 | 07 | Completed / merged | [#28](https://github.com/ZekeT/agentic-starter/pull/28) |
-| 08 | Blocked by v3.1 issue 05; 05–07 delivered | — |
+| 08 | Revised scope implemented; fresh verification/publication pending; remaining live trial deferred by human approval | — |
 
 Merge evidence comes from local Git history. Individual tickets retain the
 implementation evidence and delivery links.
@@ -110,7 +110,9 @@ reason to postpone those updates. Preserve pinned upstream skills unchanged.
    - Deliver: lead the guide with onboarding, implement/review/ship, human-observable
      outcomes, corrections and failed-push recovery; place protocol/maintainer
      detail beneath it. Exercise the complete journey in a disposable generated
-     application, including independent verification and a human-directed fix.
+     application through initial independent verification. The remaining live
+     human-directed fix, reverification and publication handoff are deferred under
+     the spec acceptance revision of 2026-09-26; retain the coverage limitation.
      Verify assembled policy/eval consistency and external brownfield guidance;
      record observed behavior and limits, not just static assertions.
    - Demo: a new user can follow the guide from setup to publishing handoff without

@@ -1,0 +1,29 @@
+id: complete-greenfield-user-journey
+kind: static
+why: Entry guides must expose the same daily loop and recovery boundaries as runtime policy; this does not prove model behavior.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  guide = Path('ENGINEERING.md').read_text()
+  assert guide.index('### New application') < guide.index('## Daily development:') < guide.index('## Other onboarding paths') < guide.index('## Mental model')
+  daily = guide.split('## Daily development:', 1)[1].split('## Other onboarding paths', 1)[0]
+  for phrase in ('/implement → /review → /ship', 'runnable example', 'INCOMPLETE',
+                 'isolated checkout', 'Preference-only', 'two unsuccessful attempts',
+                 '/grill-me', 'human-agreed resolution', 'publish run --change',
+                 'never bypassed', 'PR/MR URL'):
+      assert phrase in daily, phrase
+  for name in ('README.md', '.engineering/template/README.md'):
+      entry = Path(name).read_text()
+      for phrase in ('/implement', '/review', '/ship', 'INCOMPLETE', 'retry', 'make manifest',
+                     'ENGINEERING.md#daily-development-implement--review--ship'):
+          assert phrase in entry, (name, phrase)
+  publication = Path('.engineering/docs/publication.md').read_text()
+  assert 'content-preserving commits' in publication.lower()
+  assert 'lookup is now required' in publication
+  review = Path('.claude/commands/review.md').read_text()
+  ship = Path('.claude/commands/ship.md').read_text()
+  assert 'Reuse current complete evidence' in review
+  assert 'Wait for human' in review
+  assert 'A transport failure alone does not repeat verification' in ship
+  assert 'Never merge or force-push' in ship
+  PY

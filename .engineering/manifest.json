@@ -247,16 +247,18 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0",
+      "owned_sha256": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "edcba077274b10054e5026664f1212a30231e0f21de5631a0e5cfd0a76c2f3b6",
         "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0",
-        "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1"
+        "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1",
+        "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0",
+        "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035"
       ],
-      "sha256": "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0"
+      "sha256": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -801,6 +803,15 @@
       "previous": [],
       "sha256": "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01"
     },
+    ".engineering/evals/cases/011-complete-journey.yaml": {
+      "executable": false,
+      "owned_sha256": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871"
+    },
     ".engineering/evals/cases/101-small-change.yaml": {
       "executable": false,
       "owned_sha256": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339",
@@ -992,7 +1003,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "753607dc45948e480ce85fe1f93a8f1c96dfa2e2d757f6c4cea28c4c25adafca",
+      "owned_sha256": "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc",
       "ownership": {
         "mode": "file"
       },
@@ -1011,9 +1022,10 @@
         "93566d6c2d635e59b408388fbd736d971080e7966b6311dae9af59f2bc6c643e",
         "b3bfb373098562caa7c88bc6962b459b53d887fa6a8f0d87535ef6b665014065",
         "61ebb140de17fa3cd159020e9684575f691107369d3932474577b3f384a2e3cf",
-        "08b9d3e57ecf715ab51016c6a9346ed562d0ea9c0c41eee6657eac293d5ae55d"
+        "08b9d3e57ecf715ab51016c6a9346ed562d0ea9c0c41eee6657eac293d5ae55d",
+        "753607dc45948e480ce85fe1f93a8f1c96dfa2e2d757f6c4cea28c4c25adafca"
       ],
-      "sha256": "753607dc45948e480ce85fe1f93a8f1c96dfa2e2d757f6c4cea28c4c25adafca"
+      "sha256": "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc"
     },
     "Makefile": {
       "executable": false,
