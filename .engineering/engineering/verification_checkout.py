@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
+from .installation import installation_role
 from .ownership import digest
 from .source import git
 from .verification_inputs import (
@@ -104,6 +105,9 @@ def materialize(root: Path, destination: Path, inputs: dict[str, Any]) -> None:
     (destination / STATE).mkdir(parents=True, exist_ok=True)
     validate_checkout(destination, inputs)
     validate_navigation(destination, plan)
+    # Classification needs the proposed recorded role (ADR 0001), never a default
+    # or an out-of-scope working edit; absence blocks planning and reuse.
+    installation_role(destination)
 
 
 def validate_checkout(checkout: Path, inputs: dict[str, Any]) -> None:

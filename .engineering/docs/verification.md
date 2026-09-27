@@ -39,7 +39,10 @@ included automatically. A URL alone is not a requirement-content fingerprint.
 Reviewers independently assess plan completeness and security classification.
 
 Planning reads the installation role, `maintainer` or `consumer`, from the
-committed `.engineering/state/install.json`. Generation and adoption record
+proposed `.engineering/state/install.json` in the verified content: the
+committed state, or working bytes only when that path is in the plan's paths.
+An out-of-scope working edit never supplies or changes the role; `status`,
+`check` and `record` re-validate it. Generation and adoption record
 `consumer`; the maintainer checkout records `maintainer`. No role is ever
 assumed: when it is missing, `prepare` fails INCOMPLETE and names the fix. From
 a starter checkout, preview `engineering update <project>` and apply it; the
