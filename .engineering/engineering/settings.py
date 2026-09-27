@@ -5,12 +5,16 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from .config import object_value, read_text, safe_path, validate_config
+from .config import Config, object_value, read_text, safe_path, validate_config
 
 CONFIGURATION = ".engineering/config.toml"
 SCHEMA_VERSION = 1
 # MIGRATIONS[n] rewrites schema n text to schema n + 1, keeping project values.
 MIGRATIONS: dict[int, Callable[[str], str]] = {}
+
+
+class MigrationGap(ValueError):
+    """The starter lacks a working schema step; the project cannot repair it."""
 
 
 def load(root: Path) -> dict[str, Any]:
@@ -25,23 +29,21 @@ def migrate(text: str) -> tuple[str, list[str]]:
     while type(version) is int and 0 < version < SCHEMA_VERSION:
         step = MIGRATIONS.get(version)
         if step is None:
-            raise ValueError(f"config.schema: no migration from version {version}")
+            raise MigrationGap(f"config.schema: no migration from version {version}")
         text = step(text)
         if tomllib.loads(text).get("schema_version") != version + 1:
-            raise ValueError(f"config.schema: migration from {version} failed")
+            raise MigrationGap(f"config.schema: migration from {version} failed")
         notes.append(f"schema_version {version} → {version + 1}")
         version += 1
     return text, notes
 
 
-def validate(root: Path, text: str) -> dict[str, Any]:
+def validate(root: Path, text: str) -> Config:
     """Check the complete configuration, including maintainability thresholds."""
-    data = parse(root, text)
-    maintainability = data.get("maintainability", {})
-    validate_config(
+    maintainability = parse(root, text).get("maintainability", {})
+    return validate_config(
         root, {"schema_version": 1, "project": {"maintainability": maintainability}}
     )
-    return data
 
 
 def parse(root: Path, text: str) -> dict[str, Any]:

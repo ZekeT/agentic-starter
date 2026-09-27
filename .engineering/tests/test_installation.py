@@ -342,6 +342,24 @@ def test_configuration_schema_change_is_migrated_in_the_update(
     assert "schema_version = 2" in config and "warn_file_lines = 250" in config
 
 
+def test_missing_schema_migration_blames_the_starter(installation, capsys, monkeypatch):
+    from engineering import settings
+
+    template, target = installation
+    adopt(template, target)
+    # Simulate a release that moved the schema but shipped no migration step.
+    monkeypatch.setattr(settings, "SCHEMA_VERSION", 2)
+    customize(template, schema_version=2)
+    refresh(template)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target))
+    assert status == 1
+    assert "no migration from version 1" in output
+    assert "update the starter or report the missing migration" in output
+    assert "repair project configuration" not in output
+    assert snapshot(target) == before
+
+
 def test_invalid_configuration_fails_update_and_doctor(installation, capsys):
     template, target = installation
     adopt(template, target)

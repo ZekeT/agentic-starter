@@ -65,17 +65,10 @@ def object_value(value: Any, label: str) -> dict[str, Any]:
 
 
 def load_config(root: Path) -> Config:
-    """Read defaults and project overrides from the existing template manifest."""
-    from .settings import load
+    """Read maintainability thresholds from the validated project configuration."""
+    from .settings import CONFIGURATION, validate
 
-    data = load(root)
-    return validate_config(
-        root,
-        {
-            "schema_version": 1,
-            "project": {"maintainability": data.get("maintainability", {})},
-        },
-    )
+    return validate(root, read_text(root, CONFIGURATION))
 
 
 def validate_config(root: Path, data: dict[str, Any]) -> Config:

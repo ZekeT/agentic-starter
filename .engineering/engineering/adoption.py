@@ -103,13 +103,18 @@ def seed(template: Path, name: str) -> bytes | None:
 
 def plan_configuration(plan: Plan) -> None:
     """Validate and schema-migrate project configuration; never overwrite values."""
-    from .settings import CONFIGURATION, migrate, validate
+    from .settings import CONFIGURATION, MigrationGap, migrate, validate
 
     local = read_bytes(plan.target, CONFIGURATION)
     raw = local if local is not None else seed(plan.template, CONFIGURATION)
     try:
         text, notes = migrate((raw or b"").decode())
         validate(plan.target, text)
+    except MigrationGap as exc:
+        raise ValueError(
+            f"{CONFIGURATION}: {exc}; starter defect, not a project error: "
+            "update the starter or report the missing migration"
+        ) from exc
     except ValueError as exc:
         raise ValueError(
             f"{CONFIGURATION}: {exc}; repair project configuration, then re-plan"
