@@ -10,17 +10,27 @@ reported as an update conflict.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** implemented — awaiting independent verification
 
-- [ ] Generated and adopted projects record the configuration file as project-owned rather than whole-file managed.
-- [ ] Updating keeps customised configuration values unchanged.
-- [ ] Updating across a configuration schema change migrates values and reports the migration in its preview.
-- [ ] Invalid project configuration makes update and doctor fail visibly.
-- [ ] Existing installations whose manifest still marks the file as managed are migrated to project ownership without losing values.
-- [ ] A consumer edit to managed implementation is still reported as an update conflict and never overwritten.
-- [ ] The template copy of the configuration remains maintainer source in the maintainer checkout.
-- [ ] Command-level fixture tests cover preservation, schema migration, ownership migration and the managed-edit conflict.
-- [ ] Installation/update documentation reflects the ownership; affected evals updated.
+- [x] Generated and adopted projects record the configuration file as project-owned rather than whole-file managed.
+- [x] Updating keeps customised configuration values unchanged.
+- [x] Updating across a configuration schema change migrates values and reports the migration in its preview.
+- [x] Invalid project configuration makes update and doctor fail visibly.
+- [x] Existing installations whose manifest still marks the file as managed are migrated to project ownership without losing values.
+- [x] A consumer edit to managed implementation is still reported as an update conflict and never overwritten.
+- [x] The template copy of the configuration remains maintainer source in the maintainer checkout.
+- [x] Command-level fixture tests cover preservation, schema migration, ownership migration and the managed-edit conflict.
+- [x] Installation/update documentation reflects the ownership; affected evals updated.
 - [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
+
+- Implementation (branch `feat/v3-1c-02-project-configuration-ownership`):
+  `.engineering/config.toml` uses the existing `preserve` ownership and is
+  seeded like other project configuration, from `.engineering/template/config.toml`
+  when the template is the maintainer checkout. Update/adopt planning validates
+  it (invalid stops the plan), applies ordered schema migrations from
+  `settings.MIGRATIONS` as a `MIGRATE` preview action, and reports previously
+  managed entries as `PRESERVE … Now project-owned` while dropping their state
+  baseline. No schema change exists yet; the migration test injects one.
+  Remaining: independent verification and review, human acceptance, publication.
