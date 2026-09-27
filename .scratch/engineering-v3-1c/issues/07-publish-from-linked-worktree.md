@@ -1,0 +1,26 @@
+# 07: Publish safely from a linked Git worktree
+
+**Spec:** Defect found while publishing v3.1c tickets 01, 02 and 04; not part of the [spec](../spec.md) slices.
+
+**What to build:** `engineering publish run` works from a linked Git worktree
+exactly as from a main checkout. Today, Git exports an absolute `GIT_DIR` (and
+related variables) to hooks run inside a linked worktree. The publication
+pre-push guard then runs nested Git commands against its temporary verification
+clone (for example `git -C <clone> update-ref HEAD <base>`), which inherit that
+environment and act on the worktree's repository instead: the publishing branch
+is reset to the comparison base, content validation fails, and the push stops.
+Nested Git commands run by Engineering tooling must target only the repository
+they name.
+
+**Blocked by:** None (can start immediately).
+
+**Status:** ready-for-agent
+
+- [ ] Nested Git commands started from the pre-push guard (and any other Engineering code path running inside Git hooks) ignore hook-provided repository environment such as `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_COMMON_DIR` and `GIT_PREFIX`, while the caller's original Git configuration handling is preserved.
+- [ ] Publishing from a linked worktree never moves the publishing branch or any other ref, and pushes the accepted commit.
+- [ ] A command-level fixture test publishes from a linked worktree to a local bare remote with a fake provider and asserts the branch ref is unchanged and the pushed head equals the accepted commit.
+- [ ] Existing publication behaviour and tests from a main checkout are unchanged.
+- [ ] Publication documentation notes linked-worktree support if wording is affected.
+- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+
+## Comments
