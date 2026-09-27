@@ -118,7 +118,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "372d4e7aff12cf3377de56b5fdcd00856f17d241f758b68986323e176bc7b4e1"
+      "upstream": "cb3692d8bfdb782d2d7a614ec987a77b7b08a5db2ba659150575493bbfa3e290"
     },
     ".engineering/docs/testing.md": {
       "ownership": {
@@ -280,7 +280,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "2ffac975065fe1dbff458f8096aa9ff41ef9e3097406ac5ea4dad9a5ff543eb7"
+      "upstream": "d08f3d981a7cd7fe8f4a430c43d014e86ce90283506d02638ae5a49e21be6c62"
     },
     ".engineering/engineering/publication_provider.py": {
       "ownership": {
