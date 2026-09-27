@@ -235,3 +235,12 @@ def test_invalid_provider_fails_before_partial_status(dependency_repo):
     result = deps(dependency_repo, "status")
     assert result.returncode == 1 and "navigation.provider" in result.stderr
     assert result.stdout == ""
+
+
+def test_other_npm_dependency_is_not_judged_by_graft_content(tmp_path):
+    from engineering.registry import installed_status
+
+    row = {"id": "other", "kind": "npm", "source": "other", "version": "1.0.0"}
+    row["required"] = True
+    record = {"managed": True, "installed_version": "1.0.0", "outputs": {}}
+    assert installed_status(tmp_path, row, {"other": record}) == ("1.0.0", "OK")

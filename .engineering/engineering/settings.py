@@ -122,11 +122,15 @@ def parse(root: Path, text: str) -> dict[str, Any]:
     return data
 
 
+def selected_provider(config: dict[str, Any], capability: str) -> str:
+    """Name the provider parsed configuration selects for an optional capability."""
+    default = CAPABILITIES[capability][0]
+    return str(config.get(capability, {}).get("provider", default))
+
+
 def provider(root: Path, capability: str) -> str:
     """Name the provider an optional capability selects; "none" disables it."""
-    return str(
-        load(root).get(capability, {}).get("provider", CAPABILITIES[capability][0])
-    )
+    return selected_provider(load(root), capability)
 
 
 def graft_navigation(root: Path) -> bool:

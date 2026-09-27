@@ -3,7 +3,6 @@
 from pathlib import Path
 from typing import Any
 
-from . import graft
 from .apply import Action, Plan
 from .ownership import (
     digest,
@@ -14,24 +13,21 @@ from .ownership import (
     read_bytes,
     remove_owned,
 )
-from .registry import REGISTRY, STATE, registry, state
-from .settings import CAPABILITIES, CONFIGURATION
-
-
-def content(row: dict[str, Any]) -> tuple[str, ...]:
-    """Name the content a capability dependency installs besides recorded outputs."""
-    return graft.CONTENT if row["id"] == "graft" else ()
+from .registry import (
+    REGISTRY,
+    STATE,
+    content,
+    generated,
+    output_scope,
+    registry,
+    state,
+)
+from .settings import CONFIGURATION, selected_provider
 
 
 def configured(root: Path) -> bool:
     """Capability selection needs the project's configuration and registry."""
     return all((root / name).is_file() for name in (CONFIGURATION, REGISTRY))
-
-
-def provider(config: dict[str, Any], capability: str) -> str:
-    """Read a capability's provider from validated (possibly migrated) settings."""
-    default = CAPABILITIES[capability][0]
-    return str(config.get(capability, {}).get("provider", default))
 
 
 def installer(root: Path, config: dict[str, Any], name: str) -> str | None:
@@ -42,11 +38,42 @@ def installer(root: Path, config: dict[str, Any], name: str) -> str | None:
         capability = row.get("capability")
         if (
             capability
-            and provider(config, capability) == row["id"]
-            and name in content(row)
+            and selected_provider(config, capability) == row["id"]
+            and name in content(row["id"])
         ):
             return str(row["id"])
     return None
+
+
+def handover(
+    root: Path,
+    config: dict[str, Any],
+    name: str,
+    entry: dict[str, Any],
+    legacy: dict[str, Any],
+) -> Action | None:
+    """Transfer earlier distributed content to the dependency now installing it.
+
+    Content matching no distributed, generated or recorded version was customized
+    and is reported instead of being kept silently.
+    """
+    dependency = installer(root, config, name)
+    if dependency is None:
+        return None
+    scope = owned_content(read_bytes(root, name), name, entry["ownership"])
+    outputs = state(root)["dependencies"].get(dependency, {}).get("outputs", {})
+    known = {entry["upstream"], outputs.get(name), digest(generated(dependency, name))}
+    if name in legacy:
+        known.update(hash_history(legacy[name], name))
+    if scope is not None and digest(scope) not in known:
+        reason = (
+            f"Now installed by the {dependency} dependency, but local content was "
+            "customized; remove or restore it, then re-plan"
+        )
+        return Action(name, "CONFLICT", reason)
+    return Action(
+        name, "PRESERVE", f"Now installed by the {dependency} dependency; kept"
+    )
 
 
 def plan_deselected(
@@ -66,18 +93,20 @@ def plan_deselected(
     forget = []
     for row in registry(root)["dependency"]:
         capability = row.get("capability")
-        if not capability or provider(config, capability) == row["id"]:
+        if not capability or selected_provider(config, capability) == row["id"]:
             continue
-        label = f"{capability} disabled (provider {provider(config, capability)})"
+        label = (
+            f"{capability} disabled (provider {selected_provider(config, capability)})"
+        )
         outputs = records.get(row["id"], {}).get("outputs", {})
-        for path in sorted((set(outputs) | set(content(row))) - handled):
-            spec = graft.output_scope(path)
+        for path in sorted((set(outputs) | set(content(row["id"]))) - handled):
+            spec = output_scope(row["id"], path)
             local = read_bytes(root, path)
             plan.observed[path] = observe(root, path)
             scope = owned_content(local, path, spec)
             if scope is None:
                 continue
-            known = {outputs.get(path), digest(graft.generated(path))}
+            known = {outputs.get(path), digest(generated(row["id"], path))}
             if spec["mode"] == "file" and path in legacy:
                 known.update(hash_history(legacy[path], path))
             if digest(scope) not in known:
@@ -87,12 +116,20 @@ def plan_deselected(
                 )
                 plan.actions.append(Action(path, "CONFLICT", reason))
                 continue
+            reason = f"REMOVE_SAFE: {label}; remove {row['id']} content"
+            # Compose with an update already proposed for this path (for example a
+            # changed integration section) so one action carries both changes.
+            earlier = next(
+                (a for a in plan.actions if a.path == path and a.content is not None),
+                None,
+            )
+            if earlier is not None:
+                plan.actions.remove(earlier)
+                reason = f"{earlier.reason}; {reason}"
+            removed = remove_owned(earlier.content if earlier else local, path, spec)
             plan.actions.append(
                 Action(
-                    path,
-                    "REMOVE_SAFE" if spec["mode"] == "file" else "MERGE",
-                    f"REMOVE_SAFE: {label}; remove {row['id']} content",
-                    remove_owned(local, path, spec),
+                    path, "REMOVE_SAFE" if removed is None else "MERGE", reason, removed
                 )
             )
         if row["id"] in records:

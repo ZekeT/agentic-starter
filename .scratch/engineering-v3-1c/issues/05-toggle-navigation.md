@@ -48,3 +48,18 @@ index and root settings.
 - Remaining: independent maintainability/behavioral verification and human
   review. Upgrade proposal `graft → none` for existing installations is ticket 06.
   Disabling leaves the ignored `.engineering/graft/node_modules/` install in place.
+- Review corrections (human-authorized Q6–Q10; local commit only, awaiting
+  independent reverification):
+  - Q6: disabling composes the navigation-section removal onto any update
+    already proposed for the same path (one action carries both); plan
+    application refuses a plan with two content actions for one path.
+  - Q7: the reviewed Graft lock ships as fixed engineering content
+    (`.engineering/engineering/graft-package-lock.json`); the first install
+    uses `npm ci` against it (project lock preferred when it matches the pin).
+  - Q8: the ownership handover reports CONFLICT for content matching no
+    distributed, generated or recorded version (e.g. a customized launcher).
+  - Q9: `registry.CONTENT_OWNERS` maps dependency id to its content owner;
+    state validation, status, deselection, deps and template build use it.
+  - Q10: `settings.selected_provider(config, …)` is the single provider
+    reading; `settings.provider(root, …)` and capabilities use it.
+  - Section markers left as is (single-sourcing was not trivial).

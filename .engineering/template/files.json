@@ -36,6 +36,7 @@
     ".engineering/engineering/deps.py": ".engineering/engineering/deps.py",
     ".engineering/engineering/doctor.py": ".engineering/engineering/doctor.py",
     ".engineering/engineering/doctor_wiring.py": ".engineering/engineering/doctor_wiring.py",
+    ".engineering/engineering/graft-package-lock.json": ".engineering/engineering/graft-package-lock.json",
     ".engineering/engineering/graft.py": ".engineering/engineering/graft.py",
     ".engineering/engineering/growth.py": ".engineering/engineering/growth.py",
     ".engineering/engineering/inspection.py": ".engineering/engineering/inspection.py",

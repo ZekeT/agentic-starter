@@ -13,9 +13,9 @@ from generate_template_manifest import build_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / ".engineering"))
-from engineering import graft  # noqa: E402
 from engineering.adoption import template_manifest  # noqa: E402
 from engineering.ownership import encoded, json_object, remove_owned  # noqa: E402
+from engineering.registry import CONTENT_OWNERS, output_scope  # noqa: E402
 from engineering.verification_inputs import source_path  # noqa: E402
 
 
@@ -24,9 +24,10 @@ def selected_content(name: str, content: bytes) -> bytes:
 
     The dependency flow installs it once a project selects Graft.
     """
-    if name not in graft.CONTENT:
+    owner = next((d for d, m in CONTENT_OWNERS.items() if name in m.CONTENT), None)
+    if owner is None:
         return content
-    scope = graft.output_scope(name)
+    scope = output_scope(owner, name)
     if scope["mode"] == "file":
         raise ValueError(f"{name}: navigation content is installed, never shipped")
     return remove_owned(content, name, scope) or b""

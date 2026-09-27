@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import object_value, safe_path
-from .ownership import owned_content, read_bytes
+from .ownership import json_object, owned_content, read_bytes
 
 PACKAGE = ".engineering/graft"
 SKILL = ".claude/skills/graft/SKILL.md"
@@ -25,6 +25,9 @@ CONTENT = (
     LAUNCHER,
     GUIDANCE,
 )
+# The reviewed lock ships with the engineering package (not as navigation content)
+# so enabling installs exactly the reviewed resolution with npm ci.
+PINNED_LOCK = ".engineering/engineering/graft-package-lock.json"
 # Content agents load as instructions; leftovers would steer them to absent Graft.
 AGENT_CONTENT = (SKILL, GUIDANCE)
 LAUNCHER_TEXT = b"""#!/bin/sh
@@ -76,6 +79,12 @@ def content(pins: dict[str, bytes], node: str, package: Path) -> dict[str, bytes
         LAUNCHER: LAUNCHER_TEXT,
         GUIDANCE: GUIDANCE_TEXT,
     }
+
+
+def installed_version(root: Path) -> str | None:
+    """Read the version of the Graft package installed in the navigation tools."""
+    package = read_bytes(root, f"{PACKAGE}/node_modules/@nanonets/graft/package.json")
+    return json_object(package or b"{}").get("version")
 
 
 def present(root: Path, names: tuple[str, ...] = CONTENT) -> list[str]:

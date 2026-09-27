@@ -91,6 +91,11 @@ def test_generated_project_enables_and_disables_navigation(tmp_path):
     assert sorted(navigation_content(root)) == sorted(
         [LAUNCHER, *PINS, SKILL, "CLAUDE.md"]
     )
+    # The first install uses the reviewed lock, never a fresh resolution.
+    npm = [json.loads(line) for line in Path(env["TEMPLATE_CALLS"]).open()]
+    npm = [call[:2] for call in npm if call[0] == "npm"]
+    assert npm == [["npm", "ci"]]
+    assert (root / PINS[1]).read_bytes() == (ROOT / PINS[1]).read_bytes()
     assert (root / LAUNCHER).stat().st_mode & 0o111
     assert (root / SKILL).read_text() == "Fixture Graft skill\n"
     policy = (root / "CLAUDE.md").read_text()
@@ -155,18 +160,15 @@ def test_disabling_refuses_customized_navigation_content(installation, capsys):
     assert snapshot(target) == before
 
 
-def test_update_keeps_installed_launcher_while_navigation_is_selected(
-    installation, capsys
-):
+def shipped_launcher(template, target, local=None):
+    """Install the launcher as earlier releases did, as a whole-file managed scope."""
     from engineering.installation import STATE_PATH
     from engineering.ownership import digest, encoded, json_object
 
-    template, target = installation
     adopt(template, target)
     navigate(target, "graft", ["src"])
-    # Earlier releases shipped the launcher as a whole-file managed scope.
     raw = (ROOT / LAUNCHER).read_bytes()
-    save(target, LAUNCHER, raw.decode())
+    save(target, LAUNCHER, (local or raw).decode())
     (target / LAUNCHER).chmod(0o755)
     state = json_object((target / STATE_PATH).read_bytes())
     state["entries"][LAUNCHER] = {
@@ -185,12 +187,34 @@ def test_update_keeps_installed_launcher_while_navigation_is_selected(
     }
     manifest_path.write_bytes(encoded(manifest))
     commit(target)
+    return raw
+
+
+def test_update_keeps_installed_launcher_while_navigation_is_selected(
+    installation, capsys
+):
+    from engineering.installation import STATE_PATH
+    from engineering.ownership import json_object
+
+    template, target = installation
+    raw = shipped_launcher(template, target)
     status, output = engineering(capsys, template, "update", str(target), "--apply")
     assert status == 0, output
     assert re.search(rf"(?m)^PRESERVE {re.escape(LAUNCHER)}: .*graft", output)
     assert (target / LAUNCHER).read_bytes() == raw
     entries = json_object((target / STATE_PATH).read_bytes())["entries"]
     assert LAUNCHER not in entries
+
+
+def test_update_reports_a_customized_launcher_during_handover(installation, capsys):
+    template, target = installation
+    local = b'#!/bin/sh\n# Local wrapper.\nexec ./engineering navigation "$@"\n'
+    shipped_launcher(template, target, local)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 1
+    assert re.search(rf"(?m)^CONFLICT {re.escape(LAUNCHER)}: .*customized", output)
+    assert snapshot(target) == before
 
 
 def test_disabled_navigation_command_refuses(installation):
@@ -312,3 +336,42 @@ def test_navigation_content_from_an_earlier_release_is_reinstalled(installation)
     assert re.search(r"(?m)^graft .* OUTDATED$", status.stdout), status.stdout
     result = doctor(target)
     assert result.returncode == 1 and "graft: OUTDATED" in result.stdout
+
+
+def test_disabling_composes_with_an_upstream_policy_change(installation, capsys):
+    from .test_installation import refresh
+
+    template, target = installation
+    disabled_adoption(template, target, capsys)
+    # One update both removes navigation guidance and changes the integration section.
+    end = "<!-- engineering:integration:end -->"
+    policy = template / "CLAUDE.md"
+    policy.write_text(policy.read_text().replace(end, "New upstream rule.\n" + end, 1))
+    refresh(template)
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 0, output
+    text = (target / "CLAUDE.md").read_text()
+    assert "New upstream rule." in text
+    assert MARKER not in text
+    assert "Healthy" in engineering(capsys, target, "doctor")[1]
+
+
+def test_apply_refuses_two_content_actions_for_one_path(installation):
+    from engineering.apply import Action, Plan, apply_plan
+
+    template, target = installation
+    plan = Plan(template, target, "update", None)
+    plan.actions = [
+        Action("CLAUDE.md", "MERGE", "first", b"one\n"),
+        Action("CLAUDE.md", "MERGE", "second", b"two\n"),
+    ]
+    before = snapshot(target)
+    with pytest.raises(ValueError, match="CLAUDE.md"):
+        apply_plan(plan)
+    assert snapshot(target) == before
+
+
+def test_shipped_navigation_lock_is_the_reviewed_lock():
+    from engineering import graft
+
+    assert (ROOT / graft.PINNED_LOCK).read_bytes() == (ROOT / PINS[1]).read_bytes()

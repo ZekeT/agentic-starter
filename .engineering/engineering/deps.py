@@ -20,6 +20,7 @@ from .registry import (
     REGISTRY,
     STATE,
     installed_status,
+    output_scope,
     registry,
     required,
     selected,
@@ -87,18 +88,21 @@ def npm_stage(root: Path, directory: Path, row: dict[str, Any]) -> dict[str, byt
         )
     original.update(private=True, dependencies={row["source"]: row["version"]})
     (directory / "package.json").write_bytes(encoded(original))
-    lock = read_bytes(root, f"{graft.PACKAGE}/package-lock.json")
-    if (
-        lock
-        and json.loads(lock)
-        .get("packages", {})
-        .get("", {})
-        .get("dependencies", {})
-        .get(row["source"])
-        == row["version"]
-    ):
-        (directory / "package-lock.json").write_bytes(lock)
-        run(["npm", "ci", "--no-audit", "--no-fund"], directory)
+    # Prefer the project's lock, then the shipped reviewed lock, for this exact pin.
+    for name in (f"{graft.PACKAGE}/package-lock.json", graft.PINNED_LOCK):
+        lock = read_bytes(root, name)
+        if (
+            lock
+            and json.loads(lock)
+            .get("packages", {})
+            .get("", {})
+            .get("dependencies", {})
+            .get(row["source"])
+            == row["version"]
+        ):
+            (directory / "package-lock.json").write_bytes(lock)
+            run(["npm", "ci", "--no-audit", "--no-fund"], directory)
+            break
     else:
         run(["npm", "install", "--no-audit", "--no-fund"], directory)
     return {
@@ -225,7 +229,7 @@ def operate(
                 npm_pending = package_dir / "node_modules"
             old = evidence["dependencies"].get(row["id"], {}).get("outputs", {})
             for path, content in outputs.items():
-                scope = graft.output_scope(path)
+                scope = output_scope(row["id"], path)
                 local = read_bytes(root, path)
                 current = owned_content(local, path, scope)
                 # Earlier releases shipped the pins; npm_stage validates them.
@@ -246,7 +250,7 @@ def operate(
                 changes[path] = merge_owned(local, content, path, scope)
             for path in old.keys() - outputs.keys():
                 changes[path] = remove_owned(
-                    read_bytes(root, path), path, graft.output_scope(path)
+                    read_bytes(root, path), path, output_scope(row["id"], path)
                 )
             evidence["dependencies"][row["id"]] = {
                 "managed": True,

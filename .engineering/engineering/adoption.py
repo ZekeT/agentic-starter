@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .apply import Action, Plan, baseline
-from .capabilities import installer, plan_deselected
+from .capabilities import handover, plan_deselected
 from .config import object_value, safe_path, validate_config
 from .inspection import INSPECTED, inspect_target
 from .installation import (
@@ -265,11 +265,10 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
     for name, entry in entries.items():
         if name not in files:
             plan.observed[name] = observe(target, name)
-            if dependency := installer(target, config, name):
+            if transfer := handover(target, config, name, entry, legacy):
                 # Visible ownership transfer: the selected capability's dependency
                 # installs and tracks this content from now on.
-                reason = f"Now installed by the {dependency} dependency; kept"
-                plan.actions.append(Action(name, "PRESERVE", reason))
+                plan.actions.append(transfer)
                 continue
             local = read_bytes(target, name)
             spec = entry["ownership"]

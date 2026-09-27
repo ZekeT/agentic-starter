@@ -3,6 +3,7 @@
 import re
 import tomllib
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 from . import graft
@@ -18,6 +19,27 @@ SOURCES = {
     "show-me": ("skills", "humanlayer/skills"),
     "karpathy-guidelines": ("skills", "multica-ai/andrej-karpathy-skills"),
 }
+
+# Modules owning the content a dependency installs besides skills, by dependency id.
+CONTENT_OWNERS: dict[str, ModuleType] = {"graft": graft}
+
+
+def content(dependency: str) -> tuple[str, ...]:
+    """Name the content a dependency installs besides skills."""
+    owner = CONTENT_OWNERS.get(dependency)
+    return owner.CONTENT if owner else ()
+
+
+def output_scope(dependency: str, path: str) -> dict[str, Any]:
+    """Outputs are whole files unless the dependency's content owner bounds them."""
+    owner = CONTENT_OWNERS.get(dependency)
+    return owner.output_scope(path) if owner else {"mode": "file"}
+
+
+def generated(dependency: str, path: str) -> bytes | None:
+    """Return fixed content the dependency's content owner generates for a path."""
+    owner = CONTENT_OWNERS.get(dependency)
+    return owner.generated(path) if owner else None
 
 
 def registry(root: Path) -> dict[str, Any]:
@@ -98,7 +120,7 @@ def state(root: Path) -> dict[str, Any]:
             allowed = (
                 path.startswith(".claude/skills/")
                 if kind == "skills"
-                else path in graft.CONTENT
+                else path in content(name)
             )
             if not allowed:
                 raise ValueError(f"deps.state: unexpected managed output {path}")
@@ -107,9 +129,10 @@ def state(root: Path) -> dict[str, Any]:
     return data
 
 
-def output_digest(root: Path, path: str) -> str | None:
+def output_digest(root: Path, dependency: str, path: str) -> str | None:
     """Fingerprint only the part of a file that a dependency output owns."""
-    return digest(owned_content(read_bytes(root, path), path, graft.output_scope(path)))
+    scope = output_scope(dependency, path)
+    return digest(owned_content(read_bytes(root, path), path, scope))
 
 
 def selected(root: Path, dependency: dict[str, Any]) -> bool:
@@ -134,30 +157,24 @@ def installed_status(
         return installed, f"NOT SELECTED ({dependency['capability']})"
     if row is None:
         return "missing", "MISSING" if dependency["required"] else "OPTIONAL"
-    for name, sha in row["outputs"].items():
-        if output_digest(root, name) != sha:
+    name = dependency["id"]
+    for path, sha in row["outputs"].items():
+        if output_digest(root, name, path) != sha:
             return str(row["installed_version"]), "MODIFIED"
     version = str(row["installed_version"])
-    if dependency["kind"] == "npm":
-        # Installations predating complete navigation content reinstall it.
-        if set(graft.CONTENT) - set(row["outputs"]):
+    # Installations predating complete owned content reinstall it.
+    if set(content(name)) - set(row["outputs"]):
+        return version, "MISSING"
+    # Fixed content from an earlier release is refreshed by reinstalling.
+    for path in content(name):
+        fixed = generated(name, path)
+        if fixed is not None and row["outputs"][path] != digest(fixed):
+            return version, "OUTDATED"
+    owner = CONTENT_OWNERS.get(name)
+    if owner is not None and owner.installed_version(root) != version:
+        return version, "MISSING"
+    for skill in dependency.get("skills", []):
+        path = f".claude/skills/{skill}/SKILL.md"
+        if path not in row["outputs"] or not read_bytes(root, path):
             return version, "MISSING"
-        # Fixed content from an earlier release is refreshed by reinstalling.
-        for name in graft.CONTENT:
-            fixed = graft.generated(name)
-            if fixed is not None and row["outputs"][name] != digest(fixed):
-                return version, "OUTDATED"
-        package = json_object(
-            read_bytes(
-                root, ".engineering/graft/node_modules/@nanonets/graft/package.json"
-            )
-            or b"{}"
-        )
-        if package.get("version") != version:
-            return version, "MISSING"
-    else:
-        for skill in dependency["skills"]:
-            path = f".claude/skills/{skill}/SKILL.md"
-            if path not in row["outputs"] or not read_bytes(root, path):
-                return version, "MISSING"
     return version, "OK" if version == dependency["version"] else "PIN DIFFERS"
