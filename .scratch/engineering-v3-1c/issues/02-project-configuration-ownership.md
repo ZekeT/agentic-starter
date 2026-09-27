@@ -34,3 +34,11 @@ reported as an update conflict.
   managed entries as `PRESERVE … Now project-owned` while dropping their state
   baseline. No schema change exists yet; the migration test injects one.
   Remaining: independent verification and review, human acceptance, publication.
+- Review corrections (human-authorized): `settings.validate` is now the single
+  configuration validity rule and returns the maintainability `Config`;
+  `config.load_config` delegates to it, so update and doctor share it. A missing
+  or failed starter schema migration raises `settings.MigrationGap`, and update
+  reports it as a starter defect ("update the starter or report the missing
+  migration") instead of asking the project to repair its configuration; covered
+  by `test_missing_schema_migration_blames_the_starter`. Status unchanged:
+  implemented — awaiting independent verification.
