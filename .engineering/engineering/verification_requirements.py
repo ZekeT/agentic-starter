@@ -6,7 +6,7 @@ from typing import Any
 
 from .installation import MANIFEST_PATH, ROLES, STATE_PATH, installation_role
 from .ownership import METADATA, json_object, read_bytes, validate_ownership
-from .settings import CONFIGURATION, graft_navigation, validate
+from .settings import CONFIGURATION, graft_navigation, provider, validate
 from .source import git
 
 # Starter tooling that is never distributed; it is maintainer source there only.
@@ -35,6 +35,11 @@ def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
         except tomllib.TOMLDecodeError as error:
             raise ValueError(f"{CONFIGURATION}: {error}") from error
     graft = configured and graft_navigation(checkout)
+    if GRAFT in plan["checks"] and configured and provider(checkout, "navigation") != "graft":
+        raise ValueError(
+            "navigation disabled: remove the Graft check from the plan, or "
+            'select [navigation] provider = "graft"'
+        )
     categories = classify(checkout, role, plan["paths"])
     if edited := categories["managed implementation"]:
         raise ValueError(

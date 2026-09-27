@@ -9,6 +9,8 @@ from typing import Any
 from .config import object_value, safe_path
 
 METADATA = {".engineering/manifest.json", ".engineering/state/install.json"}
+# Sections that may share one file, such as agent policy's navigation guidance.
+SECTIONS = ("integration", "navigation")
 
 
 def digest(content: bytes | None) -> str | None:
@@ -67,7 +69,11 @@ def section_bounds(
     """Validate exactly one complete line-delimited region, or an unmarked file."""
     begin, end = markers(name, spec)
     if begin not in content and end not in content:
-        if b"engineering:" in content:
+        others = content
+        for tag in SECTIONS:
+            for marker in markers(name, {"marker": tag}):
+                others = others.replace(marker, b"")
+        if b"engineering:" in others:
             raise ValueError(f"{name}: unrecognized engineering markers")
         return None
     if content.count(begin) != 1 or content.count(end) != 1:
@@ -175,14 +181,20 @@ def merge_owned(
     return local + gap + incoming
 
 
+def remove_owned(local: bytes | None, name: str, spec: dict[str, Any]) -> bytes | None:
+    """Delete a whole-file scope, or remove only a bounded scope from shared content."""
+    if spec["mode"] == "file":
+        return None
+    incoming = encoded({}) if spec["mode"] == "hooks" else b""
+    return merge_owned(local, incoming, name, spec)
+
+
 def distribution_ownership(name: str) -> dict[str, Any]:
     """Assign starter inventory ownership explicitly, preserving application artifacts."""
     if name in {
         # Project configuration: seeded once, then validated and schema-migrated.
         ".engineering/config.toml",
         ".engineering/dependencies.toml",
-        ".engineering/graft/package.json",
-        ".engineering/graft/package-lock.json",
     }:
         return {"mode": "preserve"}
     if name == ".env.template" or name.startswith(("docs/", ".github/")):

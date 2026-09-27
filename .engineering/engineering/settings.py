@@ -71,6 +71,7 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         "tracker",
         "maintainability",
         "migration",
+        *CAPABILITIES,
     }
     if set(data) - allowed:
         raise ValueError(f"config.unknown: {sorted(set(data) - allowed)}")
@@ -86,7 +87,9 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         if set(value) - keys:
             raise ValueError(f"config.unknown: {section}")
     for capability, providers in CAPABILITIES.items():
-        if data.get(capability, {}).get("provider", providers[0]) not in providers:
+        # Every capability section is validated, including ones added later.
+        chosen = object_value(data.get(capability, {}), capability)
+        if chosen.get("provider", providers[0]) not in providers:
             raise ValueError(
                 f"{capability}.provider must be one of: {', '.join(providers)}"
             )

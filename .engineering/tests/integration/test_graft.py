@@ -204,7 +204,7 @@ def test_empty_scope_and_dependency_diagnostics(repo):
     assert result.returncode == 1 and "0.0.0 required" in result.stderr
     (repo / ".engineering/graft/node_modules").unlink()
     result = invoke(repo, "check")
-    assert result.returncode == 1 and "make graft-install" in result.stderr
+    assert result.returncode == 1 and "deps install graft" in result.stderr
 
 
 def test_enrichment_drift_does_not_block_structural_gate(repo):

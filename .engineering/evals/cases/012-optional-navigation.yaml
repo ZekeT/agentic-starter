@@ -1,0 +1,35 @@
+id: optional-navigation-policy
+kind: static
+why: Agent policy must never point at Graft unless navigation selects it; the guidance is its own conditional section.
+shell: |
+  uv run --offline --no-project --isolated --python 3.12 python - <<'PY'
+  import json, sys, tomllib
+  from pathlib import Path
+  sys.path.insert(0, '.engineering')
+  from engineering import graft
+  from engineering.ownership import owned_content
+  # New projects default to navigation none and ship no navigation content.
+  template = tomllib.loads(Path('.engineering/template/config.toml').read_text())
+  assert template['navigation']['provider'] == 'none'
+  payload = json.loads(Path('.engineering/template/files.json').read_text())['managed']
+  assert not (set(graft.CONTENT) - {graft.GUIDANCE}) & payload.keys()
+  # Shared policy is navigation-neutral: it sends agents to source directly.
+  policy = Path('CLAUDE.md').read_bytes()
+  shared = owned_content(policy, 'CLAUDE.md', {'mode': 'section', 'marker': 'integration'}).decode()
+  assert 'graft' not in shared.lower(), 'integration policy must not name Graft'
+  assert 'search and read' in shared
+  # Graft guidance lives only in its own managed navigation section.
+  section = owned_content(policy, 'CLAUDE.md', graft.GUIDANCE_SCOPE)
+  assert section == graft.GUIDANCE_TEXT, 'maintainer selects Graft; guidance must match'
+  assert b'.engineering/bin/graft' in section
+  assert b'engineering:navigation' not in Path('AGENTS.md').read_bytes()
+  # Reviewers only use Graft conditionally.
+  for name in ('verifier', 'maintainability-reviewer'):
+      text = Path(f'.claude/agents/{name}.md').read_text()
+      assert 'navigation selects Graft' in text, name
+  guide = Path('ENGINEERING.md').read_text()
+  for phrase in ('provider = "none"', 'provider = "graft"', 'core prerequisite', 'Graft is optional'):
+      assert phrase in guide, phrase
+  readme = Path('.engineering/template/README.md').read_text()
+  assert 'provider = "none"' in readme and 'optional' in readme
+  PY

@@ -79,7 +79,7 @@ def show_plan(plan: Plan) -> None:
         print(f"{action.kind} {action.path}: {action.reason}")
     print("Apply is explicit (--apply); requires a clean committed target.")
     print(
-        "Doctor runs offline after apply. Install managed dependencies separately; then run graft check and applicable evals."
+        "Doctor runs offline after apply. Install managed dependencies separately; then run graft check (when navigation selects Graft) and applicable evals."
     )
 
 

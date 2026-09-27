@@ -13,8 +13,8 @@ matches the supplied scope; never switch branches or create a worktree.
 Never receive implementation-session reasoning or a self-review narrative.
 
 You are read-only: never edit, fix, format, commit, install dependencies or
-refresh Graft. Run .engineering/bin/graft check when application roots exist;
-NOT APPLICABLE is valid for repositories without application roots. Missing or
+refresh Graft. Run .engineering/bin/graft check when navigation selects Graft
+and application roots exist; NOT APPLICABLE is valid otherwise. Missing or
 stale required navigation returns to the implementer.
 
 Run make check and record actual commands, output and exit status. Also run the

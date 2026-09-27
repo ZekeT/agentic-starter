@@ -13,9 +13,23 @@ from generate_template_manifest import build_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / ".engineering"))
+from engineering import graft  # noqa: E402
 from engineering.adoption import template_manifest  # noqa: E402
-from engineering.ownership import encoded, json_object  # noqa: E402
+from engineering.ownership import encoded, json_object, remove_owned  # noqa: E402
 from engineering.verification_inputs import source_path  # noqa: E402
+
+
+def selected_content(name: str, content: bytes) -> bytes:
+    """New projects start with navigation none: ship no navigation content.
+
+    The dependency flow installs it once a project selects Graft.
+    """
+    if name not in graft.CONTENT:
+        return content
+    scope = graft.output_scope(name)
+    if scope["mode"] == "file":
+        raise ValueError(f"{name}: navigation content is installed, never shipped")
+    return remove_owned(content, name, scope) or b""
 
 
 def build(destination: Path) -> None:
@@ -52,7 +66,7 @@ def build(destination: Path) -> None:
             if not source.is_file():
                 raise ValueError(f"Missing regular template input: {origin}")
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(source.read_bytes())
+            target.write_bytes(selected_content(name, source.read_bytes()))
             target.chmod(0o755 if source.stat().st_mode & 0o111 else 0o644)
         manifest = build_manifest(
             {}, root=stage, files=[stage / name for name in data["managed"]]

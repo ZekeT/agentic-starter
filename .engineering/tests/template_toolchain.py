@@ -53,6 +53,9 @@ elif name == "npm":
     path = Path("node_modules/@nanonets/graft/package.json")
     path.parent.mkdir(parents=True)
     path.write_text(json.dumps({"version": version}))
+    lock = Path("package-lock.json")
+    if not lock.exists():
+        lock.write_text(json.dumps({"packages": {"": {"dependencies": {"@nanonets/graft": version}}, "node_modules/@nanonets/graft": {"version": version}}}))
 elif name == "node":
     print("v22.12.0" if args == ["--version"] else "Fixture Graft skill")
 else:

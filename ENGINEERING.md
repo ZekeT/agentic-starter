@@ -12,13 +12,13 @@ Engineering System =
 
 It owns deterministic checks, maintainability constraints, security safeguards,
 independent verification, human shipping policy, safe installation and updates.
-Matt Pocock's upstream skills own development workflows. Graft owns derived
-code structure. Repository policy continues to apply regardless of how work was
+Matt Pocock's upstream skills own development workflows. Optional Graft
+navigation owns derived code structure when a project selects it. Repository policy continues to apply regardless of how work was
 planned. Changing a skill's internal method should require little or no starter
 code change; Graft's internal graph format is not our architecture database.
 
-The standard stack is **Matt + Graft + optional show-me + Karpathy principles +
-the Engineering System**. Selected Pstack principles (subtract before adding,
+The standard stack is **Matt + optional Graft navigation + optional show-me +
+Karpathy principles + the Engineering System**. Selected Pstack principles (subtract before adding,
 reduce reader load, respect boundaries, model the domain, use verifiable units,
 and encode lessons in structure) are useful reference material. No Pstack
 workflow package is installed.
@@ -28,7 +28,10 @@ workflow package is installed.
 Use a separate checkout of the Engineering source repository for generation,
 adoption and migration. A generated application is the consumer payload, not a
 copy of this repository's development history. Install Git, Python 3.12+, uv and
-Node.js 22.12+ with npm through your normal toolchain management first.
+Node.js 22.12+ with npm through your normal toolchain management first. Node is
+a core prerequisite: upstream skills install through the `skills` npm installer.
+Graft is optional and installs only when [navigation](#navigation-optional-graft)
+selects it.
 
 ### New application
 
@@ -142,10 +145,11 @@ the failure; they are never bypassed. Merge and force-push remain separate decis
 
 ### Before the first change
 
-Read `CLAUDE.md` for shared policy. Set `[navigation].application_roots` in
-`.engineering/config.toml` to actual application directories; never point Graft
-at all repository tooling. Empty means no application graph is needed. Build and
-check an applicable graph explicitly before verification.
+Read `CLAUDE.md` for shared policy. New projects start with navigation disabled
+(`[navigation] provider = "none"`): agents search and read source directly. To
+use Graft, [enable navigation](#navigation-optional-graft), set
+`[navigation].application_roots` to actual application directories (never all
+repository tooling) and build and check the graph explicitly before verification.
 
 Local Markdown is the default tracker regardless of hosting provider. Existing
 projects retain their configured tracker. Read `docs/agents/issue-tracker.md`;
@@ -240,7 +244,7 @@ removal commands merely because inventory preparation succeeded.
 | Layer | Responsibility |
 |---|---|
 | Decide | Matt: grill-with-docs, wayfinder, research, prototype, to-spec, to-tickets |
-| Understand code | Graft: map, skeleton, callers, grep, ask, blast radius |
+| Understand code | Source search and reading; optional Graft: map, skeleton, callers, grep, ask, blast radius |
 | Build | Matt: implement, tdd, diagnosing-bugs, code-review; repository constraints apply |
 | Prove | Targeted tests, formatting, full deterministic gate, fresh reviewers, human review |
 | Understand as a human | show-me for focused diagrams, code sketches and ephemeral explanations |
@@ -265,7 +269,7 @@ upstream skill is installed explicitly with
 | One behavior test-first | `/tdd` |
 | Hard bug | `/diagnosing-bugs` |
 | Review implementation quality | `/code-review` |
-| Need codebase navigation | Graft |
+| Need codebase navigation | Source search, or Graft when navigation selects it |
 | Need a readable explanation | `/show-me` |
 | Inspect a planning map | Matt's configured tracker |
 | Final repository checks | `make check` |
@@ -309,7 +313,7 @@ pointer and reconstruct requirements, diff, source and test evidence themselves.
 
 ```text
 implement → targeted tests → make fmt
-          → graft build / graft check (when application roots exist)
+          → graft build / graft check (when Graft is selected with application roots)
           → fresh maintainability reviewer (read-only: PASS / CONCERNS)
           → fresh verifier (read-only: PASS / FAIL; runs make check)
           → conditional security reviewer → human review → authorized ship
@@ -431,11 +435,32 @@ fail on substantial growth. Other source languages are reported as unanalyzed.
 Use reviewed exact-path exceptions in `[maintainability]`, not inline bypasses.
 See [.engineering/docs/maintainability.md](.engineering/docs/maintainability.md).
 
-## Graft navigation
+## Navigation (optional Graft)
 
-Graft is pinned and installed in `.engineering/graft/`. Its launcher confines
-navigation to application roots, avoids implicit refreshes and keeps optional
-model enrichment out of normal gates. Preserve its package lock.
+Navigation is an optional capability selected by `[navigation] provider` in
+`.engineering/config.toml`:
+
+| Provider | Meaning |
+| --- | --- |
+| `none` | Default for new projects. Agents search and read source directly; no Graft package, launcher, skill, pins or guidance exist and no Graft gate applies. `.engineering/bin/graft` and `engineering navigation` refuse with "navigation disabled". |
+| `graft` | The pinned Graft package, `.engineering/bin/graft` launcher, Graft skill, package pins (`.engineering/graft/package*.json`) and a `navigation` section in `CLAUDE.md` are installed together. Verification requires `.engineering/bin/graft check` once `application_roots` is nonempty. |
+
+Enable: set `provider = "graft"`, preview with `engineering deps install`, then
+run `engineering deps install --apply`. It installs the pinned package and all
+navigation content together, records their fingerprints, and refuses to overwrite
+customized content. Commit the launcher, pins and `CLAUDE.md` section.
+
+Disable: set `provider = "none"`, then from a starter checkout preview
+`./engineering update <project>` and apply it with `--apply`. The preview lists
+every removal: launcher, skill, pins, the `CLAUDE.md` navigation section and the
+dependency record. Customized navigation content is a conflict, never silently
+deleted. The Graft index (`graft/`), its local settings and
+`navigation.application_roots` are project data and are kept. Until the update
+runs, doctor fails while the Graft skill or guidance remains loadable by agents.
+
+With Graft selected, its launcher confines navigation to application roots,
+avoids implicit refreshes and keeps optional model enrichment out of normal
+gates. Preserve its package lock.
 
 ```bash
 .engineering/bin/graft build
@@ -456,15 +481,17 @@ symbol graph, call-map database or manually maintained current file map.
 
 ## Dependency ownership and updates
 
-`.engineering/dependencies.toml` is desired state. Required: Matt skills and
-Graft. Optional: show-me and Karpathy. No full Pstack or Wayfinder Maps package is
+`.engineering/dependencies.toml` is desired state. Required: Matt skills, and
+Graft while navigation selects it. Optional: show-me and Karpathy. No full Pstack or Wayfinder Maps package is
 managed. An entry with `capability = "<name>"` serves an optional capability and
 is required only while that capability's `provider` in `.engineering/config.toml`
 names it; its id must be one of that capability's provider values. Graft declares
 `capability = "navigation"`. Dependency status, setup installation, unnamed
 updates and doctor all apply this rule: with `[navigation] provider = "none"`
 Graft is reported as not selected and left untouched, even when previously
-installed, and cannot be installed or updated by name until navigation selects it. Git skills use immutable commits; npm packages and the skills installer
+installed, and cannot be installed or updated by name until navigation selects it.
+Graft's installation outputs are all navigation content (package pins, skill,
+launcher and the `CLAUDE.md` navigation section). Git skills use immutable commits; npm packages and the skills installer
 use exact versions. `.engineering/state/dependencies.json` records installed
 pins and output hashes separately and is local installation bookkeeping.
 
@@ -543,7 +570,7 @@ support diagnostics without checking installation health.
 
 `engineering doctor` is offline. It checks repository protections, Python,
 required files, executable launchers, policy, tracker pointers, hook wiring,
-reviewer definitions, Graft pin wiring, dependency evidence and installation-state
+reviewer definitions, selected Graft pin wiring, dependency evidence and installation-state
 schemas. Migration receipts are validated by migration commands, not ordinary
 development gates. It does not inspect tickets, run tests, contact remotes, assess graph
 freshness or ask for credentials. Optional missing skills warn.
@@ -553,7 +580,9 @@ Graft pin, launcher and runtime checks run only when `graft` is selected. Graft
 with application roots and valid pins passes. Graft with empty
 `navigation.application_roots` passes with a warning whose next step is adding
 roots or setting `provider = "none"`. Missing, stale or mispinned Graft while it
-is selected fails, with repair and disable (`provider = "none"`) as fixes.
+is selected fails, with repair and disable (`provider = "none"`) as fixes, as
+does locally modified navigation content. With `none`, a remaining Graft skill or
+`CLAUDE.md` navigation section fails until an update removes it.
 An invalid provider value is one configuration error; provider-dependent checks
 are then skipped.
 
@@ -608,7 +637,8 @@ After the human accepts those exact bytes, apply with `--finalize --apply`.
 Neither preview nor a generated approval field authorizes removal. Finalization
 uses the inventory's history policy; changing it requires a new inventory/review.
 The target must already have Engineering installed, required dependencies available,
-and its native `make check`. Prepare applicable Graft graphs explicitly beforehand.
+and its native `make check`. Prepare applicable Graft graphs explicitly beforehand
+when navigation selects Graft.
 
 Finalization requires current `reviewed_head`, unchanged inventory/source/evidence,
 exact destination hashes and clean Git. Keep temporary review artifacts ignored
@@ -619,7 +649,7 @@ Shared integration files receive exact reviewed replacements, never whole-file
 deletion. All inventoried OpenSpec files and runtime wiring require explicit removal.
 
 Apply runs offline doctor, the native `make check`, and Graft check (not applicable
-when application roots are empty). It does not build graphs or install dependencies.
+when navigation is disabled or application roots are empty). It does not build graphs or install dependencies.
 Ordinary write or validation failure restores affected file bytes/modes, prints the
 failure and recovery commit, and creates no success receipt. Project checks are
 project-owned executable code: inspect their output/status for any additional

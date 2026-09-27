@@ -102,26 +102,34 @@ def navigation(root: Path) -> None:
     match = re.fullmatch(r"v(\d+)\.(\d+)\.\d+\s*", version.stdout)
     if version.returncode or not match or tuple(map(int, match.groups())) < (22, 12):
         raise ValueError("Node.js 22.12+ required; repair the Node runtime")
-    rows = registry(root)["dependency"]
-    expected = next(row["version"] for row in rows if row["id"] == "graft")
-    package = json_object(read_bytes(root, f"{graft.PACKAGE}/package.json") or b"{}")
-    lock = json_object(read_bytes(root, f"{graft.PACKAGE}/package-lock.json") or b"{}")
-    if (
-        package.get("dependencies", {}).get("@nanonets/graft") != expected
-        or lock.get("packages", {})
-        .get("node_modules/@nanonets/graft", {})
-        .get("version")
-        != expected
-    ):
-        raise ValueError(
-            "Graft registry/package/lock pins disagree; run engineering deps update graft --apply"
+    present = graft.present(root)
+    # Absent content is reported by the dependency check as MISSING.
+    if f"{graft.PACKAGE}/package.json" in present:
+        rows = registry(root)["dependency"]
+        expected = next(row["version"] for row in rows if row["id"] == "graft")
+        package = json_object(
+            read_bytes(root, f"{graft.PACKAGE}/package.json") or b"{}"
         )
-    if '"$root/engineering" navigation' not in read_text(
-        root, ".engineering/bin/graft"
-    ):
-        raise ValueError("Restore Graft launcher delegation to engineering navigation")
-    if not safe_path(root, ".engineering/bin/graft").stat().st_mode & 0o111:
-        raise ValueError(".engineering/bin/graft: chmod +x required")
+        lock = json_object(
+            read_bytes(root, f"{graft.PACKAGE}/package-lock.json") or b"{}"
+        )
+        if (
+            package.get("dependencies", {}).get("@nanonets/graft") != expected
+            or lock.get("packages", {})
+            .get("node_modules/@nanonets/graft", {})
+            .get("version")
+            != expected
+        ):
+            raise ValueError(
+                "Graft registry/package/lock pins disagree; run engineering deps update graft --apply"
+            )
+    if graft.LAUNCHER in present:
+        if '"$root/engineering" navigation' not in read_text(root, graft.LAUNCHER):
+            raise ValueError(
+                "Restore Graft launcher delegation to engineering navigation"
+            )
+        if not safe_path(root, graft.LAUNCHER).stat().st_mode & 0o111:
+            raise ValueError(f"{graft.LAUNCHER}: chmod +x required")
     missing = set(graft.IGNORES) - set(read_text(root, ".gitignore").splitlines())
     if missing:
         raise ValueError(f"Missing generated-path ignore rules: {sorted(missing)}")
@@ -132,6 +140,19 @@ def navigation_state(root: Path) -> list[Diagnostic]:
     if graft_navigation(root):
         return []
     if provider(root, "navigation") == "none":
+        if leftovers := graft.present(root, graft.AGENT_CONTENT):
+            return [
+                Diagnostic(
+                    "navigation",
+                    "ERROR",
+                    ".engineering/config.toml",
+                    "navigation disabled but Graft content remains loadable by agents: "
+                    + ", ".join(leftovers),
+                    "From a starter checkout run `./engineering update <project>` to "
+                    "preview and remove it, then apply; or re-enable with "
+                    '[navigation] provider = "graft".',
+                )
+            ]
         return [
             Diagnostic(
                 "navigation",
@@ -207,11 +228,17 @@ def diagnose(root: Path) -> list[Diagnostic]:
         except (OSError, ValueError, subprocess.SubprocessError) as exc:
             findings.append(Diagnostic(code, "ERROR", path, str(exc), remediation))
     if policy:
-        findings.extend(navigation_state(root))
+        try:
+            findings.extend(navigation_state(root))
+        except (OSError, ValueError) as exc:
+            remediation = "Repair the navigation section markers in CLAUDE.md."
+            findings.append(
+                Diagnostic("navigation", "ERROR", "CLAUDE.md", str(exc), remediation)
+            )
     try:
         data, evidence = registry(root), state(root)["dependencies"]
         for row in data["dependency"]:
-            if row.get("capability") and not policy or not selected(root, row):
+            if (row.get("capability") and not policy) or not selected(root, row):
                 continue  # Unselected dependencies are left untouched.
             _, health = installed_status(root, row, evidence)
             if health == "OK":

@@ -33,5 +33,8 @@ _Avoid_: indexing, graph (as the feature name)
 **Optional capability**:
 A feature a project enables deliberately, whose dependencies and gate obligations exist only while it is enabled.
 
+**Capability content**:
+Managed content an optional capability's dependency installs together while the capability is enabled and an update removes after it is disabled, such as Graft's launcher, skill, package pins and agent-policy navigation section. Project data it produced, such as the Graft index, is not capability content.
+
 **Maintainer source**:
 Content in the maintainer checkout that becomes managed implementation or proves it: templates, managed implementation, maintainer tests and evals.

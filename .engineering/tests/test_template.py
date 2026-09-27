@@ -177,7 +177,8 @@ def test_generated_project_setup_doctor_and_normal_gates(tmp_path):
         for line in Path(env["TEMPLATE_CALLS"]).read_text().splitlines()
     ]
     assert any(call[:2] == ["npx", "--yes"] for call in calls)
-    assert any(call[:2] == ["npm", "ci"] for call in calls)
+    # Navigation starts disabled, so setup installs no Graft package.
+    assert not any(call[0] == "npm" for call in calls)
     assert not any(
         "manifest" in arg or "engineering-evals" in arg
         for call in calls

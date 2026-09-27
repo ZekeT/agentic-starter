@@ -4,7 +4,8 @@ Describe the application, its users and how to run it here.
 
 ## Start development
 
-Prerequisites: Git, Python 3.12+, uv, Node.js 22.12+ and npm/npx.
+Prerequisites: Git, Python 3.12+, uv, Node.js 22.12+ and npm/npx (Node installs
+the pinned upstream skills). Graft navigation is optional and not installed.
 From this generated directory:
 
 ```bash
@@ -20,9 +21,12 @@ project's `consumer` installation role, and explicitly installs pinned
 development dependencies. It preserves existing installation baselines.
 No global agent settings are changed. Repeating setup is supported.
 
-Add application code in `src/` and tests in `tests/`. Set
-`[navigation].application_roots` in `.engineering/config.toml` when code exists,
-then explicitly run `.engineering/bin/graft build` before verification. That file
+Add application code in `src/` and tests in `tests/`. Navigation starts
+disabled (`[navigation] provider = "none"` in `.engineering/config.toml`), so
+agents search and read source directly. To use Graft, set `provider = "graft"`
+and `application_roots`, run `./engineering deps install --apply`, then
+explicitly run `.engineering/bin/graft build` before verification; see
+[navigation](ENGINEERING.md#navigation-optional-graft) for disabling. That file
 is project configuration: Engineering updates validate and migrate it but keep
 your values. Add feature instructions as described in `docs/agents/domain.md`.
 

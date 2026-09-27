@@ -15,11 +15,12 @@ Read .engineering/docs/maintainability.md and REVIEW.md. Run:
 
 ```bash
 ./engineering maintainability --verbose
-.engineering/bin/graft check
 ```
 
-Use the Graft launcher for non-refreshing application queries. No application
-roots is NOT APPLICABLE; inspect Engineering System tooling directly.
+While navigation selects Graft, also run `.engineering/bin/graft check` and use
+the launcher for non-refreshing application queries. Navigation disabled or no
+application roots is NOT APPLICABLE; search and read source directly and inspect
+Engineering System tooling directly.
 Check cohesion, responsibility boundaries, oversized functions/modules,
 duplicate logic, dependency direction, unnecessary abstractions, generic helper
 dumping grounds and central-file accumulation. Prefer the minimum sufficient

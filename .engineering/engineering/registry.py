@@ -5,8 +5,9 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
+from . import graft
 from .config import object_value, read_text, safe_path
-from .ownership import digest, json_object, read_bytes
+from .ownership import digest, json_object, owned_content, read_bytes
 from .settings import CAPABILITIES, provider
 
 REGISTRY = ".engineering/dependencies.toml"
@@ -97,18 +98,18 @@ def state(root: Path) -> dict[str, Any]:
             allowed = (
                 path.startswith(".claude/skills/")
                 if kind == "skills"
-                else path
-                in {
-                    ".engineering/graft/package.json",
-                    ".engineering/graft/package-lock.json",
-                    ".claude/skills/graft/SKILL.md",
-                }
+                else path in graft.CONTENT
             )
             if not allowed:
                 raise ValueError(f"deps.state: unexpected managed output {path}")
             if not re.fullmatch(r"[0-9a-f]{64}", str(sha)):
                 raise ValueError(f"deps.state: invalid output digest {path}")
     return data
+
+
+def output_digest(root: Path, path: str) -> str | None:
+    """Fingerprint only the part of a file that a dependency output owns."""
+    return digest(owned_content(read_bytes(root, path), path, graft.output_scope(path)))
 
 
 def selected(root: Path, dependency: dict[str, Any]) -> bool:
@@ -134,10 +135,18 @@ def installed_status(
     if row is None:
         return "missing", "MISSING" if dependency["required"] else "OPTIONAL"
     for name, sha in row["outputs"].items():
-        if digest(read_bytes(root, name)) != sha:
+        if output_digest(root, name) != sha:
             return str(row["installed_version"]), "MODIFIED"
     version = str(row["installed_version"])
     if dependency["kind"] == "npm":
+        # Installations predating complete navigation content reinstall it.
+        if set(graft.CONTENT) - set(row["outputs"]):
+            return version, "MISSING"
+        # Fixed content from an earlier release is refreshed by reinstalling.
+        for name in graft.CONTENT:
+            fixed = graft.generated(name)
+            if fixed is not None and row["outputs"][name] != digest(fixed):
+                return version, "OUTDATED"
         package = json_object(
             read_bytes(
                 root, ".engineering/graft/node_modules/@nanonets/graft/package.json"

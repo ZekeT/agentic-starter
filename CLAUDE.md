@@ -9,8 +9,8 @@ Read relevant feature instructions and ADRs as needed, not entire doc trees.
 
 ## Implementation defaults
 
-- Understand the existing code before editing. Use `.engineering/bin/graft`
-  for non-trivial application navigation; inspect tooling source directly.
+- Understand the existing code before editing: search and read the relevant
+  source directly, following any navigation section below.
 - Surface material assumptions. Stop for contradictory requirements,
   unresolved architecture, security tradeoffs, or two unsuccessful bug fixes.
   Explain what, why, how, and your recommendation with its reason.
@@ -29,8 +29,7 @@ Read relevant feature instructions and ADRs as needed, not entire doc trees.
 Use targeted tests while building. Run `make fmt` before fresh independent
 maintainability review and behavioral verification. The verifier runs `make check`;
 it is non-mutating and authoritative. Required checks follow the installation
-role and path ownership in the verification guide. Graft build/check are
-explicit preparation steps, outside `make check`.
+role and path ownership in the verification guide.
 
 Reviewers are read-only and receive only a branch/ticket/spec/request pointer.
 Do not pass implementation-session reasoning or a self-review narrative to them.
@@ -74,3 +73,11 @@ Durable context lives in `docs/context/`; architectural reasons in `docs/adr/`.
 See [docs/agents/domain.md](docs/agents/domain.md). Tests and code establish
 current executable behavior. Keep feature-local instructions small and stable.
 <!-- engineering:integration:end -->
+<!-- engineering:navigation:begin -->
+## Navigation
+
+Graft navigation is enabled. For non-trivial application navigation, use
+`.engineering/bin/graft` (map, skeleton, callers, grep, ask, blast) before broad
+source reads; inspect tooling source directly. Graft build/check are explicit
+preparation steps, outside `make check`.
+<!-- engineering:navigation:end -->
