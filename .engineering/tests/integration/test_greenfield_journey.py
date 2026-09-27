@@ -108,7 +108,7 @@ def test_generated_application_correction_and_failed_push_reuse(repo, hosting):
     makefile = repo / "Makefile"
     makefile.write_text(
         makefile.read_text().replace(
-            "check:\n", f"check:\n\t@echo check >> {STATE}/check-calls\n"
+            "\ncheck:\n", f"\ncheck:\n\t@echo check >> {STATE}/check-calls\n"
         )
     )
     command(repo, "make", "fmt")
@@ -140,7 +140,8 @@ def test_generated_application_correction_and_failed_push_reuse(repo, hosting):
             "tests/test_greeting.py",
             "Makefile",
         ],
-        "checks": [["make", "check"]],
+        # The Makefile is a managed integration section: health checks apply.
+        "checks": [["make", "check"], ["make", "engineering-check"]],
         "tools": [[sys.executable, "--version"]],
         "inputs": sorted(inputs - tracked),
         "security_required": False,

@@ -18,6 +18,11 @@ shell: |
   assert 'Committed changes outside `paths` fail preparation' in guide
   # Verification classification uses a recorded installation role, never a default.
   assert 'installation role' in guide and 'No role is ever' in guide
+  # Requirements follow role and ownership, never which Make targets exist.
+  assert 'never which Make targets exist' in guide and 'never PASS' in guide
+  assert 'update/upstream route' in Path('ENGINEERING.md').read_text()
+  assert 'role and path ownership' in policy and 'role and path ownership' in review
+  assert 'role and path ownership' in Path('.claude/agents/verifier.md').read_text()
   assert 'records the `consumer` installation' in Path('ENGINEERING.md').read_text()
   assert '/.engineering/state/verification/' in Path('.gitignore').read_text()
   PY

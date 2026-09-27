@@ -16,13 +16,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c626f6ca62ea3069315c167b53473c080619eb525984d10ada247dacaf2b40f7"
+      "upstream": "1311eed3723131bb2761c67496a5fa272f91e558bca3819bab893081c01b8cd7"
     },
     ".claude/commands/review.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "3e19607ff4e294ea1b8d1cb06f6f8947fa1dfa524f98c7cac5bd0f62b5ad4d56"
+      "upstream": "c9f70eb1a387470d0e8bc779227f5c9c4cab3413ee5e66fdffe82e395b14f14d"
     },
     ".claude/commands/ship.md": {
       "ownership": {
@@ -124,7 +124,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1f9935ddabca47c23f5b6012ea188bdeba3bff82ba92123b64102542637701ff"
+      "upstream": "a5bc114db09604b51f3de8cd3a90c03ca40cdf69d0622d2c952ab678384d97ef"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -328,19 +328,25 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "404a72cddc861623a53693762c6dbf863ead61246dd6f840edab52fd8ecd749c"
+      "upstream": "4513cc9b7316ace2ce5f257fcebdb8708c1f1f84f62e622bf98bcb85380520c5"
     },
     ".engineering/engineering/verification_inputs.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "3bd25ae35889d637201addee76d539674a3ca9a21c7a3829b02890b4cca9ee2a"
+      "upstream": "4185788808043cb9d7a17afce9a524f54e5c3d51c5d5d291db25ffde1921fc49"
+    },
+    ".engineering/engineering/verification_requirements.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "5fc8f41e7f116d3ead99a1089145a46cb10bcff9d181b5d1692f51ce2b194e7d"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a"
+      "upstream": "ab5201408f10df9d110d85d56a3c98d087b6aa83b8c9f5f8070c008fe1b0d45e"
     },
     ".engineering/evals/README.md": {
       "ownership": {
@@ -388,7 +394,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "271f233db31cf7353e29c1f9ba1045e58dc4f5393a15cdd646d31efc13c63802"
+      "upstream": "99d29748b26a61a37bad99250572264ca5ff376006a5d745599fafe910a04bc9"
     },
     ".engineering/evals/cases/008-bounded-corrections.yaml": {
       "ownership": {
@@ -511,13 +517,13 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "e3cfe41acde60beb654bd3713aee953afa276bb685d6880d8f632081d5c916f2"
+      "upstream": "4e61395d996547359e341cfdeaaf52fd448412f80ddca7efa560a0bb1c459745"
     },
     "ENGINEERING.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "8fa3af62edac6daab904a32a8da7e1d79cdebe8bd9c3d44238015005fc34a063"
+      "upstream": "3e5e37e15776fe13948d7c4efee36cb592fa4665fe6a244ab6bd1c5ce621b6f5"
     },
     "Makefile": {
       "ownership": {

@@ -7,7 +7,6 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from .installation import installation_role
 from .ownership import digest
 from .source import git
 from .verification_inputs import (
@@ -15,8 +14,8 @@ from .verification_inputs import (
     files,
     paths_from_git,
     source_path,
-    validate_navigation,
 )
+from .verification_requirements import validate_requirements
 
 
 def baseline_files(root: Path, base: str) -> dict[str, tuple[str, str]]:
@@ -104,10 +103,9 @@ def materialize(root: Path, destination: Path, inputs: dict[str, Any]) -> None:
         target.chmod(0o755 if value["executable"] else 0o644)
     (destination / STATE).mkdir(parents=True, exist_ok=True)
     validate_checkout(destination, inputs)
-    validate_navigation(destination, plan)
-    # Classification needs the proposed recorded role (ADR 0001), never a default
-    # or an out-of-scope working edit; absence blocks planning and reuse.
-    installation_role(destination)
+    # Requirements come from the proposed recorded role and ownership (ADR 0001),
+    # never a default or an out-of-scope working edit; checked on every reuse.
+    validate_requirements(destination, plan)
 
 
 def validate_checkout(checkout: Path, inputs: dict[str, Any]) -> None:

@@ -28,8 +28,8 @@ Read relevant feature instructions and ADRs as needed, not entire doc trees.
 
 Use targeted tests while building. Run `make fmt` before fresh independent
 maintainability review and behavioral verification. The verifier runs `make check`;
-it is non-mutating and authoritative. Starter tooling changes also require
-`make engineering-test` and `make engineering-evals`. Graft build/check are
+it is non-mutating and authoritative. Required checks follow the installation
+role and path ownership in the verification guide. Graft build/check are
 explicit preparation steps, outside `make check`.
 
 Reviewers are read-only and receive only a branch/ticket/spec/request pointer.

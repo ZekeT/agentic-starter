@@ -48,10 +48,29 @@ assumed: when it is missing, `prepare` fails INCOMPLETE and names the fix. From
 a starter checkout, preview `engineering update <project>` and apply it; the
 update records the role as an Engineering migration. An unknown role also fails.
 
-`make check` is mandatory. Starter tooling scope also requires `make
-engineering-test` and `make engineering-evals`; configured application roots
-require `.engineering/bin/graft check` while `[navigation] provider = "graft"`
-(never with `none`). Add project-specific checks as needed.
+Required checks follow the role and each path's ownership in the proposed
+`.engineering/manifest.json` (the base manifest too, so dropping an entry
+cannot lower them), never which Make targets exist:
+
+| Changed path | Role | Required in addition to `make check` |
+|---|---|---|
+| Project configuration (`preserve` entries) | both | `make engineering-check` |
+| Integration sections and hooks (`section`, `hooks`) | both | `make engineering-check` |
+| Managed implementation (`file` entries) | maintainer | `make engineering-test`, `make engineering-evals` |
+| Starter tooling under `.engineering/` `template/`, `tests/`, `evals/`, `scripts/`, `migrations/` | maintainer | `make engineering-test`, `make engineering-evals` |
+| Managed implementation edited locally | consumer | Rejected: INCOMPLETE, never PASS |
+| Any other path | both | nothing further |
+
+A consumer's managed file whose bytes equal the proposed manifest (an update's
+output, including its removals) is not a local edit and needs `make
+engineering-check`. Any other change is rejected: restore the file and obtain
+changes with `engineering update <project>` from a starter checkout, or propose
+them upstream. Invalid project configuration fails preparation. The recorded role
+is trusted and fails closed: a consumer declaring `maintainer` must run suites it
+lacks; a maintainer declaring `consumer` has tooling edits rejected. A role change
+is visible in the diff. Configured application roots require
+`.engineering/bin/graft check` while `[navigation] provider = "graft"` (never
+with `none`). Add project-specific checks as needed.
 Formatting and graph building remain implementer preparation. Probes time out
 after 15 seconds, each check after 15 minutes. uv stays offline with interpreter
 downloads disabled.

@@ -56,11 +56,8 @@ def validate_plan(root: Path, plan: dict[str, Any]) -> None:
             strings(command, field)
         if len({tuple(c) for c in plan[field]}) != len(plan[field]):
             raise ValueError(f"{field}: duplicate commands")
-    required = [["make", "check"]]
-    if any(p.startswith(".engineering/") for p in plan["paths"]):
-        required += [["make", "engineering-test"], ["make", "engineering-evals"]]
-    if any(command not in plan["checks"] for command in required):
-        raise ValueError(f"Required checks missing: {required}")
+    # Required checks depend on proposed role and ownership: see
+    # verification_requirements, applied whenever the checkout is materialized.
 
 
 def repository_inputs(root: Path, plan: dict[str, Any]) -> dict[str, Any]:

@@ -54,6 +54,7 @@
     ".engineering/engineering/verification_checkout.py": ".engineering/engineering/verification_checkout.py",
     ".engineering/engineering/verification_inputs.py": ".engineering/engineering/verification_inputs.py",
     ".engineering/engineering/verification_snapshot.py": ".engineering/engineering/verification_snapshot.py",
+    ".engineering/engineering/verification_requirements.py": ".engineering/engineering/verification_requirements.py",
     ".engineering/graft/package-lock.json": ".engineering/graft/package-lock.json",
     ".engineering/graft/package.json": ".engineering/graft/package.json",
     ".engineering/scripts/check_feature_docs.py": ".engineering/scripts/check_feature_docs.py",

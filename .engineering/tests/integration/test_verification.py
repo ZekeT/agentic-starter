@@ -58,6 +58,8 @@ def repo(tmp_path):
     (tmp_path / "Makefile").write_text("check:\n\t@test -s app.txt\n")
     (tmp_path / "app.txt").write_text("before\n")
     record_role(tmp_path, "consumer")
+    # Ownership comes from the installation manifest; this fixture owns nothing.
+    (tmp_path / ".engineering/manifest.json").write_text('{"files": {}}')
     git(tmp_path, "add", ".")
     git(tmp_path, "commit", "-m", "baseline")
     git(tmp_path, "checkout", "-b", "feature")
