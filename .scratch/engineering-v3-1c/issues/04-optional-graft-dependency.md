@@ -38,3 +38,12 @@ without roots (warning) or enabled but broken.
   publication and merge remain outstanding.
 - Remaining for ticket 05: template default `none`, conditional Graft managed
   content (launcher, skill, package pins) and agent-policy guidance.
+- Review corrections (human-authorized): unnamed `deps install/update --apply`,
+  `deps status` and doctor now apply `selected()` to recorded dependencies too,
+  so an unselected but installed Graft is reported as not selected and left
+  untouched (removal on disable remains ticket 05); the registry rejects a
+  capability entry whose id is not a provider value of that capability; one
+  `graft_navigation` predicate (selected with roots) serves doctor and
+  verification; an invalid provider yields one doctor configuration error and
+  `deps status` fails before printing. Fixture tests cover each case. Status
+  unchanged: awaiting independent verification.
