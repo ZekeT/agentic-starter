@@ -17,6 +17,10 @@ class MigrationGap(ValueError):
     """The starter lacks a working schema step; the project cannot repair it."""
 
 
+# Optional capabilities: each is selected by its section's provider (first is default).
+CAPABILITIES = {"navigation": ("graft", "none")}
+
+
 def load(root: Path) -> dict[str, Any]:
     """Reject unknown schemas and malformed policy before any operation."""
     return parse(root, read_text(root, CONFIGURATION))
@@ -81,8 +85,11 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         value = object_value(data.get(section, {}), section)
         if set(value) - keys:
             raise ValueError(f"config.unknown: {section}")
-    if data.get("navigation", {}).get("provider", "graft") != "graft":
-        raise ValueError("navigation.provider must be graft")
+    for capability, providers in CAPABILITIES.items():
+        if data.get(capability, {}).get("provider", providers[0]) not in providers:
+            raise ValueError(
+                f"{capability}.provider must be one of: {', '.join(providers)}"
+            )
     roots = data.get("navigation", {}).get("application_roots", [])
     if not isinstance(roots, list) or any(not isinstance(p, str) for p in roots):
         raise ValueError("navigation.application_roots must be a list of directories")
@@ -110,3 +117,17 @@ def parse(root: Path, text: str) -> dict[str, Any]:
     }:
         raise ValueError("migration.legacy_history must be snapshot or git-only")
     return data
+
+
+def provider(root: Path, capability: str) -> str:
+    """Name the provider an optional capability selects; "none" disables it."""
+    return str(
+        load(root).get(capability, {}).get("provider", CAPABILITIES[capability][0])
+    )
+
+
+def graft_navigation(root: Path) -> bool:
+    """Graft navigation applies only while selected with application roots configured."""
+    return provider(root, "navigation") == "graft" and bool(
+        load(root).get("navigation", {}).get("application_roots")
+    )

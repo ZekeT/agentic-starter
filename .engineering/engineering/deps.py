@@ -8,7 +8,15 @@ from typing import Any
 
 from . import graft
 from .ownership import digest, encoded, observe, read_bytes
-from .registry import REGISTRY, STATE, installed_status, registry, state
+from .registry import (
+    REGISTRY,
+    STATE,
+    installed_status,
+    registry,
+    required,
+    selected,
+    state,
+)
 from .skill_install import run, stage
 from .transaction import write_files
 
@@ -16,11 +24,12 @@ from .transaction import write_files
 def status(root: Path) -> int:
     """Report installed-versus-pinned state without querying upstream."""
     data, evidence = registry(root), state(root)["dependencies"]
+    # Assess every row before printing so invalid policy yields no partial table.
+    rows = [(row, *installed_status(root, row, evidence)) for row in data["dependency"]]
     print(
         "Dependency             Desired                                   Installed                                 Status"
     )
-    for row in data["dependency"]:
-        installed, health = installed_status(root, row, evidence)
+    for row, installed, health in rows:
         print(f"{row['id']:<22} {row['version']:<41} {installed:<41} {health}")
     return 0
 
@@ -104,10 +113,18 @@ def operate(
         for row in data["dependency"]
         if row["id"] == name
         or name is None
-        and (row["required"] or row["id"] in evidence["dependencies"])
+        and selected(root, row)
+        and (required(root, row) or row["id"] in evidence["dependencies"])
     ]
     if not rows:
         raise ValueError(f"deps.id: unknown dependency {name}")
+    for row in rows:
+        if name and not selected(root, row):
+            capability = row["capability"]
+            raise ValueError(
+                f"deps.capability: {name} serves {capability}; select it first with "
+                f'[{capability}] provider = "{name}" in .engineering/config.toml'
+            )
     if ref and (not name or operation != "update"):
         raise ValueError("deps.ref: use deps update NAME --ref IMMUTABLE_PIN")
     if check_remote and (apply or ref):
@@ -150,7 +167,7 @@ def operate(
     if not apply:
         print("No files changed. Select --apply to install/update the displayed pins.")
         return 0
-    selected = []
+    pending = []
     for row in rows:
         _, health = installed_status(root, row, evidence["dependencies"])
         if health == "MODIFIED":
@@ -165,8 +182,8 @@ def operate(
             and health == "PIN DIFFERS"
         ):
             raise ValueError("deps.pin: installed version differs; use deps update")
-        selected.append(row)
-    if not selected:
+        pending.append(row)
+    if not pending:
         print("Already installed at desired pins.")
         return 0
     observed = {REGISTRY: observe(root, REGISTRY), STATE: observe(root, STATE)}
@@ -179,7 +196,7 @@ def operate(
     with tempfile.TemporaryDirectory(prefix="engineering-deps-") as temporary:
         temporary_path = Path(temporary)
         npm_pending = None
-        for row in selected:
+        for row in pending:
             directory = temporary_path / row["id"]
             directory.mkdir()
             if row["kind"] == "skills":

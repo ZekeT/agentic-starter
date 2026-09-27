@@ -1,6 +1,8 @@
 """Prove dependency plans, pinned installs and customization protection offline."""
 
+import json
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,10 +40,29 @@ def test_custom_npm_package_refused_before_execution(tmp_path, monkeypatch, cust
     assert package.read_bytes() == before
 
 
+def select_navigation(root, provider):
+    (root / ".engineering/config.toml").write_text(
+        f'schema_version = 1\n[navigation]\nprovider = "{provider}"\n'
+    )
+
+
+def deps(root, *args):
+    return subprocess.run(
+        [sys.executable, str(ROOT / "engineering"), "--root", str(root), "deps", *args],
+        capture_output=True,
+        text=True,
+    )
+
+
+def graft_row(output):
+    return next(line for line in output.splitlines() if line.startswith("graft "))
+
+
 @pytest.fixture
 def dependency_repo(tmp_path, monkeypatch):
     (tmp_path / ".engineering").mkdir()
     shutil.copy2(ROOT / REGISTRY, tmp_path / REGISTRY)
+    select_navigation(tmp_path, "graft")
 
     def stage(directory, row, installer):
         return {
@@ -117,3 +138,100 @@ def test_staging_failure_never_advances_state(dependency_repo, monkeypatch):
 def test_mutable_or_malformed_refs_rejected(dependency_repo, ref):
     with pytest.raises(ValueError, match="pin"):
         operate(dependency_repo, "update", "matt-skills", ref=ref, apply=False)
+
+
+def test_graft_required_only_while_navigation_selects_it(dependency_repo):
+    root = dependency_repo
+    operate(root, "install", "matt-skills", apply=True)
+    selected = deps(root, "status")
+    assert selected.returncode == 0 and "MISSING" in graft_row(selected.stdout)
+    plan = deps(root, "install")
+    assert plan.returncode == 0 and "graft:" in plan.stdout
+    select_navigation(root, "none")
+    before = snapshot(root)
+    disabled = deps(root, "status")
+    assert disabled.returncode == 0
+    assert "MISSING" not in graft_row(disabled.stdout)
+    assert "navigation" in graft_row(disabled.stdout)
+    plan = deps(root, "install")
+    assert plan.returncode == 0 and "graft:" not in plan.stdout
+    # Setup's required installation succeeds without Graft.
+    applied = deps(root, "install", "--apply")
+    assert applied.returncode == 0, applied.stderr
+    assert "graft:" not in applied.stdout
+    assert snapshot(root) == before
+    refused = deps(root, "install", "graft")
+    assert refused.returncode == 1 and '"graft"' in refused.stderr
+    assert snapshot(root) == before
+
+
+@pytest.mark.parametrize("capability", ["unknown", 1, ""])
+def test_unknown_capability_rejected(dependency_repo, capability):
+    root = dependency_repo
+    path = root / REGISTRY
+    text = path.read_text().replace(
+        'source = "humanlayer/skills"\n',
+        f'source = "humanlayer/skills"\ncapability = {json.dumps(capability)}\n',
+    )
+    path.write_text(text)
+    result = deps(root, "status")
+    assert result.returncode == 1 and "capability" in result.stderr
+
+
+@pytest.mark.parametrize("breakage", ["ok", "modified", "missing", "pin changed"])
+def test_unselected_recorded_graft_left_untouched(
+    dependency_repo, monkeypatch, tmp_path_factory, breakage
+):
+    from .test_doctor import record_installed
+
+    root = dependency_repo
+    # Any attempted installation fails instead of reaching the network.
+    stubs = tmp_path_factory.mktemp("stubs")
+    for tool in ("npm", "npx", "node"):
+        (stubs / tool).write_text("#!/bin/sh\nexit 1\n")
+        (stubs / tool).chmod(0o755)
+    monkeypatch.setenv("PATH", f"{stubs}:{__import__('os').environ['PATH']}")
+    version = "0.17.0" if breakage == "pin changed" else "0.18.0"
+    package = root / ".engineering/graft"
+    package.mkdir()
+    (package / "package.json").write_text(
+        json.dumps({"dependencies": {"@nanonets/graft": version}})
+    )
+    (package / "package-lock.json").write_text("{}")
+    record_installed(root, {"matt-skills", "graft"}, graft_version=version)
+    if breakage == "modified":
+        (root / ".claude/skills/graft/SKILL.md").write_text("local edit\n")
+    elif breakage == "missing":
+        (root / ".engineering/graft/node_modules/@nanonets/graft/package.json").unlink()
+    select_navigation(root, "none")
+    before = snapshot(root)
+    reported = deps(root, "status")
+    assert reported.returncode == 0, reported.stderr
+    assert "NOT SELECTED (navigation)" in graft_row(reported.stdout)
+    for operation in ("install", "update"):
+        applied = deps(root, operation, "--apply")
+        assert applied.returncode == 0, applied.stderr
+        assert "graft:" not in applied.stdout
+        assert "Already installed at desired pins." in applied.stdout
+    assert snapshot(root) == before
+
+
+def test_capability_dependency_must_be_a_provider_value(dependency_repo):
+    root = dependency_repo
+    path = root / REGISTRY
+    path.write_text(
+        path.read_text().replace(
+            'source = "humanlayer/skills"\n',
+            'source = "humanlayer/skills"\ncapability = "navigation"\n',
+        )
+    )
+    result = deps(root, "status")
+    assert result.returncode == 1 and "deps.capability" in result.stderr
+    assert "show-me" in result.stderr
+
+
+def test_invalid_provider_fails_before_partial_status(dependency_repo):
+    select_navigation(dependency_repo, "other")
+    result = deps(dependency_repo, "status")
+    assert result.returncode == 1 and "navigation.provider" in result.stderr
+    assert result.stdout == ""

@@ -50,7 +50,8 @@ update records the role as an Engineering migration. An unknown role also fails.
 
 `make check` is mandatory. Starter tooling scope also requires `make
 engineering-test` and `make engineering-evals`; configured application roots
-require `.engineering/bin/graft check`. Add project-specific checks as needed.
+require `.engineering/bin/graft check` while `[navigation] provider = "graft"`
+(never with `none`). Add project-specific checks as needed.
 Formatting and graph building remain implementer preparation. Probes time out
 after 15 seconds, each check after 15 minutes. uv stays offline with interpreter
 downloads disabled.

@@ -15,6 +15,7 @@ kind = "npm"
 source = "@nanonets/graft"
 version = "0.18.0"
 required = true
+capability = "navigation"
 
 [[dependency]]
 id = "show-me"

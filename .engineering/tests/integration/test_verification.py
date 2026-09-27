@@ -467,3 +467,39 @@ def test_out_of_scope_role_edit_is_ignored(repo):
         ],
     )
     assert prepare(repo)["status"] == "INCOMPLETE"
+
+
+@pytest.mark.parametrize(
+    "provider,roots,required",
+    [("graft", ["src"], True), ("graft", [], False), ("none", ["src"], False)],
+)
+def test_graft_check_required_only_when_selected_with_roots(
+    repo, provider, roots, required
+):
+    (repo / "src").mkdir()
+    (repo / "src/app.py").write_text("VALUE = 1\n")
+    (repo / ".engineering/config.toml").write_text(
+        f'schema_version = 1\n[navigation]\nprovider = "{provider}"\n'
+        f"application_roots = {json.dumps(roots)}\n"
+    )
+    # Configuration changes may carry further checks; this asserts only Graft's.
+    checks = [["make", target] for target in ("check", "engineering-check")]
+    checks += [["make", "engineering-test"], ["make", "engineering-evals"]]
+    change_plan(
+        repo,
+        paths=["app.txt", ".engineering/config.toml", "src/app.py"],
+        checks=checks,
+    )
+    if required:
+        result = cli(
+            repo,
+            "prepare",
+            "--change",
+            "example",
+            "--plan",
+            ".engineering/state/verification/plan.json",
+            status=1,
+        )
+        assert "Graft check" in result["error"]
+    else:
+        assert prepare(repo)["status"] == "INCOMPLETE"

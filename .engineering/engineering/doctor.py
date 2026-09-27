@@ -13,8 +13,13 @@ from .config import load_config, read_text, safe_path
 from .doctor_wiring import check_git, check_hooks, external_tool
 from .installation import MANIFEST_PATH, check_state
 from .ownership import json_object, read_bytes
-from .registry import installed_status, registry, state
-from .settings import load
+from .registry import installed_status, registry, required, selected, state
+from .settings import graft_navigation, load, provider
+
+
+def disable(capability: str) -> str:
+    """Offer turning an optional capability off as an alternative fix."""
+    return f'or disable {capability} with [{capability}] provider = "none" in .engineering/config.toml.'
 
 
 @dataclass(frozen=True)
@@ -42,9 +47,8 @@ def structure(root: Path) -> None:
         ".engineering/scripts/cmd_check.sh",
     ):
         read_text(root, name)
-    for name in ("engineering", ".engineering/bin/graft"):
-        if not safe_path(root, name).stat().st_mode & 0o111:
-            raise ValueError(f"{name}: chmod +x required")
+    if not safe_path(root, "engineering").stat().st_mode & 0o111:
+        raise ValueError("engineering: chmod +x required")
     for name in ("maintainability-reviewer", "verifier", "security-reviewer"):
         content = read_text(root, f".claude/agents/{name}.md")
         if "readonly: true" not in content:
@@ -59,7 +63,8 @@ def configuration(root: Path) -> None:
     """Validate project policy, scope and the upstream tracker configuration pointer."""
     config = load(root)
     load_config(root)
-    graft.application_roots(root)
+    if graft_navigation(root):
+        graft.application_roots(root)
     read_text(
         root,
         config.get("tracker", {}).get("configuration", "docs/agents/issue-tracker.md"),
@@ -83,6 +88,8 @@ def metadata(root: Path) -> None:
 
 def navigation(root: Path) -> None:
     """Check pin/lock/launcher wiring, never graph freshness or model credentials."""
+    if provider(root, "navigation") != "graft":
+        return
     node = external_tool(root, "node")
     version = subprocess.run(
         [node, "--version"],
@@ -113,9 +120,36 @@ def navigation(root: Path) -> None:
         root, ".engineering/bin/graft"
     ):
         raise ValueError("Restore Graft launcher delegation to engineering navigation")
+    if not safe_path(root, ".engineering/bin/graft").stat().st_mode & 0o111:
+        raise ValueError(".engineering/bin/graft: chmod +x required")
     missing = set(graft.IGNORES) - set(read_text(root, ".gitignore").splitlines())
     if missing:
         raise ValueError(f"Missing generated-path ignore rules: {sorted(missing)}")
+
+
+def navigation_state(root: Path) -> list[Diagnostic]:
+    """Report disabled or ineffective navigation without failing installation health."""
+    if graft_navigation(root):
+        return []
+    if provider(root, "navigation") == "none":
+        return [
+            Diagnostic(
+                "navigation",
+                "INFO",
+                ".engineering/config.toml",
+                "navigation disabled (provider none); agents search and read source directly",
+                'To enable, set [navigation] provider = "graft", then engineering deps install --apply.',
+            )
+        ]
+    return [
+        Diagnostic(
+            "navigation",
+            "WARN",
+            ".engineering/config.toml",
+            "Graft is selected but navigation.application_roots is empty, so it has no effect",
+            f"Add application directories to navigation.application_roots, {disable('navigation')}",
+        )
+    ]
 
 
 def diagnose(root: Path) -> list[Diagnostic]:
@@ -155,29 +189,45 @@ def diagnose(root: Path) -> list[Diagnostic]:
             "navigation",
             graft.PACKAGE,
             navigation,
-            "Restore pinned Graft wiring; run engineering deps install --apply.",
+            f"Restore pinned Graft wiring with engineering deps install --apply, {disable('navigation')}",
         ),
     ]
+    try:
+        load(root)
+        policy = True
+    except (OSError, ValueError):
+        # The configuration check reports invalid policy once; provider-dependent
+        # checks cannot be assessed and are skipped rather than repeating it.
+        policy = False
+        checks = [check for check in checks if check[0] != "navigation"]
     findings = []
     for code, path, check, remediation in checks:
         try:
             check(root)
         except (OSError, ValueError, subprocess.SubprocessError) as exc:
             findings.append(Diagnostic(code, "ERROR", path, str(exc), remediation))
+    if policy:
+        findings.extend(navigation_state(root))
     try:
         data, evidence = registry(root), state(root)["dependencies"]
         for row in data["dependency"]:
+            if row.get("capability") and not policy or not selected(root, row):
+                continue  # Unselected dependencies are left untouched.
             _, health = installed_status(root, row, evidence)
-            if health != "OK":
-                findings.append(
-                    Diagnostic(
-                        "dependency",
-                        "ERROR" if row["required"] else "WARN",
-                        row["id"],
-                        health,
-                        f"Run engineering deps install {row['id']} --apply (or deps update for an existing pin).",
-                    )
+            if health == "OK":
+                continue
+            fix = f"Run engineering deps install {row['id']} --apply (or deps update for an existing pin)"
+            findings.append(
+                Diagnostic(
+                    "dependency",
+                    "ERROR" if required(root, row) else "WARN",
+                    row["id"],
+                    health,
+                    f"{fix}, {disable(row['capability'])}"
+                    if row.get("capability")
+                    else f"{fix}.",
                 )
+            )
     except (OSError, ValueError) as exc:
         findings.append(
             Diagnostic(
