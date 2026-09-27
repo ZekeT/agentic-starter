@@ -16,6 +16,7 @@ MIGRATIONS: dict[int, Callable[[str], str]] = {}
 class MigrationGap(ValueError):
     """The starter lacks a working schema step; the project cannot repair it."""
 
+
 # Optional capabilities: each is selected by its section's provider (first is default).
 CAPABILITIES = {"navigation": ("graft", "none")}
 

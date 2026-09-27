@@ -124,7 +124,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c50256d3b0012c1008b27de952f716139ed8f9670a482cfe9e180499547ff92e"
+      "upstream": "1f9935ddabca47c23f5b6012ea188bdeba3bff82ba92123b64102542637701ff"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -160,13 +160,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d7f4057fe4934293452dd1ca00a8cbe5b3fb309d88c67b8ae6286bb05668f4ee"
+      "upstream": "daa1e5c93f07b818f3114630e19884aedd0fc4fdb5ee3db0c3595412225b8e74"
     },
     ".engineering/engineering/doctor.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1b97b9a977843e5b7a397d26d7b3d52f0965b5591f6cd879ee35f101c1ce7be9"
+      "upstream": "90798f182ae9259060397cf0a053f5056b2f21ee477af202e5f8124ffda8a91f"
     },
     ".engineering/engineering/doctor_wiring.py": {
       "ownership": {
@@ -286,13 +286,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "42f2a18b3cea11a6e263508b18a2ccfdf653ab3916b6fe4d9cb565b2bb1b2bd2"
+      "upstream": "459507cb84a6100377487db762c70a16f867f0004c2855ab68dbe8c38e043f03"
     },
     ".engineering/engineering/settings.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "5e4fcd191cdb31732028f7b857599d4bc091b843b815f059bbf6b29713b1abe8"
+      "upstream": "60ea4ff386f7bcf461af30b1ba49c0d1ab21323ba938756ae13e26f460b62cc4"
     },
     ".engineering/engineering/skill_install.py": {
       "ownership": {
@@ -334,7 +334,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a5e52e6d19ed4df4fc52c625fd8b1383bd9feec99a076e37e4dd2198a7336a2d"
+      "upstream": "3bd25ae35889d637201addee76d539674a3ca9a21c7a3829b02890b4cca9ee2a"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
@@ -364,7 +364,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "22e66193a921242f7857dbcb4320253dee0f43103f0aec3690cebfc7e0c9a961"
+      "upstream": "a7df44430aafc1dd077bf7535121d20d22a9eef3b5bcd06b8b45b5f9ebff843e"
     },
     ".engineering/evals/cases/004-health.yaml": {
       "ownership": {
@@ -490,7 +490,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "85022dc0c43ed1935d4f822ec8d238471acb58a50c88e62b60492aba6051c188"
+      "upstream": "94688aa03bec45eb3271c1711e27626c7dad0922c912ae65912d12ed52caa5d6"
     },
     ".gitignore": {
       "ownership": {
@@ -517,7 +517,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "e5dfd6945c7063f54ab19485fd43bec66e5f5c38b9f8fbfac8c5aa71dd70987b"
+      "upstream": "8fa3af62edac6daab904a32a8da7e1d79cdebe8bd9c3d44238015005fc34a063"
     },
     "Makefile": {
       "ownership": {
