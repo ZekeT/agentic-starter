@@ -11,18 +11,18 @@ maintainer checkout still requires the maintainer suites.
 
 **Blocked by:** 01 (Record the installation role), 02 (Make Engineering configuration project-owned).
 
-**Status:** ready-for-agent
+**Status:** implemented — awaiting independent verification
 
-- [ ] A generated consumer project changes application roots or maintainability settings and prepares a valid plan with `make check` and `make engineering-check`, requiring no nonexistent target.
-- [ ] Invalid project configuration fails verification visibly.
-- [ ] A consumer change to managed implementation is rejected with an explanation and the update/upstream route; the outcome is INCOMPLETE, never PASS.
-- [ ] Maintainer source changes in the maintainer checkout still require `make engineering-test` and `make engineering-evals`.
-- [ ] The maintainer checkout's own configuration change requires only `make check` and `make engineering-check`.
-- [ ] Removing a maintainer Make target cannot lower the required checks.
-- [ ] Generated and adopted consumer projects classify identically.
-- [ ] Requirements never depend on which Make targets happen to exist.
-- [ ] Command-level `verify prepare` fixture tests cover each case above.
-- [ ] Verification documentation, `/review` guidance and project instructions describe role-based requirements; affected evals updated.
+- [x] A generated consumer project changes application roots or maintainability settings and prepares a valid plan with `make check` and `make engineering-check`, requiring no nonexistent target.
+- [x] Invalid project configuration fails verification visibly.
+- [x] A consumer change to managed implementation is rejected with an explanation and the update/upstream route; the outcome is INCOMPLETE, never PASS.
+- [x] Maintainer source changes in the maintainer checkout still require `make engineering-test` and `make engineering-evals`.
+- [x] The maintainer checkout's own configuration change requires only `make check` and `make engineering-check`.
+- [x] Removing a maintainer Make target cannot lower the required checks.
+- [x] Generated and adopted consumer projects classify identically.
+- [x] Requirements never depend on which Make targets happen to exist.
+- [x] Command-level `verify prepare` fixture tests cover each case above.
+- [x] Verification documentation, `/review` guidance and project instructions describe role-based requirements; affected evals updated.
 - [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
@@ -34,3 +34,31 @@ maintainer checkout still requires the maintainer suites.
 - **`section` and `hooks` files** (`CLAUDE.md`, `AGENTS.md`, `Makefile`, `.gitignore`, `.claude/settings.json`) are treated like project configuration: `make check` plus `make engineering-check`. Doctor already detects tampered managed sections or inactive hooks, so no second section parser is added.
 - **Maintainer source (role `maintainer` only)** = all `file`-mode manifest entries plus non-distributed starter tooling (`.engineering/template/**`, `.engineering/tests/**`, `.engineering/evals/**`, `.engineering/scripts/**`, `.engineering/migrations/**`). Requires `make engineering-test` and `make engineering-evals` in addition. `preserve`/`section`/`hooks` paths follow the same rules in both roles.
 - **Consumer edits to `file`-mode managed implementation** are rejected with the supported update/upstream route; outcome INCOMPLETE.
+
+### Implementation evidence (2026-09-27, commit c5cc605 on `feat/v3-1c-03-role-based-verification`)
+
+Implementation only: not verification, human acceptance, publication or merge.
+
+- Classification lives in `.engineering/engineering/verification_requirements.py`,
+  called from `verification_checkout.materialize`, so role (`installation_role`)
+  and ownership come from the proposed content on every prepare/status/check/record.
+  Ownership is the union of the proposed and base `.engineering/manifest.json`
+  (dropping an entry cannot lower requirements); a proposed manifest is required.
+  The old `.engineering/` prefix rule in `validate_plan` is removed; the Graft rule
+  moved unchanged into the same module. The proposed configuration is fully
+  validated (including maintainability) so invalid values fail `prepare`.
+- Assumption beyond the Decisions: a consumer `file`-mode path whose proposed bytes
+  equal the proposed manifest's `sha256` (or is absent from both, i.e. an update's
+  removal) is treated as distributed update output (category "managed
+  integration", requires `make engineering-check`), not a local edit; otherwise
+  the update route itself would be rejected. `.engineering/manifest.json` and
+  `install.json` themselves are "project" paths (`make check` only).
+- Tests: new `.engineering/tests/integration/test_verification_requirements.py`
+  (31 command-level `verify prepare` cases on generated, adopted and
+  maintainer-checkout fixtures); `test_verification.py` fixture gains a manifest;
+  the greenfield journey plan adds `make engineering-check` for its Makefile edit.
+- Docs: verification guide requirement table, ENGINEERING.md, CLAUDE.md sentence,
+  verifier agent, `/review`; eval 007 asserts the role-based wording.
+- Gates run locally after `make fmt` and one `make manifest`: `make check` exit 0;
+  `make engineering-test` exit 0 (385 passed); `make engineering-evals` exit 0
+  (11/11 static, 5 prompt cases skipped). Independent review not yet done.
