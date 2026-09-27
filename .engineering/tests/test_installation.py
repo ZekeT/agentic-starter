@@ -1,6 +1,7 @@
 """Exercise adopted project preservation and three-way update safety end to end."""
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -204,7 +205,7 @@ def test_new_upstream_file_and_unknown_config_schema(installation):
     assert snapshot(target) == before
 
 
-def engineering(template, *args):
+def engineering_process(template, *args):
     return subprocess.run(
         [
             sys.executable,
@@ -221,7 +222,7 @@ def engineering(template, *args):
 
 def test_update_records_missing_installation_role(installation):
     template, target = installation
-    applied = engineering(template, "adopt", str(target), "--apply")
+    applied = engineering_process(template, "adopt", str(target), "--apply")
     assert applied.returncode == 0, applied.stdout + applied.stderr
     state = target / STATE_PATH
     assert json.loads(state.read_text())["role"] == "consumer"
@@ -232,10 +233,169 @@ def test_update_records_missing_installation_role(installation):
     state.write_bytes(encoded(data))
     commit(target)
     before = snapshot(target)
-    preview = engineering(template, "update", str(target))
+    preview = engineering_process(template, "update", str(target))
     assert preview.returncode == 0, preview.stdout + preview.stderr
     assert "installation role" in preview.stdout and "consumer" in preview.stdout
     assert snapshot(target) == before
-    applied = engineering(template, "update", str(target), "--apply")
+    applied = engineering_process(template, "update", str(target), "--apply")
     assert applied.returncode == 0, applied.stdout + applied.stderr
     assert json.loads(state.read_text())["role"] == "consumer"
+
+
+CONFIG = ".engineering/config.toml"
+
+
+def engineering(capsys, template, *args):
+    """Run the ./engineering command line from a distribution checkout."""
+    from engineering.cli import main
+
+    status = main(["--root", str(template), *args])
+    output = capsys.readouterr()
+    return status, output.out + output.err
+
+
+def customize(root, **values):
+    text = (root / CONFIG).read_text()
+    for key, value in values.items():
+        text, count = re.subn(rf"(?m)^{key} = .*$", f"{key} = {value}", text)
+        assert count == 1, key
+    save(root, CONFIG, text)
+
+
+def test_configuration_is_project_owned_and_survives_updates(installation, capsys):
+    template, target = installation
+    status, output = engineering(capsys, template, "adopt", str(target), "--apply")
+    assert status == 0, output
+    commit(target)
+    installed = json_object((target / MANIFEST_PATH).read_bytes())
+    assert installed["files"][CONFIG]["ownership"] == {"mode": "preserve"}
+    assert CONFIG not in json_object((target / STATE_PATH).read_bytes())["entries"]
+    customize(target, warn_file_lines=250)
+    commit(target)
+    customize(template, warn_file_lines=280, max_file_lines=600)
+    refresh(template)
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 0, output
+    assert "CONFLICT" not in output
+    config = (target / CONFIG).read_text()
+    assert "warn_file_lines = 250" in config and "max_file_lines = 500" in config
+
+
+def test_installed_managed_configuration_moves_to_project_ownership(
+    installation, capsys
+):
+    template, target = installation
+    adopt(template, target)
+    # Earlier releases recorded the configuration as whole-file managed.
+    raw = (target / CONFIG).read_bytes()
+    manifest = json_object((target / MANIFEST_PATH).read_bytes())
+    manifest["files"][CONFIG].update(
+        ownership={"mode": "file"}, sha256=digest(raw), owned_sha256=digest(raw)
+    )
+    state = json_object((target / STATE_PATH).read_bytes())
+    state["entries"][CONFIG] = {"ownership": {"mode": "file"}, "upstream": digest(raw)}
+    (target / MANIFEST_PATH).write_bytes(encoded(manifest))
+    (target / STATE_PATH).write_bytes(encoded(state))
+    customize(target, warn_file_lines=250)
+    commit(target)
+    customize(template, warn_file_lines=280)
+    refresh(template)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target))
+    assert status == 0, output
+    assert f"{CONFIG}: Now project-owned" in output
+    assert snapshot(target) == before
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 0, output
+    assert "warn_file_lines = 250" in (target / CONFIG).read_text()
+    installed = json_object((target / MANIFEST_PATH).read_bytes())
+    assert installed["files"][CONFIG]["ownership"] == {"mode": "preserve"}
+    assert CONFIG not in json_object((target / STATE_PATH).read_bytes())["entries"]
+
+
+def test_configuration_schema_change_is_migrated_in_the_update(
+    installation, capsys, monkeypatch
+):
+    from engineering import settings
+
+    template, target = installation
+    adopt(template, target)
+    customize(target, warn_file_lines=250)
+    commit(target)
+    # Simulate a release whose configuration schema moved to version 2.
+    monkeypatch.setattr(settings, "SCHEMA_VERSION", 2)
+    monkeypatch.setitem(
+        settings.MIGRATIONS,
+        1,
+        lambda text: text.replace("schema_version = 1", "schema_version = 2", 1),
+    )
+    customize(template, schema_version=2)
+    refresh(template)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target))
+    assert status == 0, output
+    assert f"MIGRATE {CONFIG}" in output and "1 → 2" in output
+    assert snapshot(target) == before
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 0, output
+    config = (target / CONFIG).read_text()
+    assert "schema_version = 2" in config and "warn_file_lines = 250" in config
+
+
+def test_missing_schema_migration_blames_the_starter(installation, capsys, monkeypatch):
+    from engineering import settings
+
+    template, target = installation
+    adopt(template, target)
+    # Simulate a release that moved the schema but shipped no migration step.
+    monkeypatch.setattr(settings, "SCHEMA_VERSION", 2)
+    customize(template, schema_version=2)
+    refresh(template)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target))
+    assert status == 1
+    assert "no migration from version 1" in output
+    assert "update the starter or report the missing migration" in output
+    assert "repair project configuration" not in output
+    assert snapshot(target) == before
+
+
+def test_invalid_configuration_fails_update_and_doctor(installation, capsys):
+    template, target = installation
+    adopt(template, target)
+    customize(target, warn_file_lines=900)
+    commit(target)
+    before = snapshot(target)
+    for mode in ("--plan", "--apply"):
+        status, output = engineering(capsys, template, "update", str(target), mode)
+        assert status == 1
+        assert f"update: {CONFIG}" in output and "warn_file_lines" in output
+        assert snapshot(target) == before
+    status, output = engineering(capsys, target, "doctor")
+    assert status == 1
+    assert f"ERROR [configuration] {CONFIG}" in output
+
+
+def test_managed_implementation_edit_still_conflicts(installation, capsys):
+    template, target = installation
+    adopt(template, target)
+    save(target, "REVIEW.md", "Local managed edit\n")
+    commit(target)
+    save(template, "REVIEW.md", "Upstream managed change\n")
+    refresh(template)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 1
+    assert "CONFLICT REVIEW.md" in output
+    assert snapshot(target) == before
+
+
+def test_configuration_seeds_from_maintainer_template_copy(installation, capsys):
+    template, target = installation
+    # The maintainer checkout's own configuration is its project configuration.
+    customize(template, warn_file_lines=260)
+    shipped = (ROOT / ".engineering/template/config.toml").read_text()
+    save(template, ".engineering/template/config.toml", shipped)
+    status, output = engineering(capsys, template, "adopt", str(target), "--apply")
+    assert status == 0, output
+    assert (target / CONFIG).read_text() == shipped

@@ -29,12 +29,17 @@ from .ownership import (
 from .updates import classify, legacy_baseline
 
 SEEDS = (
+    ".engineering/config.toml",
     "docs/agents/issue-tracker.md",
     "docs/agents/domain.md",
     ".engineering/dependencies.toml",
     ".engineering/graft/package.json",
     ".engineering/graft/package-lock.json",
 )
+
+# The maintainer checkout's own configuration is its project configuration;
+# new installations start from the template copy (maintainer source).
+SEED_SOURCES = {".engineering/config.toml": ".engineering/template/config.toml"}
 
 DIRECTORIES = (
     "docs/context",
@@ -89,6 +94,36 @@ def template_manifest(root: Path) -> dict[str, Any]:
     return data
 
 
+def seed(template: Path, name: str) -> bytes | None:
+    """Read initial project content, preferring maintainer template copies."""
+    source = SEED_SOURCES.get(name)
+    content = read_bytes(template, source) if source else None
+    return content if content is not None else read_bytes(template, name)
+
+
+def plan_configuration(plan: Plan) -> None:
+    """Validate and schema-migrate project configuration; never overwrite values."""
+    from .settings import CONFIGURATION, MigrationGap, migrate, validate
+
+    local = read_bytes(plan.target, CONFIGURATION)
+    raw = local if local is not None else seed(plan.template, CONFIGURATION)
+    try:
+        text, notes = migrate((raw or b"").decode())
+        validate(plan.target, text)
+    except MigrationGap as exc:
+        raise ValueError(
+            f"{CONFIGURATION}: {exc}; starter defect, not a project error: "
+            "update the starter or report the missing migration"
+        ) from exc
+    except ValueError as exc:
+        raise ValueError(
+            f"{CONFIGURATION}: {exc}; repair project configuration, then re-plan"
+        ) from exc
+    if local is not None and notes:
+        reason = f"Project configuration {', '.join(notes)}; values kept"
+        plan.actions.append(Action(CONFIGURATION, "MIGRATE", reason, text.encode()))
+
+
 def plan_scope(
     plan: Plan,
     name: str,
@@ -99,6 +134,9 @@ def plan_scope(
     """Reconcile one owned scope; historical whole-file hashes authorize conversion."""
     spec = validate_ownership(name, entry["ownership"])
     if spec["mode"] == "preserve":
+        if old:
+            reason = "Now project-owned; local content kept and no longer updated"
+            return Action(name, "PRESERVE", reason), None
         return Action(name, "SKIP", "Project-owned; never copied or updated"), None
     local = read_bytes(plan.target, name)
     incoming = owned_content(read_bytes(plan.template, name), name, spec)
@@ -259,9 +297,10 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
                     name,
                     "ADD",
                     "Seed initial project configuration; future changes are project/dependency-owned",
-                    read_bytes(template, name),
+                    seed(template, name),
                 )
             )
+    plan_configuration(plan)
     for name in INSPECTED:
         plan.observed[name] = observe(target, name)
     for name in DIRECTORIES:

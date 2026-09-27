@@ -178,6 +178,8 @@ def merge_owned(
 def distribution_ownership(name: str) -> dict[str, Any]:
     """Assign starter inventory ownership explicitly, preserving application artifacts."""
     if name in {
+        # Project configuration: seeded once, then validated and schema-migrated.
+        ".engineering/config.toml",
         ".engineering/dependencies.toml",
         ".engineering/graft/package.json",
         ".engineering/graft/package-lock.json",

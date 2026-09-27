@@ -84,6 +84,14 @@ def test_initialize_missing_state_and_preserve_customization(tmp_path):
     data = json.loads(original)
     assert data["entries"]["Makefile"]["ownership"]["mode"] == "section"
     assert data["role"] == "consumer"
+    # Configuration is project-owned; its template copy stays maintainer source.
+    config = ".engineering/config.toml"
+    manifest = json.loads((root / ".engineering/manifest.json").read_text())
+    assert manifest["files"][config]["ownership"] == {"mode": "preserve"}
+    assert config not in data["entries"]
+    assert (root / config).read_bytes() == (
+        ROOT / ".engineering/template/config.toml"
+    ).read_bytes()
     (root / "REVIEW.md").write_text("Local review policy\n")
     result = cli(root, "init-installation")
     assert result.returncode == 0, result.stdout + result.stderr

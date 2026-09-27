@@ -403,7 +403,8 @@ excludes upstream tracker artifacts,
 maintainer tests/evals/build scripts, historical project documentation, caches,
 installed dependency outputs and populated installation/migration state.
 Downstream `.scratch/` tickets remain trackable. Application README, project
-metadata and lockfile are seed content outside Engineering update ownership.
+metadata and lockfile are seed content outside Engineering update ownership;
+`.engineering/config.toml` is project configuration seeded from the template copy.
 Application edits and project-owned portions of shared files pass ordinary gates
 without `make manifest` or fingerprint repair. Setup verifies distribution bytes
 before first initialization; later setup preserves the installation baseline.
@@ -498,8 +499,17 @@ and zero conflicts. There is no force flag. Shared instruction/Makefile/ignore
 regions and the recognized JSON hook subset preserve surrounding project data.
 The manifest and installed baseline distinguish new, unchanged, local-only,
 upstream-only, conflicting and safely removable scopes. A removed customized
-scope conflicts. Unresolved conflicts never advance metadata. Configuration
-schema changes require explicit migration rather than guessing.
+scope conflicts. Unresolved conflicts never advance metadata. A local edit to
+managed implementation conflicts when upstream also changed it; change it
+upstream in the Engineering checkout instead.
+
+`.engineering/config.toml` is project configuration, not managed implementation.
+Adoption seeds it from the template copy (`.engineering/template/config.toml` in
+the maintainer checkout, which is maintainer source). Updates never overwrite its
+values: they validate it, refuse to plan while it is invalid, and apply
+configuration schema migrations shown as `MIGRATE` in the preview. Installations
+that recorded it as managed move it to project ownership on their next update,
+keeping its values.
 
 Installation state records the installation role: `consumer` for generated and
 adopted projects, `maintainer` for the starter's own checkout (written by `make

@@ -90,12 +90,6 @@
       },
       "upstream": "8b09bed5dac3e599c5f6cb40cf10c191e124e53cf98c133c13f1b00f0ed18bd7"
     },
-    ".engineering/config.toml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "2030200d270c6ec908856b4dd81e680aa4ae94323e7fe4c6db652af0c087380c"
-    },
     ".engineering/docs/coding-standards.md": {
       "ownership": {
         "mode": "file"
@@ -142,7 +136,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "2d2bef65aa68fbdaf6cb3e08ed79bd181503db7bb64f53e81833157bdeb3d50f"
+      "upstream": "c5631914909d187e522ebc20cb8ada3d35d9a9697d784bec0cbef4d0c259496d"
     },
     ".engineering/engineering/apply.py": {
       "ownership": {
@@ -160,7 +154,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "8c61fc11fc9a544b7a6b72a815207ed506324b10e48c4f5501808c7333e4cf46"
+      "upstream": "d4396b3cab44ef7cc481bc20813912446777d73082c828a61fa7887cc9e90767"
     },
     ".engineering/engineering/deps.py": {
       "ownership": {
@@ -244,7 +238,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "100eeaa32f95182391a32e72f4b626a849f11c6b79b00bbcac100ea9cff21426"
+      "upstream": "74508090cc05c2b714dd6e0ff9c022bd50ab1a6f297b2cc3e51acc42cc3e44f3"
     },
     ".engineering/engineering/migrate/openspec.py": {
       "ownership": {
@@ -268,7 +262,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "860f0d5f22e7334b707c9b416c4ac4228593eea76e2fe26a11ab551cd8fbea10"
+      "upstream": "b32733f227dbfa8ac9e8453acab92c7e34a52352ea9bca66cfbca44c2151cbd4"
     },
     ".engineering/engineering/publication.py": {
       "ownership": {
@@ -298,7 +292,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "174cac97c527ef60075e095f00559a8a14e9ea839f0f6dfac9ed0f467104a3fa"
+      "upstream": "5e4fcd191cdb31732028f7b857599d4bc091b843b815f059bbf6b29713b1abe8"
     },
     ".engineering/engineering/skill_install.py": {
       "ownership": {
@@ -412,7 +406,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01"
+      "upstream": "62af70da3d583fd23e97f1d97bf92fe1838375b8b8a8e2162b10da34d5219030"
     },
     ".engineering/evals/cases/011-complete-journey.yaml": {
       "ownership": {
@@ -523,7 +517,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "e21fe6742a4976b2a530911ae6d08bf30d23061fafaa1f31cee7700fc1e6f535"
+      "upstream": "e5dfd6945c7063f54ab19485fd43bec66e5f5c38b9f8fbfac8c5aa71dd70987b"
     },
     "Makefile": {
       "ownership": {
