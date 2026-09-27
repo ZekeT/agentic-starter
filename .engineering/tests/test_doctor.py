@@ -128,3 +128,158 @@ def test_eval_parser_retains_supported_block_styles(style):
 def test_eval_parser_refuses_duplicate_fields():
     with pytest.raises(ValueError):
         parse_fields("id: one\nid: two\nkind: static\nshell: echo hello\n", "fixture")
+
+
+ENGINEERING = Path(__file__).parents[2] / "engineering"
+
+
+def navigate(target, provider, roots):
+    """Select a navigation provider and application roots in project policy."""
+    import re
+
+    path = target / ".engineering/config.toml"
+    text = re.sub(
+        r'(?m)^provider = "graft"$',
+        f'provider = "{provider}"',
+        path.read_text(),
+        count=1,
+    )
+    text = re.sub(
+        r"(?m)^application_roots = .*$",
+        f"application_roots = {json.dumps(roots)}",
+        text,
+    )
+    path.write_text(text)
+    for name in roots:
+        save(target, f"{name}/app.py", "VALUE = 1\n")
+
+
+def record_installed(target, names, graft_version="0.18.0"):
+    """Write installation evidence as if pinned dependencies had been installed."""
+    from engineering.ownership import digest
+    from engineering.registry import registry
+
+    evidence = {}
+    for row in registry(target)["dependency"]:
+        if row["id"] not in names:
+            continue
+        version = row["version"] if row["kind"] == "skills" else graft_version
+        if row["kind"] == "skills":
+            outputs = [f".claude/skills/{skill}/SKILL.md" for skill in row["skills"]]
+            for name in outputs:
+                save(target, name, f"{version} fixture skill\n")
+        else:
+            outputs = [
+                ".engineering/graft/package.json",
+                ".engineering/graft/package-lock.json",
+                ".claude/skills/graft/SKILL.md",
+            ]
+            save(target, outputs[-1], "graft fixture skill\n")
+            save(
+                target,
+                ".engineering/graft/node_modules/@nanonets/graft/package.json",
+                json.dumps({"version": version}),
+            )
+        evidence[row["id"]] = {
+            "managed": True,
+            "installed_version": version,
+            "installed_from": row["source"],
+            "outputs": {n: digest((target / n).read_bytes()) for n in outputs},
+        }
+    save(
+        target,
+        ".engineering/state/dependencies.json",
+        json.dumps({"schema_version": 1, "dependencies": evidence}),
+    )
+
+
+def doctor(target):
+    import subprocess
+    import sys
+
+    return subprocess.run(
+        [sys.executable, str(ENGINEERING), "--root", str(target), "doctor"],
+        capture_output=True,
+        text=True,
+    )
+
+
+def findings(result, severity, code):
+    return [
+        line
+        for line in result.stdout.splitlines()
+        if line.startswith(f"{severity} [{code}]")
+    ]
+
+
+def test_disabled_navigation_passes_without_graft(installation):
+    template, target = installation
+    adopt(template, target)
+    navigate(target, "none", ["src"])
+    record_installed(target, {"matt-skills"})
+    # Pins are not checked while navigation is disabled.
+    save(target, ".engineering/graft/package.json", '{"dependencies":{}}\n')
+    result = doctor(target)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert findings(result, "INFO", "navigation")
+    assert "disabled" in result.stdout
+    assert "graft" not in {
+        line.split("]")[1].split(":")[0].strip()
+        for line in result.stdout.splitlines()
+        if line.startswith(("ERROR", "WARN"))
+    }
+
+
+def test_ready_navigation_passes(installation):
+    template, target = installation
+    adopt(template, target)
+    navigate(target, "graft", ["src"])
+    record_installed(target, {"matt-skills", "graft"})
+    result = doctor(target)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert not findings(result, "WARN", "navigation")
+    assert not findings(result, "ERROR", "navigation")
+    assert not findings(result, "ERROR", "dependency")
+
+
+def test_enabled_navigation_without_roots_warns_without_failing(installation):
+    template, target = installation
+    adopt(template, target)
+    navigate(target, "graft", [])
+    record_installed(target, {"matt-skills", "graft"})
+    result = doctor(target)
+    assert result.returncode == 0, result.stdout + result.stderr
+    [warning] = findings(result, "WARN", "navigation")
+    next_step = result.stdout.split(warning, 1)[1]
+    assert "application_roots" in next_step and '"none"' in next_step
+
+
+@pytest.mark.parametrize("breakage", ["missing", "stale", "mispinned"])
+def test_enabled_but_broken_navigation_fails_with_disable_option(
+    installation, breakage
+):
+    template, target = installation
+    adopt(template, target)
+    navigate(target, "graft", ["src"])
+    if breakage == "missing":
+        record_installed(target, {"matt-skills"})
+    elif breakage == "stale":
+        record_installed(target, {"matt-skills", "graft"}, graft_version="0.17.0")
+    else:
+        record_installed(target, {"matt-skills", "graft"})
+        save(
+            target,
+            ".engineering/graft/package.json",
+            '{"dependencies":{"@nanonets/graft":"0.0.0"}}\n',
+        )
+    result = doctor(target)
+    assert result.returncode == 1, result.stdout + result.stderr
+    failures = [
+        line
+        for line in result.stdout.splitlines()
+        if line.startswith(("ERROR [navigation]", "ERROR [dependency] graft"))
+    ]
+    assert failures
+    lines = result.stdout.splitlines()
+    fixes = [lines[lines.index(line) + 1] for line in failures]
+    assert all('provider = "none"' in fix for fix in fixes)

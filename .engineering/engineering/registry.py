@@ -7,6 +7,7 @@ from typing import Any
 
 from .config import object_value, read_text, safe_path
 from .ownership import digest, json_object, read_bytes
+from .settings import CAPABILITIES, provider
 
 REGISTRY = ".engineering/dependencies.toml"
 STATE = ".engineering/state/dependencies.json"
@@ -44,6 +45,11 @@ def registry(root: Path) -> dict[str, Any]:
             )
         if type(row.get("required")) is not bool:
             raise ValueError(f"deps.required: {name} requires a boolean")
+        capability = row.get("capability")
+        if capability is not None and (
+            not isinstance(capability, str) or capability not in CAPABILITIES
+        ):
+            raise ValueError(f"deps.capability: {name} names an unknown capability")
         if row["kind"] == "skills":
             names = row.get("skills")
             if not isinstance(names, list) or not names:
@@ -99,12 +105,25 @@ def state(root: Path) -> dict[str, Any]:
     return data
 
 
+def selected(root: Path, dependency: dict[str, Any]) -> bool:
+    """A capability's dependency applies only while that capability's provider names it."""
+    capability = dependency.get("capability")
+    return capability is None or provider(root, capability) == dependency["id"]
+
+
+def required(root: Path, dependency: dict[str, Any]) -> bool:
+    """Apply the single rule used by dependency status, setup and doctor."""
+    return bool(dependency["required"]) and selected(root, dependency)
+
+
 def installed_status(
     root: Path, dependency: dict[str, Any], evidence: dict[str, Any]
 ) -> tuple[str, str]:
     """Compare installed bytes with recorded pins, entirely offline."""
     row = evidence.get(dependency["id"])
     if row is None:
+        if not selected(root, dependency):
+            return "missing", f"NOT SELECTED ({dependency['capability']})"
         return "missing", "MISSING" if dependency["required"] else "OPTIONAL"
     for name, sha in row["outputs"].items():
         if digest(read_bytes(root, name)) != sha:

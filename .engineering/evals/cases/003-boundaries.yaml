@@ -9,6 +9,9 @@ shell: |
   from engineering.registry import registry
   data = registry(Path.cwd())
   assert {r['id'] for r in data['dependency']} == {'matt-skills', 'graft', 'show-me', 'karpathy-guidelines'}
+  # Optional capabilities use one generic field; only Graft serves navigation.
+  assert {r['id']: r.get('capability') for r in data['dependency']}['graft'] == 'navigation'
+  assert [r['id'] for r in data['dependency'] if r.get('capability')] == ['graft']
   assert 'local-markdown' in Path('.engineering/config.toml').read_text()
   guide = Path('ENGINEERING.md').read_text()
   assert 'MUST NOT maintain a `.scratch/` ↔ `.plan/` translator' in guide

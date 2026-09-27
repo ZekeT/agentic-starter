@@ -33,9 +33,11 @@ def strings(value: Any, label: str, *, empty: bool = False) -> list[str]:
 def validate_navigation(root: Path, plan: dict[str, Any]) -> None:
     """Assess applicable navigation using the proposed configuration."""
     if (root / ".engineering/config.toml").is_file():
-        from .settings import load
+        from .settings import load, provider
 
-        if load(root).get("navigation", {}).get("application_roots"):
+        if provider(root, "navigation") == "graft" and load(root).get(
+            "navigation", {}
+        ).get("application_roots"):
             if [".engineering/bin/graft", "check"] not in plan["checks"]:
                 raise ValueError("Configured application roots require Graft check")
 

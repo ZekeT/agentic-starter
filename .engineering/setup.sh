@@ -8,7 +8,7 @@ if [ "$#" -ne 0 ]; then
   echo 'Usage: .engineering/setup.sh [--check]' >&2
   exit 2
 fi
-echo 'Setup will install Python development tools and required pinned Matt/Graft dependencies from the network.'
+echo 'Setup will install Python development tools and required pinned dependencies from the network (Graft only while navigation selects it).'
 echo 'Optional dependencies and machine-wide settings are unchanged.'
 ./engineering init-installation
 uv sync --all-extras
