@@ -176,3 +176,62 @@ def test_unknown_capability_rejected(dependency_repo, capability):
     path.write_text(text)
     result = deps(root, "status")
     assert result.returncode == 1 and "capability" in result.stderr
+
+
+@pytest.mark.parametrize("breakage", ["ok", "modified", "missing", "pin changed"])
+def test_unselected_recorded_graft_left_untouched(
+    dependency_repo, monkeypatch, tmp_path_factory, breakage
+):
+    from .test_doctor import record_installed
+
+    root = dependency_repo
+    # Any attempted installation fails instead of reaching the network.
+    stubs = tmp_path_factory.mktemp("stubs")
+    for tool in ("npm", "npx", "node"):
+        (stubs / tool).write_text("#!/bin/sh\nexit 1\n")
+        (stubs / tool).chmod(0o755)
+    monkeypatch.setenv("PATH", f"{stubs}:{__import__('os').environ['PATH']}")
+    version = "0.17.0" if breakage == "pin changed" else "0.18.0"
+    package = root / ".engineering/graft"
+    package.mkdir()
+    (package / "package.json").write_text(
+        json.dumps({"dependencies": {"@nanonets/graft": version}})
+    )
+    (package / "package-lock.json").write_text("{}")
+    record_installed(root, {"matt-skills", "graft"}, graft_version=version)
+    if breakage == "modified":
+        (root / ".claude/skills/graft/SKILL.md").write_text("local edit\n")
+    elif breakage == "missing":
+        (root / ".engineering/graft/node_modules/@nanonets/graft/package.json").unlink()
+    select_navigation(root, "none")
+    before = snapshot(root)
+    reported = deps(root, "status")
+    assert reported.returncode == 0, reported.stderr
+    assert "NOT SELECTED (navigation)" in graft_row(reported.stdout)
+    for operation in ("install", "update"):
+        applied = deps(root, operation, "--apply")
+        assert applied.returncode == 0, applied.stderr
+        assert "graft:" not in applied.stdout
+        assert "Already installed at desired pins." in applied.stdout
+    assert snapshot(root) == before
+
+
+def test_capability_dependency_must_be_a_provider_value(dependency_repo):
+    root = dependency_repo
+    path = root / REGISTRY
+    path.write_text(
+        path.read_text().replace(
+            'source = "humanlayer/skills"\n',
+            'source = "humanlayer/skills"\ncapability = "navigation"\n',
+        )
+    )
+    result = deps(root, "status")
+    assert result.returncode == 1 and "deps.capability" in result.stderr
+    assert "show-me" in result.stderr
+
+
+def test_invalid_provider_fails_before_partial_status(dependency_repo):
+    select_navigation(dependency_repo, "other")
+    result = deps(dependency_repo, "status")
+    assert result.returncode == 1 and "navigation.provider" in result.stderr
+    assert result.stdout == ""

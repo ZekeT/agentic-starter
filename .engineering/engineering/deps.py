@@ -24,11 +24,12 @@ from .transaction import write_files
 def status(root: Path) -> int:
     """Report installed-versus-pinned state without querying upstream."""
     data, evidence = registry(root), state(root)["dependencies"]
+    # Assess every row before printing so invalid policy yields no partial table.
+    rows = [(row, *installed_status(root, row, evidence)) for row in data["dependency"]]
     print(
         "Dependency             Desired                                   Installed                                 Status"
     )
-    for row in data["dependency"]:
-        installed, health = installed_status(root, row, evidence)
+    for row, installed, health in rows:
         print(f"{row['id']:<22} {row['version']:<41} {installed:<41} {health}")
     return 0
 
@@ -112,6 +113,7 @@ def operate(
         for row in data["dependency"]
         if row["id"] == name
         or name is None
+        and selected(root, row)
         and (required(root, row) or row["id"] in evidence["dependencies"])
     ]
     if not rows:

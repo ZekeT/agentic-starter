@@ -451,10 +451,11 @@ symbol graph, call-map database or manually maintained current file map.
 Graft. Optional: show-me and Karpathy. No full Pstack or Wayfinder Maps package is
 managed. An entry with `capability = "<name>"` serves an optional capability and
 is required only while that capability's `provider` in `.engineering/config.toml`
-names it; Graft declares `capability = "navigation"`. Dependency status, setup
-installation and doctor all apply this rule: with `[navigation] provider = "none"`
-Graft is reported as not selected, is not installed, and cannot be installed by
-name until navigation selects it. Git skills use immutable commits; npm packages and the skills installer
+names it; its id must be one of that capability's provider values. Graft declares
+`capability = "navigation"`. Dependency status, setup installation, unnamed
+updates and doctor all apply this rule: with `[navigation] provider = "none"`
+Graft is reported as not selected and left untouched, even when previously
+installed, and cannot be installed or updated by name until navigation selects it. Git skills use immutable commits; npm packages and the skills installer
 use exact versions. `.engineering/state/dependencies.json` records installed
 pins and output hashes separately and is local installation bookkeeping.
 
@@ -544,6 +545,8 @@ with application roots and valid pins passes. Graft with empty
 `navigation.application_roots` passes with a warning whose next step is adding
 roots or setting `provider = "none"`. Missing, stale or mispinned Graft while it
 is selected fails, with repair and disable (`provider = "none"`) as fixes.
+An invalid provider value is one configuration error; provider-dependent checks
+are then skipped.
 
 Exit codes: 0 healthy, 1 configuration/installation failure, 2 invalid CLI usage.
 Errors include stable categories, affected paths and remediation. Restore or

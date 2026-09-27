@@ -50,6 +50,12 @@ def registry(root: Path) -> dict[str, Any]:
             not isinstance(capability, str) or capability not in CAPABILITIES
         ):
             raise ValueError(f"deps.capability: {name} names an unknown capability")
+        if capability is not None and (
+            name not in CAPABILITIES[capability] or name == "none"
+        ):
+            raise ValueError(
+                f"deps.capability: {name} is not a {capability} provider value"
+            )
         if row["kind"] == "skills":
             names = row.get("skills")
             if not isinstance(names, list) or not names:
@@ -121,9 +127,11 @@ def installed_status(
 ) -> tuple[str, str]:
     """Compare installed bytes with recorded pins, entirely offline."""
     row = evidence.get(dependency["id"])
+    if not selected(root, dependency):
+        # Unselected dependencies are left untouched, whatever their recorded state.
+        installed = "missing" if row is None else str(row["installed_version"])
+        return installed, f"NOT SELECTED ({dependency['capability']})"
     if row is None:
-        if not selected(root, dependency):
-            return "missing", f"NOT SELECTED ({dependency['capability']})"
         return "missing", "MISSING" if dependency["required"] else "OPTIONAL"
     for name, sha in row["outputs"].items():
         if digest(read_bytes(root, name)) != sha:

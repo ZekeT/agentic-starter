@@ -123,3 +123,10 @@ def provider(root: Path, capability: str) -> str:
     return str(
         load(root).get(capability, {}).get("provider", CAPABILITIES[capability][0])
     )
+
+
+def graft_navigation(root: Path) -> bool:
+    """Graft navigation applies only while selected with application roots configured."""
+    return provider(root, "navigation") == "graft" and bool(
+        load(root).get("navigation", {}).get("application_roots")
+    )

@@ -13,8 +13,8 @@ from .config import load_config, read_text, safe_path
 from .doctor_wiring import check_git, check_hooks, external_tool
 from .installation import MANIFEST_PATH, check_state
 from .ownership import json_object, read_bytes
-from .registry import installed_status, registry, required, state
-from .settings import load, provider
+from .registry import installed_status, registry, required, selected, state
+from .settings import graft_navigation, load, provider
 
 
 def disable(capability: str) -> str:
@@ -63,7 +63,7 @@ def configuration(root: Path) -> None:
     """Validate project policy, scope and the upstream tracker configuration pointer."""
     config = load(root)
     load_config(root)
-    if provider(root, "navigation") == "graft":
+    if graft_navigation(root):
         graft.application_roots(root)
     read_text(
         root,
@@ -129,12 +129,9 @@ def navigation(root: Path) -> None:
 
 def navigation_state(root: Path) -> list[Diagnostic]:
     """Report disabled or ineffective navigation without failing installation health."""
-    try:
-        selection = provider(root, "navigation")
-        roots = load(root).get("navigation", {}).get("application_roots")
-    except (OSError, ValueError):
-        return []  # The configuration check reports invalid policy.
-    if selection != "graft":
+    if graft_navigation(root):
+        return []
+    if provider(root, "navigation") == "none":
         return [
             Diagnostic(
                 "navigation",
@@ -144,17 +141,15 @@ def navigation_state(root: Path) -> list[Diagnostic]:
                 'To enable, set [navigation] provider = "graft", then engineering deps install --apply.',
             )
         ]
-    if not roots:
-        return [
-            Diagnostic(
-                "navigation",
-                "WARN",
-                ".engineering/config.toml",
-                "Graft is selected but navigation.application_roots is empty, so it has no effect",
-                f"Add application directories to navigation.application_roots, {disable('navigation')}",
-            )
-        ]
-    return []
+    return [
+        Diagnostic(
+            "navigation",
+            "WARN",
+            ".engineering/config.toml",
+            "Graft is selected but navigation.application_roots is empty, so it has no effect",
+            f"Add application directories to navigation.application_roots, {disable('navigation')}",
+        )
+    ]
 
 
 def diagnose(root: Path) -> list[Diagnostic]:
@@ -197,18 +192,29 @@ def diagnose(root: Path) -> list[Diagnostic]:
             f"Restore pinned Graft wiring with engineering deps install --apply, {disable('navigation')}",
         ),
     ]
+    try:
+        load(root)
+        policy = True
+    except (OSError, ValueError):
+        # The configuration check reports invalid policy once; provider-dependent
+        # checks cannot be assessed and are skipped rather than repeating it.
+        policy = False
+        checks = [check for check in checks if check[0] != "navigation"]
     findings = []
     for code, path, check, remediation in checks:
         try:
             check(root)
         except (OSError, ValueError, subprocess.SubprocessError) as exc:
             findings.append(Diagnostic(code, "ERROR", path, str(exc), remediation))
-    findings.extend(navigation_state(root))
+    if policy:
+        findings.extend(navigation_state(root))
     try:
         data, evidence = registry(root), state(root)["dependencies"]
         for row in data["dependency"]:
+            if row.get("capability") and not policy or not selected(root, row):
+                continue  # Unselected dependencies are left untouched.
             _, health = installed_status(root, row, evidence)
-            if health == "OK" or health.startswith("NOT SELECTED"):
+            if health == "OK":
                 continue
             fix = f"Run engineering deps install {row['id']} --apply (or deps update for an existing pin)"
             findings.append(

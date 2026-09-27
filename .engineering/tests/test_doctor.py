@@ -283,3 +283,39 @@ def test_enabled_but_broken_navigation_fails_with_disable_option(
     lines = result.stdout.splitlines()
     fixes = [lines[lines.index(line) + 1] for line in failures]
     assert all('provider = "none"' in fix for fix in fixes)
+
+
+@pytest.mark.parametrize("breakage", ["modified", "missing", "pin changed"])
+def test_disabled_navigation_ignores_recorded_graft(installation, breakage):
+    template, target = installation
+    adopt(template, target)
+    navigate(target, "none", ["src"])
+    version = "0.17.0" if breakage == "pin changed" else "0.18.0"
+    record_installed(target, {"matt-skills", "graft"}, graft_version=version)
+    if breakage == "modified":
+        save(target, ".claude/skills/graft/SKILL.md", "local edit\n")
+    elif breakage == "missing":
+        (
+            target / ".engineering/graft/node_modules/@nanonets/graft/package.json"
+        ).unlink()
+    result = doctor(target)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert not [
+        line
+        for line in result.stdout.splitlines()
+        if line.startswith(("ERROR", "WARN")) and "graft" in line
+    ]
+    assert findings(result, "INFO", "navigation")
+
+
+def test_invalid_provider_is_one_configuration_error(installation):
+    template, target = installation
+    adopt(template, target)
+    navigate(target, "other", ["src"])
+    record_installed(target, {"matt-skills", "graft"})
+    result = doctor(target)
+    assert result.returncode == 1
+    errors = [line for line in result.stdout.splitlines() if line.startswith("ERROR")]
+    assert len(errors) == 1 and errors[0].startswith("ERROR [configuration]")
+    assert "navigation.provider" in errors[0]
+    assert "deps install --apply" not in result.stdout
