@@ -18,4 +18,8 @@ shell: |
       assert 'separate Engineering checkout' in guide
       assert 'fingerprint repair' in guide
   assert 'manifest:' not in Path('.engineering/template/Makefile').read_text()
+  # Project configuration is seeded and migrated, never overwritten by updates.
+  assert distribution['.engineering/config.toml']['ownership'] == {'mode': 'preserve'}
+  assert 'project configuration' in Path('ENGINEERING.md').read_text()
+  assert 'project configuration' in Path('.engineering/template/README.md').read_text()
   PY

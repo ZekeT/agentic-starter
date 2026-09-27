@@ -1,17 +1,62 @@
-"""Read project policy independently of installation fingerprints."""
+"""Read project configuration independently of installation fingerprints."""
 
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from .config import object_value, read_text, safe_path
+from .config import object_value, read_text, safe_path, validate_config
+
+CONFIGURATION = ".engineering/config.toml"
+SCHEMA_VERSION = 1
+# MIGRATIONS[n] rewrites schema n text to schema n + 1, keeping project values.
+MIGRATIONS: dict[int, Callable[[str], str]] = {}
 
 
 def load(root: Path) -> dict[str, Any]:
     """Reject unknown schemas and malformed policy before any operation."""
-    data = tomllib.loads(read_text(root, ".engineering/config.toml"))
-    if type(data.get("schema_version")) is not int or data["schema_version"] != 1:
-        raise ValueError("config.schema: expected schema_version = 1")
+    return parse(root, read_text(root, CONFIGURATION))
+
+
+def migrate(text: str) -> tuple[str, list[str]]:
+    """Apply ordered schema migrations; unsupported versions fail in parse."""
+    notes = []
+    version = tomllib.loads(text).get("schema_version")
+    while type(version) is int and 0 < version < SCHEMA_VERSION:
+        step = MIGRATIONS.get(version)
+        if step is None:
+            raise ValueError(f"config.schema: no migration from version {version}")
+        text = step(text)
+        if tomllib.loads(text).get("schema_version") != version + 1:
+            raise ValueError(f"config.schema: migration from {version} failed")
+        notes.append(f"schema_version {version} → {version + 1}")
+        version += 1
+    return text, notes
+
+
+def validate(root: Path, text: str) -> dict[str, Any]:
+    """Check the complete configuration, including maintainability thresholds."""
+    data = parse(root, text)
+    maintainability = data.get("maintainability", {})
+    validate_config(
+        root, {"schema_version": 1, "project": {"maintainability": maintainability}}
+    )
+    return data
+
+
+def parse(root: Path, text: str) -> dict[str, Any]:
+    """Validate configuration text against the current schema."""
+    data = tomllib.loads(text)
+    version = data.get("schema_version")
+    if type(version) is not int or version != SCHEMA_VERSION:
+        hint = (
+            "; run engineering update to migrate it"
+            if type(version) is int and 0 < version < SCHEMA_VERSION
+            else ""
+        )
+        raise ValueError(
+            f"config.schema: expected schema_version = {SCHEMA_VERSION}{hint}"
+        )
     allowed = {
         "schema_version",
         "navigation",

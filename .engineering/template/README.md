@@ -22,8 +22,9 @@ No global agent settings are changed. Repeating setup is supported.
 
 Add application code in `src/` and tests in `tests/`. Set
 `[navigation].application_roots` in `.engineering/config.toml` when code exists,
-then explicitly run `.engineering/bin/graft build` before verification. Add
-feature instructions as described in `docs/agents/domain.md`.
+then explicitly run `.engineering/bin/graft build` before verification. That file
+is project configuration: Engineering updates validate and migrate it but keep
+your values. Add feature instructions as described in `docs/agents/domain.md`.
 
 Run `make fmt` while developing. The independent verifier runs `make check`
 for the completed change; review and ship reuse current evidence.

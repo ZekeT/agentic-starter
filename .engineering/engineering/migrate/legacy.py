@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from ..adoption import SEEDS, template_manifest
+from ..adoption import SEEDS, seed, template_manifest
 from ..config import object_value, safe_path, validate_config
 from ..installation import MANIFEST_PATH, STATE_PATH, build_state
 from ..ownership import (
@@ -27,7 +27,7 @@ OLD_STATE = ".factory/state.json"
 def translate_config(template: Path, root: Path, previous: dict[str, Any]) -> bytes:
     """Move supported project settings into TOML, retaining reviewed exceptions."""
     validate_config(root, {"schema_version": 1, **previous})
-    content = (read_bytes(template, ".engineering/config.toml") or b"").decode()
+    content = (seed(template, ".engineering/config.toml") or b"").decode()
     project = object_value(previous.get("project", {}), "legacy project")
     for section in ("maintainability", "navigation"):
         values = object_value(project.get(section, {}), section)
@@ -262,16 +262,17 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
             current = read_bytes(root, name)
             content = owned_content(incoming, name, spec)
             assert content is not None
-            if name == ".engineering/config.toml":
-                content = translate_config(template, root, previous)
             result.add(name, merge_owned(current, content, name, spec))
         if entry.get("executable"):
             result.executables.add(name)
         entries[name] = {"ownership": spec, "upstream": entry["owned_sha256"]}
-    # Tracker configuration is project-owned after initial creation.
+    # Project configuration and tracker pointers are project-owned once seeded.
     for name in SEEDS:
         if read_bytes(root, name) is None:
-            result.add(name, read_bytes(template, name))
+            if name == ".engineering/config.toml":
+                result.add(name, translate_config(template, root, previous))
+            else:
+                result.add(name, seed(template, name))
     result.add(MANIFEST_PATH, encoded(offered))
     result.add(
         STATE_PATH,
