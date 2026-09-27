@@ -1,5 +1,6 @@
 """Exercise documented existing-project onboarding through public commands."""
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -82,6 +83,9 @@ def test_existing_project_onboarding_preserves_native_work_and_openspec(
             assert (target / name).read_bytes() == content
     assert (target / "Makefile").read_text().startswith(native)
     assert not (target / "pyproject.toml").exists()
+    # Both routes classify the installation identically, never as the maintainer.
+    state = json.loads((target / ".engineering/state/install.json").read_text())
+    assert state["role"] == "consumer"
     ok("./engineering", "deps", "install", "--apply")
     ok("./engineering", "doctor")
     commit(target)

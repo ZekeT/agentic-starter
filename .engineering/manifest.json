@@ -248,7 +248,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731",
+      "owned_sha256": "699681f7184a60a5ee4e89dd53d156ca876bfa790ebb77b2229cbc6d9fe3b596",
       "ownership": {
         "mode": "file"
       },
@@ -257,9 +257,10 @@
         "05f36dbfd4c6546ae019c17434a862b1d74fd888960add70bf4d757a095549c0",
         "eb35b428dbb3900a5b761a3619fff774af6cdc51884468790cebbba1815791d1",
         "57765c7dd58214daa26eb000c0720523502cbf68a1e208aa62e2e9dd145f81a0",
-        "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035"
+        "3041fdb0ad26e9d5fbfc6bf848d218158b0160f64157db31e4f5c942949d1035",
+        "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731"
       ],
-      "sha256": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731"
+      "sha256": "699681f7184a60a5ee4e89dd53d156ca876bfa790ebb77b2229cbc6d9fe3b596"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -272,16 +273,17 @@
     },
     ".engineering/engineering/adoption.py": {
       "executable": false,
-      "owned_sha256": "4c77916e4f26f4557f9d124a0ee23aca9938f1d58bd096478fc0113e86443038",
+      "owned_sha256": "2d2bef65aa68fbdaf6cb3e08ed79bd181503db7bb64f53e81833157bdeb3d50f",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "74b125fae823695260ed407bc46133ce11d93112b8af16ff168ab09ab3e16ec5",
         "4f2b9240097b2d85a858052b37f9b6dddbffe0f09a54bb632d5f498fc477bd54",
-        "030b22730d6f947dc95832fe0795b27f20a987192cdb4dd6b33e52ea8d3f1212"
+        "030b22730d6f947dc95832fe0795b27f20a987192cdb4dd6b33e52ea8d3f1212",
+        "4c77916e4f26f4557f9d124a0ee23aca9938f1d58bd096478fc0113e86443038"
       ],
-      "sha256": "4c77916e4f26f4557f9d124a0ee23aca9938f1d58bd096478fc0113e86443038"
+      "sha256": "2d2bef65aa68fbdaf6cb3e08ed79bd181503db7bb64f53e81833157bdeb3d50f"
     },
     ".engineering/engineering/apply.py": {
       "executable": false,
@@ -413,15 +415,16 @@
     },
     ".engineering/engineering/installation.py": {
       "executable": false,
-      "owned_sha256": "2547ce676863c8cb5570487dd85fa622ed1fa47990996c0fe7b6c7574016e311",
+      "owned_sha256": "009631470ff74f53bd3172a294e007297128d99db7a55def6ad8fdb22ee011eb",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "9c76e05ca59a407ea1fcc34f567038aaba1b84f14725b3b9fb5287b9d1af1d93",
-        "092754dde2a37798911aefeb76e7bb1ff546f8053b5892454f08ca4b88f2f361"
+        "092754dde2a37798911aefeb76e7bb1ff546f8053b5892454f08ca4b88f2f361",
+        "2547ce676863c8cb5570487dd85fa622ed1fa47990996c0fe7b6c7574016e311"
       ],
-      "sha256": "2547ce676863c8cb5570487dd85fa622ed1fa47990996c0fe7b6c7574016e311"
+      "sha256": "009631470ff74f53bd3172a294e007297128d99db7a55def6ad8fdb22ee011eb"
     },
     ".engineering/engineering/migrate/__init__.py": {
       "executable": false,
@@ -483,7 +486,7 @@
     },
     ".engineering/engineering/migrate/legacy.py": {
       "executable": false,
-      "owned_sha256": "a2107910a455a98d9de3892366b50e83a35951d04f5762d5e1137f1fbc67a7c4",
+      "owned_sha256": "100eeaa32f95182391a32e72f4b626a849f11c6b79b00bbcac100ea9cff21426",
       "ownership": {
         "mode": "file"
       },
@@ -497,9 +500,11 @@
         "d91391712dd018fca6fc6c3c0d58bbb7b0a31413b8c966bbab6815710a916fef",
         "d588d12d8301363f8a769da2204b27a1dadd6e04a6d69a94d9996aaf30004dc0",
         "f556987c9a6da3d0f92a1dddb23454a4ef0666fbbab3721d935a1f46fec1431a",
-        "212be79362035785a07555fdd451f83da2de7630b997d42dded543687e770f2c"
+        "212be79362035785a07555fdd451f83da2de7630b997d42dded543687e770f2c",
+        "a2107910a455a98d9de3892366b50e83a35951d04f5762d5e1137f1fbc67a7c4",
+        "13604e2ddf7a944655e434b8d23a20bc29065460a7a76be063b43bef4c462bd4"
       ],
-      "sha256": "a2107910a455a98d9de3892366b50e83a35951d04f5762d5e1137f1fbc67a7c4"
+      "sha256": "100eeaa32f95182391a32e72f4b626a849f11c6b79b00bbcac100ea9cff21426"
     },
     ".engineering/engineering/migrate/openspec.py": {
       "executable": false,
@@ -688,15 +693,17 @@
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,
-      "owned_sha256": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a",
+      "owned_sha256": "12c44d45d07074967b7de78b6b1e7762d77af5b27b86473ae532f4ff4f7fb760",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "7b23766ec71fab3e3ee4ab23fe000390945eaf42e9b138cef58799b08352b2e7",
-        "6552cc89f794f136a38fb3382986591af803b1e1724d5ce5d431e2e89253d09f"
+        "6552cc89f794f136a38fb3382986591af803b1e1724d5ce5d431e2e89253d09f",
+        "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a",
+        "92070cf4e7c0028c41c01320d1d01d37f607f6bd6ab8b1ef3fd6311357edddd7"
       ],
-      "sha256": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a"
+      "sha256": "12c44d45d07074967b7de78b6b1e7762d77af5b27b86473ae532f4ff4f7fb760"
     },
     ".engineering/evals/README.md": {
       "executable": false,
@@ -765,14 +772,15 @@
     },
     ".engineering/evals/cases/007-reusable-verification.yaml": {
       "executable": false,
-      "owned_sha256": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424",
+      "owned_sha256": "271f233db31cf7353e29c1f9ba1045e58dc4f5393a15cdd646d31efc13c63802",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07"
+        "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07",
+        "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424"
       ],
-      "sha256": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424"
+      "sha256": "271f233db31cf7353e29c1f9ba1045e58dc4f5393a15cdd646d31efc13c63802"
     },
     ".engineering/evals/cases/008-bounded-corrections.yaml": {
       "executable": false,
@@ -1005,7 +1013,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc",
+      "owned_sha256": "e21fe6742a4976b2a530911ae6d08bf30d23061fafaa1f31cee7700fc1e6f535",
       "ownership": {
         "mode": "file"
       },
@@ -1025,9 +1033,10 @@
         "b3bfb373098562caa7c88bc6962b459b53d887fa6a8f0d87535ef6b665014065",
         "61ebb140de17fa3cd159020e9684575f691107369d3932474577b3f384a2e3cf",
         "08b9d3e57ecf715ab51016c6a9346ed562d0ea9c0c41eee6657eac293d5ae55d",
-        "753607dc45948e480ce85fe1f93a8f1c96dfa2e2d757f6c4cea28c4c25adafca"
+        "753607dc45948e480ce85fe1f93a8f1c96dfa2e2d757f6c4cea28c4c25adafca",
+        "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc"
       ],
-      "sha256": "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc"
+      "sha256": "e21fe6742a4976b2a530911ae6d08bf30d23061fafaa1f31cee7700fc1e6f535"
     },
     "Makefile": {
       "executable": false,

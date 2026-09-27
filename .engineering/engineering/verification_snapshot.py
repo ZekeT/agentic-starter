@@ -8,6 +8,7 @@ from typing import Any
 
 from .config import safe_path
 from .growth import merge_base
+from .installation import installation_role
 from .ownership import digest, encoded, json_object
 from .verification_checkout import proposed_files, temporary_checkout
 from .verification_inputs import STATE, paths_from_git, source_path, strings
@@ -56,6 +57,8 @@ def validate_plan(root: Path, plan: dict[str, Any]) -> None:
             strings(command, field)
         if len({tuple(c) for c in plan[field]}) != len(plan[field]):
             raise ValueError(f"{field}: duplicate commands")
+    # Classification needs the recorded role (ADR 0001); absence blocks planning.
+    installation_role(root)
     required = [["make", "check"]]
     if any(p.startswith(".engineering/") for p in plan["paths"]):
         required += [["make", "engineering-test"], ["make", "engineering-evals"]]

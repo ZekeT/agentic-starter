@@ -130,7 +130,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731"
+      "upstream": "699681f7184a60a5ee4e89dd53d156ca876bfa790ebb77b2229cbc6d9fe3b596"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -142,7 +142,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4c77916e4f26f4557f9d124a0ee23aca9938f1d58bd096478fc0113e86443038"
+      "upstream": "2d2bef65aa68fbdaf6cb3e08ed79bd181503db7bb64f53e81833157bdeb3d50f"
     },
     ".engineering/engineering/apply.py": {
       "ownership": {
@@ -208,7 +208,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "2547ce676863c8cb5570487dd85fa622ed1fa47990996c0fe7b6c7574016e311"
+      "upstream": "009631470ff74f53bd3172a294e007297128d99db7a55def6ad8fdb22ee011eb"
     },
     ".engineering/engineering/migrate/__init__.py": {
       "ownership": {
@@ -244,7 +244,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a2107910a455a98d9de3892366b50e83a35951d04f5762d5e1137f1fbc67a7c4"
+      "upstream": "100eeaa32f95182391a32e72f4b626a849f11c6b79b00bbcac100ea9cff21426"
     },
     ".engineering/engineering/migrate/openspec.py": {
       "ownership": {
@@ -346,7 +346,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a"
+      "upstream": "12c44d45d07074967b7de78b6b1e7762d77af5b27b86473ae532f4ff4f7fb760"
     },
     ".engineering/evals/README.md": {
       "ownership": {
@@ -394,7 +394,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424"
+      "upstream": "271f233db31cf7353e29c1f9ba1045e58dc4f5393a15cdd646d31efc13c63802"
     },
     ".engineering/evals/cases/008-bounded-corrections.yaml": {
       "ownership": {
@@ -523,7 +523,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "2bd176a2e351ccc083bbfd15d62ae8f65e5850b73bd3c70cd78489fc47865ffc"
+      "upstream": "e21fe6742a4976b2a530911ae6d08bf30d23061fafaa1f31cee7700fc1e6f535"
     },
     "Makefile": {
       "ownership": {
@@ -546,5 +546,6 @@
     }
   },
   "installed_version": "3.0.0",
+  "role": "maintainer",
   "schema_version": 1
 }

@@ -271,21 +271,31 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
     plan.directories = DIRECTORIES
     if not plan.conflicts:
         installed = {**offered, "project": prior_manifest.get("project", {})}
+        # Adoption and legacy conversion install consumers; updates keep a
+        # recorded role and migrate installations that predate roles.
+        role = state.get("role", "consumer") if state else "consumer"
+        migration = (
+            f"Engineering migration: record installation role {role}; "
+            if state is not None and "role" not in state
+            else ""
+        )
         metadata = [
-            (MANIFEST_PATH, encoded(installed)),
+            (MANIFEST_PATH, encoded(installed), ""),
             (
                 STATE_PATH,
-                encoded(build_state(offered["template_version"], next_entries)),
+                encoded(build_state(offered["template_version"], next_entries, role)),
+                migration,
             ),
         ]
-        for name, content in metadata:
+        for name, content, note in metadata:
             before = read_bytes(target, name)
             if before != content:
                 plan.actions.append(
                     Action(
                         name,
                         "ADD" if before is None else "MERGE",
-                        "Reconciled installation metadata; preserve project overrides",
+                        note
+                        + "Reconciled installation metadata; preserve project overrides",
                         content,
                     )
                 )

@@ -227,7 +227,9 @@ def main() -> None:
     }
     state_path = ROOT / ".engineering/state/install.json"
     state_path.parent.mkdir(parents=True, exist_ok=True)
-    state_path.write_bytes(encoded(build_state(manifest["template_version"], entries)))
+    state_path.write_bytes(
+        encoded(build_state(manifest["template_version"], entries, "maintainer"))
+    )
     changed = sum(
         1
         for rel, entry in manifest["files"].items()

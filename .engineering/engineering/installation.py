@@ -46,6 +46,7 @@ def installation_version(root: Path) -> str | None:
 
 STATE_PATH = ".engineering/state/install.json"
 MANIFEST_PATH = ".engineering/manifest.json"
+ROLES = ("maintainer", "consumer")
 
 
 def load_state(root: Path) -> dict[str, Any] | None:
@@ -62,9 +63,15 @@ def load_state(root: Path) -> dict[str, Any] | None:
         r"\d+\.\d+\.\d+(?:-[\w.-]+)?", state["installed_version"]
     ):
         raise ValueError("Invalid installed_version in state")
-    if set(state) != {"schema_version", "installed_version", "entries"}:
+    # Role is optional here so updates can migrate installations that predate it.
+    if set(state) - {"role"} != {"schema_version", "installed_version", "entries"}:
         raise ValueError(
-            "Installation state must contain only version and baseline metadata"
+            "Installation state must contain only version, role and baseline metadata"
+        )
+    if "role" in state and state["role"] not in ROLES:
+        raise ValueError(
+            f"Invalid installation role {state['role']!r} in {STATE_PATH}; "
+            f"expected one of {', '.join(ROLES)}"
         )
     entries = object_value(state.get("entries"), "state.entries")
     for name, value in entries.items():
@@ -79,9 +86,29 @@ def load_state(root: Path) -> dict[str, Any] | None:
     return state
 
 
-def build_state(version: str, entries: dict[str, Any]) -> dict[str, Any]:
-    """Keep only installation authority and per-scope upstream fingerprints."""
-    return {"schema_version": 1, "installed_version": version, "entries": entries}
+def installation_role(root: Path) -> str:
+    """Return the recorded role; classification is never guessed (ADR 0001)."""
+    state = load_state(root)
+    if state is None or "role" not in state:
+        raise ValueError(
+            f"Installation role is not recorded in {STATE_PATH}; verification "
+            "assumes no default. Consumer project: from a starter checkout run "
+            "`./engineering update <project>`, review the preview, then rerun it "
+            "with --apply. Maintainer checkout: run `make manifest`."
+        )
+    return str(state["role"])
+
+
+def build_state(version: str, entries: dict[str, Any], role: str) -> dict[str, Any]:
+    """Keep only installation authority, role and per-scope upstream fingerprints."""
+    if role not in ROLES:
+        raise ValueError(f"Invalid installation role {role!r}")
+    return {
+        "schema_version": 1,
+        "installed_version": version,
+        "role": role,
+        "entries": entries,
+    }
 
 
 def initialize(root: Path) -> None:
@@ -99,7 +126,8 @@ def initialize(root: Path) -> None:
         for name, entry in manifest["files"].items()
         if entry["ownership"]["mode"] != "preserve"
     }
-    content = encoded(build_state(manifest["template_version"], entries))
+    # Distributions initialize consumer projects; the maintainer uses make manifest.
+    content = encoded(build_state(manifest["template_version"], entries, "consumer"))
     destination = safe_path(root, STATE_PATH)
     destination.parent.mkdir(parents=True, exist_ok=True)
     # Exclusive creation also protects a baseline created by concurrent setup.

@@ -37,6 +37,18 @@ def cli(root, *args, status=0):
     return json.loads(proc.stdout)
 
 
+INSTALL_STATE = ".engineering/state/install.json"
+
+
+def record_role(root, role):
+    state = {"schema_version": 1, "installed_version": "3.0.0", "entries": {}}
+    if role is not None:
+        state["role"] = role
+    path = root / INSTALL_STATE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state))
+
+
 @pytest.fixture
 def repo(tmp_path):
     git(tmp_path, "init", "-b", "main")
@@ -45,6 +57,7 @@ def repo(tmp_path):
     (tmp_path / ".gitignore").write_text(".engineering/state/verification/\n")
     (tmp_path / "Makefile").write_text("check:\n\t@test -s app.txt\n")
     (tmp_path / "app.txt").write_text("before\n")
+    record_role(tmp_path, "consumer")
     git(tmp_path, "add", ".")
     git(tmp_path, "commit", "-m", "baseline")
     git(tmp_path, "checkout", "-b", "feature")
@@ -402,3 +415,33 @@ def test_bounded_correction_preserves_history_but_requires_fresh_proof(repo):
     assert prepare(repo)["previous_evidence"] == current["previous_evidence"]
     assert json.loads(history.read_text()) == previous
     assert git(repo, "diff", "--name-only") == "app.txt"
+
+
+@pytest.mark.parametrize("state", ["missing role", "missing state"])
+def test_missing_installation_role_blocks_planning_with_next_step(repo, state):
+    if state == "missing role":
+        record_role(repo, None)
+    else:
+        (repo / INSTALL_STATE).unlink()
+    result = prepare_status(repo, 1)
+    assert result["status"] == "INCOMPLETE"
+    assert "role" in result["error"] and "engineering update" in result["error"]
+    assert not (repo / ".engineering/state/verification/example.json").exists()
+
+
+def test_invalid_installation_role_fails_visibly(repo):
+    record_role(repo, "owner")
+    result = prepare_status(repo, 1)
+    assert result["status"] == "INCOMPLETE" and "owner" in result["error"]
+
+
+def prepare_status(root, status):
+    return cli(
+        root,
+        "prepare",
+        "--change",
+        "example",
+        "--plan",
+        ".engineering/state/verification/plan.json",
+        status=status,
+    )
