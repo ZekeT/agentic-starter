@@ -1,5 +1,6 @@
 """Derive required checks from the recorded installation role and path ownership."""
 
+import tomllib
 from pathlib import Path
 from typing import Any
 
@@ -29,7 +30,10 @@ def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
     configured = (checkout / CONFIGURATION).is_file()
     if configured:
         # Invalid project configuration fails planning visibly, not only doctor.
-        validate(checkout, (checkout / CONFIGURATION).read_text())
+        try:
+            validate(checkout, (checkout / CONFIGURATION).read_text())
+        except tomllib.TOMLDecodeError as error:
+            raise ValueError(f"{CONFIGURATION}: {error}") from error
     graft = configured and graft_navigation(checkout)
     categories = classify(checkout, role, plan["paths"])
     if edited := categories["managed implementation"]:
@@ -48,7 +52,11 @@ def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
         or categories["installation metadata"]
     ):
         required.append(HEALTH)
-    if categories["maintainer source"]:
+    # In the maintainer checkout the metadata is the ownership contract every
+    # consumer receives, so it is maintainer source as well as metadata.
+    if categories["maintainer source"] or (
+        role == "maintainer" and categories["installation metadata"]
+    ):
         required += SUITES
     if graft:
         required.append(GRAFT)

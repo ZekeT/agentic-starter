@@ -220,6 +220,15 @@ def test_invalid_consumer_configuration_fails_visibly(project):
 
 
 @consumers
+def test_unparseable_consumer_configuration_names_the_file(project):
+    name = ".engineering/config.toml"
+    (project / name).write_text("schema_version = \n")
+    result = prepare(project, [name], [CHECK, HEALTH], status=1)
+    assert result["status"] == "INCOMPLETE"
+    assert result["error"].startswith(f"{name}: ")
+
+
+@consumers
 def test_consumer_managed_implementation_edit_is_rejected_with_route(project):
     edit(project, MANAGED)
     result = prepare(project, [MANAGED], [CHECK, HEALTH, *SUITES], status=1)
@@ -362,6 +371,48 @@ def test_maintainer_configuration_needs_only_project_and_health_checks(project):
     name = ".engineering/config.toml"
     assert "engineering-check" in prepare(project, [name], [CHECK], status=1)["error"]
     assert prepare(project, [name], [CHECK, HEALTH])["status"] == "INCOMPLETE"
+
+
+@maintainer_checkout
+def test_maintainer_manifest_is_maintainer_source(project):
+    # Dropping an entry and weakening ownership changes every consumer's contract.
+    write_manifest(
+        project,
+        {
+            ".engineering/engineering/tool.py": ("VALUE = 1\n", {"mode": "preserve"}),
+            ".engineering/config.toml": (
+                'schema_version = 1\n[navigation]\nprovider = "none"\n',
+                {"mode": "preserve"},
+            ),
+        },
+    )
+    names = [".engineering/manifest.json"]
+    assert "engineering-test" in prepare(project, names, [CHECK], status=1)["error"]
+    result = prepare(project, names, [CHECK, HEALTH], status=1)
+    assert (
+        "engineering-test" in result["error"] and "engineering-evals" in result["error"]
+    )
+    assert (
+        "engineering-check"
+        in prepare(project, names, [CHECK, *SUITES], status=1)["error"]
+    )
+    assert prepare(project, names, [CHECK, HEALTH, *SUITES])["status"] == "INCOMPLETE"
+
+
+@maintainer_checkout
+def test_maintainer_install_state_is_maintainer_source(project):
+    name = ".engineering/state/install.json"
+    path = project / name
+    path.write_text(json.dumps(json.loads(path.read_text()), indent=4) + "\n")
+    result = prepare(project, [name], [CHECK, HEALTH], status=1)
+    assert (
+        "engineering-test" in result["error"] and "engineering-evals" in result["error"]
+    )
+    assert (
+        "engineering-check"
+        in prepare(project, [name], [CHECK, *SUITES], status=1)["error"]
+    )
+    assert prepare(project, [name], [CHECK, HEALTH, *SUITES])["status"] == "INCOMPLETE"
 
 
 @maintainer_checkout

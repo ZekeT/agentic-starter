@@ -58,7 +58,8 @@ cannot lower them), never which Make targets exist:
 |---|---|---|
 | Project configuration (`preserve` entries) | both | `make engineering-check` |
 | Integration sections and hooks (`section`, `hooks`) | both | `make engineering-check` |
-| `.engineering/manifest.json`, `.engineering/state/install.json` | both | `make engineering-check` |
+| `.engineering/manifest.json`, `.engineering/state/install.json` | consumer | `make engineering-check` |
+| `.engineering/manifest.json`, `.engineering/state/install.json` | maintainer | `make engineering-check`, `make engineering-test`, `make engineering-evals` |
 | Managed implementation (`file` entries) | maintainer | `make engineering-test`, `make engineering-evals` |
 | Starter tooling under `.engineering/` `template/`, `tests/`, `evals/`, `scripts/`, `migrations/` | maintainer | `make engineering-test`, `make engineering-evals` |
 | Managed implementation edited or deleted | consumer | Rejected: INCOMPLETE, never PASS |
@@ -69,7 +70,9 @@ is rejected, whatever the manifest digests say: the manifest is proposed content
 too, so it cannot vouch for the file. Restore the file and obtain changes with
 `engineering update <project>` from a starter checkout, or propose them
 upstream. A consumer starter-update PR is therefore not yet verifiable by this
-workflow. Invalid project configuration fails preparation. The recorded role is
+workflow. In the maintainer checkout the installation metadata is maintainer
+source as well: the manifest is the ownership contract every consumer receives.
+Invalid project configuration fails preparation, naming the file. The recorded role is
 trusted and fails closed: a consumer declaring `maintainer` must run suites it
 lacks; a maintainer checkout proposing `consumer` keeps maintainer requirements
 until that change merges. A role change is visible in the diff. Configured application roots require

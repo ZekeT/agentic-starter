@@ -370,7 +370,8 @@ Material expansion returns to `/to-spec` and `/to-tickets`. See [REVIEW.md](REVI
 Verification requires checks by installation role and path ownership, never by
 which targets exist: project configuration, integration sections, hooks and
 installation metadata add `make engineering-check`; maintainer source in the
-maintainer checkout adds `make engineering-test` and `make engineering-evals`; a
+maintainer checkout, including its installation metadata, adds
+`make engineering-test` and `make engineering-evals`; a
 consumer edit or deletion of managed implementation is rejected with the
 update/upstream route. See
 [verification evidence](.engineering/docs/verification.md).

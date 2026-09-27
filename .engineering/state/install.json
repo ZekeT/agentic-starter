@@ -124,7 +124,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "94aac8ddf90383e3968f69fa750480e1fba90bd18f2ae16dfd1f868a9b83efc3"
+      "upstream": "61c218461a668b80001ab1eaa8729928d09f986137d6dc17fa4951043680b95c"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -340,7 +340,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "18d0e40951857dec1c26422170f441d48390b97a86cce8cfe85f6ddca57aa17d"
+      "upstream": "127e44edf261d65e8ba34351bba3ac30747862bc38e5797c2ac1da6ca3c968fa"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
@@ -523,7 +523,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "fe9bdb356d87efbcd2c516fc7784d223124c4d3b6a8e60102bae5c08d548ab90"
+      "upstream": "94c27e314a034a23c32e5c460f8e348743964bfe8f50f84c40f33c391fca2426"
     },
     "Makefile": {
       "ownership": {
