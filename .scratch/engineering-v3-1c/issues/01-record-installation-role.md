@@ -10,7 +10,7 @@ tells the developer how to fix it, so classification is never guessed (ADR 0001)
 
 **Blocked by:** None (can start immediately).
 
-**Status:** implemented — awaiting independent verification
+**Status:** completed — merged in [PR #33](https://github.com/ZekeT/agentic-starter/pull/33)
 
 - [x] A generated consumer project records the consumer role in its committed install state.
 - [x] An adopted project records the consumer role identically.
@@ -20,7 +20,7 @@ tells the developer how to fix it, so classification is never guessed (ADR 0001)
 - [x] An invalid role value fails visibly.
 - [x] Command-level fixture tests cover generation, adoption, update migration and the missing-role blocker.
 - [x] Verification and onboarding documentation describe the role; affected evals updated.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
 
@@ -46,3 +46,5 @@ tells the developer how to fix it, so classification is never guessed (ADR 0001)
   test helper into `prepare`. Implementer-run checks only, not verification.
   Remaining: fresh independent review and verification of the corrections,
   human acceptance, publication and merge.
+
+- 2026-09-27: Independent behavioral, maintainability and security review PASS (snapshot 0a447739…, rebased on #32); human-accepted and published as PR #33; merged into main (3427680).
