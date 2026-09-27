@@ -284,6 +284,8 @@ def test_verification_rejects_graft_check_while_navigation_is_disabled(tmp_path)
         'application_roots = ["src"]\n',
     )
     record_role(root, "consumer")
+    # Verification classifies ownership from the installation manifest (ticket 03).
+    save(root, ".engineering/manifest.json", json.dumps({"files": {}}))
     git(root, "add", ".")
     git(root, "commit", "-m", "baseline")
     save(root, "src/app.py", "VALUE = 2\n")

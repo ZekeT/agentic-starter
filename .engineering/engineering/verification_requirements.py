@@ -4,12 +4,14 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
+from .config import object_value
 from .installation import MANIFEST_PATH, ROLES, STATE_PATH, installation_role
 from .ownership import METADATA, json_object, read_bytes, validate_ownership
 from .settings import CONFIGURATION, graft_navigation, provider, validate
 from .source import git
 
-# Starter tooling that is never distributed; it is maintainer source there only.
+# Starter tooling directories; some files are distributed, but everything here
+# is maintainer source in the maintainer checkout (never consumer policy).
 MAINTAINER_TOOLING = tuple(
     f".engineering/{name}/"
     for name in ("template", "tests", "evals", "scripts", "migrations")
@@ -35,7 +37,11 @@ def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
         except tomllib.TOMLDecodeError as error:
             raise ValueError(f"{CONFIGURATION}: {error}") from error
     graft = configured and graft_navigation(checkout)
-    if GRAFT in plan["checks"] and configured and provider(checkout, "navigation") != "graft":
+    if (
+        GRAFT in plan["checks"]
+        and configured
+        and provider(checkout, "navigation") != "graft"
+    ):
         raise ValueError(
             "navigation disabled: remove the Graft check from the plan, or "
             'select [navigation] provider = "graft"'
@@ -131,7 +137,10 @@ def baseline_role(checkout: Path) -> str | None:
 
 
 def baseline(checkout: Path, name: str) -> bytes | None:
-    """Read a path from the checkout's baseline commit, None when absent."""
+    """Read a path from the checkout's baseline commit, None when absent.
+
+    Relies on materialize() having set the checkout HEAD to the plan base.
+    """
     if not git(checkout, "ls-tree", "--name-only", "HEAD", "--", name):
         return None
     return git(checkout, "show", f"HEAD:{name}")
@@ -141,9 +150,7 @@ def manifest_files(raw: bytes | None) -> dict[str, Any] | None:
     """Validate the ownership of every manifest entry before trusting it."""
     if raw is None:
         return None
-    files = json_object(raw).get("files")
-    if not isinstance(files, dict):
-        raise ValueError(f"{MANIFEST_PATH}: files must be an object")
+    files = object_value(json_object(raw).get("files"), f"{MANIFEST_PATH}: files")
     for name, entry in files.items():
         if not isinstance(entry, dict):
             raise ValueError(f"{MANIFEST_PATH}: invalid entry {name}")

@@ -11,7 +11,7 @@ maintainer checkout still requires the maintainer suites.
 
 **Blocked by:** 01 (Record the installation role), 02 (Make Engineering configuration project-owned).
 
-**Status:** implemented — awaiting independent verification
+**Status:** completed — merged in [PR #36](https://github.com/ZekeT/agentic-starter/pull/36)
 
 - [x] A generated consumer project changes application roots or maintainability settings and prepares a valid plan with `make check` and `make engineering-check`, requiring no nonexistent target.
 - [x] Invalid project configuration fails verification visibly.
@@ -23,7 +23,7 @@ maintainer checkout still requires the maintainer suites.
 - [x] Requirements never depend on which Make targets happen to exist.
 - [x] Command-level `verify prepare` fixture tests cover each case above.
 - [x] Verification documentation, `/review` guidance and project instructions describe role-based requirements; affected evals updated.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
 
@@ -128,3 +128,5 @@ human acceptance, publication or merge.
   `origin/main` first): targeted tests 70 passed; `make check` exit 0;
   `make engineering-test` exit 0 (398 passed); `make engineering-evals` exit 0
   (11/11 static, 5 prompt cases skipped). Independent reverification not yet done.
+
+- 2026-09-28: Independent behavioral, maintainability and security review PASS after two authorized correction rounds (snapshot 3d0a34bd…); human-accepted and published as PR #36; merged into main (962559a). Non-blocking follow-ups moved to ticket 09; comment nits applied in ticket 05's rebase commit.
