@@ -41,6 +41,20 @@ maintainer checkout still requires the maintainer suites.
 2. **Effective role = stricter of base and proposed role** (`maintainer` is stricter), mirroring the base∪proposed manifest rule; a role change takes effect only after it merges (supersedes "maintainer declaring `consumer` has tooling edits rejected" above). With no base install state or role, the proposed role applies (missing-role blocking still applies to proposed content). The recorded role is otherwise trusted.
 3. **Installation metadata** (`.engineering/manifest.json`, `.engineering/state/install.json`) requires `make check` plus `make engineering-check`.
 
+### Decisions (2026-09-28, behavioral review follow-up, human-approved)
+
+4. **Q4 — maintainer installation metadata is maintainer source.** With effective
+   role `maintainer`, changes to `.engineering/manifest.json` and
+   `.engineering/state/install.json` require `make engineering-test` and
+   `make engineering-evals` in addition to `make check` and
+   `make engineering-check`: that manifest is the ownership contract every
+   consumer receives. (Behavioral review: a manifest-only change dropping the
+   `growth.py` entry and switching `cli.py` to `preserve` was accepted with only
+   `make check`.) Consumer role keeps decision 3 (`make check` +
+   `make engineering-check`).
+5. **Q5 — invalid TOML names the file.** The configuration parse error from
+   verification planning is reported as `.engineering/config.toml: <parser message>`.
+
 ### Implementation evidence (2026-09-27, commit c5cc605 on `feat/v3-1c-03-role-based-verification`)
 
 Implementation only: not verification, human acceptance, publication or merge.
@@ -90,3 +104,27 @@ failed with one HIGH, one MEDIUM and one LOW finding.
   `origin/main` first): `make check` exit 0; `make engineering-test` exit 0
   (394 passed); `make engineering-evals` exit 0 (11/11 static, 5 prompt cases
   skipped). Independent reverification not yet done.
+
+### Behavioral review corrections (2026-09-28)
+
+Implementation of human-authorized decisions 4–5 above; not verification,
+human acceptance, publication or merge.
+
+- Decision 4: `verification_requirements.validate_requirements` adds
+  `make engineering-test` and `make engineering-evals` when the effective role is
+  `maintainer` and installation metadata changed (still also requiring
+  `make engineering-check`). Consumer requirements unchanged.
+- Decision 5: a `TOMLDecodeError` from configuration validation is re-raised as
+  `.engineering/config.toml: <parser message>`.
+- Tests first: 4 new `verify prepare` cases (maintainer manifest dropping an
+  entry and switching `tool.py` to `preserve`; maintainer `install.json`;
+  unparseable consumer config × generated/adopted) failed before the fix
+  (maintainer: `assert 0 == 1`, prepare accepted; TOML: error was
+  `Invalid value (at line 1, column 18)`).
+- Docs: verification guide table/wording and ENGINEERING.md. Ticket 06 gained the
+  post-update `graft: MISSING` acceptance point and a note that ticket 05 already
+  added the navigation guide and prerequisite split.
+- Gates after `make fmt` and one `make manifest` (metadata restored from
+  `origin/main` first): targeted tests 70 passed; `make check` exit 0;
+  `make engineering-test` exit 0 (398 passed); `make engineering-evals` exit 0
+  (11/11 static, 5 prompt cases skipped). Independent reverification not yet done.
