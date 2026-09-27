@@ -1,4 +1,4 @@
-"""Regular verification inputs and configuration validation shared by checkout and identity."""
+"""Regular verification inputs shared by checkout and identity."""
 
 from pathlib import Path
 from typing import Any
@@ -28,16 +28,6 @@ def strings(value: Any, label: str, *, empty: bool = False) -> list[str]:
     if any(not isinstance(item, str) or not item.strip() for item in value):
         raise ValueError(f"{label}: expected nonempty strings")
     return value
-
-
-def validate_navigation(root: Path, plan: dict[str, Any]) -> None:
-    """Assess applicable navigation using the proposed configuration."""
-    if (root / ".engineering/config.toml").is_file():
-        from .settings import graft_navigation
-
-        if graft_navigation(root):
-            if [".engineering/bin/graft", "check"] not in plan["checks"]:
-                raise ValueError("Configured application roots require Graft check")
 
 
 def paths_from_git(root: Path, *args: str) -> set[str]:

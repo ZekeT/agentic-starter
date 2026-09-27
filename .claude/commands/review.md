@@ -7,7 +7,9 @@ base, full intended committed/staged/unstaged/new scope and agreed request or
 spec/ticket. Use .engineering/scripts/lib/change.sh for base discovery.
 
 Inspect the saved verification plan against the actual request and scope; PASS
-for another plan is not evidence for this change. Use engineering verify status.
+for another plan is not evidence for this change. Required checks follow the
+installation role and path ownership; a consumer edit to managed implementation
+stays INCOMPLETE until restored and routed through update or upstream. Use engineering verify status.
 Reuse current complete evidence without rerunning checks or reviews. If absent,
 missing/stale or incomplete, prepare the current plan and launch fresh independent
 maintainability and behavioral reviewers, plus security review when applicable.

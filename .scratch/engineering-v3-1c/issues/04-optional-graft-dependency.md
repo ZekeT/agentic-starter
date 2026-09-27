@@ -10,7 +10,7 @@ without roots (warning) or enabled but broken.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** implemented — awaiting independent verification
+**Status:** completed — merged in [PR #35](https://github.com/ZekeT/agentic-starter/pull/35)
 
 - [x] The registry supports a generic optional capability field; Graft declares the navigation capability.
 - [x] Dependency status, setup and doctor treat a capability dependency as required only while its provider selects it.
@@ -21,7 +21,7 @@ without roots (warning) or enabled but broken.
 - [x] Verification still requires the Graft check only when Graft is selected and roots exist.
 - [x] Command-level doctor and deps fixture tests cover each state.
 - [x] Dependency and doctor documentation describe the capability rule; affected evals updated.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
 
@@ -47,3 +47,5 @@ without roots (warning) or enabled but broken.
   verification; an invalid provider yields one doctor configuration error and
   `deps status` fails before printing. Fixture tests cover each case. Status
   unchanged: awaiting independent verification.
+
+- 2026-09-27: Rebased onto tickets 01-02; independent behavioral, maintainability and security review PASS (snapshot 8e4436a2…); human-accepted and published as PR #35; merged into main (9459085). Launcher-ignores-provider, capability-section robustness and disabled-Graft integrity moved to ticket 05.

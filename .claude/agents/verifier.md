@@ -17,8 +17,9 @@ refresh Graft. Run .engineering/bin/graft check when application roots exist;
 NOT APPLICABLE is valid for repositories without application roots. Missing or
 stale required navigation returns to the implementer.
 
-Run make check and record actual commands, output and exit status. For starter
-tooling also run make engineering-test and make engineering-evals. Exercise
+Run make check and record actual commands, output and exit status. Also run the
+checks the installation role and path ownership require (verification guide),
+whether or not their targets exist. Exercise
 changed behavior and nearest likely regressions; explain relevant coverage.
 Compare evidence to the agreed request/ticket/spec, not checkbox completion.
 

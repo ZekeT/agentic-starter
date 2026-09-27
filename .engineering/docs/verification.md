@@ -41,6 +41,8 @@ Reviewers independently assess plan completeness and security classification.
 Planning reads the installation role, `maintainer` or `consumer`, from the
 proposed `.engineering/state/install.json` in the verified content: the
 committed state, or working bytes only when that path is in the plan's paths.
+The stricter of the base and proposed roles applies (`maintainer` is stricter),
+so a role change takes effect only after it merges.
 An out-of-scope working edit never supplies or changes the role; `status`,
 `check` and `record` re-validate it. Generation and adoption record
 `consumer`; the maintainer checkout records `maintainer`. No role is ever
@@ -48,10 +50,34 @@ assumed: when it is missing, `prepare` fails INCOMPLETE and names the fix. From
 a starter checkout, preview `engineering update <project>` and apply it; the
 update records the role as an Engineering migration. An unknown role also fails.
 
-`make check` is mandatory. Starter tooling scope also requires `make
-engineering-test` and `make engineering-evals`; configured application roots
-require `.engineering/bin/graft check` while `[navigation] provider = "graft"`
-(never with `none`). Add project-specific checks as needed.
+Required checks follow the role and each path's ownership in the proposed
+`.engineering/manifest.json` (the base manifest too, so dropping an entry
+cannot lower them), never which Make targets exist:
+
+| Changed path | Role | Required in addition to `make check` |
+|---|---|---|
+| Project configuration (`preserve` entries) | both | `make engineering-check` |
+| Integration sections and hooks (`section`, `hooks`) | both | `make engineering-check` |
+| `.engineering/manifest.json`, `.engineering/state/install.json` | consumer | `make engineering-check` |
+| `.engineering/manifest.json`, `.engineering/state/install.json` | maintainer | `make engineering-check`, `make engineering-test`, `make engineering-evals` |
+| Managed implementation (`file` entries) | maintainer | `make engineering-test`, `make engineering-evals` |
+| Starter tooling under `.engineering/` `template/`, `tests/`, `evals/`, `scripts/`, `migrations/` | maintainer | `make engineering-test`, `make engineering-evals` |
+| Managed implementation edited or deleted | consumer | Rejected: INCOMPLETE, never PASS |
+| Any other path | both | nothing further |
+
+Any consumer change to a path owned as `file` in the base or proposed manifest
+is rejected, whatever the manifest digests say: the manifest is proposed content
+too, so it cannot vouch for the file. Restore the file and obtain changes with
+`engineering update <project>` from a starter checkout, or propose them
+upstream. A consumer starter-update PR is therefore not yet verifiable by this
+workflow. In the maintainer checkout the installation metadata is maintainer
+source as well: the manifest is the ownership contract every consumer receives.
+Invalid project configuration fails preparation, naming the file. The recorded role is
+trusted and fails closed: a consumer declaring `maintainer` must run suites it
+lacks; a maintainer checkout proposing `consumer` keeps maintainer requirements
+until that change merges. A role change is visible in the diff. Configured application roots require
+`.engineering/bin/graft check` while `[navigation] provider = "graft"` (never
+with `none`). Add project-specific checks as needed.
 Formatting and graph building remain implementer preparation. Probes time out
 after 15 seconds, each check after 15 minutes. uv stays offline with interpreter
 downloads disabled.
