@@ -83,6 +83,7 @@ def test_initialize_missing_state_and_preserve_customization(tmp_path):
     original = state.read_bytes()
     data = json.loads(original)
     assert data["entries"]["Makefile"]["ownership"]["mode"] == "section"
+    assert data["role"] == "consumer"
     (root / "REVIEW.md").write_text("Local review policy\n")
     result = cli(root, "init-installation")
     assert result.returncode == 0, result.stdout + result.stderr
@@ -92,6 +93,11 @@ def test_initialize_missing_state_and_preserve_customization(tmp_path):
     result = cli(root, "init-installation")
     assert result.returncode != 0 and "schema" in result.stderr
     assert state.read_text() == '{"schema_version": 99}'
+
+
+def test_maintainer_checkout_records_maintainer_role():
+    state = json.loads((ROOT / ".engineering/state/install.json").read_text())
+    assert state["role"] == "maintainer"
 
 
 def test_modified_distribution_cannot_become_an_initial_baseline(tmp_path):

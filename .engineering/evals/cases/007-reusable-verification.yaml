@@ -16,5 +16,8 @@ shell: |
   assert 'isolated `checkout` path' in Path('.claude/agents/verifier.md').read_text()
   assert 'Preparation failures leave proof INCOMPLETE' in review
   assert 'Committed changes outside `paths` fail preparation' in guide
+  # Verification classification uses a recorded installation role, never a default.
+  assert 'installation role' in guide and 'No role is ever' in guide
+  assert 'records the `consumer` installation' in Path('ENGINEERING.md').read_text()
   assert '/.engineering/state/verification/' in Path('.gitignore').read_text()
   PY

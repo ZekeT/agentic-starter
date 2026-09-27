@@ -273,7 +273,10 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
         if read_bytes(root, name) is None:
             result.add(name, read_bytes(template, name))
     result.add(MANIFEST_PATH, encoded(offered))
-    result.add(STATE_PATH, encoded(build_state(offered["template_version"], entries)))
+    result.add(
+        STATE_PATH,
+        encoded(build_state(offered["template_version"], entries, "consumer")),
+    )
     legacy_doc_customizations: bytes = (
         "# Legacy documentation reconciliation\n\n"
         + (

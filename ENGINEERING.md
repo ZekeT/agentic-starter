@@ -45,7 +45,8 @@ make check
 ```
 
 Setup explicitly installs pinned dependencies over the network and initializes
-missing installation state after verifying distribution bytes. Repeating setup
+missing installation state after verifying distribution bytes, recording the
+`consumer` installation role that verification requires. Repeating setup
 preserves the baseline. Application code, tests, README and project metadata are
 yours; ordinary edits never need `make manifest`. The generated README is the
 application's starting guide. Remote template publication is not provided.
@@ -168,7 +169,8 @@ Engineering source checkout:
 ```
 
 The first command previews exact actions without writes. Inspect the plan and
-resolve conflicts before applying. Adoption adds managed regions around shared
+resolve conflicts before applying. Adoption records the `consumer` installation
+role, exactly as generation does. Adoption adds managed regions around shared
 files and preserves project-owned content; it does not replace native tooling
 with the Python template. If OpenSpec is detected, its sources and integration
 remain until the separate semantic migration below.
@@ -498,6 +500,12 @@ The manifest and installed baseline distinguish new, unchanged, local-only,
 upstream-only, conflicting and safely removable scopes. A removed customized
 scope conflicts. Unresolved conflicts never advance metadata. Configuration
 schema changes require explicit migration rather than guessing.
+
+Installation state records the installation role: `consumer` for generated and
+adopted projects, `maintainer` for the starter's own checkout (written by `make
+manifest`). Updates keep a recorded role. An installation that predates roles
+gets `consumer` through an Engineering migration shown in the update preview.
+Verification refuses to plan without a recorded role; it never guesses one.
 
 After adoption install required dependencies and run doctor and both project
 and engineering checks. Doctor validates structure during apply; missing

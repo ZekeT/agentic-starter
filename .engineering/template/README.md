@@ -15,8 +15,9 @@ git commit -m "Initialize application"
 make check
 ```
 
-Setup initializes missing Engineering installation state and explicitly installs
-pinned development dependencies. It preserves existing installation baselines.
+Setup initializes missing Engineering installation state, recording this
+project's `consumer` installation role, and explicitly installs pinned
+development dependencies. It preserves existing installation baselines.
 No global agent settings are changed. Repeating setup is supported.
 
 Add application code in `src/` and tests in `tests/`. Set

@@ -38,6 +38,16 @@ All tracked configuration/locks and ignored managed dependency evidence are
 included automatically. A URL alone is not a requirement-content fingerprint.
 Reviewers independently assess plan completeness and security classification.
 
+Planning reads the installation role, `maintainer` or `consumer`, from the
+proposed `.engineering/state/install.json` in the verified content: the
+committed state, or working bytes only when that path is in the plan's paths.
+An out-of-scope working edit never supplies or changes the role; `status`,
+`check` and `record` re-validate it. Generation and adoption record
+`consumer`; the maintainer checkout records `maintainer`. No role is ever
+assumed: when it is missing, `prepare` fails INCOMPLETE and names the fix. From
+a starter checkout, preview `engineering update <project>` and apply it; the
+update records the role as an Engineering migration. An unknown role also fails.
+
 `make check` is mandatory. Starter tooling scope also requires `make
 engineering-test` and `make engineering-evals`; configured application roots
 require `.engineering/bin/graft check`. Add project-specific checks as needed.

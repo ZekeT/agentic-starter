@@ -37,6 +37,18 @@ def cli(root, *args, status=0):
     return json.loads(proc.stdout)
 
 
+INSTALL_STATE = ".engineering/state/install.json"
+
+
+def record_role(root, role):
+    state = {"schema_version": 1, "installed_version": "3.0.0", "entries": {}}
+    if role is not None:
+        state["role"] = role
+    path = root / INSTALL_STATE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state))
+
+
 @pytest.fixture
 def repo(tmp_path):
     git(tmp_path, "init", "-b", "main")
@@ -45,6 +57,7 @@ def repo(tmp_path):
     (tmp_path / ".gitignore").write_text(".engineering/state/verification/\n")
     (tmp_path / "Makefile").write_text("check:\n\t@test -s app.txt\n")
     (tmp_path / "app.txt").write_text("before\n")
+    record_role(tmp_path, "consumer")
     git(tmp_path, "add", ".")
     git(tmp_path, "commit", "-m", "baseline")
     git(tmp_path, "checkout", "-b", "feature")
@@ -65,7 +78,7 @@ def repo(tmp_path):
     return tmp_path
 
 
-def prepare(root):
+def prepare(root, status=0):
     return cli(
         root,
         "prepare",
@@ -73,6 +86,7 @@ def prepare(root):
         "example",
         "--plan",
         ".engineering/state/verification/plan.json",
+        status=status,
     )
 
 
@@ -402,3 +416,54 @@ def test_bounded_correction_preserves_history_but_requires_fresh_proof(repo):
     assert prepare(repo)["previous_evidence"] == current["previous_evidence"]
     assert json.loads(history.read_text()) == previous
     assert git(repo, "diff", "--name-only") == "app.txt"
+
+
+def commit_base_role(root, role):
+    """Advance the base with committed install state; the feature follows it."""
+    git(root, "checkout", "--quiet", "main")
+    if role == "absent":
+        git(root, "rm", "--quiet", INSTALL_STATE)
+    else:
+        record_role(root, role)
+        git(root, "add", INSTALL_STATE)
+    git(root, "commit", "--quiet", "-m", "install state")
+    git(root, "checkout", "--quiet", "feature")
+    git(root, "merge", "--quiet", "--ff-only", "main")
+
+
+@pytest.mark.parametrize("role", [None, "absent"])
+def test_missing_installation_role_blocks_planning_with_next_step(repo, role):
+    commit_base_role(repo, role)
+    result = prepare(repo, 1)
+    assert result["status"] == "INCOMPLETE"
+    assert "role" in result["error"] and "engineering update" in result["error"]
+    assert not (repo / ".engineering/state/verification/example.json").exists()
+
+
+def test_invalid_installation_role_fails_visibly(repo):
+    commit_base_role(repo, "owner")
+    result = prepare(repo, 1)
+    assert result["status"] == "INCOMPLETE" and "owner" in result["error"]
+
+
+def test_out_of_scope_role_edit_is_ignored(repo):
+    # The committed role governs; an uncommitted edit outside the plan cannot remove it.
+    record_role(repo, None)
+    assert prepare(repo)["status"] == "INCOMPLETE"
+    assert cli(repo, "status", "--change", "example", status=1)["missing"]
+    # Nor can such an edit supply a role the committed state lacks.
+    commit_base_role(repo, None)
+    record_role(repo, "consumer")
+    assert "not recorded" in prepare(repo, 1)["error"]
+    assert cli(repo, "status", "--change", "example", status=1)["status"] != "PASS"
+    # A proposed role counts when the install state is within the plan's scope.
+    change_plan(
+        repo,
+        paths=["app.txt", INSTALL_STATE],
+        checks=[
+            ["make", "check"],
+            ["make", "engineering-test"],
+            ["make", "engineering-evals"],
+        ],
+    )
+    assert prepare(repo)["status"] == "INCOMPLETE"

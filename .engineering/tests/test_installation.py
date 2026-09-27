@@ -1,6 +1,8 @@
 """Exercise adopted project preservation and three-way update safety end to end."""
 
+import json
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -200,3 +202,40 @@ def test_new_upstream_file_and_unknown_config_schema(installation):
     with pytest.raises(ValueError, match="config.schema"):
         plan_installation(template, target, "update")
     assert snapshot(target) == before
+
+
+def engineering(template, *args):
+    return subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(ROOT / "engineering"),
+            *args,
+            "--template",
+            template,
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_update_records_missing_installation_role(installation):
+    template, target = installation
+    applied = engineering(template, "adopt", str(target), "--apply")
+    assert applied.returncode == 0, applied.stdout + applied.stderr
+    state = target / STATE_PATH
+    assert json.loads(state.read_text())["role"] == "consumer"
+    commit(target)
+    # An installation from before roles existed.
+    data = json.loads(state.read_text())
+    del data["role"]
+    state.write_bytes(encoded(data))
+    commit(target)
+    before = snapshot(target)
+    preview = engineering(template, "update", str(target))
+    assert preview.returncode == 0, preview.stdout + preview.stderr
+    assert "installation role" in preview.stdout and "consumer" in preview.stdout
+    assert snapshot(target) == before
+    applied = engineering(template, "update", str(target), "--apply")
+    assert applied.returncode == 0, applied.stdout + applied.stderr
+    assert json.loads(state.read_text())["role"] == "consumer"
