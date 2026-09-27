@@ -35,3 +35,14 @@ tells the developer how to fix it, so classification is never guessed (ADR 0001)
   engineering-test` (322 passed) and `make engineering-evals` (11/11 static)
   passed. Remaining: fresh independent review and verification, human acceptance,
   publication and merge.
+- 2026-09-27 human-authorized review corrections: (1) `verify` now reads the
+  role from the materialized proposed checkout, so prepare, status, check and
+  record use the committed install state (or its working bytes only when the
+  path is in plan scope); an out-of-scope working edit can neither supply nor
+  remove the role. Command-level fixture test added; verification.md wording
+  made precise. (2) `.engineering/manifest.json` and install state regenerated
+  once from `main`, so `previous` lists carry no never-committed intermediate
+  hashes; role stays `maintainer`. (3) Merged the duplicated `prepare_status`
+  test helper into `prepare`. Implementer-run checks only, not verification.
+  Remaining: fresh independent review and verification of the corrections,
+  human acceptance, publication and merge.
