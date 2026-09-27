@@ -14,6 +14,17 @@ from .verification_checkout import baseline_content
 from .verification_inputs import paths_from_git, source_path
 
 ORIGINAL_GIT_PARAMETERS = "ENGINEERING_PUBLISH_ORIGINAL_GIT_CONFIG_PARAMETERS"
+# Git exports these to hooks (an absolute GIT_DIR in linked worktrees). Nested
+# `git -C <path>` commands would otherwise act on the publishing repository.
+HOOK_REPOSITORY_VARIABLES = (
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_INDEX_FILE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_COMMON_DIR",
+    "GIT_PREFIX",
+)
 
 
 def validate_tree(root: Path, data: dict[str, Any]) -> None:
@@ -70,6 +81,10 @@ def pre_push_guard(
         result = subprocess.run([original, *args], cwd=root)
         if result.returncode:
             return result.returncode
+    # The original hook keeps Git's hook environment; Engineering's own nested
+    # Git commands must target only the repository they name.
+    for name in HOOK_REPOSITORY_VARIABLES:
+        os.environ.pop(name, None)
     from .publication import current
 
     try:
