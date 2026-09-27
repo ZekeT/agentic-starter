@@ -3,8 +3,8 @@
 from pathlib import Path
 from typing import Any
 
-from .installation import MANIFEST_PATH, installation_role
-from .ownership import digest, json_object, read_bytes, validate_ownership
+from .installation import MANIFEST_PATH, ROLES, STATE_PATH, installation_role
+from .ownership import METADATA, json_object, read_bytes, validate_ownership
 from .settings import CONFIGURATION, graft_navigation, validate
 from .source import git
 
@@ -20,9 +20,12 @@ GRAFT = [".engineering/bin/graft", "check"]
 
 
 def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
-    """Require checks from proposed role and ownership, never from existing targets."""
-    # The proposed recorded role is trusted (ADR 0001); absence blocks planning.
+    """Require checks from recorded role and ownership, never from existing targets."""
+    # The recorded role is trusted (ADR 0001); absence blocks planning. The
+    # stricter of base and proposed applies, so a role change counts once merged.
     role = installation_role(checkout)
+    if baseline_role(checkout) == "maintainer":
+        role = "maintainer"
     configured = (checkout / CONFIGURATION).is_file()
     if configured:
         # Invalid project configuration fails planning visibly, not only doctor.
@@ -35,10 +38,15 @@ def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
             "Engineering owns these files, so verification cannot pass. Restore "
             "them; get changes through `./engineering update <project>` from a "
             "starter checkout (review the preview, then rerun with --apply), or "
-            "propose the change upstream in the starter repository."
+            "propose the change upstream in the starter repository. Manifest "
+            "digests are proposed content, so update output is not yet verifiable."
         )
     required = [PROJECT]
-    if categories["project configuration"] or categories["managed integration"]:
+    if (
+        categories["project configuration"]
+        or categories["managed integration"]
+        or categories["installation metadata"]
+    ):
         required.append(HEALTH)
     if categories["maintainer source"]:
         required += SUITES
@@ -66,51 +74,54 @@ def classify(checkout: Path, role: str, paths: list[str]) -> dict[str, list[str]
             "Restore the installation manifest before verification."
         )
     # Baseline ownership keeps a dropped entry from lowering requirements.
-    baseline = manifest_files(baseline_manifest(checkout)) or {}
+    base = manifest_files(baseline(checkout, MANIFEST_PATH)) or {}
     categories: dict[str, list[str]] = {
         "project configuration": [],
         "managed integration": [],
         "maintainer source": [],
         "managed implementation": [],
+        "installation metadata": [],
         "project": [],
     }
     for name in sorted(paths):
         modes = {
             entry["ownership"]["mode"]
-            for entry in (proposed.get(name), baseline.get(name))
+            for entry in (proposed.get(name), base.get(name))
             if entry is not None
         }
         if role == "maintainer" and (
             "file" in modes or name.startswith(MAINTAINER_TOOLING)
         ):
             category = "maintainer source"
-        elif "file" in modes and not distributed(checkout, name, proposed.get(name)):
+        elif "file" in modes and read_bytes(checkout, name) != baseline(checkout, name):
+            # Manifest digests are proposed content too, so they never vouch
+            # for an edit or removal; the update route is not yet verifiable.
             category = "managed implementation"
         elif modes == {"preserve"}:
             category = "project configuration"
         elif modes:
-            # Integration sections, hooks and consumer bytes matching the
-            # proposed distribution (the update route's output); doctor checks them.
+            # Integration sections, hooks and unchanged distributed files.
             category = "managed integration"
+        elif name in METADATA:
+            category = "installation metadata"
         else:
             category = "project"
         categories[category].append(name)
     return categories
 
 
-def distributed(checkout: Path, name: str, entry: dict[str, Any] | None) -> bool:
-    """Proposed bytes equal the proposed manifest, including an update's removal."""
-    content = read_bytes(checkout, name)
-    if entry is None or entry["ownership"]["mode"] != "file":
-        return content is None
-    return content is not None and digest(content) == entry.get("sha256")
+def baseline_role(checkout: Path) -> str | None:
+    """The comparison base's recorded role, or None before it was recorded."""
+    raw = baseline(checkout, STATE_PATH)
+    role = None if raw is None else json_object(raw).get("role")
+    return role if role in ROLES else None
 
 
-def baseline_manifest(checkout: Path) -> bytes | None:
-    """Read the comparison base's manifest from the checkout's baseline commit."""
-    if not git(checkout, "ls-tree", "--name-only", "HEAD", "--", MANIFEST_PATH):
+def baseline(checkout: Path, name: str) -> bytes | None:
+    """Read a path from the checkout's baseline commit, None when absent."""
+    if not git(checkout, "ls-tree", "--name-only", "HEAD", "--", name):
         return None
-    return git(checkout, "show", f"HEAD:{MANIFEST_PATH}")
+    return git(checkout, "show", f"HEAD:{name}")
 
 
 def manifest_files(raw: bytes | None) -> dict[str, Any] | None:

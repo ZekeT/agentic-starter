@@ -252,7 +252,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "a5bc114db09604b51f3de8cd3a90c03ca40cdf69d0622d2c952ab678384d97ef",
+      "owned_sha256": "94aac8ddf90383e3968f69fa750480e1fba90bd18f2ae16dfd1f868a9b83efc3",
       "ownership": {
         "mode": "file"
       },
@@ -266,7 +266,7 @@
         "c50256d3b0012c1008b27de952f716139ed8f9670a482cfe9e180499547ff92e",
         "1f9935ddabca47c23f5b6012ea188bdeba3bff82ba92123b64102542637701ff"
       ],
-      "sha256": "a5bc114db09604b51f3de8cd3a90c03ca40cdf69d0622d2c952ab678384d97ef"
+      "sha256": "94aac8ddf90383e3968f69fa750480e1fba90bd18f2ae16dfd1f868a9b83efc3"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -712,12 +712,12 @@
     },
     ".engineering/engineering/verification_requirements.py": {
       "executable": false,
-      "owned_sha256": "5fc8f41e7f116d3ead99a1089145a46cb10bcff9d181b5d1692f51ce2b194e7d",
+      "owned_sha256": "18d0e40951857dec1c26422170f441d48390b97a86cce8cfe85f6ddca57aa17d",
       "ownership": {
         "mode": "file"
       },
       "previous": [],
-      "sha256": "5fc8f41e7f116d3ead99a1089145a46cb10bcff9d181b5d1692f51ce2b194e7d"
+      "sha256": "18d0e40951857dec1c26422170f441d48390b97a86cce8cfe85f6ddca57aa17d"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,
@@ -1047,7 +1047,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "3e5e37e15776fe13948d7c4efee36cb592fa4665fe6a244ab6bd1c5ce621b6f5",
+      "owned_sha256": "fe9bdb356d87efbcd2c516fc7784d223124c4d3b6a8e60102bae5c08d548ab90",
       "ownership": {
         "mode": "file"
       },
@@ -1073,7 +1073,7 @@
         "e5dfd6945c7063f54ab19485fd43bec66e5f5c38b9f8fbfac8c5aa71dd70987b",
         "8fa3af62edac6daab904a32a8da7e1d79cdebe8bd9c3d44238015005fc34a063"
       ],
-      "sha256": "3e5e37e15776fe13948d7c4efee36cb592fa4665fe6a244ab6bd1c5ce621b6f5"
+      "sha256": "fe9bdb356d87efbcd2c516fc7784d223124c4d3b6a8e60102bae5c08d548ab90"
     },
     "Makefile": {
       "executable": false,

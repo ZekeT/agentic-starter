@@ -464,6 +464,7 @@ def test_out_of_scope_role_edit_is_ignored(repo):
         paths=["app.txt", INSTALL_STATE],
         checks=[
             ["make", "check"],
+            ["make", "engineering-check"],
             ["make", "engineering-test"],
             ["make", "engineering-evals"],
         ],

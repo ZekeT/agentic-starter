@@ -368,10 +368,11 @@ Material expansion returns to `/to-spec` and `/to-tickets`. See [REVIEW.md](REVI
 | `make template DEST=/path/to/new-project` | Maintainer-only deterministic consumer directory build |
 
 Verification requires checks by installation role and path ownership, never by
-which targets exist: project configuration, integration sections and hooks add
-`make engineering-check`; maintainer source in the maintainer checkout adds
-`make engineering-test` and `make engineering-evals`; a consumer edit to managed
-implementation is rejected with the update/upstream route. See
+which targets exist: project configuration, integration sections, hooks and
+installation metadata add `make engineering-check`; maintainer source in the
+maintainer checkout adds `make engineering-test` and `make engineering-evals`; a
+consumer edit or deletion of managed implementation is rejected with the
+update/upstream route. See
 [verification evidence](.engineering/docs/verification.md).
 
 `make check` does not mutate source, fetch dependencies, update pins, build a

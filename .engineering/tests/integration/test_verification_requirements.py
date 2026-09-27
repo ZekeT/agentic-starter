@@ -239,8 +239,46 @@ def test_consumer_deleting_managed_implementation_is_rejected(project):
 
 
 @consumers
+def test_forged_manifest_digest_does_not_admit_a_managed_edit(project):
+    edit(project, MANAGED)
+    manifest = project / ".engineering/manifest.json"
+    data = json.loads(manifest.read_text())
+    sha = hashlib.sha256((project / MANAGED).read_bytes()).hexdigest()
+    data["files"][MANAGED].update(sha256=sha, owned_sha256=sha)
+    manifest.write_text(json.dumps(data, indent=2) + "\n")
+    paths = [MANAGED, ".engineering/manifest.json"]
+    result = prepare(project, paths, [CHECK, HEALTH, *SUITES], status=1)
+    assert result["status"] == "INCOMPLETE" and MANAGED in result["error"]
+    assert "engineering update" in result["error"]
+
+
+@consumers
+def test_deleting_managed_file_and_its_entry_is_rejected(project):
+    (project / MANAGED).unlink()
+    manifest = project / ".engineering/manifest.json"
+    data = json.loads(manifest.read_text())
+    del data["files"][MANAGED]
+    manifest.write_text(json.dumps(data, indent=2) + "\n")
+    paths = [MANAGED, ".engineering/manifest.json"]
+    result = prepare(project, paths, [CHECK, HEALTH, *SUITES], status=1)
+    assert result["status"] == "INCOMPLETE" and MANAGED in result["error"]
+    assert "engineering update" in result["error"]
+
+
+@consumers
+@pytest.mark.parametrize(
+    "name", [".engineering/manifest.json", ".engineering/state/install.json"]
+)
+def test_installation_metadata_needs_health_check(project, name):
+    path = project / name
+    path.write_text(json.dumps(json.loads(path.read_text()), indent=4) + "\n")
+    assert "engineering-check" in prepare(project, [name], [CHECK], status=1)["error"]
+    assert prepare(project, [name], [CHECK, HEALTH])["status"] == "INCOMPLETE"
+
+
+@consumers
 def test_distributed_managed_content_is_not_a_local_edit(project):
-    # Bytes matching the proposed manifest are the update route's output.
+    # Unchanged distributed bytes are not a local edit; any change is rejected.
     assert (
         "engineering-check" in prepare(project, [MANAGED], [CHECK], status=1)["error"]
     )
@@ -297,6 +335,21 @@ def test_maintainer_source_requires_maintainer_suites(project, name):
         "engineering-test" in result["error"] and "engineering-evals" in result["error"]
     )
     assert prepare(project, [name], [CHECK, *SUITES])["status"] == "INCOMPLETE"
+
+
+@maintainer_checkout
+def test_role_switch_to_consumer_applies_only_after_merge(project):
+    state = project / ".engineering/state/install.json"
+    data = json.loads(state.read_text())
+    data["role"] = "consumer"
+    state.write_text(json.dumps(data, indent=2) + "\n")
+    name = ".engineering/tests/test_tool.py"
+    edit(project, name)
+    paths = [name, ".engineering/state/install.json"]
+    # The stricter base role still governs the proposed change.
+    result = prepare(project, paths, [CHECK, HEALTH], status=1)
+    assert "engineering-test" in result["error"] and "maintainer" in result["error"]
+    assert prepare(project, paths, [CHECK, HEALTH, *SUITES])["status"] == "INCOMPLETE"
 
 
 @maintainer_checkout
