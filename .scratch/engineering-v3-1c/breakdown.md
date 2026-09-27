@@ -13,6 +13,7 @@ Source: [specification](spec.md). Slices A and C only; B, D, E and F remain in
 | [04 Make Graft an optional capability in dependencies and doctor](issues/04-optional-graft-dependency.md) | None | completed — merged in [PR #35](https://github.com/ZekeT/agentic-starter/pull/35) |
 | [05 Enable and disable navigation](issues/05-toggle-navigation.md) | 02, 04 | ready-for-agent |
 | [06 Upgrade existing navigation and document prerequisites](issues/06-navigation-upgrade-and-prerequisites.md) | 05 | ready-for-agent |
+| [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03 | needs-triage (security review follow-up) |
 
 Frontier: 03 and 05 (01, 02 and 04 merged); 06 after 05. Each slice updates consumer generation,
 adoption/update behavior, documentation and evals, not only the maintainer

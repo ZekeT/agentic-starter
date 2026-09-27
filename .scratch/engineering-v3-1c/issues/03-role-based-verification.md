@@ -35,6 +35,12 @@ maintainer checkout still requires the maintainer suites.
 - **Maintainer source (role `maintainer` only)** = all `file`-mode manifest entries plus non-distributed starter tooling (`.engineering/template/**`, `.engineering/tests/**`, `.engineering/evals/**`, `.engineering/scripts/**`, `.engineering/migrations/**`). Requires `make engineering-test` and `make engineering-evals` in addition. `preserve`/`section`/`hooks` paths follow the same rules in both roles.
 - **Consumer edits to `file`-mode managed implementation** are rejected with the supported update/upstream route; outcome INCOMPLETE.
 
+### Decisions (2026-09-27, security review follow-up, human-approved)
+
+1. **No update-output exemption.** Any consumer change (edit or deletion) to a path whose ownership is `file` in the base or proposed manifest is rejected with the update/upstream route; outcome INCOMPLETE, regardless of manifest hashes (the proposed manifest is consumer-controlled). Consumer starter-update PRs are not yet verifiable; follow-up [08](08-verified-starter-update-evidence.md).
+2. **Effective role = stricter of base and proposed role** (`maintainer` is stricter), mirroring the base∪proposed manifest rule; a role change takes effect only after it merges (supersedes "maintainer declaring `consumer` has tooling edits rejected" above). With no base install state or role, the proposed role applies (missing-role blocking still applies to proposed content). The recorded role is otherwise trusted.
+3. **Installation metadata** (`.engineering/manifest.json`, `.engineering/state/install.json`) requires `make check` plus `make engineering-check`.
+
 ### Implementation evidence (2026-09-27, commit c5cc605 on `feat/v3-1c-03-role-based-verification`)
 
 Implementation only: not verification, human acceptance, publication or merge.
@@ -47,12 +53,9 @@ Implementation only: not verification, human acceptance, publication or merge.
   The old `.engineering/` prefix rule in `validate_plan` is removed; the Graft rule
   moved unchanged into the same module. The proposed configuration is fully
   validated (including maintainability) so invalid values fail `prepare`.
-- Assumption beyond the Decisions: a consumer `file`-mode path whose proposed bytes
-  equal the proposed manifest's `sha256` (or is absent from both, i.e. an update's
-  removal) is treated as distributed update output (category "managed
-  integration", requires `make engineering-check`), not a local edit; otherwise
-  the update route itself would be rejected. `.engineering/manifest.json` and
-  `install.json` themselves are "project" paths (`make check` only).
+- The original "update output" assumption (consumer bytes matching the proposed
+  manifest counted as update output) and "metadata is a project path" were
+  superseded by the security review follow-up decisions 1 and 3 above.
 - Tests: new `.engineering/tests/integration/test_verification_requirements.py`
   (31 command-level `verify prepare` cases on generated, adopted and
   maintainer-checkout fixtures); `test_verification.py` fixture gains a manifest;
@@ -62,3 +65,28 @@ Implementation only: not verification, human acceptance, publication or merge.
 - Gates run locally after `make fmt` and one `make manifest`: `make check` exit 0;
   `make engineering-test` exit 0 (385 passed); `make engineering-evals` exit 0
   (11/11 static, 5 prompt cases skipped). Independent review not yet done.
+
+### Security review corrections (2026-09-27, commit c863e5b)
+
+Implementation of human-authorized decisions 1–3 above; not verification,
+human acceptance, publication or merge. The independent security review had
+failed with one HIGH, one MEDIUM and one LOW finding.
+
+- Decision 1: `verification_requirements.classify` no longer consults manifest
+  digests; a consumer `file`-mode path whose proposed bytes differ from the base
+  commit (edit or deletion) is rejected. Unchanged distributed files listed in a
+  plan still need only `make engineering-check`.
+- Decision 2: a base `install.json` recording `maintainer` keeps `maintainer`
+  whatever the proposed role; otherwise the proposed role applies.
+- Decision 3: new category "installation metadata" requires `make engineering-check`.
+- Tests first: 9 new `verify prepare` cases (forged digest, deletion plus dropped
+  entry, metadata × 2 files, maintainer→consumer switch touching
+  `.engineering/tests/**`) all failed before the fix (`assert 0 == 1`: prepare
+  accepted). `test_verification.py::test_out_of_scope_role_edit_is_ignored` adds
+  `make engineering-check` for its in-scope `install.json`.
+- Docs: verification guide (role sentence, table, update-output paragraph) and
+  ENGINEERING.md. Follow-up [08](08-verified-starter-update-evidence.md) created.
+- Gates after `make fmt` and one `make manifest` (metadata restored from
+  `origin/main` first): `make check` exit 0; `make engineering-test` exit 0
+  (394 passed); `make engineering-evals` exit 0 (11/11 static, 5 prompt cases
+  skipped). Independent reverification not yet done.
