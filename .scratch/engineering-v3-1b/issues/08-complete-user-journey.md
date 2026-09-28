@@ -11,7 +11,7 @@ in a disposable generated application, recording observed behavior and limits.
 v3.1 issue 05 — Document and prove all onboarding paths
 ([external prerequisite](../../engineering-v3-1/issues/05-onboarding-verification.md)).
 
-**Status:** implemented — revised acceptance scope approved; fresh verification and publication pending; remaining live trial deferred
+**Status:** merged — revised scope independently verified, human-accepted and merged in [PR #31](https://github.com/ZekeT/agentic-starter/pull/31) (2026-09-26); remaining live trial deferred
 
 - [x] Integrate v3.1 onboarding documentation. Lead the guide with onboarding,
   `/implement → /review → /ship`, expected observable outcomes, findings fixes and
@@ -30,7 +30,7 @@ v3.1 issue 05 — Document and prove all onboarding paths
   commands, observations, evidence and unverified limits; static assertions alone
   do not establish independent model behavior. Authenticated model evals remain
   explicit and optional under repository policy.
-- [ ] Pass required checks and fresh independent reviews; resolve material
+- [x] Pass required checks and fresh independent reviews; resolve material
   integration findings without reopening settled decisions silently.
 
 ## Accepted scope and deferred follow-up — 2026-09-26
@@ -81,3 +81,15 @@ proves the complete journey.
   was corrected and the subsequent run passed 317 tests and 11 static evals.
   Use change `complete-journey` for fresh evidence of the revised scope. Publication
   is authorized after that verification; no merge is authorized or claimed.
+
+## Delivery — 2026-09-26
+
+Revised scope published in [PR #31](https://github.com/ZekeT/agentic-starter/pull/31).
+Fresh snapshot `1da8d259d116036b5cbca1a7a12c3be98506eb9ba0631d0d6b386fb4211ac910`
+passed all seven ordinary check stages, 317 engineering tests and 11 static evals;
+maintainability, behavioral and security reviews all passed. Five optional prompt
+cases were skipped. The human approved the scope revision and shipping after fresh
+verification. PR #31 merged on 2026-09-26 (observed); deferred live work above remains undone.
+
+This delivery entry was recorded locally after publication and is not part of that
+verified PR snapshot. Current publication evidence refers to the published bytes.

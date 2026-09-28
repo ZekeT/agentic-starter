@@ -38,3 +38,14 @@ Managed content an optional capability's dependency installs together while the 
 
 **Maintainer source**:
 Content in the maintainer checkout that becomes managed implementation or proves it: templates, managed implementation, maintainer tests and evals.
+
+**Review tier**:
+The declared risk level of a proposed change — documentation, ordinary or sensitive — which decides the independent review it needs.
+_Avoid_: review level, risk class
+
+**Tier floor**:
+The lowest review tier a change's paths allow; a change may declare a higher tier but never a lower one.
+
+**Carried evidence**:
+Reviewer reports from an earlier snapshot that remain current after a clean rebase left the change itself untouched; its checks still run again.
+_Avoid_: reused review, inherited proof

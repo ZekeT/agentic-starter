@@ -2,8 +2,9 @@
 
 Status: ready-for-agent — shared understanding and test seams approved 2026-09-27
 
-Source: [intent](intent.md). Covers slices A and C only; B, D, E and F remain
-intent-level until their own grilling sessions. Vocabulary follows the product
+Source: [intent](intent.md). Covers slices A and C only; slice B is specified in
+[spec-b-review-tiers](spec-b-review-tiers.md); D, E and F remain intent-level
+until their own grilling sessions. Vocabulary follows the product
 context glossary; the installation role follows ADR 0001.
 
 ## Problem Statement
