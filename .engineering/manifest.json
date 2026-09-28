@@ -696,7 +696,7 @@
     },
     ".engineering/engineering/verification.py": {
       "executable": false,
-      "owned_sha256": "912b876504bc8eb9a6db10fe7e1d9d04f345dfc529fdb301669d41f3b22eedfc",
+      "owned_sha256": "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b",
       "ownership": {
         "mode": "file"
       },
@@ -706,9 +706,10 @@
         "478d80ec02a268ba417155254e1511e4ad7a0094d97430cabc51fad85ffc13f8",
         "a7682dbc4f69fc577cfecefd1a8aad5ff68769ccc50b49e778c4c682dd3ccf47",
         "1aa510bd0f66df4d3863c9facea654a4a9d2b9f452e4bcf91a9b58159390e3e8",
-        "ea9638f16e800d4cbee4f4dd9ed169eefce1a55b932d7d1d1e8a73069ee5f5e6"
+        "ea9638f16e800d4cbee4f4dd9ed169eefce1a55b932d7d1d1e8a73069ee5f5e6",
+        "912b876504bc8eb9a6db10fe7e1d9d04f345dfc529fdb301669d41f3b22eedfc"
       ],
-      "sha256": "912b876504bc8eb9a6db10fe7e1d9d04f345dfc529fdb301669d41f3b22eedfc"
+      "sha256": "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b"
     },
     ".engineering/engineering/verification_checkout.py": {
       "executable": false,
@@ -752,7 +753,7 @@
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,
-      "owned_sha256": "cb866deb1937018a33042047a5a75ab3370e610a0f30fe613d9795bc687a2e21",
+      "owned_sha256": "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470",
       "ownership": {
         "mode": "file"
       },
@@ -760,9 +761,10 @@
         "7b23766ec71fab3e3ee4ab23fe000390945eaf42e9b138cef58799b08352b2e7",
         "6552cc89f794f136a38fb3382986591af803b1e1724d5ce5d431e2e89253d09f",
         "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a",
-        "ab5201408f10df9d110d85d56a3c98d087b6aa83b8c9f5f8070c008fe1b0d45e"
+        "ab5201408f10df9d110d85d56a3c98d087b6aa83b8c9f5f8070c008fe1b0d45e",
+        "cb866deb1937018a33042047a5a75ab3370e610a0f30fe613d9795bc687a2e21"
       ],
-      "sha256": "cb866deb1937018a33042047a5a75ab3370e610a0f30fe613d9795bc687a2e21"
+      "sha256": "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470"
     },
     ".engineering/evals/README.md": {
       "executable": false,

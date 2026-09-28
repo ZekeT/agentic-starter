@@ -328,7 +328,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "912b876504bc8eb9a6db10fe7e1d9d04f345dfc529fdb301669d41f3b22eedfc"
+      "upstream": "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b"
     },
     ".engineering/engineering/verification_checkout.py": {
       "ownership": {
@@ -352,7 +352,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "cb866deb1937018a33042047a5a75ab3370e610a0f30fe613d9795bc687a2e21"
+      "upstream": "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470"
     },
     ".engineering/evals/README.md": {
       "ownership": {

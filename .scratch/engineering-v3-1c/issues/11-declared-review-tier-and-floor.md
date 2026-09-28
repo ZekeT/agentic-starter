@@ -43,9 +43,14 @@ session the spec asks for.
   `*package-lock.json` covers the fixed Graft lock.
 - Evidence (implementer-run, not independent): new `test_review_tiers.py`
   (consumer + maintainer fixtures), migrated verification, requirements, publication recovery,
-  publication, greenfield and navigation tests pass (`make engineering-test`: 455 passed, the one failing recovery test then fixed and rerun); `make engineering-evals`
-  static cases pass except `offline-installation-health` (see below), including
-  new `013-review-tiers`.
+  publication, greenfield and navigation tests pass (`make engineering-test`: 457 passed after `/code-review` fixes); `make engineering-evals`
+  static cases 12/13 pass, including new `013-review-tiers`; the failure is
+  `offline-installation-health` (see below).
+- `/code-review` (standards + spec) fixes applied: one shared-reviewer rule for
+  record and status; status reports the floor recomputed under current rules;
+  tier message built from `TIERS`. Open for human decision: the verifier agent
+  definition now allows filing a separate maintainability report in a combined
+  ordinary session (needed for one combined session; keeps read-only).
 - Blocker outside this change: `make check` fails only at `./engineering doctor`
   with `ERROR [dependency] graft: MISSING` — the ignored local
   `.engineering/state/dependencies.json` does not match the installed Graft

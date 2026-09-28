@@ -47,7 +47,7 @@ def validate_plan(root: Path, plan: dict[str, Any]) -> None:
     if plan["base"].startswith("-"):
         raise ValueError("Invalid base reference")
     if plan["tier"] not in TIERS:
-        raise ValueError("tier must be documentation, ordinary or sensitive")
+        raise ValueError(f"tier must be one of: {', '.join(TIERS)}")
     for field in ("paths", "inputs"):
         values = strings(plan[field], field, empty=field == "inputs")
         if len(values) != len(set(values)):

@@ -1,10 +1,13 @@
 """Review tiers: declared tier, starter-rule floor and reviewer roles via the CLI."""
 
 import json
+import os
+import subprocess
+import sys
 
 import pytest
 
-from .test_verification import change_plan, cli, complete, prepare, report
+from .test_verification import TOOLING, change_plan, cli, complete, prepare, report
 from .test_verification import repo as repo
 from .test_verification_requirements import (
     CHECK,
@@ -30,7 +33,7 @@ pytestmark = pytest.mark.integration
             "replaced by tier and tier_reason",
         ),
         ({"tier": None}, "tier"),
-        ({"tier": "trivial"}, "documentation, ordinary or sensitive"),
+        ({"tier": "trivial"}, "documentation, ordinary, sensitive"),
         ({"tier_reason": " "}, "tier_reason"),
     ],
 )
@@ -242,3 +245,30 @@ def test_other_maintainer_source_floors_at_ordinary(project):
     edit(project, name)
     result = prepare_paths(project, [name], [CHECK, *SUITES], tier="ordinary")
     assert result["floor"] == "ordinary"
+
+
+def test_status_reports_the_floor_current_rules_give(repo):
+    change_plan(repo, tier="sensitive", tier_reason="Raised: parses credentials")
+    complete(repo)
+    stricter = (
+        "import engineering.verification_requirements as rules\n"
+        "rules.STARTER_SENSITIVE['fixture rule'] = ('app.txt',)\n"
+    )
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            stricter + "from engineering.cli import main; raise SystemExit(main())",
+            "--root",
+            str(repo),
+            "verify",
+            "status",
+            "--change",
+            "example",
+        ],
+        env={**os.environ, "PYTHONPATH": str(TOOLING)},
+        capture_output=True,
+        text=True,
+    )
+    assert json.loads(proc.stdout)["floor"] == "sensitive"
+    assert cli(repo, "status", "--change", "example")["floor"] == "ordinary"

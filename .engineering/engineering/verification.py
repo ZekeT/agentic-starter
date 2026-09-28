@@ -268,6 +268,8 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             return 1
         checkout = safe_path(root, data.get("checkout", ""))
         validate_checkout(checkout, inputs)
+        # Report the floor current rules give this scope, not the prepared one.
+        data["requirements"] = requirements(checkout, data["inputs"]["plan"])
         if args.operation == "check":
             if args.snapshot != token:
                 raise ValueError("STALE check request: obtain the current snapshot")
@@ -287,14 +289,12 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         elif args.operation == "record":
             report = json_object(safe_path(root, args.report).read_bytes())
             validate_report(report, token)
-            if data["inputs"]["plan"]["tier"] == "sensitive" and any(
-                other["reviewer"] == report["reviewer"]
-                for role, other in data["reports"].items()
-                if role != report["role"]
+            reports = {**data["reports"], report["role"]: report}
+            if data["inputs"]["plan"]["tier"] == "sensitive" and (
+                shared := shared_reviewers(reports)
             ):
                 raise ValueError(
-                    "Sensitive tier requires separate fresh sessions: reviewer "
-                    f"{report['reviewer']} already reported another role"
+                    f"Sensitive tier requires separate fresh sessions: {shared}"
                 )
             if report["role"] == "behavioral" and report["verdict"] == "PASS":
                 if (
