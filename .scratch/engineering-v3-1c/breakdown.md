@@ -13,9 +13,10 @@ Source: [specification](spec.md). Slices A and C only; B, D, E and F remain in
 | [04 Make Graft an optional capability in dependencies and doctor](issues/04-optional-graft-dependency.md) | None | completed — merged in [PR #35](https://github.com/ZekeT/agentic-starter/pull/35) |
 | [05 Enable and disable navigation](issues/05-toggle-navigation.md) | 02, 04 | completed — merged in [PR #37](https://github.com/ZekeT/agentic-starter/pull/37) |
 | [06 Upgrade existing navigation and document prerequisites](issues/06-navigation-upgrade-and-prerequisites.md) | 05 | ready-for-agent |
-| [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03 | needs-triage (security review follow-up) |
-| [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | needs-triage (review follow-ups) |
+| [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | ready-for-agent |
+| [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
+| [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | ready-for-agent |
 
-Frontier: 06 (01–05 merged); 08 and 09 need triage. Each slice updates consumer generation,
+Order agreed 2026-09-28: slice B (review tiers, needs grilling) → 06 → 09 → 10 → 08. Each slice updates consumer generation,
 adoption/update behavior, documentation and evals, not only the maintainer
 checkout. Use a fresh implementation session and branch per ticket.
