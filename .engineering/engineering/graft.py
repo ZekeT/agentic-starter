@@ -6,11 +6,52 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
+from typing import Any
 
 from .config import object_value, safe_path
+from .ownership import json_object, owned_content, read_bytes
 
 PACKAGE = ".engineering/graft"
 SKILL = ".claude/skills/graft/SKILL.md"
+LAUNCHER = ".engineering/bin/graft"
+GUIDANCE = "CLAUDE.md"
+GUIDANCE_SCOPE = {"mode": "section", "marker": "navigation"}
+# Navigation content exists only while navigation selects Graft: the dependency
+# flow installs it together and an update removes it after disabling.
+CONTENT = (
+    f"{PACKAGE}/package.json",
+    f"{PACKAGE}/package-lock.json",
+    SKILL,
+    LAUNCHER,
+    GUIDANCE,
+)
+# The reviewed lock ships with the engineering package (not as navigation content)
+# so enabling installs exactly the reviewed resolution with npm ci.
+PINNED_LOCK = ".engineering/engineering/graft-package-lock.json"
+# Content agents load as instructions; leftovers would steer them to absent Graft.
+AGENT_CONTENT = (SKILL, GUIDANCE)
+LAUNCHER_TEXT = b"""#!/bin/sh
+# Select engineering Python independently of the downstream application's runtime.
+root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+exec "$root/engineering" navigation "$@"
+"""
+GUIDANCE_TEXT = b"""<!-- engineering:navigation:begin -->
+## Navigation
+
+Graft navigation is enabled. For non-trivial application navigation, use
+`.engineering/bin/graft` (map, skeleton, callers, grep, ask, blast) before broad
+source reads; inspect tooling source directly. Graft build/check are explicit
+preparation steps, outside `make check`.
+<!-- engineering:navigation:end -->
+"""
+PACKAGE_TEXT = b"""{
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "name": "engineering-navigation-tools",
+  "private": true
+}
+"""
 IGNORES = (
     "/graft/",
     "/.graft/",
@@ -18,6 +59,54 @@ IGNORES = (
     "/.claude/skills/graft/",
 )
 QUERIES = {"ask", "grep", "skeleton", "callers", "map", "blast"}
+
+
+def output_scope(path: str) -> dict[str, Any]:
+    """Guidance is a bounded section of agent policy; other content is whole files."""
+    return GUIDANCE_SCOPE if path == GUIDANCE else {"mode": "file"}
+
+
+def generated(path: str) -> bytes | None:
+    """Return fixed navigation content; pins and the skill come from the package."""
+    return {LAUNCHER: LAUNCHER_TEXT, GUIDANCE: GUIDANCE_TEXT}.get(path)
+
+
+def content(pins: dict[str, bytes], node: str, package: Path) -> dict[str, bytes]:
+    """Assemble every navigation output installed together with the Graft package."""
+    return {
+        **pins,
+        SKILL: skill_text(node, package).encode(),
+        LAUNCHER: LAUNCHER_TEXT,
+        GUIDANCE: GUIDANCE_TEXT,
+    }
+
+
+def installed_version(root: Path) -> str | None:
+    """Read the version of the Graft package installed in the navigation tools."""
+    package = read_bytes(root, f"{PACKAGE}/node_modules/@nanonets/graft/package.json")
+    return json_object(package or b"{}").get("version")
+
+
+def present(root: Path, names: tuple[str, ...] = CONTENT) -> list[str]:
+    """Name the navigation content currently present in a project."""
+    return [
+        name
+        for name in names
+        if owned_content(read_bytes(root, name), name, output_scope(name)) is not None
+    ]
+
+
+def require_enabled(root: Path) -> None:
+    """Refuse navigation while the project configuration disables it."""
+    from .settings import provider
+
+    selected = provider(root, "navigation")
+    if selected != "graft":
+        raise ValueError(
+            f"navigation disabled (provider {selected}): agents search and read "
+            'source directly. To enable, set [navigation] provider = "graft" in '
+            ".engineering/config.toml, then run engineering deps install --apply"
+        )
 
 
 def validate_query(command: str, extra: list[str]) -> None:
@@ -86,7 +175,7 @@ def runtime(root: Path) -> tuple[str, Path]:
     node = shutil.which("node")
     if not node:
         raise ValueError(
-            "Node.js 22.12+ required; install Node and run make graft-install"
+            "Node.js 22.12+ required; install Node and run engineering deps install graft --apply"
         )
     version = subprocess.run(
         [node, "--version"], check=True, capture_output=True, text=True
@@ -99,11 +188,11 @@ def runtime(root: Path) -> tuple[str, Path]:
     ]
     installed = package / "node_modules/@nanonets/graft"
     if not (installed / "package.json").is_file():
-        raise ValueError("Graft missing; run make graft-install")
+        raise ValueError("Graft missing; run engineering deps install graft --apply")
     actual = json.loads((installed / "package.json").read_text())["version"]
     if actual != expected:
         raise ValueError(
-            f"Graft {expected} required; found {actual}; run make graft-install"
+            f"Graft {expected} required; found {actual}; run engineering deps update graft --apply"
         )
     return node, installed
 
@@ -216,6 +305,7 @@ def check_structure(root: Path, node: str, package: Path) -> int:
 
 def run(root: Path, args: list[str]) -> int:
     """Expose bounded upstream commands; structural preparation is implementer-owned."""
+    require_enabled(root)
     if any(arg.startswith("dotenv_config_") for arg in args):
         raise ValueError("dotenv CLI overrides are disabled for engineering navigation")
     if args in (["install-skill"], ["install-skill", "--apply"]):

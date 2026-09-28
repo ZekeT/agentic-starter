@@ -103,8 +103,9 @@ def materialize(root: Path, destination: Path, inputs: dict[str, Any]) -> None:
         target.chmod(0o755 if value["executable"] else 0o644)
     (destination / STATE).mkdir(parents=True, exist_ok=True)
     validate_checkout(destination, inputs)
-    # Requirements come from the proposed recorded role and ownership (ADR 0001),
-    # never a default or an out-of-scope working edit; checked on every reuse.
+    # Requirements come from the recorded role (stricter of base and proposed)
+    # and base-plus-proposed ownership (ADR 0001), never a default or an
+    # out-of-scope working edit; checked on every reuse.
     validate_requirements(destination, plan)
 
 

@@ -7,11 +7,20 @@ from pathlib import Path
 from typing import Any
 
 from . import graft
-from .ownership import digest, encoded, observe, read_bytes
+from .ownership import (
+    digest,
+    encoded,
+    merge_owned,
+    observe,
+    owned_content,
+    read_bytes,
+    remove_owned,
+)
 from .registry import (
     REGISTRY,
     STATE,
     installed_status,
+    output_scope,
     registry,
     required,
     selected,
@@ -56,7 +65,9 @@ def npm_stage(root: Path, directory: Path, row: dict[str, Any]) -> dict[str, byt
     """Resolve an exact npm pin in isolation, then promote the complete installation."""
     directory.mkdir()
     original = json.loads(
-        (read_bytes(root, f"{graft.PACKAGE}/package.json") or b"{}").decode()
+        (
+            read_bytes(root, f"{graft.PACKAGE}/package.json") or graft.PACKAGE_TEXT
+        ).decode()
     )
     if (
         not isinstance(original, dict)
@@ -77,18 +88,21 @@ def npm_stage(root: Path, directory: Path, row: dict[str, Any]) -> dict[str, byt
         )
     original.update(private=True, dependencies={row["source"]: row["version"]})
     (directory / "package.json").write_bytes(encoded(original))
-    lock = read_bytes(root, f"{graft.PACKAGE}/package-lock.json")
-    if (
-        lock
-        and json.loads(lock)
-        .get("packages", {})
-        .get("", {})
-        .get("dependencies", {})
-        .get(row["source"])
-        == row["version"]
-    ):
-        (directory / "package-lock.json").write_bytes(lock)
-        run(["npm", "ci", "--no-audit", "--no-fund"], directory)
+    # Prefer the project's lock, then the shipped reviewed lock, for this exact pin.
+    for name in (f"{graft.PACKAGE}/package-lock.json", graft.PINNED_LOCK):
+        lock = read_bytes(root, name)
+        if (
+            lock
+            and json.loads(lock)
+            .get("packages", {})
+            .get("", {})
+            .get("dependencies", {})
+            .get(row["source"])
+            == row["version"]
+        ):
+            (directory / "package-lock.json").write_bytes(lock)
+            run(["npm", "ci", "--no-audit", "--no-fund"], directory)
+            break
     else:
         run(["npm", "install", "--no-audit", "--no-fund"], directory)
     return {
@@ -112,9 +126,11 @@ def operate(
         dict(row)
         for row in data["dependency"]
         if row["id"] == name
-        or name is None
-        and selected(root, row)
-        and (required(root, row) or row["id"] in evidence["dependencies"])
+        or (
+            name is None
+            and selected(root, row)
+            and (required(root, row) or row["id"] in evidence["dependencies"])
+        )
     ]
     if not rows:
         raise ValueError(f"deps.id: unknown dependency {name}")
@@ -207,14 +223,16 @@ def operate(
                 node = run(["node", "--version"], directory)
                 if tuple(map(int, node.lstrip("v").split(".")[:2])) < (22, 12):
                     raise ValueError("deps.runtime: Node.js 22.12+ required")
-                outputs[graft.SKILL] = graft.skill_text(
-                    "node", package_dir / "node_modules/@nanonets/graft"
-                ).encode()
+                outputs = graft.content(
+                    outputs, "node", package_dir / "node_modules/@nanonets/graft"
+                )
                 npm_pending = package_dir / "node_modules"
             old = evidence["dependencies"].get(row["id"], {}).get("outputs", {})
             for path, content in outputs.items():
-                current = read_bytes(root, path)
-                # npm metadata are shipped pins, and are validated independently.
+                scope = output_scope(row["id"], path)
+                local = read_bytes(root, path)
+                current = owned_content(local, path, scope)
+                # Earlier releases shipped the pins; npm_stage validates them.
                 shipped = path in {
                     f"{graft.PACKAGE}/package.json",
                     f"{graft.PACKAGE}/package-lock.json",
@@ -229,13 +247,16 @@ def operate(
                         f"deps.destination_modified: {path}; no files changed"
                     )
                 observed.setdefault(path, observe(root, path))
-                changes[path] = content
+                changes[path] = merge_owned(local, content, path, scope)
             for path in old.keys() - outputs.keys():
-                changes[path] = None
+                changes[path] = remove_owned(
+                    read_bytes(root, path), path, output_scope(row["id"], path)
+                )
             evidence["dependencies"][row["id"]] = {
                 "managed": True,
                 "installed_version": row["version"],
                 "installed_from": row["source"],
+                # Owned scopes equal the staged content, so record their digests.
                 "outputs": {path: digest(content) for path, content in outputs.items()},
             }
         if any(observe(root, path) != value for path, value in observed.items()):
@@ -255,7 +276,7 @@ def operate(
                 shutil.move(str(destination), backup)
             try:
                 shutil.move(str(npm_pending), destination)
-                write_files(root, changes)
+                write_files(root, changes, executables={graft.LAUNCHER})
             except (OSError, ValueError):
                 if destination.exists():
                     shutil.rmtree(destination)

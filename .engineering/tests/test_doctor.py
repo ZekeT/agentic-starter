@@ -139,7 +139,7 @@ def navigate(target, provider, roots):
 
     path = target / ".engineering/config.toml"
     text = re.sub(
-        r'(?m)^provider = "graft"$',
+        r'(?m)^provider = "[^"]*"$',
         f'provider = "{provider}"',
         path.read_text(),
         count=1,
@@ -156,7 +156,8 @@ def navigate(target, provider, roots):
 
 def record_installed(target, names, graft_version="0.18.0"):
     """Write installation evidence as if pinned dependencies had been installed."""
-    from engineering.ownership import digest
+    from engineering import graft
+    from engineering.ownership import digest, merge_owned, owned_content, read_bytes
     from engineering.registry import registry
 
     evidence = {}
@@ -169,12 +170,29 @@ def record_installed(target, names, graft_version="0.18.0"):
             for name in outputs:
                 save(target, name, f"{version} fixture skill\n")
         else:
-            outputs = [
-                ".engineering/graft/package.json",
-                ".engineering/graft/package-lock.json",
-                ".claude/skills/graft/SKILL.md",
-            ]
-            save(target, outputs[-1], "graft fixture skill\n")
+            outputs = list(graft.CONTENT)
+            package, lock = outputs[:2]
+            if not (target / package).exists():
+                save(
+                    target,
+                    package,
+                    json.dumps({"dependencies": {"@nanonets/graft": version}}),
+                )
+            if not (target / lock).exists():
+                pinned = {"node_modules/@nanonets/graft": {"version": version}}
+                save(target, lock, json.dumps({"packages": pinned}))
+            save(target, graft.SKILL, "graft fixture skill\n")
+            save(target, graft.LAUNCHER, graft.LAUNCHER_TEXT.decode())
+            (target / graft.LAUNCHER).chmod(0o755)
+            policy = target / graft.GUIDANCE
+            policy.write_bytes(
+                merge_owned(
+                    read_bytes(target, graft.GUIDANCE),
+                    graft.GUIDANCE_TEXT,
+                    graft.GUIDANCE,
+                    graft.GUIDANCE_SCOPE,
+                )
+            )
             save(
                 target,
                 ".engineering/graft/node_modules/@nanonets/graft/package.json",
@@ -184,7 +202,12 @@ def record_installed(target, names, graft_version="0.18.0"):
             "managed": True,
             "installed_version": version,
             "installed_from": row["source"],
-            "outputs": {n: digest((target / n).read_bytes()) for n in outputs},
+            "outputs": {
+                n: digest(
+                    owned_content(read_bytes(target, n), n, graft.output_scope(n))
+                )
+                for n in outputs
+            },
         }
     save(
         target,
@@ -286,7 +309,7 @@ def test_enabled_but_broken_navigation_fails_with_disable_option(
 
 
 @pytest.mark.parametrize("breakage", ["modified", "missing", "pin changed"])
-def test_disabled_navigation_ignores_recorded_graft(installation, breakage):
+def test_disabled_navigation_reports_leftover_agent_content(installation, breakage):
     template, target = installation
     adopt(template, target)
     navigate(target, "none", ["src"])
@@ -299,12 +322,24 @@ def test_disabled_navigation_ignores_recorded_graft(installation, breakage):
             target / ".engineering/graft/node_modules/@nanonets/graft/package.json"
         ).unlink()
     result = doctor(target)
+    # Leftover skill and guidance would still steer agents toward disabled Graft.
+    assert result.returncode == 1, result.stdout + result.stderr
+    [leftover] = findings(result, "ERROR", "navigation")
+    assert ".claude/skills/graft/SKILL.md" in leftover and "CLAUDE.md" in leftover
+    lines = result.stdout.splitlines()
+    assert "update" in lines[lines.index(leftover) + 1]
+    # The unselected dependency itself is not assessed.
+    assert not findings(result, "ERROR", "dependency")
+    (target / ".claude/skills/graft/SKILL.md").unlink()
+    policy = target / "CLAUDE.md"
+    text = policy.read_text()
+    begin = text.index("<!-- engineering:navigation:begin -->")
+    end = text.index("<!-- engineering:navigation:end -->\n") + len(
+        "<!-- engineering:navigation:end -->\n"
+    )
+    policy.write_text(text[:begin] + text[end:])
+    result = doctor(target)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert not [
-        line
-        for line in result.stdout.splitlines()
-        if line.startswith(("ERROR", "WARN")) and "graft" in line
-    ]
     assert findings(result, "INFO", "navigation")
 
 

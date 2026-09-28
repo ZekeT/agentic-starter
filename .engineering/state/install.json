@@ -4,7 +4,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "80ffe285123ee854fa5b5326a370b3c8eb81ea47592d84aec35aa04fb96a66c0"
+      "upstream": "ab0cc68dcab30d34351c01510b810803cb3cac3c078cfc6bdf6e86ba0ea5dbcb"
     },
     ".claude/agents/security-reviewer.md": {
       "ownership": {
@@ -16,7 +16,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1311eed3723131bb2761c67496a5fa272f91e558bca3819bab893081c01b8cd7"
+      "upstream": "4313b05b690d3d03808c1e778d46f3fa9082ca86c4346bbc3e7aab0b33f3cb27"
     },
     ".claude/commands/review.md": {
       "ownership": {
@@ -84,12 +84,6 @@
       },
       "upstream": "2985be8b28d3ade858e8d8fb4bc22f565b1bf6020dff982dce141f7721b9999c"
     },
-    ".engineering/bin/graft": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "8b09bed5dac3e599c5f6cb40cf10c191e124e53cf98c133c13f1b00f0ed18bd7"
-    },
     ".engineering/docs/coding-standards.md": {
       "ownership": {
         "mode": "file"
@@ -136,13 +130,19 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c5631914909d187e522ebc20cb8ada3d35d9a9697d784bec0cbef4d0c259496d"
+      "upstream": "9330c14717adfaed124b6a5fe18e1bb1e9551e020b6f5a0aa5cf4b4961cf21ad"
     },
     ".engineering/engineering/apply.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "e42975f089502a9b5801b9a89f11660160927fd044bb3cb0ff282624a6232987"
+      "upstream": "614746399c4bea9194db3b7c1972dd777e43091ed22cd1116321b17889d59729"
+    },
+    ".engineering/engineering/capabilities.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "f5350563238266c59320aadaee1c87670c5d8ef52d6f5427b6a60f7a662d6d16"
     },
     ".engineering/engineering/cli.py": {
       "ownership": {
@@ -160,13 +160,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "daa1e5c93f07b818f3114630e19884aedd0fc4fdb5ee3db0c3595412225b8e74"
+      "upstream": "19b9bc02b90cac6613574ce1e9ed192f1cbdedf8c223c3d80a996fff665686c1"
     },
     ".engineering/engineering/doctor.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "90798f182ae9259060397cf0a053f5056b2f21ee477af202e5f8124ffda8a91f"
+      "upstream": "ca91513d8cd7ccecd03a83dbb43713119156d4d5ea693546087145769a683caa"
     },
     ".engineering/engineering/doctor_wiring.py": {
       "ownership": {
@@ -180,11 +180,17 @@
       },
       "upstream": "de0906579a396215289ed825f14e46d964fc05fc53903123af2f3db00f4c881f"
     },
+    ".engineering/engineering/graft-package-lock.json": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "48e08f5eac6c8a722dea6c0d969c80fd005b42fed79de7748528556c898464c9"
+    },
     ".engineering/engineering/graft.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "676e101c4e5b7985fe766814601b1e5935437251b09c554657b124fb317b8489"
+      "upstream": "dc37d59895cf0ad7a220dce5be831cbef61611983ea01ba3cf07b46cdc06b8ad"
     },
     ".engineering/engineering/growth.py": {
       "ownership": {
@@ -262,7 +268,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "b32733f227dbfa8ac9e8453acab92c7e34a52352ea9bca66cfbca44c2151cbd4"
+      "upstream": "054a384ae55b04090cb371b6c61a09bf9cc6ff49aefd4cf6945c44636c4870e4"
     },
     ".engineering/engineering/publication.py": {
       "ownership": {
@@ -286,13 +292,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "459507cb84a6100377487db762c70a16f867f0004c2855ab68dbe8c38e043f03"
+      "upstream": "c452c4823c522a0b89092cc9a4a41d578e8811347eb8257e58fa9ed2cd42fb68"
     },
     ".engineering/engineering/settings.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "60ea4ff386f7bcf461af30b1ba49c0d1ab21323ba938756ae13e26f460b62cc4"
+      "upstream": "a9922e81e29fa098fe79224324e8772f7afe5415dd156a24a0017e8649ec919c"
     },
     ".engineering/engineering/skill_install.py": {
       "ownership": {
@@ -328,7 +334,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4513cc9b7316ace2ce5f257fcebdb8708c1f1f84f62e622bf98bcb85380520c5"
+      "upstream": "13ea45e6319066018561ae1cbf257889bbfb2a3eb3675fa0abb2426fa8ed9c9b"
     },
     ".engineering/engineering/verification_inputs.py": {
       "ownership": {
@@ -340,7 +346,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "127e44edf261d65e8ba34351bba3ac30747862bc38e5797c2ac1da6ca3c968fa"
+      "upstream": "a8d5e6b5c0d0ca217588eb6e399bce8d128a64565a3267f92338bf688dc07d93"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
@@ -419,6 +425,12 @@
         "mode": "file"
       },
       "upstream": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871"
+    },
+    ".engineering/evals/cases/012-optional-navigation.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "d63631030ef1a2f642ddec5ecf31b0c388ce38b67ecca6f45f3e697f27a0270d"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
@@ -517,13 +529,13 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "4e61395d996547359e341cfdeaaf52fd448412f80ddca7efa560a0bb1c459745"
+      "upstream": "d946c9d47081d16b7de2a6012c8856164ae2b9cb26bc8baf2956b2617bda9793"
     },
     "ENGINEERING.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "94c27e314a034a23c32e5c460f8e348743964bfe8f50f84c40f33c391fca2426"
+      "upstream": "a395807916eab1d382e023bebef75480c4b33764faf33480338ba11fca3a7f08"
     },
     "Makefile": {
       "ownership": {

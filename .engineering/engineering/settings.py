@@ -71,6 +71,7 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         "tracker",
         "maintainability",
         "migration",
+        *CAPABILITIES,
     }
     if set(data) - allowed:
         raise ValueError(f"config.unknown: {sorted(set(data) - allowed)}")
@@ -86,7 +87,9 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         if set(value) - keys:
             raise ValueError(f"config.unknown: {section}")
     for capability, providers in CAPABILITIES.items():
-        if data.get(capability, {}).get("provider", providers[0]) not in providers:
+        # Every capability section is validated, including ones added later.
+        chosen = object_value(data.get(capability, {}), capability)
+        if chosen.get("provider", providers[0]) not in providers:
             raise ValueError(
                 f"{capability}.provider must be one of: {', '.join(providers)}"
             )
@@ -119,11 +122,15 @@ def parse(root: Path, text: str) -> dict[str, Any]:
     return data
 
 
+def selected_provider(config: dict[str, Any], capability: str) -> str:
+    """Name the provider parsed configuration selects for an optional capability."""
+    default = CAPABILITIES[capability][0]
+    return str(config.get(capability, {}).get("provider", default))
+
+
 def provider(root: Path, capability: str) -> str:
     """Name the provider an optional capability selects; "none" disables it."""
-    return str(
-        load(root).get(capability, {}).get("provider", CAPABILITIES[capability][0])
-    )
+    return selected_provider(load(root), capability)
 
 
 def graft_navigation(root: Path) -> bool:

@@ -1,7 +1,7 @@
 # Agentic Starter
 
 A lightweight Engineering System for agent-assisted development. It supplies
-repository instructions, deterministic quality gates, Graft navigation, fresh
+repository instructions, deterministic quality gates, optional Graft navigation, fresh
 independent verification, safe dependency management, adoption and migration.
 Matt Pocock's upstream skills supply the development workflow.
 

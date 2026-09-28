@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .apply import Action, Plan, baseline
+from .capabilities import handover, plan_deselected
 from .config import object_value, safe_path, validate_config
 from .inspection import INSPECTED, inspect_target
 from .installation import (
@@ -24,6 +25,7 @@ from .ownership import (
     observe,
     owned_content,
     read_bytes,
+    remove_owned,
     validate_ownership,
 )
 from .updates import classify, legacy_baseline
@@ -33,8 +35,6 @@ SEEDS = (
     "docs/agents/issue-tracker.md",
     "docs/agents/domain.md",
     ".engineering/dependencies.toml",
-    ".engineering/graft/package.json",
-    ".engineering/graft/package-lock.json",
 )
 
 # The maintainer checkout's own configuration is its project configuration;
@@ -101,9 +101,9 @@ def seed(template: Path, name: str) -> bytes | None:
     return content if content is not None else read_bytes(template, name)
 
 
-def plan_configuration(plan: Plan) -> None:
+def plan_configuration(plan: Plan) -> dict[str, Any]:
     """Validate and schema-migrate project configuration; never overwrite values."""
-    from .settings import CONFIGURATION, MigrationGap, migrate, validate
+    from .settings import CONFIGURATION, MigrationGap, migrate, parse, validate
 
     local = read_bytes(plan.target, CONFIGURATION)
     raw = local if local is not None else seed(plan.template, CONFIGURATION)
@@ -122,6 +122,7 @@ def plan_configuration(plan: Plan) -> None:
     if local is not None and notes:
         reason = f"Project configuration {', '.join(notes)}; values kept"
         plan.actions.append(Action(CONFIGURATION, "MIGRATE", reason, text.encode()))
+    return parse(plan.target, text)
 
 
 def plan_scope(
@@ -258,9 +259,17 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
         plan.actions.append(action)
         if next_entry is not None:
             next_entries[name] = next_entry
+    removed = set(entries) - set(files)
+    # Capability selection reads the migrated configuration the update proposes.
+    config = plan_configuration(plan)
     for name, entry in entries.items():
         if name not in files:
             plan.observed[name] = observe(target, name)
+            if transfer := handover(target, config, name, entry, legacy):
+                # Visible ownership transfer: the selected capability's dependency
+                # installs and tracks this content from now on.
+                plan.actions.append(transfer)
+                continue
             local = read_bytes(target, name)
             spec = entry["ownership"]
             scope = owned_content(local, name, spec)
@@ -280,15 +289,15 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
                     Action(name, "REMOVE_SAFE", "Pristine scope removed upstream")
                 )
             else:
-                incoming = encoded({}) if spec["mode"] == "hooks" else b""
                 plan.actions.append(
                     Action(
                         name,
                         "MERGE",
                         "REMOVE_SAFE: remove only the owned scope",
-                        merge_owned(local, incoming, name, spec),
+                        remove_owned(local, name, spec),
                     )
                 )
+    plan_deselected(plan, config, removed, legacy)
     for name in SEEDS:
         plan.observed[name] = observe(target, name)
         if read_bytes(target, name) is None:
@@ -300,7 +309,6 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
                     seed(template, name),
                 )
             )
-    plan_configuration(plan)
     for name in INSPECTED:
         plan.observed[name] = observe(target, name)
     for name in DIRECTORIES:

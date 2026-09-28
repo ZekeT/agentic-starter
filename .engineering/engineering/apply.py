@@ -79,8 +79,13 @@ def show_plan(plan: Plan) -> None:
         print(f"{action.kind} {action.path}: {action.reason}")
     print("Apply is explicit (--apply); requires a clean committed target.")
     print(
-        "Doctor runs offline after apply. Install managed dependencies separately; then run graft check and applicable evals."
+        "Doctor runs offline after apply. Install managed dependencies separately; then run graft check (when navigation selects Graft) and applicable evals."
     )
+
+
+def writes_content(action: Action) -> bool:
+    """Name the actions that replace or delete a path's bytes."""
+    return action.content is not None or action.kind == "REMOVE_SAFE"
 
 
 def apply_plan(plan: Plan) -> int:
@@ -89,6 +94,12 @@ def apply_plan(plan: Plan) -> int:
 
     if plan.conflicts:
         raise ValueError("Unresolved conflicts; no files written")
+    writes = [a.path for a in plan.actions if writes_content(a)]
+    if duplicates := sorted({p for p in writes if writes.count(p) > 1}):
+        raise ValueError(
+            f"Plan proposes more than one content change for {', '.join(duplicates)}; "
+            "no files written"
+        )
     if plan.baseline is None or git(plan.target, "rev-parse", "--show-toplevel") != str(
         plan.target
     ):
@@ -110,9 +121,7 @@ def apply_plan(plan: Plan) -> int:
     from .transaction import write_files
 
     changes = {
-        action.path: action.content
-        for action in plan.actions
-        if action.content is not None or action.kind == "REMOVE_SAFE"
+        action.path: action.content for action in plan.actions if writes_content(action)
     }
     executables = {action.path for action in plan.actions if action.executable}
 
