@@ -17,7 +17,7 @@ pytestmark = pytest.mark.integration
 
 def test_failed_push_reuses_commit_authorization_and_evidence(repo, hosting):
     (repo / "Makefile").write_text(f"check:\n\t@echo check >> {STATE}/calls\n")
-    change_plan(repo, paths=["app.txt", "Makefile"])
+    change_plan(repo, paths=["app.txt", "Makefile"], tier="sensitive")
     review(repo, hosting)
     checkout = repo / prepare(repo)["checkout"]
     evidence = (repo / STATE / "example.json").read_bytes()

@@ -11,9 +11,11 @@ for another plan is not evidence for this change. Required checks follow the
 installation role and path ownership; a consumer edit to managed implementation
 stays INCOMPLETE until restored and routed through update or upstream. Use engineering verify status.
 Reuse current complete evidence without rerunning checks or reviews. If absent,
-missing/stale or incomplete, prepare the current plan and launch fresh independent
-maintainability and behavioral reviewers, plus security review when applicable.
-The verifier runs engineering verify check and reports observed behavior
+missing/stale or incomplete, prepare the current plan with a review tier at or
+above the computed floor, then launch fresh independent reviewers for only the
+missing roles the tier requires: one combined session filing separate
+maintainability and behavioral reports when the tier is ordinary, a separate
+session per role when sensitive. The verifier runs engineering verify check and reports observed behavior
 independently. Record their actual reports using the prepared snapshot; never
 fabricate independent reports or turn implementer reasoning into proof.
 

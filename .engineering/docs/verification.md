@@ -25,8 +25,8 @@ Keep plans, reports and records under ignored local
   "checks": [["make", "check"]],
   "tools": [["python3", "--version"], ["uv", "--version"]],
   "inputs": [],
-  "security_required": false,
-  "security_reason": "Explain why security review is or is not applicable"
+  "tier": "ordinary",
+  "tier_reason": "Why this review tier fits the change"
 }
 ```
 
@@ -36,7 +36,7 @@ runtimes/check tools in `tools`; status runs those read-only version probes, not
 the suite. `inputs` names additional ignored non-secret files influencing results.
 All tracked configuration/locks and ignored managed dependency evidence are
 included automatically. A URL alone is not a requirement-content fingerprint.
-Reviewers independently assess plan completeness and security classification.
+Reviewers independently assess plan completeness and the declared review tier.
 
 Planning reads the installation role, `maintainer` or `consumer`, from the
 proposed `.engineering/state/install.json` in the verified content: the
@@ -138,10 +138,47 @@ closed; the public `.env.template` is permitted. Secret/environment values are
 not fingerprinted. Disclose material external/environment gaps; this is not a
 hermetic snapshot of the machine or external services.
 
+## Review tiers
+
+Each plan declares a review tier with a reason. The tier decides the required
+reviewer roles; it never adds or removes checks.
+
+| Tier | Required reports | Sessions |
+|---|---|---|
+| `documentation` | behavioral | one fresh session |
+| `ordinary` | maintainability, behavioral | one fresh session may file both |
+| `sensitive` | maintainability, behavioral, security | a separate fresh session per role |
+
+Preparation computes a tier floor from the changed paths and rejects a plan that
+declares less, naming each path and the rule that set the floor. A mixed change
+takes the highest path floor. Declare a higher tier with a reason when risk the
+paths cannot show applies, such as authentication, secrets or untrusted input.
+Starter-owned rules always apply:
+
+- `sensitive`: dependency manifests and locks (`pyproject.toml`, `uv.lock`,
+  `package*.json`, `.engineering/dependencies.toml`), `.claude/settings*.json`,
+  hooks, `.github/workflows/**`, `Makefile` and Engineering launchers. In the
+  maintainer checkout also the dependency, skill-installation, apply,
+  transaction, update, migration, publication and verification modules.
+- `ordinary`: agent policy is never documentation: `CLAUDE.md`, `AGENTS.md`,
+  `.claude/**` including skills, `REVIEW.md`, `ENGINEERING.md`, Engineering docs
+  and agent docs. Every other path is `ordinary` until project review settings
+  name documentation paths.
+
+A combined ordinary session files two separate reports, one per role, each with
+its own verdict and the same `reviewer` identifier. Reports sharing a `reviewer`
+identifier across roles are rejected for `sensitive` changes, both when recorded
+and in status. The evidence record stores the floor, per-tier paths with their
+rules, required checks and roles. `verify status` reports the tier, its reason,
+the floor, required and missing roles, and any reviewer covering several roles.
+Status and publication recompute the floor for the current scope, so evidence
+whose tier falls below it cannot pass or ship. Records from before review tiers
+are unsupported: prepare again; no tier is inferred for old evidence.
+
 ## Obtain fresh evidence
 
-Fresh maintainability, behavioral and applicable security reviewers receive only
-the branch/request/spec/ticket pointer. They independently discover requirements,
+Fresh reviewers for the roles the tier requires receive only the
+branch/request/spec/ticket pointer. They independently discover requirements,
 actual scope and prepared plan; no implementer reasoning/self-review is handed
 over. The plan is a discoverable scope/execution contract, not proof.
 
@@ -177,7 +214,7 @@ Each reviewer supplies a report in ignored local storage:
 Roles are `maintainability`, `behavioral`, `security`; verdicts are `PASS`, `FAIL`
 or `CONCERNS`. Findings are readable strings with evidence/references. Behavioral
 PASS requires successful recorded authoritative checks. Non-PASS reports prevent
-PASS; required missing roles remain INCOMPLETE.
+PASS; missing roles the tier requires remain INCOMPLETE.
 
 ```bash
 ./engineering verify record --change example --report .engineering/state/verification/report.json

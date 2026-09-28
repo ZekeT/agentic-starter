@@ -15,7 +15,7 @@ from .verification_inputs import (
     paths_from_git,
     source_path,
 )
-from .verification_requirements import validate_requirements
+from .verification_requirements import requirements
 
 
 def baseline_files(root: Path, base: str) -> dict[str, tuple[str, str]]:
@@ -72,8 +72,13 @@ def proposed_files(root: Path, base: str, plan: dict[str, Any]) -> dict[str, Any
     return result
 
 
-def materialize(root: Path, destination: Path, inputs: dict[str, Any]) -> None:
-    """Create an independent local Git repository with baseline history and bytes."""
+def materialize(
+    root: Path, destination: Path, inputs: dict[str, Any]
+) -> dict[str, Any]:
+    """Create an independent local Git repository with baseline history and bytes.
+
+    Returns the plan's verification requirements, computed from that checkout.
+    """
     plan = inputs["plan"]
     git(root, "clone", "--no-local", "--no-checkout", "--", str(root), str(destination))
     git(destination, "update-ref", "HEAD", inputs["base"])
@@ -105,8 +110,9 @@ def materialize(root: Path, destination: Path, inputs: dict[str, Any]) -> None:
     validate_checkout(destination, inputs)
     # Requirements come from the recorded role (stricter of base and proposed)
     # and base-plus-proposed ownership (ADR 0001), never a default or an
-    # out-of-scope working edit; checked on every reuse.
-    validate_requirements(destination, plan)
+    # out-of-scope working edit; checked on every reuse, so status and
+    # publication recompute the tier floor for the current scope.
+    return requirements(destination, plan)
 
 
 def validate_checkout(checkout: Path, inputs: dict[str, Any]) -> None:

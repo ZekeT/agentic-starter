@@ -14,17 +14,22 @@ Review in this order:
 7. What did automated and independent verification prove?
 8. What remains unverified?
 
-Require current evidence from a fresh read-only maintainability review
-(PASS / CONCERNS) and behavioral verification (PASS / FAIL). Reuse matching
+Require current evidence from the fresh read-only reviewers the plan's review
+tier requires: behavioral verification (PASS / FAIL) always, maintainability
+review (PASS / CONCERNS) for `ordinary` and `sensitive`, and security review for
+`sensitive`. Reuse matching
 evidence under [.engineering/docs/verification.md](.engineering/docs/verification.md);
 fresh context does not mean repeating an unchanged review at every later gate. They independently discover the diff, expected
 behavior, source and relevant tests. Never substitute an implementation agent's
 narrative for their evidence. Record and resolve material concerns; label nits.
 
-Run a read-only security review for authentication, authorization, secrets,
+The tool computes a tier floor from changed paths and rejects a lower declared
+tier; see [review tiers](.engineering/docs/verification.md#review-tiers). Declare
+`sensitive` above the floor for authentication, authorization, secrets,
 cryptography, untrusted input, privilege boundaries, payments, destructive
-operations, sensitive storage, network exposure or dependency execution.
-Trivial documentation changes do not require a security review.
+operations, sensitive storage, network exposure or dependency execution. One
+fresh session may file both `ordinary` reports; `sensitive` needs a separate
+fresh session per role. No tier permits implementer self-review.
 
 Use `/show-me` for a design, request path, module boundary or diff that is hard
 to understand. Visual explanations are normally ephemeral. No diagram is a gate.

@@ -33,8 +33,10 @@ role and path ownership in the verification guide.
 
 Reviewers are read-only and receive only a branch/ticket/spec/request pointer.
 Do not pass implementation-session reasoning or a self-review narrative to them.
-Security review applies to security-sensitive changes, including dependency
-execution and destructive operations. Human review follows [REVIEW.md](REVIEW.md). Wait for human fix instructions;
+Plans declare a review tier at or above the computed floor; the tier sets the
+required reviewer roles. One fresh session may file both ordinary reports;
+sensitive changes need a separate fresh session per role, including security.
+Human review follows [REVIEW.md](REVIEW.md). Wait for human fix instructions;
 preserve settled decisions. Pause after two unsuccessful attempts at one finding
 or before undoing a settled decision; use focused `/grill-me` and record the
 agreed resolution. Independently reverify authorized corrections.

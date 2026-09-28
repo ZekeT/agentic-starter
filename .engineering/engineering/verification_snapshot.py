@@ -11,6 +11,7 @@ from .growth import merge_base
 from .ownership import digest, encoded, json_object
 from .verification_checkout import proposed_files, temporary_checkout
 from .verification_inputs import STATE, paths_from_git, source_path, strings
+from .verification_requirements import TIERS
 
 
 def read_plan(root: Path, name: str) -> dict[str, Any]:
@@ -29,18 +30,24 @@ def validate_plan(root: Path, plan: dict[str, Any]) -> None:
         "checks",
         "tools",
         "inputs",
-        "security_required",
-        "security_reason",
+        "tier",
+        "tier_reason",
     }
+    if {"security_required", "security_reason"} & set(plan):
+        raise ValueError(
+            "security_required and security_reason are replaced by tier and "
+            "tier_reason: declare the review tier (documentation, ordinary or "
+            "sensitive) and why"
+        )
     if set(plan) != fields:
         raise ValueError(f"Plan requires exactly: {sorted(fields)}")
-    for field in ("base", "requirement", "security_reason"):
+    for field in ("base", "requirement", "tier_reason"):
         if not isinstance(plan[field], str) or not plan[field].strip():
             raise ValueError(f"{field}: nonempty text required")
     if plan["base"].startswith("-"):
         raise ValueError("Invalid base reference")
-    if type(plan["security_required"]) is not bool:
-        raise ValueError("security_required must be boolean")
+    if plan["tier"] not in TIERS:
+        raise ValueError("tier must be documentation, ordinary or sensitive")
     for field in ("paths", "inputs"):
         values = strings(plan[field], field, empty=field == "inputs")
         if len(values) != len(set(values)):
@@ -56,8 +63,9 @@ def validate_plan(root: Path, plan: dict[str, Any]) -> None:
             strings(command, field)
         if len({tuple(c) for c in plan[field]}) != len(plan[field]):
             raise ValueError(f"{field}: duplicate commands")
-    # Required checks depend on proposed role and ownership: see
-    # verification_requirements, applied whenever the checkout is materialized.
+    # Required checks and the tier floor depend on proposed role, ownership and
+    # paths: see verification_requirements, applied whenever the checkout is
+    # materialized.
 
 
 def repository_inputs(root: Path, plan: dict[str, Any]) -> dict[str, Any]:

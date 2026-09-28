@@ -28,10 +28,13 @@ Any failed or unavailable required check prevents PASS. Never silently fix.
 
 For reusable evidence follow .engineering/docs/verification.md. Independently
 inspect the prepared plan against the request and actual scope; require applicable
-checks, tools, ignored inputs and security scope. Capture its snapshot BEFORE
+checks, tools, ignored inputs and a review tier at or above its floor. Capture its snapshot BEFORE
 verification. Run `engineering verify check --change <id> --snapshot <token>` to
 execute and record the required checks instead of running them twice. Then submit
 your behavioral report with that same snapshot and observed coverage/gaps.
+When asked for a combined ordinary-tier session, also inspect maintainability as
+the maintainability reviewer would and file it as a separate report with its own
+verdict and the same `reviewer` identifier. Never combine roles for a sensitive tier.
 If inputs change, do not relabel old findings with a new token: reverify. Local
 evidence output is allowed, application edits are not. Never substitute implementer
 self-review for independent evidence.

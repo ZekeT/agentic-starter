@@ -14,9 +14,11 @@ explicit authorization. Never infer publication permission from /implement.
 Never merge or force-push without separate specific authorization.
 
 Use engineering publish preflight to check intended content/paths, current proof,
-comparison base, branch/remote and unresolved blockers. Missing or stale evidence
-returns to verification; missing/stale acceptance summary or blockers return to
-/review and human-directed corrections. Reuse current semantic review and checks;
+comparison base, branch/remote and unresolved blockers. Preflight recomputes the
+tier floor for the current scope and refuses evidence whose tier is below it.
+Missing or stale evidence or classification returns to verification;
+missing/stale acceptance summary or blockers return to /review and
+human-directed corrections. Reuse current semantic review and checks;
 do not rerun unchanged authoritative checks during shipping.
 
 Use engineering publish run with only the human-authorized commit/push/pr scope.

@@ -63,7 +63,7 @@ def scripted_verification(root):
     prepared = prepare(root)
     token = prepared["snapshot"]
     engineering(root, "verify", "check", "--snapshot", token)
-    for role in ("maintainability", "behavioral"):
+    for role in ("maintainability", "behavioral", "security"):
         report = {
             "snapshot": token,
             "role": role,
@@ -144,8 +144,9 @@ def test_generated_application_correction_and_failed_push_reuse(repo, hosting):
         "checks": [["make", "check"], ["make", "engineering-check"]],
         "tools": [[sys.executable, "--version"]],
         "inputs": sorted(inputs - tracked),
-        "security_required": False,
-        "security_reason": "Disposable greeting and local fake hosting fixture.",
+        # The Makefile is a build recipe, so the starter floor is sensitive.
+        "tier": "sensitive",
+        "tier_reason": "Build recipe edit; disposable greeting and fake hosting.",
     }
     (repo / STATE / "plan.json").write_text(json.dumps(plan))
     readme = repo / "README.md"

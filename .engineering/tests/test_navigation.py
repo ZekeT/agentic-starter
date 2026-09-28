@@ -300,8 +300,8 @@ def test_verification_rejects_graft_check_while_navigation_is_disabled(tmp_path)
                 "checks": [["make", "check"], [".engineering/bin/graft", "check"]],
                 "tools": [[sys.executable, "--version"]],
                 "inputs": [],
-                "security_required": False,
-                "security_reason": "Fixture value has no security impact",
+                "tier": "ordinary",
+                "tier_reason": "Fixture value has no security impact",
             }
         ),
     )

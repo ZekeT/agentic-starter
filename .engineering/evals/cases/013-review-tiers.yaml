@@ -1,0 +1,24 @@
+id: review-tiers-without-self-certification
+kind: static
+why: Review tiers change reviewer roles, never checks, and never permit self-certification.
+shell: |
+  python3 - <<'PY'
+  from pathlib import Path
+  policy = Path('CLAUDE.md').read_text()
+  assert 'review tier' in policy and 'computed floor' in policy
+  assert 'separate fresh session per role' in policy and 'never self-certify' in policy
+  review = Path('REVIEW.md').read_text()
+  assert 'tier floor' in review and 'No tier permits implementer self-review' in review
+  guide = Path('.engineering/docs/verification.md').read_text()
+  for phrase in ('## Review tiers', 'never adds or removes checks', 'agent policy is never documentation',
+                 'rejected for `sensitive` changes', 'prepare again; no tier is inferred'):
+      assert phrase in guide, phrase
+  assert 'security_required' not in guide
+  command = Path('.claude/commands/review.md').read_text()
+  assert 'only the' in command and 'missing roles the tier requires' in command
+  assert 'separate' in command and 'never' in command
+  ship = Path('.claude/commands/ship.md').read_text()
+  assert 'recomputes the' in ship and 'tier floor' in ship
+  verifier = Path('.claude/agents/verifier.md').read_text()
+  assert 'Never combine roles for a sensitive tier' in verifier and 'readonly: true' in verifier
+  PY

@@ -17,7 +17,7 @@ D, E and F remain in [intent](intent.md).
 | [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | ready-for-agent |
 | [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
 | [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | ready-for-agent |
-| [11 Declare a review tier checked against a starter-rule floor](issues/11-declared-review-tier-and-floor.md) | None | ready-for-agent |
+| [11 Declare a review tier checked against a starter-rule floor](issues/11-declared-review-tier-and-floor.md) | None | in-progress — implemented; awaiting independent verification |
 | [12 Project review settings enable the documentation tier](issues/12-project-review-settings.md) | 11 | ready-for-agent |
 | [13 Carry reviewer reports across a clean rebase](issues/13-carried-evidence.md) | 11 (serialized after 12) | ready-for-agent |
 
