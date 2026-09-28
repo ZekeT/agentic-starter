@@ -2,8 +2,9 @@
 
 Status: ready-for-agent — breakdown approved 2026-09-27
 
-Source: [specification](spec.md). Slices A and C only; B, D, E and F remain in
-[intent](intent.md).
+Source: [specification](spec.md). Slices A and C only. Slice B is specified in
+[spec-b-review-tiers](spec-b-review-tiers.md) and awaits `/to-tickets`; D, E and F
+remain in [intent](intent.md).
 
 | Ticket | Blocked by | Status |
 | --- | --- | --- |
@@ -17,6 +18,6 @@ Source: [specification](spec.md). Slices A and C only; B, D, E and F remain in
 | [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
 | [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | ready-for-agent |
 
-Order agreed 2026-09-28: slice B (review tiers, needs grilling) → 06 → 09 → 10 → 08. Each slice updates consumer generation,
+Order agreed 2026-09-28: slice B (review tiers; grilled and specified 2026-09-28, needs tickets) → 06 → 09 → 10 → 08. Each slice updates consumer generation,
 adoption/update behavior, documentation and evals, not only the maintainer
 checkout. Use a fresh implementation session and branch per ticket.

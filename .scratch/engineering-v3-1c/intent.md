@@ -1,7 +1,7 @@
 # Engineering v3.1c — starter refinement
 
-Status: intent settled by grilling 2026-09-27 (A, C) and 2026-09-28 (B); A and C
-specified; B ready for `/to-spec`
+Status: intent settled by grilling 2026-09-27 (A, C) and 2026-09-28 (B); A, C and B
+specified ([B spec](spec-b-review-tiers.md))
 
 A focused refinement of the current Engineering System, not a redesign. Keep
 the v3 ownership split: Engineering System owns invariants, checks, migration,
