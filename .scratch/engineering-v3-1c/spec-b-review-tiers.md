@@ -1,6 +1,7 @@
 # Engineering v3.1c — Review tiers and carried evidence (slice B)
 
-Status: ready-for-agent — shared understanding and test seams approved 2026-09-28
+Status: ready-for-agent — shared understanding and test seams approved 2026-09-28;
+tickets 11–13 in [breakdown](breakdown.md)
 
 Source: [intent](intent.md), section "B. Review tiers and carried evidence".
 Slices A and C are in [spec](spec.md). Vocabulary follows the product context
