@@ -94,7 +94,7 @@ def test_documentation_tier_needs_project_review_settings(repo):
 CONFIG = ".engineering/config.toml"
 
 
-def review_settings(documentation=(), sensitive=(), extra=""):
+def settings_text(documentation=(), sensitive=(), extra=""):
     return (
         'schema_version = 2\n[navigation]\nprovider = "none"\n[review]\n'
         f"documentation = {json.dumps(list(documentation))}\n"
@@ -102,7 +102,7 @@ def review_settings(documentation=(), sensitive=(), extra=""):
     )
 
 
-def settle(repo, text):
+def commit_base_settings(repo, text):
     """Commit review settings to the comparison base, keeping feature edits."""
     git(repo, "checkout", "--quiet", "main")
     (repo / CONFIG).write_text(text)
@@ -112,7 +112,7 @@ def settle(repo, text):
     git(repo, "merge", "--quiet", "--ff-only", "main")
 
 
-def change(repo, names, tier="sensitive"):
+def prepare_edits(repo, names, tier="sensitive"):
     """Replace the fixture change with edits to names; return prepare's result."""
     (repo / "app.txt").write_text("before\n")
     for name in names:
@@ -128,7 +128,7 @@ def recorded_paths(repo):
 
 
 def test_documentation_only_change_passes_with_one_behavioral_report(repo):
-    settle(repo, review_settings(["README.md", "docs/**"]))
+    commit_base_settings(repo, settings_text(["README.md", "docs/**"]))
     (repo / "app.txt").write_text("before\n")
     (repo / "docs").mkdir()
     (repo / "docs/guide.md").write_text("Run make check.\n")
@@ -156,21 +156,21 @@ def test_documentation_only_change_passes_with_one_behavioral_report(repo):
 def test_documentation_settings_classify_domain_docs_not_agent_policy(
     repo, name, floor, rule
 ):
-    settle(repo, review_settings(["README.md", "docs/**"]))
-    change(repo, [name])
+    commit_base_settings(repo, settings_text(["README.md", "docs/**"]))
+    prepare_edits(repo, [name])
     assert recorded_paths(repo)[floor] == {name: rule}
 
 
 def test_project_sensitive_additions_raise_the_floor(repo):
-    settle(repo, review_settings(["docs/**"], ["src/auth/**"]))
-    error = change(repo, ["src/auth/login.py"], tier="ordinary")["error"]
+    commit_base_settings(repo, settings_text(["docs/**"], ["src/auth/**"]))
+    error = prepare_edits(repo, ["src/auth/login.py"], tier="ordinary")["error"]
     assert "below the tier floor sensitive" in error
     assert "src/auth/login.py (project sensitive setting)" in error
 
 
 def test_project_settings_cannot_weaken_starter_rules(repo):
-    settle(repo, review_settings(["**"]))
-    change(repo, ["Makefile", "CLAUDE.md", "guide.md"])
+    commit_base_settings(repo, settings_text(["**"]))
+    prepare_edits(repo, ["Makefile", "CLAUDE.md", "guide.md"])
     paths = recorded_paths(repo)
     assert paths["sensitive"] == {"Makefile": "build recipe"}
     assert paths["ordinary"] == {"CLAUDE.md": "agent policy"}
@@ -178,11 +178,11 @@ def test_project_settings_cannot_weaken_starter_rules(repo):
 
 
 def test_editing_review_settings_uses_the_stricter_of_base_and_proposed(repo):
-    settle(repo, review_settings(["docs/**"], ["billing/**"]))
+    commit_base_settings(repo, settings_text(["docs/**"], ["billing/**"]))
     names = ["docs/guide.md", "src/app.py", "billing/rates.py", "api/keys.py"]
-    change(repo, names)
+    prepare_edits(repo, names)
     # The proposed settings drop billing and document src; they add api.
-    (repo / CONFIG).write_text(review_settings(["src/**"], ["api/**"]))
+    (repo / CONFIG).write_text(settings_text(["src/**"], ["api/**"]))
     change_plan(repo, paths=[CONFIG, *names])
     prepare(repo)
     assert recorded_paths(repo) == {
@@ -200,8 +200,8 @@ def test_editing_review_settings_uses_the_stricter_of_base_and_proposed(repo):
 
 
 def test_review_settings_floor_at_ordinary_even_when_documented(repo):
-    settle(repo, review_settings(["**"]))
-    (repo / CONFIG).write_text(review_settings(["**"], extra="# reviewed\n"))
+    commit_base_settings(repo, settings_text(["**"]))
+    (repo / CONFIG).write_text(settings_text(["**"], extra="# reviewed\n"))
     change_plan(repo, paths=[CONFIG], tier="documentation")
     error = prepare(repo, status=1)["error"]
     assert f"{CONFIG} (review settings)" in error
@@ -217,7 +217,7 @@ def test_review_settings_floor_at_ordinary_even_when_documented(repo):
     ],
 )
 def test_invalid_review_settings_fail_planning(repo, setting, message):
-    settle(repo, review_settings(["docs/**"]))
+    commit_base_settings(repo, settings_text(["docs/**"]))
     (repo / CONFIG).write_text(f"schema_version = 2\n[review]\n{setting}\n")
     change_plan(repo, paths=["app.txt", CONFIG])
     result = prepare(repo, status=1)
@@ -234,7 +234,7 @@ def test_invalid_review_settings_fail_planning(repo, setting, message):
     ],
 )
 def test_build_and_agent_scripts_floor_at_sensitive(repo, name, rule):
-    error = change(repo, [name], tier="ordinary")["error"]
+    error = prepare_edits(repo, [name], tier="ordinary")["error"]
     assert f"{name} ({rule})" in error
 
 

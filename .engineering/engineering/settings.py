@@ -18,7 +18,7 @@ REVIEW_DEFAULTS = '[review]\ndocumentation = ["README.md", "docs/**"]\nsensitive
 def add_review_settings(text: str) -> str:
     """Schema 1 → 2: add default review settings, keeping every existing value."""
     text = re.sub(
-        r"(?m)^schema_version\s*=\s*1\s*$", "schema_version = 2", text, count=1
+        r"(?m)^(schema_version\s*=\s*)1(\s*(?:#.*)?)$", r"\g<1>2\2", text, count=1
     )
     return text.rstrip("\n") + "\n\n" + REVIEW_DEFAULTS
 
@@ -151,6 +151,14 @@ def review_patterns(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
             raise ValueError(f"review.{key} must be a list of path patterns")
         result[key] = tuple(patterns)
     return result
+
+
+def review_settings(raw: bytes | None) -> dict[str, tuple[str, ...]]:
+    """Review settings from configuration bytes of any schema; absent means none."""
+    try:
+        return review_patterns(tomllib.loads(raw.decode()) if raw is not None else {})
+    except (tomllib.TOMLDecodeError, UnicodeDecodeError, ValueError) as error:
+        raise ValueError(f"{CONFIGURATION} review settings: {error}") from error
 
 
 def selected_provider(config: dict[str, Any], capability: str) -> str:

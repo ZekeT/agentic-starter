@@ -349,7 +349,7 @@ def test_review_settings_arrive_only_with_the_approved_update(installation, caps
     # A project configured before review settings existed, with its own values.
     config = (target / CONFIG).read_text()
     config = config.split("\n[review]")[0].replace(
-        "schema_version = 2", "schema_version = 1"
+        "schema_version = 2", "schema_version = 1  # before review settings"
     )
     save(target, CONFIG, config)
     customize(target, warn_file_lines=250)
@@ -361,7 +361,9 @@ def test_review_settings_arrive_only_with_the_approved_update(installation, caps
     assert snapshot(target) == before
     status, output = engineering(capsys, template, "update", str(target), "--apply")
     assert status == 0, output
-    migrated = tomllib.loads((target / CONFIG).read_text())
+    text = (target / CONFIG).read_text()
+    assert "schema_version = 2  # before review settings" in text
+    migrated = tomllib.loads(text)
     assert migrated["schema_version"] == 2
     assert migrated["review"] == {
         "documentation": ["README.md", "docs/**"],

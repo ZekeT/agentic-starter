@@ -47,5 +47,13 @@ update; generated and adopted projects start with identical defaults.
   dependency modules (it executes the pinned Graft CLI); the leading `/` anchor
   is documented. Remaining maintainability notes from ticket 11 (`operate()`
   growth, preflight floor via `snapshot()`, `SESSIONS` table) are unchanged.
-- Remaining: `make engineering-test`, three separate independent review
-  sessions (sensitive), human review, publication.
+- `/code-review` (2026-09-29), both axes: human accepted the recommendations.
+  Keep `graft.py` sensitive; keep starter lists in code, recorded in ADR 0002;
+  keep the any-depth `README.md` default from the spec; leave `CLAUDE.md` and
+  `/ship` unchanged. Fixed: configuration reading moved to
+  `settings.review_settings`; the 1 → 2 migration keeps a trailing comment on
+  `schema_version`; clearer test helper names. Not changed (judgement calls):
+  defaults kept in both the migration and the template, the review-settings
+  dict type, and rebuilding the rule table per path.
+- Remaining: three separate independent review sessions (sensitive), human
+  review, publication.

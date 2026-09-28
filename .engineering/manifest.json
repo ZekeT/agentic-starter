@@ -644,7 +644,7 @@
     },
     ".engineering/engineering/settings.py": {
       "executable": false,
-      "owned_sha256": "9db1b3fb1d86c7aae266d7013f91e39ec2211068bd0b39373ea65111f06e16bf",
+      "owned_sha256": "8c8cd49360a4e2076f2854a1a85db8c0c70377dfa11a3d20dc35f982679cc91b",
       "ownership": {
         "mode": "file"
       },
@@ -654,9 +654,10 @@
         "5e4fcd191cdb31732028f7b857599d4bc091b843b815f059bbf6b29713b1abe8",
         "60ea4ff386f7bcf461af30b1ba49c0d1ab21323ba938756ae13e26f460b62cc4",
         "a9922e81e29fa098fe79224324e8772f7afe5415dd156a24a0017e8649ec919c",
-        "c315a2381498b04725ed68f4a27f3a32451ba06ff15a097fc3a59c9ef1dde051"
+        "c315a2381498b04725ed68f4a27f3a32451ba06ff15a097fc3a59c9ef1dde051",
+        "9db1b3fb1d86c7aae266d7013f91e39ec2211068bd0b39373ea65111f06e16bf"
       ],
-      "sha256": "9db1b3fb1d86c7aae266d7013f91e39ec2211068bd0b39373ea65111f06e16bf"
+      "sha256": "8c8cd49360a4e2076f2854a1a85db8c0c70377dfa11a3d20dc35f982679cc91b"
     },
     ".engineering/engineering/skill_install.py": {
       "executable": false,
@@ -747,7 +748,7 @@
     },
     ".engineering/engineering/verification_requirements.py": {
       "executable": false,
-      "owned_sha256": "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56",
+      "owned_sha256": "4b7ce18ee60d5f28cd9f99de44de90dc6819c921cd85d45f27520c3fcaee8e06",
       "ownership": {
         "mode": "file"
       },
@@ -755,9 +756,10 @@
         "127e44edf261d65e8ba34351bba3ac30747862bc38e5797c2ac1da6ca3c968fa",
         "a8d5e6b5c0d0ca217588eb6e399bce8d128a64565a3267f92338bf688dc07d93",
         "69e94c56e00fba2c4c199adcec7334214e915a2da81e3097fe4ea8ac2911f342",
-        "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464"
+        "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464",
+        "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56"
       ],
-      "sha256": "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56"
+      "sha256": "4b7ce18ee60d5f28cd9f99de44de90dc6819c921cd85d45f27520c3fcaee8e06"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,

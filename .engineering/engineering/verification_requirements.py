@@ -12,7 +12,7 @@ from .settings import (
     CONFIGURATION,
     graft_navigation,
     provider,
-    review_patterns,
+    review_settings,
     validate,
 )
 from .source import git
@@ -156,7 +156,7 @@ def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(
             f"Required checks missing: {missing} (role {role}; {'; '.join(reasons)})"
         )
-    paths = tier_paths(role, plan["paths"], review_settings(checkout))
+    paths = tier_paths(role, plan["paths"], base_and_proposed_settings(checkout))
     floor = max((tier for tier in TIERS if paths[tier]), key=TIERS.index)
     if TIERS.index(plan["tier"]) < TIERS.index(floor):
         reasons = [f"{name} ({rule})" for name, rule in paths[floor].items()]
@@ -207,22 +207,17 @@ def path_floor(
     return "ordinary", "no documentation rule"
 
 
-def review_settings(checkout: Path) -> list[dict[str, tuple[str, ...]]]:
+def base_and_proposed_settings(checkout: Path) -> list[dict[str, tuple[str, ...]]]:
     """Base and proposed review settings; a change cannot weaken its own floor.
 
     Starter lists are code in a module that is sensitive in the maintainer
     checkout and managed implementation elsewhere, so base and proposed agree
-    whenever verification can pass.
+    whenever verification can pass (ADR 0002).
     """
-    settings = []
-    for raw in (baseline(checkout, CONFIGURATION), read_bytes(checkout, CONFIGURATION)):
-        try:
-            # Any schema: a base written before review settings has none.
-            data = tomllib.loads(raw.decode()) if raw is not None else {}
-            settings.append(review_patterns(data))
-        except (tomllib.TOMLDecodeError, UnicodeDecodeError, ValueError) as error:
-            raise ValueError(f"{CONFIGURATION} review settings: {error}") from error
-    return settings
+    return [
+        review_settings(baseline(checkout, CONFIGURATION)),
+        review_settings(read_bytes(checkout, CONFIGURATION)),
+    ]
 
 
 def matches(name: str, patterns: tuple[str, ...]) -> bool:

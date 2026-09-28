@@ -298,7 +298,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9db1b3fb1d86c7aae266d7013f91e39ec2211068bd0b39373ea65111f06e16bf"
+      "upstream": "8c8cd49360a4e2076f2854a1a85db8c0c70377dfa11a3d20dc35f982679cc91b"
     },
     ".engineering/engineering/skill_install.py": {
       "ownership": {
@@ -346,7 +346,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56"
+      "upstream": "4b7ce18ee60d5f28cd9f99de44de90dc6819c921cd85d45f27520c3fcaee8e06"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
