@@ -13,9 +13,10 @@ stays INCOMPLETE until restored and routed through update or upstream. Use engin
 Reuse current complete evidence without rerunning checks or reviews. If absent,
 missing/stale or incomplete, prepare the current plan with a review tier at or
 above the computed floor, then launch fresh independent reviewers for only the
-missing roles the tier requires: one combined session filing separate
-maintainability and behavioral reports when the tier is ordinary, a separate
-session per role when sensitive. The verifier runs engineering verify check and reports observed behavior
+missing roles the tier requires: one behavioral session that checks the
+documentation against code and recorded decisions when the tier is documentation,
+one combined session filing separate maintainability and behavioral reports
+when the tier is ordinary, a separate session per role when sensitive. The verifier runs engineering verify check and reports observed behavior
 independently. Record their actual reports using the prepared snapshot; never
 fabricate independent reports or turn implementer reasoning into proof.
 

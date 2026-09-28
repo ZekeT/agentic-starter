@@ -42,7 +42,7 @@ def test_custom_npm_package_refused_before_execution(tmp_path, monkeypatch, cust
 
 def select_navigation(root, provider):
     (root / ".engineering/config.toml").write_text(
-        f'schema_version = 1\n[navigation]\nprovider = "{provider}"\n'
+        f'schema_version = 2\n[navigation]\nprovider = "{provider}"\n'
     )
 
 

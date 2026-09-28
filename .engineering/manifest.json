@@ -40,7 +40,7 @@
     },
     ".claude/agents/verifier.md": {
       "executable": false,
-      "owned_sha256": "32b980853383d0d06c47d01747b513f743557c4af91d66f22b98e173edb34931",
+      "owned_sha256": "53db5a3b2c89705d1f0f1db49e21b0cda1b8677f2dbc789f4485c1a83ba5ea10",
       "ownership": {
         "mode": "file"
       },
@@ -50,13 +50,14 @@
         "a510d582669271c4d37eba5f9e825230b9c1315a082a40f53bd7719dd42c4530",
         "c626f6ca62ea3069315c167b53473c080619eb525984d10ada247dacaf2b40f7",
         "1311eed3723131bb2761c67496a5fa272f91e558bca3819bab893081c01b8cd7",
-        "4313b05b690d3d03808c1e778d46f3fa9082ca86c4346bbc3e7aab0b33f3cb27"
+        "4313b05b690d3d03808c1e778d46f3fa9082ca86c4346bbc3e7aab0b33f3cb27",
+        "32b980853383d0d06c47d01747b513f743557c4af91d66f22b98e173edb34931"
       ],
-      "sha256": "32b980853383d0d06c47d01747b513f743557c4af91d66f22b98e173edb34931"
+      "sha256": "53db5a3b2c89705d1f0f1db49e21b0cda1b8677f2dbc789f4485c1a83ba5ea10"
     },
     ".claude/commands/review.md": {
       "executable": false,
-      "owned_sha256": "8034dcbc1325d966d5d566bd68b12849582617cfc7e6432d837c43a84ce6d5e3",
+      "owned_sha256": "0031b8ae5774397e65c74157f2daa41d00b6f6e3450483c6825c80e85e3ac693",
       "ownership": {
         "mode": "file"
       },
@@ -66,9 +67,10 @@
         "c3e6bf530b36136408cb21248e8191e8418b44de903c0077adfdc723913358d0",
         "9a36f64baefcbd9173861cabcf9902d24e682c22d3c9f689c2e10734dbaa1676",
         "3e19607ff4e294ea1b8d1cb06f6f8947fa1dfa524f98c7cac5bd0f62b5ad4d56",
-        "c9f70eb1a387470d0e8bc779227f5c9c4cab3413ee5e66fdffe82e395b14f14d"
+        "c9f70eb1a387470d0e8bc779227f5c9c4cab3413ee5e66fdffe82e395b14f14d",
+        "8034dcbc1325d966d5d566bd68b12849582617cfc7e6432d837c43a84ce6d5e3"
       ],
-      "sha256": "8034dcbc1325d966d5d566bd68b12849582617cfc7e6432d837c43a84ce6d5e3"
+      "sha256": "0031b8ae5774397e65c74157f2daa41d00b6f6e3450483c6825c80e85e3ac693"
     },
     ".claude/commands/ship.md": {
       "executable": false,
@@ -177,8 +179,10 @@
       "ownership": {
         "mode": "preserve"
       },
-      "previous": [],
-      "sha256": "2030200d270c6ec908856b4dd81e680aa4ae94323e7fe4c6db652af0c087380c"
+      "previous": [
+        "2030200d270c6ec908856b4dd81e680aa4ae94323e7fe4c6db652af0c087380c"
+      ],
+      "sha256": "4b8d9b439c6bf387aa929a7648a35e617bfa068ca23dcbda687318bd3469a124"
     },
     ".engineering/dependencies.toml": {
       "executable": false,
@@ -248,7 +252,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7",
+      "owned_sha256": "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053",
       "ownership": {
         "mode": "file"
       },
@@ -261,9 +265,10 @@
         "abb900a9a5c4f24eadbcdb00143c6abd68984199eef2feef409c4d544ee3c731",
         "c50256d3b0012c1008b27de952f716139ed8f9670a482cfe9e180499547ff92e",
         "1f9935ddabca47c23f5b6012ea188bdeba3bff82ba92123b64102542637701ff",
-        "61c218461a668b80001ab1eaa8729928d09f986137d6dc17fa4951043680b95c"
+        "61c218461a668b80001ab1eaa8729928d09f986137d6dc17fa4951043680b95c",
+        "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7"
       ],
-      "sha256": "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7"
+      "sha256": "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -639,7 +644,7 @@
     },
     ".engineering/engineering/settings.py": {
       "executable": false,
-      "owned_sha256": "a9922e81e29fa098fe79224324e8772f7afe5415dd156a24a0017e8649ec919c",
+      "owned_sha256": "9db1b3fb1d86c7aae266d7013f91e39ec2211068bd0b39373ea65111f06e16bf",
       "ownership": {
         "mode": "file"
       },
@@ -647,9 +652,11 @@
         "df7364a27c4e80f40ce7cd94dfdbf0c5868ad27c7e81a6b424d864239144c7e8",
         "174cac97c527ef60075e095f00559a8a14e9ea839f0f6dfac9ed0f467104a3fa",
         "5e4fcd191cdb31732028f7b857599d4bc091b843b815f059bbf6b29713b1abe8",
-        "60ea4ff386f7bcf461af30b1ba49c0d1ab21323ba938756ae13e26f460b62cc4"
+        "60ea4ff386f7bcf461af30b1ba49c0d1ab21323ba938756ae13e26f460b62cc4",
+        "a9922e81e29fa098fe79224324e8772f7afe5415dd156a24a0017e8649ec919c",
+        "c315a2381498b04725ed68f4a27f3a32451ba06ff15a097fc3a59c9ef1dde051"
       ],
-      "sha256": "a9922e81e29fa098fe79224324e8772f7afe5415dd156a24a0017e8649ec919c"
+      "sha256": "9db1b3fb1d86c7aae266d7013f91e39ec2211068bd0b39373ea65111f06e16bf"
     },
     ".engineering/engineering/skill_install.py": {
       "executable": false,
@@ -740,16 +747,17 @@
     },
     ".engineering/engineering/verification_requirements.py": {
       "executable": false,
-      "owned_sha256": "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464",
+      "owned_sha256": "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "127e44edf261d65e8ba34351bba3ac30747862bc38e5797c2ac1da6ca3c968fa",
         "a8d5e6b5c0d0ca217588eb6e399bce8d128a64565a3267f92338bf688dc07d93",
-        "69e94c56e00fba2c4c199adcec7334214e915a2da81e3097fe4ea8ac2911f342"
+        "69e94c56e00fba2c4c199adcec7334214e915a2da81e3097fe4ea8ac2911f342",
+        "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464"
       ],
-      "sha256": "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464"
+      "sha256": "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,
@@ -899,12 +907,14 @@
     },
     ".engineering/evals/cases/013-review-tiers.yaml": {
       "executable": false,
-      "owned_sha256": "be19ff2d5e0c34fbf067e5c162c574a83c082d139225b2de900df31dcfc3bccd",
+      "owned_sha256": "f105b09698cbe1d756b45ad4aefb3009d6325a04dccad97f036aaab8be57566a",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "be19ff2d5e0c34fbf067e5c162c574a83c082d139225b2de900df31dcfc3bccd"
+      "previous": [
+        "be19ff2d5e0c34fbf067e5c162c574a83c082d139225b2de900df31dcfc3bccd"
+      ],
+      "sha256": "f105b09698cbe1d756b45ad4aefb3009d6325a04dccad97f036aaab8be57566a"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "executable": false,
@@ -1081,7 +1091,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "7b5e0481acb7fedf91cf8adda21f38a9e9494195868537488ffafb28d795ecec",
+      "owned_sha256": "abae1b7314d49b0aeef19555ce5199decf170cb4feaae3ddb340bdb3e4a79c63",
       "ownership": {
         "mode": "file"
       },
@@ -1107,9 +1117,10 @@
         "e5dfd6945c7063f54ab19485fd43bec66e5f5c38b9f8fbfac8c5aa71dd70987b",
         "8fa3af62edac6daab904a32a8da7e1d79cdebe8bd9c3d44238015005fc34a063",
         "94c27e314a034a23c32e5c460f8e348743964bfe8f50f84c40f33c391fca2426",
-        "a395807916eab1d382e023bebef75480c4b33764faf33480338ba11fca3a7f08"
+        "a395807916eab1d382e023bebef75480c4b33764faf33480338ba11fca3a7f08",
+        "7b5e0481acb7fedf91cf8adda21f38a9e9494195868537488ffafb28d795ecec"
       ],
-      "sha256": "7b5e0481acb7fedf91cf8adda21f38a9e9494195868537488ffafb28d795ecec"
+      "sha256": "abae1b7314d49b0aeef19555ce5199decf170cb4feaae3ddb340bdb3e4a79c63"
     },
     "Makefile": {
       "executable": false,
@@ -1127,7 +1138,7 @@
     },
     "REVIEW.md": {
       "executable": false,
-      "owned_sha256": "dedb1231813b1905447f57d335766c78188da63ba39c5a19284887135b0dcce8",
+      "owned_sha256": "53a5380eef31fcec7864a6b78d69e1ceb76a30f7b2a80df49413611398b5e49a",
       "ownership": {
         "mode": "file"
       },
@@ -1136,9 +1147,10 @@
         "97e39010d899fbb48cc5b94f55ddaef43d535264d05add59888f4df7a0a2c2ca",
         "eb2352bc95fa2fe8d2bdda7da2797a3e1267f7d3997f5b776b0bf3740e36fb94",
         "bbf338d9b9919ae0afc033a5b2c7b31eee71e813cc11163763fb25f73d052948",
-        "0acb56b012327e1bba53a60ba5c107b28f66e5189c83232b1980141cc4284f5b"
+        "0acb56b012327e1bba53a60ba5c107b28f66e5189c83232b1980141cc4284f5b",
+        "dedb1231813b1905447f57d335766c78188da63ba39c5a19284887135b0dcce8"
       ],
-      "sha256": "dedb1231813b1905447f57d335766c78188da63ba39c5a19284887135b0dcce8"
+      "sha256": "53a5380eef31fcec7864a6b78d69e1ceb76a30f7b2a80df49413611398b5e49a"
     },
     "docs/agents/domain.md": {
       "executable": false,

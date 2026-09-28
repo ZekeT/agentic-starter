@@ -1,5 +1,6 @@
 """Read project configuration independently of installation fingerprints."""
 
+import re
 import tomllib
 from collections.abc import Callable
 from pathlib import Path
@@ -8,9 +9,22 @@ from typing import Any
 from .config import Config, object_value, read_text, safe_path, validate_config
 
 CONFIGURATION = ".engineering/config.toml"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+# Review settings defaults (ADR 0002): documentation paths may use the
+# documentation tier; sensitive paths add to the starter's sensitive rules.
+REVIEW_DEFAULTS = '[review]\ndocumentation = ["README.md", "docs/**"]\nsensitive = []\n'
+
+
+def add_review_settings(text: str) -> str:
+    """Schema 1 → 2: add default review settings, keeping every existing value."""
+    text = re.sub(
+        r"(?m)^schema_version\s*=\s*1\s*$", "schema_version = 2", text, count=1
+    )
+    return text.rstrip("\n") + "\n\n" + REVIEW_DEFAULTS
+
+
 # MIGRATIONS[n] rewrites schema n text to schema n + 1, keeping project values.
-MIGRATIONS: dict[int, Callable[[str], str]] = {}
+MIGRATIONS: dict[int, Callable[[str], str]] = {1: add_review_settings}
 
 
 class MigrationGap(ValueError):
@@ -71,6 +85,7 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         "tracker",
         "maintainability",
         "migration",
+        "review",
         *CAPABILITIES,
     }
     if set(data) - allowed:
@@ -81,6 +96,7 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         "documentation": {"require_feature_docs"},
         "tracker": {"provider", "configuration"},
         "migration": {"legacy_history"},
+        "review": {"documentation", "sensitive"},
     }
     for section, keys in fields.items():
         value = object_value(data.get(section, {}), section)
@@ -119,7 +135,22 @@ def parse(root: Path, text: str) -> dict[str, Any]:
         "git-only",
     }:
         raise ValueError("migration.legacy_history must be snapshot or git-only")
+    review_patterns(data)
     return data
+
+
+def review_patterns(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    """Review settings as documentation and sensitive glob lists (empty if unset)."""
+    review = object_value(data.get("review", {}), "review")
+    result = {}
+    for key in ("documentation", "sensitive"):
+        patterns = review.get(key, [])
+        if not isinstance(patterns, list) or not all(
+            isinstance(pattern, str) and pattern.strip() for pattern in patterns
+        ):
+            raise ValueError(f"review.{key} must be a list of path patterns")
+        result[key] = tuple(patterns)
+    return result
 
 
 def selected_provider(config: dict[str, Any], capability: str) -> str:

@@ -90,7 +90,7 @@ def test_missing_base_and_size_only(repo):
 def config_file(repo, values):
     (repo / ".engineering").mkdir(exist_ok=True)
     # JSON scalar spellings are valid TOML; exception objects need inline tables.
-    lines = ["schema_version = 1", "[maintainability]"]
+    lines = ["schema_version = 2", "[maintainability]"]
     for key, value in values.items():
         if key == "exceptions":
             encoded = (

@@ -1,4 +1,4 @@
-schema_version = 1
+schema_version = 2
 
 [navigation]
 provider = "none"
@@ -20,3 +20,7 @@ warn_file_lines = 300
 max_file_lines = 500
 substantial_growth_lines = 150
 exceptions = []
+
+[review]
+documentation = ["README.md", "docs/**"]
+sensitive = []

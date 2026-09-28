@@ -16,7 +16,7 @@ session the spec asks for.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** in-progress — implemented on `feat/v3-1c-11-review-tiers`; awaiting independent verification
+**Status:** completed — merged in [PR #39](https://github.com/ZekeT/agentic-starter/pull/39)
 
 - [x] Plans require `tier` (one of the three values) and nonempty `tier_reason`; a plan with `security_required`/`security_reason` or missing the new fields is invalid with a message naming the replacement.
 - [x] One deep function in the verification-requirements module returns required checks, tier floor, per-category paths and required roles for a (checkout, plan); callers do not assemble these separately.
@@ -32,7 +32,7 @@ session the spec asks for.
 - [x] `CLAUDE.md`, `REVIEW.md`, the verification guide and the `/review` and `/ship` skills describe tiers, the floor and combined ordinary sessions; `/review` spawns only the required roles and one combined session when permitted. Reviewer agent definitions keep read-only independence; pinned upstream skills unchanged.
 - [x] Command-level tests through `verify prepare | record | check | status` on consumer and maintainer fixtures, plus a publication preflight test, cover the scenarios above.
 - [x] Affected evals updated; no wording permits self-certification.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (this change is itself `sensitive`: three separate sessions).
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (this change is itself `sensitive`: three separate sessions).
 
 - Implementation notes: `verification_requirements.requirements(checkout, plan)`
   returns checks, floor, per-tier paths with the rule that set each, and roles;
@@ -58,3 +58,17 @@ session the spec asks for.
   human decision (e.g. `./engineering deps install graft --apply`).
 - Remaining: three separate independent review sessions (this change is
   sensitive), human review, publication.
+- 2026-09-29: Graft install restored by the human; `make check` passes. Independent
+  evidence for snapshot 662a876e…: maintainability, behavioral and security PASS
+  from three separate sessions; `make check`, `make engineering-check`,
+  `make engineering-test` (457 passed) and `make engineering-evals` (13/13 static)
+  exit 0. The reports were erased once because the reviewers ran in parallel with
+  `verify check`; the original report files were re-recorded one at a time.
+  Human accepted and published via `/ship` as PR #39 (not merged).
+- Follow-ups the human accepted as non-blocking (moved to ticket 12): the security
+  review found that root `GNUmakefile`/`makefile`, `.engineering/scripts/**`
+  (the `make check` body) and `.claude/statusline.sh` floor at ordinary; whether
+  `graft.py` should be sensitive is undecided. The maintainability notes are:
+  `operate()` keeps growing; the publish preflight gets the floor only through
+  `snapshot()`; the leading `/` anchor is undocumented; `SESSIONS` is a second
+  tier-keyed table.

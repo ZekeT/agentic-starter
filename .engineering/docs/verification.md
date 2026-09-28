@@ -157,13 +157,38 @@ Starter-owned rules always apply:
 
 - `sensitive`: dependency manifests and locks (`pyproject.toml`, `uv.lock`,
   `package*.json`, `.engineering/dependencies.toml`), `.claude/settings*.json`,
-  hooks, `.github/workflows/**`, `Makefile` and Engineering launchers. In the
-  maintainer checkout also the dependency, skill-installation, apply,
-  transaction, update, migration, publication and verification modules.
+  hooks, `.claude/statusline.sh`, `.github/workflows/**`, make recipes
+  (`Makefile`, `GNUmakefile`, `makefile`, `*.mk`), `.engineering/scripts/**`
+  and Engineering launchers. In the maintainer checkout also the dependency
+  (including Graft), skill-installation, apply, transaction, update, migration,
+  publication and verification modules.
 - `ordinary`: agent policy is never documentation: `CLAUDE.md`, `AGENTS.md`,
   `.claude/**` including skills, `REVIEW.md`, `ENGINEERING.md`, Engineering docs
-  and agent docs. Every other path is `ordinary` until project review settings
-  name documentation paths.
+  and agent docs. Changes to `.engineering/config.toml`, which holds the review
+  settings, are at least `ordinary`.
+- `documentation`: a path the project's review settings list as documentation
+  that no rule above catches. Every other path is `ordinary`.
+
+Review settings live in project configuration:
+
+```toml
+[review]
+documentation = ["README.md", "docs/**"]
+sensitive = []
+```
+
+`documentation` names paths eligible for the documentation tier, such as domain
+context and ADRs; `sensitive` adds project paths that always need security
+review. A pattern without `/` matches a file name at any depth; other patterns
+match the repository path, where `*` also crosses directories; a leading `/`
+anchors a file name to the root. Project settings add to the starter rules and
+can never reduce them. The floor evaluates both the base and the proposed
+settings and keeps the stricter result for each path, so a change cannot lower
+its own review. Invalid settings fail planning.
+
+A documentation reviewer checks the changed prose against the code, tests and
+recorded decisions (domain context and ADRs), and reports claims the code
+contradicts; `make check` still gates formatting, links and size.
 
 A combined ordinary session files two separate reports, one per role, each with
 its own verdict and the same `reviewer` identifier. Reports sharing a `reviewer`
