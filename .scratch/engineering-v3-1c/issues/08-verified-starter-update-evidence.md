@@ -28,3 +28,4 @@ update, and how does a stale or altered source fail closed?
 - [ ] A forged proposed manifest digest or a dropped entry is still rejected.
 - [ ] An update PR produced by `./engineering update --apply` from that source prepares a valid plan requiring `make check` and `make engineering-check`.
 - [ ] Documentation replaces "consumer starter-update PRs are not yet verifiable" with the supported route.
+- [ ] Generation and update agree on the distributed file set: updating a freshly generated project from the starter currently adds about 33 managed files (evals, migrate package, migrate-from-openspec skill, v2 baseline) and changes the Makefile section, which ticket 03 rejects as managed-implementation edits, so even a navigation disable bundled with that update is unverifiable (ticket 05 behavioral review; pre-existing on main).

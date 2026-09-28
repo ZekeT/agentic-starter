@@ -11,7 +11,7 @@ index and root settings.
 
 **Blocked by:** 02 (Make Engineering configuration project-owned), 04 (Make Graft an optional capability in dependencies and doctor).
 
-**Status:** implemented — awaiting independent verification
+**Status:** completed — merged in [PR #37](https://github.com/ZekeT/agentic-starter/pull/37)
 
 - [x] A newly generated consumer project defaults to provider `none` and contains no Graft skill, launcher, package pins or navigation guidance.
 - [x] Agent-policy navigation guidance is its own managed section, present only while Graft is selected; otherwise policy directs agents to ordinary search and source reading.
@@ -24,7 +24,7 @@ index and root settings.
 - [x] Template contents, setup, doctor, dependency status and verification agree about navigation optionality.
 - [x] Command-level generation, update and deps fixture tests cover default, enable and disable.
 - [x] Generated README and onboarding reflect the `none` default; affected policy evals updated.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
 
@@ -63,3 +63,5 @@ index and root settings.
   - Q10: `settings.selected_provider(config, …)` is the single provider
     reading; `settings.provider(root, …)` and capabilities use it.
   - Section markers left as is (single-sourcing was not trivial).
+
+- 2026-09-28: Rebased onto ticket 03; independent behavioral, maintainability and security review PASS (snapshot ef4242c3…); human-accepted and published as PR #37; merged into main (8f1752a). Follow-ups recorded in tickets 06, 08 and 09.
