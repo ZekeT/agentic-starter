@@ -1,6 +1,6 @@
 # Approved v3.1b implementation slices
 
-Status: in progress — tickets 01–07 merged; ticket 08 revised scope implemented; fresh verification/publication pending; remaining live trial deferred
+Status: in progress — tickets 01–07 merged; ticket 08 revised scope merged in PR #31 (2026-09-26); remaining live trial deferred
 
 Source: [specification](spec.md).
 
@@ -15,7 +15,7 @@ Source: [specification](spec.md).
 | 05 | Completed / merged | [#26](https://github.com/ZekeT/agentic-starter/pull/26) |
 | 06 | Completed / merged | [#27](https://github.com/ZekeT/agentic-starter/pull/27) |
 | 07 | Completed / merged | [#28](https://github.com/ZekeT/agentic-starter/pull/28) |
-| 08 | Revised scope implemented; fresh verification/publication pending; remaining live trial deferred by human approval | — |
+| 08 | Revised scope merged; remaining live trial deferred by human approval | [#31](https://github.com/ZekeT/agentic-starter/pull/31) |
 
 Merge evidence comes from local Git history. Individual tickets retain the
 implementation evidence and delivery links.
