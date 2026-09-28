@@ -150,7 +150,8 @@ def edit(root, name, text=None):
     )
 
 
-def prepare(root, paths, checks, status=0):
+def prepare(root, paths, checks, status=0, tier="sensitive"):
+    # Sensitive is never below the floor, so check tests see only check errors.
     plan = {
         "base": "main",
         "requirement": "Exercise role-based verification requirements",
@@ -158,8 +159,8 @@ def prepare(root, paths, checks, status=0):
         "checks": checks,
         "tools": [[sys.executable, "--version"]],
         "inputs": [],
-        "security_required": False,
-        "security_reason": "Fixture change has no security-sensitive behavior",
+        "tier": tier,
+        "tier_reason": "Fixture tier for the scenario under test",
     }
     path = root / PLAN
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -80,7 +80,8 @@ Hello, Ada! Include the command I can run to try it.
 
 The agent formats with `make fmt` before independent verification. A fresh
 behavioral verifier runs `make check`; the maintainability reviewer inspects the
-same proposed content, with security review when applicable. You do not need to
+same proposed content when the review tier requires it, with security review
+for sensitive changes. You do not need to
 run the full gate again merely to invoke review or ship. A local commit records
 implementation; it proves neither verification nor human acceptance. `/implement`
 authorizes local commits only. `/ship` after completed review accepts the unchanged
@@ -314,15 +315,18 @@ pointer and reconstruct requirements, diff, source and test evidence themselves.
 ```text
 implement → targeted tests → make fmt
           → graft build / graft check (when Graft is selected with application roots)
-          → fresh maintainability reviewer (read-only: PASS / CONCERNS)
+          → review tier at or above the computed floor
+          → fresh maintainability reviewer (read-only: PASS / CONCERNS; not documentation tier)
           → fresh verifier (read-only: PASS / FAIL; runs make check)
-          → conditional security reviewer → human review → authorized ship
+          → security reviewer (sensitive tier) → human review → authorized ship
 ```
 
-Use [REVIEW.md](REVIEW.md) for human review. Security review applies to auth,
-secrets, cryptography, untrusted input, payments, privilege boundaries,
+Use [REVIEW.md](REVIEW.md) for human review. The review tier decides reviewer
+roles; the tool's floor makes dependency, hook, settings, workflow and launcher
+changes sensitive, and agent policy at least ordinary. Declare sensitive for
+auth, secrets, cryptography, untrusted input, payments, privilege boundaries,
 destructive operations, sensitive storage, network exposure and dependency
-execution. It is unnecessary for a trivial prose change.
+execution. One fresh session may cover both ordinary roles.
 
 `/implement` authorizes scoped local commits, not acceptance or publication.
 After implementation, automatically hand off to fresh independent reviewers when

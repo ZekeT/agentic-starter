@@ -73,8 +73,8 @@ def repo(tmp_path):
         "checks": [["make", "check"]],
         "tools": [[sys.executable, "--version"]],
         "inputs": [],
-        "security_required": False,
-        "security_reason": "Fixture text has no security-sensitive behavior",
+        "tier": "ordinary",
+        "tier_reason": "Fixture text has no security-sensitive behavior",
     }
     (state / "plan.json").write_text(json.dumps(plan))
     return tmp_path
@@ -92,14 +92,14 @@ def prepare(root, status=0):
     )
 
 
-def report(root, token, role, verdict="PASS", expected=0):
+def report(root, token, role, verdict="PASS", expected=0, reviewer=None):
     path = root / ".engineering/state/verification/report.json"
     path.write_text(
         json.dumps(
             {
                 "snapshot": token,
                 "role": role,
-                "reviewer": f"fresh-{role}-session",
+                "reviewer": reviewer or f"fresh-{role}-session",
                 "independent": True,
                 "verdict": verdict,
                 "summary": "Inspected fixture behavior against the requirement",
@@ -119,11 +119,20 @@ def report(root, token, role, verdict="PASS", expected=0):
     )
 
 
+ROLES = {
+    "documentation": ["behavioral"],
+    "ordinary": ["maintainability", "behavioral"],
+    "sensitive": ["maintainability", "behavioral", "security"],
+}
+
+
 def complete(root):
+    """Record every role the plan's tier requires, each from its own session."""
     token = prepare(root)["snapshot"]
     cli(root, "check", "--change", "example", "--snapshot", token)
-    report(root, token, "maintainability")
-    report(root, token, "behavioral")
+    plan = json.loads((root / ".engineering/state/verification/plan.json").read_text())
+    for role in ROLES[plan["tier"]]:
+        report(root, token, role)
     return token
 
 
@@ -158,7 +167,7 @@ def test_untracked_and_deleted_content_survives_commit(repo):
     (repo / "new.txt").write_text("new behavior\n")
     (repo / "app.txt").unlink()
     (repo / "Makefile").write_text("check:\n\t@test -s new.txt\n")
-    change_plan(repo, paths=["app.txt", "new.txt", "Makefile"])
+    change_plan(repo, paths=["app.txt", "new.txt", "Makefile"], tier="sensitive")
     complete(repo)
     git(repo, "add", "app.txt", "new.txt", "Makefile")
     git(repo, "commit", "-m", "replace app")
@@ -174,14 +183,17 @@ def test_unrelated_edits_preserve_current_evidence(repo):
 
 
 def test_failed_checks_and_missing_security_cannot_pass(repo):
-    change_plan(repo, security_required=True)
-    token = complete(repo)
+    change_plan(repo, tier="sensitive", tier_reason="Raised: handles credentials")
+    token = prepare(repo)["snapshot"]
+    cli(repo, "check", "--change", "example", "--snapshot", token)
+    report(repo, token, "maintainability")
+    report(repo, token, "behavioral")
     result = cli(repo, "status", "--change", "example", status=1)
     assert result["missing"] == ["security"]
     report(repo, token, "security", "FAIL")
     assert cli(repo, "status", "--change", "example", status=1)["status"] == "FAIL"
     (repo / "Makefile").write_text("check:\n\t@exit 7\n")
-    change_plan(repo, paths=["app.txt", "Makefile"], security_required=False)
+    change_plan(repo, paths=["app.txt", "Makefile"])
     token = prepare(repo)["snapshot"]
     assert (
         cli(repo, "check", "--change", "example", "--snapshot", token, status=1)[
@@ -215,7 +227,7 @@ def test_tool_versions_and_ignored_explicit_inputs_invalidate(repo):
 
 def test_check_mutations_never_produce_current_proof(repo):
     (repo / "Makefile").write_text("check:\n\t@echo mutated >> app.txt\n")
-    change_plan(repo, paths=["app.txt", "Makefile"])
+    change_plan(repo, paths=["app.txt", "Makefile"], tier="sensitive")
     token = prepare(repo)["snapshot"]
     result = cli(repo, "check", "--change", "example", "--snapshot", token, status=1)
     assert "mutated" in result["error"]
@@ -274,7 +286,7 @@ def test_status_and_reprepare_do_not_rerun_checks(repo):
     (repo / "Makefile").write_text(
         "check:\n\t@echo check >> .engineering/state/verification/calls\n"
     )
-    change_plan(repo, paths=["app.txt", "Makefile"])
+    change_plan(repo, paths=["app.txt", "Makefile"], tier="sensitive")
     complete(repo)
     checkout = repo / prepare(repo)["checkout"]
     for _ in range(2):
@@ -285,7 +297,7 @@ def test_status_and_reprepare_do_not_rerun_checks(repo):
 
 def test_unrelated_local_fix_cannot_make_proposal_pass(repo):
     (repo / "Makefile").write_text("check:\n\t@test -f unrelated.txt\n")
-    change_plan(repo, paths=["app.txt", "Makefile"])
+    change_plan(repo, paths=["app.txt", "Makefile"], tier="sensitive")
     (repo / "unrelated.txt").write_text("local rescue\n")
     subprocess.run(["make", "check"], cwd=repo, check=True)
     before = git(repo, "status", "--porcelain=v1")
@@ -309,7 +321,9 @@ def test_checkout_contains_intended_layers_and_preserves_index(repo):
         'test -x new.sh && test "`cat app.txt`" = after\n'
     )
     change_plan(
-        repo, paths=["app.txt", "Makefile", "committed.txt", "staged.txt", "new.sh"]
+        repo,
+        paths=["app.txt", "Makefile", "committed.txt", "staged.txt", "new.sh"],
+        tier="sensitive",
     )
     (repo / ".gitignore").write_text(
         "unrelated staged edit\n.engineering/state/verification/\n"

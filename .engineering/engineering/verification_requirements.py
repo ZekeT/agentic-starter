@@ -1,7 +1,8 @@
-"""Derive required checks from the recorded installation role and path ownership."""
+"""Derive required checks, tier floor and reviewer roles for a verification plan."""
 
 import tomllib
-from pathlib import Path
+from fnmatch import fnmatchcase
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from .config import object_value
@@ -21,9 +22,68 @@ HEALTH = ["make", "engineering-check"]
 SUITES = [["make", "engineering-test"], ["make", "engineering-evals"]]
 GRAFT = [".engineering/bin/graft", "check"]
 
+# Review tiers in increasing order, with the reviewer roles each requires.
+TIERS = ("documentation", "ordinary", "sensitive")
+REVIEWERS = {
+    "documentation": ["behavioral"],
+    "ordinary": ["maintainability", "behavioral"],
+    "sensitive": ["maintainability", "behavioral", "security"],
+}
+# Starter-owned floor rules (ADR 0002); projects may add to them, never remove.
+# A pattern without "/" matches a file name at any depth; others match the
+# repository path, where "*" also crosses directories.
+STARTER_SENSITIVE = {
+    "dependency manifest or lock": (
+        "pyproject.toml",
+        "uv.lock",
+        "package*.json",
+        "*package-lock.json",
+        ".engineering/dependencies.toml",
+    ),
+    "agent settings": (".claude/settings*.json",),
+    "hook": (".claude/hooks/**",),
+    "workflow": (".github/workflows/**",),
+    "build recipe": ("Makefile",),
+    "Engineering launcher": (
+        "/engineering",
+        ".engineering/bin/**",
+        ".engineering/setup.sh",
+    ),
+}
+MODULES = ".engineering/engineering/"
+# Maintainer modules that execute dependencies, or destroy or publish data.
+MAINTAINER_SENSITIVE = {
+    "dependency module": (f"{MODULES}deps.py", f"{MODULES}registry.py"),
+    "skill installation module": (f"{MODULES}skill_install.py",),
+    "apply or transaction module": (f"{MODULES}apply.py", f"{MODULES}transaction.py"),
+    "update module": (
+        f"{MODULES}adoption.py",
+        f"{MODULES}installation.py",
+        f"{MODULES}updates.py",
+    ),
+    "migration module": (f"{MODULES}migrate/**", ".engineering/migrations/**"),
+    "publication module": (f"{MODULES}publication*.py",),
+    "verification module": (f"{MODULES}verification*.py",),
+}
+# Agent-policy files are never documentation: they change how agents behave.
+AGENT_POLICY = (
+    "CLAUDE.md",
+    "AGENTS.md",
+    "REVIEW.md",
+    "ENGINEERING.md",
+    ".claude/**",
+    ".engineering/docs/**",
+    "docs/agents/**",
+)
 
-def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
-    """Require checks from recorded role and ownership, never from existing targets."""
+
+def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
+    """Required checks, tier floor, per-path floor rules and reviewer roles.
+
+    Rejects a plan that omits a required check or declares a tier below the
+    floor. Checks come from recorded role and ownership, never from existing
+    targets; the tier changes reviewers, never checks.
+    """
     # The recorded role is trusted (ADR 0001); absence blocks planning. The
     # stricter of base and proposed applies, so a role change counts once merged.
     role = installation_role(checkout)
@@ -82,6 +142,51 @@ def validate_requirements(checkout: Path, plan: dict[str, Any]) -> None:
         raise ValueError(
             f"Required checks missing: {missing} (role {role}; {'; '.join(reasons)})"
         )
+    paths = tier_paths(role, plan["paths"])
+    floor = max((tier for tier in TIERS if paths[tier]), key=TIERS.index)
+    if TIERS.index(plan["tier"]) < TIERS.index(floor):
+        reasons = [f"{name} ({rule})" for name, rule in paths[floor].items()]
+        raise ValueError(
+            f"Declared tier {plan['tier']} is below the tier floor {floor}: "
+            f"{', '.join(reasons)}. Declare at least {floor}."
+        )
+    return {
+        "floor": floor,
+        "paths": paths,
+        "checks": required,
+        "roles": REVIEWERS[plan["tier"]],
+    }
+
+
+def tier_paths(role: str, paths: list[str]) -> dict[str, dict[str, str]]:
+    """Floor each path by the first matching rule; the highest tier wins."""
+    sensitive = dict(STARTER_SENSITIVE)
+    if role == "maintainer":
+        sensitive.update(MAINTAINER_SENSITIVE)
+    result: dict[str, dict[str, str]] = {tier: {} for tier in reversed(TIERS)}
+    for name in sorted(paths):
+        rule = next(
+            (rule for rule, patterns in sensitive.items() if matches(name, patterns)),
+            None,
+        )
+        if rule is not None:
+            result["sensitive"][name] = rule
+        elif matches(name, AGENT_POLICY):
+            result["ordinary"][name] = "agent policy"
+        else:
+            # Project documentation settings do not exist yet (ticket 12).
+            result["ordinary"][name] = "no documentation rule"
+    return result
+
+
+def matches(name: str, patterns: tuple[str, ...]) -> bool:
+    """Match file-name patterns at any depth and path patterns from the root."""
+    return any(
+        fnmatchcase(name, pattern.removeprefix("/"))
+        if "/" in pattern
+        else fnmatchcase(PurePosixPath(name).name, pattern)
+        for pattern in patterns
+    )
 
 
 def classify(checkout: Path, role: str, paths: list[str]) -> dict[str, list[str]]:

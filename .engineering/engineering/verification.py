@@ -14,12 +14,21 @@ from .source import git
 from .transaction import write_files
 from .verification_checkout import materialize, validate_checkout
 from .verification_inputs import STATE, strings
+from .verification_requirements import REVIEWERS, TIERS, requirements
 from .verification_snapshot import (
     read_plan,
     run_command,
     snapshot,
     validate_plan,
 )
+
+# Version 2 adds review tiers; older records are history, never inferred proof.
+SCHEMA = 2
+SESSIONS = {
+    "documentation": "Documentation tier: one behavioral review.",
+    "ordinary": "Ordinary tier: one fresh session may file both reports.",
+    "sensitive": "Sensitive tier: each role needs its own fresh session.",
+}
 
 
 def add_parser(sub: Any) -> None:
@@ -54,8 +63,9 @@ def read_record(root: Path, name: str) -> dict[str, Any]:
     data = json_object(safe_path(root, name).read_bytes())
     if (
         type(data.get("schema_version")) is not int
-        or data["schema_version"] != 1
+        or data["schema_version"] != SCHEMA
         or not isinstance(data.get("inputs"), dict)
+        or not isinstance(data.get("requirements"), dict)
         or not isinstance(data.get("reports"), dict)
         or not isinstance(data.get("checks"), list)
         or not isinstance(data.get("snapshot"), str)
@@ -65,6 +75,13 @@ def read_record(root: Path, name: str) -> dict[str, Any]:
     if not isinstance(plan, dict):
         raise ValueError("Invalid stored plan")
     validate_plan(root, plan)
+    stored = data["requirements"]
+    if (
+        set(stored) != {"floor", "paths", "checks", "roles"}
+        or stored["floor"] not in TIERS
+        or stored["roles"] != REVIEWERS[plan["tier"]]
+    ):
+        raise ValueError("Invalid stored requirements; prepare again")
     for role, report in data["reports"].items():
         if not isinstance(report, dict):
             raise ValueError("Invalid stored report")
@@ -86,12 +103,15 @@ def read_record(root: Path, name: str) -> dict[str, Any]:
 
 def outcome(data: dict[str, Any]) -> dict[str, Any]:
     """Summarize completeness without equating recorded proof with acceptance."""
-    roles = ["maintainability", "behavioral"]
-    if data["inputs"]["plan"]["security_required"]:
-        roles.append("security")
-    missing = [role for role in roles if role not in data["reports"]]
+    plan = data["inputs"]["plan"]
+    roles = REVIEWERS[plan["tier"]]
+    missing_roles = [role for role in roles if role not in data["reports"]]
+    missing = list(missing_roles)
+    shared = shared_reviewers(data["reports"])
+    if plan["tier"] == "sensitive" and shared:
+        missing.append(f"separate sessions for sensitive review: {shared}")
     checks = data["checks"]
-    if [item["command"] for item in checks] != data["inputs"]["plan"]["checks"]:
+    if [item["command"] for item in checks] != plan["checks"]:
         missing.append("authoritative checks")
     failed = any(item["exit_code"] != 0 for item in checks)
     failed |= any(report["verdict"] != "PASS" for report in data["reports"].values())
@@ -101,14 +121,29 @@ def outcome(data: dict[str, Any]) -> dict[str, Any]:
         "snapshot": data["snapshot"],
         "checkout": data.get("checkout"),
         "previous_evidence": data.get("previous_evidence"),
+        "tier": plan["tier"],
+        "tier_reason": plan["tier_reason"],
+        "floor": data["requirements"]["floor"],
+        "required_roles": roles,
+        "missing_roles": missing_roles,
+        "shared_reviewers": shared,
         "missing": missing,
         "reports": data["reports"],
         "checks": checks,
-        "handoff": "Fresh read-only reviewer: inspect the plan requirement and actual scope; record missing roles. No implementer self-review."
+        "handoff": "Fresh read-only reviewer: inspect the plan requirement and actual scope; record missing roles. No implementer self-review. "
+        + SESSIONS[plan["tier"]]
         if missing
         else "",
         "meaning": "Recorded verification evidence only; not human acceptance or publication authorization.",
     }
+
+
+def shared_reviewers(reports: dict[str, Any]) -> dict[str, list[str]]:
+    """Reviewer identifiers that filed more than one role, with those roles."""
+    roles: dict[str, list[str]] = {}
+    for role, report in sorted(reports.items()):
+        roles.setdefault(report["reviewer"], []).append(role)
+    return {reviewer: names for reviewer, names in roles.items() if len(names) > 1}
 
 
 def validate_report(report: dict[str, Any], token: str) -> None:
@@ -164,7 +199,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         plan = read_plan(root, args.plan)
         token, inputs = snapshot(root, plan)
         data: dict[str, Any] = {
-            "schema_version": 1,
+            "schema_version": SCHEMA,
             "snapshot": token,
             "inputs": inputs,
             "checks": [],
@@ -172,8 +207,16 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         }
         previous = None
         if path.exists():
-            previous = read_record(root, name)
-            if previous["snapshot"] == token and previous["inputs"] == inputs:
+            previous = json_object(path.read_bytes())
+            # Records from before review tiers are kept as history only.
+            reusable = previous.get("schema_version") == SCHEMA
+            if reusable:
+                previous = read_record(root, name)
+            if (
+                reusable
+                and previous["snapshot"] == token
+                and previous["inputs"] == inputs
+            ):
                 try:
                     validate_checkout(
                         safe_path(root, previous.get("checkout", "")), inputs
@@ -186,7 +229,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             folder = Path(tempfile.mkdtemp(prefix=f"{args.change}-", dir=path.parent))
             checkout = folder / "checkout"
             try:
-                materialize(root, checkout, inputs)
+                data["requirements"] = materialize(root, checkout, inputs)
             except (ValueError, OSError):
                 shutil.rmtree(folder)
                 raise
@@ -196,7 +239,9 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 write_files(root, {history: encoded(previous)})
                 data["previous_evidence"] = history
         else:
-            validate_checkout(safe_path(root, data["checkout"]), inputs)
+            reused = safe_path(root, data["checkout"])
+            validate_checkout(reused, inputs)
+            data["requirements"] = requirements(reused, inputs["plan"])
         write_files(root, {name: encoded(data)})
     else:
         if not path.exists():
@@ -223,6 +268,8 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             return 1
         checkout = safe_path(root, data.get("checkout", ""))
         validate_checkout(checkout, inputs)
+        # Report the floor current rules give this scope, not the prepared one.
+        data["requirements"] = requirements(checkout, data["inputs"]["plan"])
         if args.operation == "check":
             if args.snapshot != token:
                 raise ValueError("STALE check request: obtain the current snapshot")
@@ -242,6 +289,13 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         elif args.operation == "record":
             report = json_object(safe_path(root, args.report).read_bytes())
             validate_report(report, token)
+            reports = {**data["reports"], report["role"]: report}
+            if data["inputs"]["plan"]["tier"] == "sensitive" and (
+                shared := shared_reviewers(reports)
+            ):
+                raise ValueError(
+                    f"Sensitive tier requires separate fresh sessions: {shared}"
+                )
             if report["role"] == "behavioral" and report["verdict"] == "PASS":
                 if (
                     not data["checks"]

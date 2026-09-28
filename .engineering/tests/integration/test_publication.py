@@ -14,12 +14,12 @@ pytestmark = pytest.mark.integration
 STATE = ".engineering/state/verification"
 
 
-def publish(root, operation, *args, status=0):
+def publish(root, operation, *args, status=0, setup=""):
     proc = subprocess.run(
         [
             sys.executable,
             "-c",
-            "from engineering.cli import main; raise SystemExit(main())",
+            setup + "from engineering.cli import main; raise SystemExit(main())",
             "--root",
             str(root),
             "publish",
@@ -83,7 +83,7 @@ def test_committed_implementation_and_uncommitted_fix_publish_once(repo, hosting
     implementation = git(repo, "rev-parse", "HEAD")
     (repo / "app.txt").write_text("accepted correction\n")
     (repo / "Makefile").write_text(f"check:\n\t@echo check >> {STATE}/calls\n")
-    change_plan(repo, paths=["app.txt", "Makefile"])
+    change_plan(repo, paths=["app.txt", "Makefile"], tier="sensitive")
     review(repo, hosting)
     checkout = repo / prepare(repo)["checkout"]
     (repo / "unrelated.txt").write_text("staged\n")
@@ -147,6 +147,21 @@ def test_preflight_rejects_without_mutation(repo, hosting, failure):
     assert git(repo, "status", "--porcelain=v1") == before
     assert not (repo / STATE / "created.json").exists()
     assert git(hosting[0], "branch", "--list", "feature") == ""
+
+
+def test_preflight_refuses_tier_below_the_recomputed_floor(repo, hosting):
+    review(repo, hosting)
+    assert publish(repo, "preflight")["status"] == "READY"
+    # A starter update that makes the change sensitive invalidates the
+    # recorded ordinary classification, although content is unchanged.
+    stricter = (
+        "import engineering.verification_requirements as rules\n"
+        "rules.STARTER_SENSITIVE['fixture rule'] = ('app.txt',)\n"
+    )
+    result = publish(repo, "preflight", status=1, setup=stricter)
+    assert result["status"] == "STOPPED"
+    assert "below the tier floor sensitive" in result["error"]
+    assert "app.txt (fixture rule)" in result["error"]
 
 
 @pytest.mark.parametrize(

@@ -2,9 +2,9 @@
 
 Status: ready-for-agent — breakdown approved 2026-09-27
 
-Source: [specification](spec.md). Slices A and C only. Slice B is specified in
-[spec-b-review-tiers](spec-b-review-tiers.md) and awaits `/to-tickets`; D, E and F
-remain in [intent](intent.md).
+Source: [specification](spec.md) for slices A and C; slice B tickets 11–13 from
+[spec-b-review-tiers](spec-b-review-tiers.md) (breakdown approved 2026-09-28).
+D, E and F remain in [intent](intent.md).
 
 | Ticket | Blocked by | Status |
 | --- | --- | --- |
@@ -17,7 +17,10 @@ remain in [intent](intent.md).
 | [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | ready-for-agent |
 | [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
 | [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | ready-for-agent |
+| [11 Declare a review tier checked against a starter-rule floor](issues/11-declared-review-tier-and-floor.md) | None | in-progress — implemented; awaiting independent verification |
+| [12 Project review settings enable the documentation tier](issues/12-project-review-settings.md) | 11 | ready-for-agent |
+| [13 Carry reviewer reports across a clean rebase](issues/13-carried-evidence.md) | 11 (serialized after 12) | ready-for-agent |
 
-Order agreed 2026-09-28: slice B (review tiers; grilled and specified 2026-09-28, needs tickets) → 06 → 09 → 10 → 08. Each slice updates consumer generation,
+Order agreed 2026-09-28: slice B 11 → 12 → 13 (serial; shared evidence and policy files) → 06 → 09 → 10 → 08. Each slice updates consumer generation,
 adoption/update behavior, documentation and evals, not only the maintainer
 checkout. Use a fresh implementation session and branch per ticket.

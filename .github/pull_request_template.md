@@ -7,7 +7,7 @@
 - [ ] `make check` passes
 - Independent maintainability review:
 - Independent behavioral verification:
-- Security review, when applicable:
+- Review tier (declared, floor) and security review when sensitive:
 - Relevant tests and observed outcomes:
 - Not covered:
 

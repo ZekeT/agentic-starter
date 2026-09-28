@@ -16,19 +16,19 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4313b05b690d3d03808c1e778d46f3fa9082ca86c4346bbc3e7aab0b33f3cb27"
+      "upstream": "32b980853383d0d06c47d01747b513f743557c4af91d66f22b98e173edb34931"
     },
     ".claude/commands/review.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c9f70eb1a387470d0e8bc779227f5c9c4cab3413ee5e66fdffe82e395b14f14d"
+      "upstream": "8034dcbc1325d966d5d566bd68b12849582617cfc7e6432d837c43a84ce6d5e3"
     },
     ".claude/commands/ship.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "caa2433f24739b8b04a921e89cdc9099d9bf31ae6502086fbcc81f603d0c7d6b"
+      "upstream": "04ca216f3c33c6c39e4ef4f9ce0d3d4ce1e89ca4d28edb35221d53215dcdc893"
     },
     ".claude/hooks/post_tool_lint.py": {
       "ownership": {
@@ -118,7 +118,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "61c218461a668b80001ab1eaa8729928d09f986137d6dc17fa4951043680b95c"
+      "upstream": "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -328,13 +328,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1aa510bd0f66df4d3863c9facea654a4a9d2b9f452e4bcf91a9b58159390e3e8"
+      "upstream": "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b"
     },
     ".engineering/engineering/verification_checkout.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "13ea45e6319066018561ae1cbf257889bbfb2a3eb3675fa0abb2426fa8ed9c9b"
+      "upstream": "275ef55c45a443a4767341bd57862c91c02b068a9e18d5fc263a2f028e517e7a"
     },
     ".engineering/engineering/verification_inputs.py": {
       "ownership": {
@@ -346,13 +346,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a8d5e6b5c0d0ca217588eb6e399bce8d128a64565a3267f92338bf688dc07d93"
+      "upstream": "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "ab5201408f10df9d110d85d56a3c98d087b6aa83b8c9f5f8070c008fe1b0d45e"
+      "upstream": "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470"
     },
     ".engineering/evals/README.md": {
       "ownership": {
@@ -431,6 +431,12 @@
         "mode": "file"
       },
       "upstream": "d63631030ef1a2f642ddec5ecf31b0c388ce38b67ecca6f45f3e697f27a0270d"
+    },
+    ".engineering/evals/cases/013-review-tiers.yaml": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "be19ff2d5e0c34fbf067e5c162c574a83c082d139225b2de900df31dcfc3bccd"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
@@ -529,13 +535,13 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "d946c9d47081d16b7de2a6012c8856164ae2b9cb26bc8baf2956b2617bda9793"
+      "upstream": "3f351da182ed8eff2a3c19fbbe5a11741148e1534f2850a1ad47954ad0a3ef53"
     },
     "ENGINEERING.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a395807916eab1d382e023bebef75480c4b33764faf33480338ba11fca3a7f08"
+      "upstream": "7b5e0481acb7fedf91cf8adda21f38a9e9494195868537488ffafb28d795ecec"
     },
     "Makefile": {
       "ownership": {
@@ -548,7 +554,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "0acb56b012327e1bba53a60ba5c107b28f66e5189c83232b1980141cc4284f5b"
+      "upstream": "dedb1231813b1905447f57d335766c78188da63ba39c5a19284887135b0dcce8"
     },
     "engineering": {
       "ownership": {
