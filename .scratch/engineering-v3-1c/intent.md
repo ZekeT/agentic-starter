@@ -1,6 +1,7 @@
 # Engineering v3.1c — starter refinement
 
-Status: intent settled by grilling 2026-09-27; ready for `/to-spec` (slices A and C only)
+Status: intent settled by grilling 2026-09-27 (A, C) and 2026-09-28 (B); A and C
+specified; B ready for `/to-spec`
 
 A focused refinement of the current Engineering System, not a redesign. Keep
 the v3 ownership split: Engineering System owns invariants, checks, migration,
@@ -8,7 +9,8 @@ updates and verification; upstream Matt skills own workflow; Graft owns derived
 code knowledge.
 
 Terms follow [product context](../../docs/context/product.md). The installation
-role decision is [ADR 0001](../../docs/adr/0001-explicit-installation-role.md).
+role decision is [ADR 0001](../../docs/adr/0001-explicit-installation-role.md);
+review tiers and carried evidence are [ADR 0002](../../docs/adr/0002-review-tiers-and-carried-evidence.md).
 
 ## Intent
 
@@ -29,9 +31,8 @@ Six independently reviewable slices, one PR each, in this order:
 5. **E** — cheaper evidence freshness checks
 6. **F** — human-readable review explanation for substantial changes
 
-Specify and ticket **A and C now**. B, D, E and F stay ideas until their own
-grilling session; B waits for C because optional navigation affects which checks
-tiers must require.
+A and C are specified and ticketed. B was settled by grilling on 2026-09-28
+after C merged. D, E and F stay ideas until their own grilling session.
 
 ## A. Consumer versus maintainer verification
 
@@ -133,6 +134,100 @@ Starting points: `dependencies.toml`, `deps.py`, `registry.py`, `doctor.py`,
 `graft.py`, `verification_inputs.py`, `settings.py`, `updates.py`, setup,
 `CLAUDE.md` sections, template `files.json`, generated README, `ENGINEERING.md`.
 
+## B. Review tiers and carried evidence
+
+Motivation: v3.1c tickets 01–05 and 07 took about 15 review rounds of three
+reviewers; four rebase-only rounds found nothing blocking. Every change pays for
+three sessions regardless of risk, and any base movement discards all evidence.
+
+Scope: review tiers plus carrying reviewer reports across a clean rebase. The
+existing review-corrections procedure is unchanged. Freshness performance stays
+in E.
+
+Settled decisions:
+
+- **Tiers**: `documentation`, `ordinary`, `sensitive`. The plan declares `tier`
+  and `tier_reason`, replacing `security_required` and `security_reason`.
+- **Tier floor**: a deterministic classifier computes the minimum tier from
+  changed paths; the plan may raise the tier, never lower it. A plan below the
+  floor is rejected. Mixed scopes take the highest tier any path requires.
+- **Documentation tier**: every path matches the project's documentation list
+  and none matches the starter exclusion list, which always wins: `CLAUDE.md`,
+  `AGENTS.md`, `.claude/**`, skills, `REVIEW.md`, `ENGINEERING.md`,
+  `.engineering/docs/**`, `docs/agents/**`. `docs/context/**` and `docs/adr/**`
+  remain eligible. Maintainer docs about managed implementation are excluded.
+- **Sensitive floor**: a starter-owned list, extendable but not reducible by the
+  project: dependency manifests and locks (`pyproject.toml`, `uv.lock`,
+  `package*.json`, `.engineering/dependencies.toml`), `.claude/settings*.json`,
+  hooks, `.github/workflows/**`, `Makefile`, `.engineering/bin/**`; in the
+  maintainer checkout also `deps`, `skill_install`, `apply`, `transaction`,
+  `updates`, `migrate/**`, `publication*` and `verification*` modules. Risks
+  paths cannot see (for example application authentication) raise the tier
+  through the plan.
+- **Configuration**: `[review]` in `.engineering/config.toml` with
+  `documentation = [...]` and `sensitive = [...]`. The floor uses the stricter
+  of base and proposed configuration, so a change cannot lower its own tier.
+  Any `[review]` change is at least `ordinary`.
+- **Reviewers per tier**:
+  - `documentation` — one fresh `behavioral` reviewer checks accuracy against
+    code and recorded decisions; `maintainability` not required.
+  - `ordinary` — `maintainability` and `behavioral`; one fresh session may file
+    both reports (same `reviewer` id).
+  - `sensitive` — `maintainability`, `behavioral` and `security`, each from a
+    separate session; shared reviewer ids are rejected.
+- **Checks are unchanged by tier**: required checks remain derived from
+  ownership categories and navigation. `make check` is always required.
+- **Evidence**: the record stores the computed floor, the path categories behind
+  it, and the required checks and roles. `status` reports tier, floor and
+  whether one session covered two roles. Records without a tier are unsupported:
+  prepare again. No inferred migration of local evidence.
+- **Carried evidence across a clean rebase**: `verify prepare` copies reviewer
+  reports into the new record with `carried_from` (the previous snapshot) only
+  when the change's own diff is identical per path (patch-id), plan, tools and
+  checks are unchanged, and no path changed upstream between old and new base
+  intersects the PR `paths` or explicit `inputs`. Checks are cleared; status is
+  INCOMPLETE until `verify check` passes on the new snapshot. Anyone, including
+  the implementer, may run `verify check` for a carried snapshot; a failed check
+  is FAIL and drops the carried behavioral report.
+- **Overlap**: when upstream changes intersect the scope, nothing carries; every
+  required role re-attests through the existing review-corrections procedure,
+  which permits justified retention of unchanged coverage.
+- **Base tip**: removed from the snapshot fingerprint; recorded and reported as
+  advisory. Merge-base still defines content identity.
+- **Ship**: recomputes the floor for the current scope and accepts evidence only
+  when the snapshot is current (including carried) and the recorded tier is at
+  or above that floor; otherwise it stops with the missing roles. No re-review.
+- **Rollout**: a migration adds `[review]` with defaults `["README.md",
+  "docs/**"]`, shown in the update preview and applied only with the approved
+  update. New consumer projects get the same defaults. The maintainer
+  checkout lists `docs/**` but not `docs-maintainer/**`.
+- **Policy edits**: `CLAUDE.md`, `REVIEW.md` and `.engineering/docs/verification.md`
+  change to describe tiers and permit non-verifier check runs for carried
+  snapshots only.
+
+Acceptance criteria:
+
+- A documentation-only change in a consumer project reaches PASS with one fresh
+  behavioral report and `make check`.
+- An agent-policy Markdown change is never below `ordinary`; a sensitive-list
+  path is never below `sensitive`; a plan below the floor is rejected.
+- Editing `[review]` or removing a sensitive entry cannot lower the tier of the
+  same change.
+- An ordinary change reaches PASS with both reports from one session; a
+  sensitive change with a shared reviewer id does not.
+- A clean rebase with no upstream overlap carries reports; status stays
+  INCOMPLETE until rerun checks pass; a failing rerun is FAIL.
+- Upstream overlap, changed patch, plan, tools or checks carry nothing.
+- Moving the base tip without rebasing keeps evidence current.
+- A legacy record without a tier requires preparing again.
+- Ship refuses evidence whose tier is below the current floor.
+- Update preview shows the `[review]` migration; nothing applies without approval.
+
+Starting points: `verification_requirements.py`, `verification_snapshot.py`,
+`verification.py`, `verification_checkout.py`, `settings.py`, migrations,
+`publication.py`, `/review` and `/ship` skills, reviewer agent definitions,
+`CLAUDE.md`, `REVIEW.md`, `.engineering/docs/verification.md`, template config.
+
 ## Future improvement (not in this initiative)
 
 Node-free core: replace the `npx skills` installer with a pinned Git checkout
@@ -141,12 +236,6 @@ scoping.
 
 ## Deferred slices — open questions for their own sessions
 
-- **B. Review tiers** (documentation-only / ordinary / sensitive): which
-  deterministic checks form the documentation tier and how existing evidence
-  migrates; when one fresh reviewer may cover behavior and maintainability;
-  classification by semantic impact (agent-policy Markdown is not low risk);
-  storing tier, reason, checks and reviewer coverage in evidence; shipping
-  reuses compatible evidence.
 - **D. Adoption compatibility preview**: extend adoption's existing read-only
   plan to report project checks, runtime prerequisites, unsupported repository
   constructs (symlinks, submodules, unmerged entries), policy conflicts,
@@ -169,4 +258,4 @@ per-change gate. Key scenarios for A and C: consumer config change verifies;
 maintainer changes still need maintainer suites; missing role blocks; consumer
 managed-implementation edit rejected; navigation none versus enabled-ready
 versus enabled-without-roots versus enabled-broken; upgrade with and without
-Graft evidence.
+Graft evidence. Key scenarios for B are its acceptance criteria above.
