@@ -8,7 +8,13 @@ from typing import Any
 from .config import object_value
 from .installation import MANIFEST_PATH, ROLES, STATE_PATH, installation_role
 from .ownership import METADATA, json_object, read_bytes, validate_ownership
-from .settings import CONFIGURATION, graft_navigation, provider, validate
+from .settings import (
+    CONFIGURATION,
+    graft_navigation,
+    provider,
+    review_settings,
+    validate,
+)
 from .source import git
 
 # Starter tooling directories; some files are distributed, but everything here
@@ -31,7 +37,9 @@ REVIEWERS = {
 }
 # Starter-owned floor rules (ADR 0002); projects may add to them, never remove.
 # A pattern without "/" matches a file name at any depth; others match the
-# repository path, where "*" also crosses directories.
+# repository path, where "*" also crosses directories. A leading "/" anchors a
+# pattern without another "/" to the repository root. Project review settings
+# use the same pattern rules.
 STARTER_SENSITIVE = {
     "dependency manifest or lock": (
         "pyproject.toml",
@@ -43,7 +51,9 @@ STARTER_SENSITIVE = {
     "agent settings": (".claude/settings*.json",),
     "hook": (".claude/hooks/**",),
     "workflow": (".github/workflows/**",),
-    "build recipe": ("Makefile",),
+    "build recipe": ("Makefile", "GNUmakefile", "makefile", "*.mk"),
+    "check script": (".engineering/scripts/**",),
+    "agent-executed script": (".claude/statusline.sh",),
     "Engineering launcher": (
         "/engineering",
         ".engineering/bin/**",
@@ -53,7 +63,11 @@ STARTER_SENSITIVE = {
 MODULES = ".engineering/engineering/"
 # Maintainer modules that execute dependencies, or destroy or publish data.
 MAINTAINER_SENSITIVE = {
-    "dependency module": (f"{MODULES}deps.py", f"{MODULES}registry.py"),
+    "dependency module": (
+        f"{MODULES}deps.py",
+        f"{MODULES}registry.py",
+        f"{MODULES}graft.py",
+    ),
     "skill installation module": (f"{MODULES}skill_install.py",),
     "apply or transaction module": (f"{MODULES}apply.py", f"{MODULES}transaction.py"),
     "update module": (
@@ -142,7 +156,7 @@ def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(
             f"Required checks missing: {missing} (role {role}; {'; '.join(reasons)})"
         )
-    paths = tier_paths(role, plan["paths"])
+    paths = tier_paths(role, plan["paths"], base_and_proposed_settings(checkout))
     floor = max((tier for tier in TIERS if paths[tier]), key=TIERS.index)
     if TIERS.index(plan["tier"]) < TIERS.index(floor):
         reasons = [f"{name} ({rule})" for name, rule in paths[floor].items()]
@@ -158,25 +172,52 @@ def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def tier_paths(role: str, paths: list[str]) -> dict[str, dict[str, str]]:
-    """Floor each path by the first matching rule; the highest tier wins."""
+def tier_paths(
+    role: str, paths: list[str], settings: list[dict[str, tuple[str, ...]]]
+) -> dict[str, dict[str, str]]:
+    """Floor each path under every review settings version; the highest tier wins."""
+    result: dict[str, dict[str, str]] = {tier: {} for tier in reversed(TIERS)}
+    for name in sorted(paths):
+        tier, rule = max(
+            (path_floor(role, name, review) for review in settings),
+            key=lambda floor: TIERS.index(floor[0]),
+        )
+        result[tier][name] = rule
+    return result
+
+
+def path_floor(
+    role: str, name: str, review: dict[str, tuple[str, ...]]
+) -> tuple[str, str]:
+    """The first matching rule; starter rules precede project settings."""
     sensitive = dict(STARTER_SENSITIVE)
     if role == "maintainer":
         sensitive.update(MAINTAINER_SENSITIVE)
-    result: dict[str, dict[str, str]] = {tier: {} for tier in reversed(TIERS)}
-    for name in sorted(paths):
-        rule = next(
-            (rule for rule, patterns in sensitive.items() if matches(name, patterns)),
-            None,
-        )
-        if rule is not None:
-            result["sensitive"][name] = rule
-        elif matches(name, AGENT_POLICY):
-            result["ordinary"][name] = "agent policy"
-        else:
-            # Project documentation settings do not exist yet (ticket 12).
-            result["ordinary"][name] = "no documentation rule"
-    return result
+    sensitive["project sensitive setting"] = review["sensitive"]
+    for rule, patterns in sensitive.items():
+        if matches(name, patterns):
+            return "sensitive", rule
+    if matches(name, AGENT_POLICY):
+        return "ordinary", "agent policy"
+    if name == CONFIGURATION:
+        # Changing review settings is itself reviewed, whatever they list.
+        return "ordinary", "review settings"
+    if matches(name, review["documentation"]):
+        return "documentation", "project documentation setting"
+    return "ordinary", "no documentation rule"
+
+
+def base_and_proposed_settings(checkout: Path) -> list[dict[str, tuple[str, ...]]]:
+    """Base and proposed review settings; a change cannot weaken its own floor.
+
+    Starter lists are code in a module that is sensitive in the maintainer
+    checkout and managed implementation elsewhere, so base and proposed agree
+    whenever verification can pass (ADR 0002).
+    """
+    return [
+        review_settings(baseline(checkout, CONFIGURATION)),
+        review_settings(read_bytes(checkout, CONFIGURATION)),
+    ]
 
 
 def matches(name: str, patterns: tuple[str, ...]) -> bool:

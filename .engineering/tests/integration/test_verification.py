@@ -496,7 +496,7 @@ def test_graft_check_required_only_when_selected_with_roots(
     (repo / "src").mkdir()
     (repo / "src/app.py").write_text("VALUE = 1\n")
     (repo / ".engineering/config.toml").write_text(
-        f'schema_version = 1\n[navigation]\nprovider = "{provider}"\n'
+        f'schema_version = 2\n[navigation]\nprovider = "{provider}"\n'
         f"application_roots = {json.dumps(roots)}\n"
     )
     # Configuration changes may carry further checks; this asserts only Graft's.

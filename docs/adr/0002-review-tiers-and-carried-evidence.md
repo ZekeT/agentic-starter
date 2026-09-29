@@ -4,6 +4,8 @@ Status: accepted (2026-09-28)
 
 Each verification plan declares a review tier — `documentation`, `ordinary` or `sensitive` — that decides the required reviewer roles and whether one session may cover two of them. A deterministic tier floor, computed from changed paths, sets the minimum; the plan may raise it but never lower it. Starter-owned lists always win: agent-policy Markdown is never documentation tier, and dependency, hook, settings, workflow and destructive-operation paths are always sensitive. Projects can extend these lists but not reduce them, and the floor uses the stricter of base and proposed configuration. Tiers change reviewers, not checks.
 
+Only project review settings are read from both base and proposed content. The starter lists stay in code and come from the running implementation. They live in a module that is itself sensitive in the maintainer checkout and managed implementation in consumers, where edits are rejected, so base and proposed lists agree whenever verification can pass. A data file would not change this: the running code decides whether to read it.
+
 Reviewer reports carry forward across a clean rebase — identical own diff, unchanged plan, tools and checks, and no upstream change to the scope — but authoritative checks always rerun on the new snapshot. Because rerunning recorded argv carries no judgment, anyone, including the implementer, may run those checks for a carried snapshot. Base-tip movement without a rebase no longer invalidates evidence; the merge-base still defines content identity.
 
 ## Considered options

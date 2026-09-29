@@ -5,6 +5,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -197,7 +198,7 @@ def test_new_upstream_file_and_unknown_config_schema(installation):
     assert apply_plan(plan_installation(template, target, "update")) == 0
     assert (target / name).read_bytes() == raw
     commit(target)
-    save(template, ".engineering/config.toml", "schema_version = 2\n")
+    save(template, ".engineering/config.toml", "schema_version = 3\n")
     refresh(template)
     before = snapshot(target)
     with pytest.raises(ValueError, match="config.schema"):
@@ -322,24 +323,54 @@ def test_configuration_schema_change_is_migrated_in_the_update(
     adopt(template, target)
     customize(target, warn_file_lines=250)
     commit(target)
-    # Simulate a release whose configuration schema moved to version 2.
-    monkeypatch.setattr(settings, "SCHEMA_VERSION", 2)
+    # Simulate a release whose configuration schema moved to version 3.
+    monkeypatch.setattr(settings, "SCHEMA_VERSION", 3)
     monkeypatch.setitem(
         settings.MIGRATIONS,
-        1,
-        lambda text: text.replace("schema_version = 1", "schema_version = 2", 1),
+        2,
+        lambda text: text.replace("schema_version = 2", "schema_version = 3", 1),
     )
-    customize(template, schema_version=2)
+    customize(template, schema_version=3)
     refresh(template)
     before = snapshot(target)
     status, output = engineering(capsys, template, "update", str(target))
     assert status == 0, output
-    assert f"MIGRATE {CONFIG}" in output and "1 → 2" in output
+    assert f"MIGRATE {CONFIG}" in output and "2 → 3" in output
     assert snapshot(target) == before
     status, output = engineering(capsys, template, "update", str(target), "--apply")
     assert status == 0, output
     config = (target / CONFIG).read_text()
-    assert "schema_version = 2" in config and "warn_file_lines = 250" in config
+    assert "schema_version = 3" in config and "warn_file_lines = 250" in config
+
+
+def test_review_settings_arrive_only_with_the_approved_update(installation, capsys):
+    template, target = installation
+    adopt(template, target)
+    # A project configured before review settings existed, with its own values.
+    config = (target / CONFIG).read_text()
+    config = config.split("\n[review]")[0].replace(
+        "schema_version = 2", "schema_version = 1  # before review settings"
+    )
+    save(target, CONFIG, config)
+    customize(target, warn_file_lines=250)
+    commit(target)
+    before = snapshot(target)
+    status, output = engineering(capsys, template, "update", str(target))
+    assert status == 0, output
+    assert f"MIGRATE {CONFIG}" in output and "schema_version 1 → 2" in output
+    assert snapshot(target) == before
+    status, output = engineering(capsys, template, "update", str(target), "--apply")
+    assert status == 0, output
+    text = (target / CONFIG).read_text()
+    assert "schema_version = 2  # before review settings" in text
+    migrated = tomllib.loads(text)
+    assert migrated["schema_version"] == 2
+    assert migrated["review"] == {
+        "documentation": ["README.md", "docs/**"],
+        "sensitive": [],
+    }
+    assert migrated["maintainability"]["warn_file_lines"] == 250
+    assert migrated["tracker"] == tomllib.loads(config)["tracker"]
 
 
 def test_missing_schema_migration_blames_the_starter(installation, capsys, monkeypatch):
@@ -348,13 +379,13 @@ def test_missing_schema_migration_blames_the_starter(installation, capsys, monke
     template, target = installation
     adopt(template, target)
     # Simulate a release that moved the schema but shipped no migration step.
-    monkeypatch.setattr(settings, "SCHEMA_VERSION", 2)
-    customize(template, schema_version=2)
+    monkeypatch.setattr(settings, "SCHEMA_VERSION", 3)
+    customize(template, schema_version=3)
     refresh(template)
     before = snapshot(target)
     status, output = engineering(capsys, template, "update", str(target))
     assert status == 1
-    assert "no migration from version 1" in output
+    assert "no migration from version 2" in output
     assert "update the starter or report the missing migration" in output
     assert "repair project configuration" not in output
     assert snapshot(target) == before

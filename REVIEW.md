@@ -24,7 +24,9 @@ behavior, source and relevant tests. Never substitute an implementation agent's
 narrative for their evidence. Record and resolve material concerns; label nits.
 
 The tool computes a tier floor from changed paths and rejects a lower declared
-tier; see [review tiers](.engineering/docs/verification.md#review-tiers). Declare
+tier; see [review tiers](.engineering/docs/verification.md#review-tiers). A
+documentation-tier reviewer checks the docs against code and recorded decisions.
+Declare
 `sensitive` above the floor for authentication, authorization, secrets,
 cryptography, untrusted input, privilege boundaries, payments, destructive
 operations, sensitive storage, network exposure or dependency execution. One

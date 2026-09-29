@@ -253,16 +253,16 @@ def test_capabilities_added_later_are_validated(installation, capsys, monkeypatc
 
     template, target = installation
     adopt(template, target)
-    monkeypatch.setitem(settings.CAPABILITIES, "review", ("none", "tiered"))
+    monkeypatch.setitem(settings.CAPABILITIES, "audit", ("none", "tiered"))
     path = target / CONFIG
-    path.write_text("review = 5\n" + path.read_text())
+    path.write_text("audit = 5\n" + path.read_text())
     status, output = engineering(capsys, target, "doctor")
-    assert status == 1 and "ERROR [configuration]" in output and "review" in output
+    assert status == 1 and "ERROR [configuration]" in output and "audit" in output
     path.write_text(
-        path.read_text().replace("review = 5\n", "") + '[review]\nprovider = "x"\n'
+        path.read_text().replace("audit = 5\n", "") + '[audit]\nprovider = "x"\n'
     )
     status, output = engineering(capsys, target, "doctor")
-    assert status == 1 and "review.provider" in output
+    assert status == 1 and "audit.provider" in output
     path.write_text(path.read_text().replace('provider = "x"', 'provider = "tiered"'))
     assert "ERROR [configuration]" not in engineering(capsys, target, "doctor")[1]
 
@@ -280,7 +280,7 @@ def test_verification_rejects_graft_check_while_navigation_is_disabled(tmp_path)
     save(
         root,
         CONFIG,
-        'schema_version = 1\n[navigation]\nprovider = "none"\n'
+        'schema_version = 2\n[navigation]\nprovider = "none"\n'
         'application_roots = ["src"]\n',
     )
     record_role(root, "consumer")

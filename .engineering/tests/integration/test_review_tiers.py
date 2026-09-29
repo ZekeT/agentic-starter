@@ -4,10 +4,19 @@ import json
 import os
 import subprocess
 import sys
+import tomllib
 
 import pytest
 
-from .test_verification import TOOLING, change_plan, cli, complete, prepare, report
+from .test_verification import (
+    TOOLING,
+    change_plan,
+    cli,
+    complete,
+    git,
+    prepare,
+    report,
+)
 from .test_verification import repo as repo
 from .test_verification_requirements import (
     CHECK,
@@ -75,11 +84,158 @@ def test_raised_tier_requires_its_roles_and_reports_them(repo):
     assert result["shared_reviewers"] == {}
 
 
-def test_documentation_tier_is_below_the_ordinary_floor_for_now(repo):
-    # No path is documentation until project review settings exist.
+def test_documentation_tier_needs_project_review_settings(repo):
+    # Without project configuration no path is documentation.
     change_plan(repo, tier="documentation")
     error = prepare(repo, status=1)["error"]
     assert "below the tier floor ordinary" in error and "app.txt" in error
+
+
+CONFIG = ".engineering/config.toml"
+
+
+def settings_text(documentation=(), sensitive=(), extra=""):
+    return (
+        'schema_version = 2\n[navigation]\nprovider = "none"\n[review]\n'
+        f"documentation = {json.dumps(list(documentation))}\n"
+        f"sensitive = {json.dumps(list(sensitive))}\n{extra}"
+    )
+
+
+def commit_base_settings(repo, text):
+    """Commit review settings to the comparison base, keeping feature edits."""
+    git(repo, "checkout", "--quiet", "main")
+    (repo / CONFIG).write_text(text)
+    git(repo, "add", CONFIG)
+    git(repo, "commit", "--quiet", "-m", "review settings")
+    git(repo, "checkout", "--quiet", "feature")
+    git(repo, "merge", "--quiet", "--ff-only", "main")
+
+
+def prepare_edits(repo, names, tier="sensitive"):
+    """Replace the fixture change with edits to names; return prepare's result."""
+    (repo / "app.txt").write_text("before\n")
+    for name in names:
+        (repo / name).parent.mkdir(parents=True, exist_ok=True)
+        (repo / name).write_text("changed\n")
+    change_plan(repo, paths=names, tier=tier)
+    return prepare(repo, status=0 if tier == "sensitive" else 1)
+
+
+def recorded_paths(repo):
+    record = repo / ".engineering/state/verification/example.json"
+    return json.loads(record.read_text())["requirements"]["paths"]
+
+
+def test_documentation_only_change_passes_with_one_behavioral_report(repo):
+    commit_base_settings(repo, settings_text(["README.md", "docs/**"]))
+    (repo / "app.txt").write_text("before\n")
+    (repo / "docs").mkdir()
+    (repo / "docs/guide.md").write_text("Run make check.\n")
+    change_plan(repo, paths=["docs/guide.md"], tier="documentation")
+    result = prepare(repo)
+    assert result["floor"] == "documentation"
+    assert result["required_roles"] == ["behavioral"]
+    token = result["snapshot"]
+    cli(repo, "check", "--change", "example", "--snapshot", token)
+    report(repo, token, "behavioral")
+    result = cli(repo, "status", "--change", "example")
+    assert result["status"] == "PASS" and result["missing_roles"] == []
+
+
+@pytest.mark.parametrize(
+    "name,floor,rule",
+    [
+        ("README.md", "documentation", "project documentation setting"),
+        ("docs/context/product.md", "documentation", "project documentation setting"),
+        ("docs/adr/0003-choice.md", "documentation", "project documentation setting"),
+        ("docs/agents/domain.md", "ordinary", "agent policy"),
+        ("notes.md", "ordinary", "no documentation rule"),
+    ],
+)
+def test_documentation_settings_classify_domain_docs_not_agent_policy(
+    repo, name, floor, rule
+):
+    commit_base_settings(repo, settings_text(["README.md", "docs/**"]))
+    prepare_edits(repo, [name])
+    assert recorded_paths(repo)[floor] == {name: rule}
+
+
+def test_project_sensitive_additions_raise_the_floor(repo):
+    commit_base_settings(repo, settings_text(["docs/**"], ["src/auth/**"]))
+    error = prepare_edits(repo, ["src/auth/login.py"], tier="ordinary")["error"]
+    assert "below the tier floor sensitive" in error
+    assert "src/auth/login.py (project sensitive setting)" in error
+
+
+def test_project_settings_cannot_weaken_starter_rules(repo):
+    commit_base_settings(repo, settings_text(["**"]))
+    prepare_edits(repo, ["Makefile", "CLAUDE.md", "guide.md"])
+    paths = recorded_paths(repo)
+    assert paths["sensitive"] == {"Makefile": "build recipe"}
+    assert paths["ordinary"] == {"CLAUDE.md": "agent policy"}
+    assert paths["documentation"] == {"guide.md": "project documentation setting"}
+
+
+def test_editing_review_settings_uses_the_stricter_of_base_and_proposed(repo):
+    commit_base_settings(repo, settings_text(["docs/**"], ["billing/**"]))
+    names = ["docs/guide.md", "src/app.py", "billing/rates.py", "api/keys.py"]
+    prepare_edits(repo, names)
+    # The proposed settings drop billing and document src; they add api.
+    (repo / CONFIG).write_text(settings_text(["src/**"], ["api/**"]))
+    change_plan(repo, paths=[CONFIG, *names])
+    prepare(repo)
+    assert recorded_paths(repo) == {
+        "sensitive": {
+            "api/keys.py": "project sensitive setting",
+            "billing/rates.py": "project sensitive setting",
+        },
+        "ordinary": {
+            CONFIG: "review settings",
+            "docs/guide.md": "no documentation rule",
+            "src/app.py": "no documentation rule",
+        },
+        "documentation": {},
+    }
+
+
+def test_review_settings_floor_at_ordinary_even_when_documented(repo):
+    commit_base_settings(repo, settings_text(["**"]))
+    (repo / CONFIG).write_text(settings_text(["**"], extra="# reviewed\n"))
+    change_plan(repo, paths=[CONFIG], tier="documentation")
+    error = prepare(repo, status=1)["error"]
+    assert f"{CONFIG} (review settings)" in error
+
+
+@pytest.mark.parametrize(
+    "setting,message",
+    [
+        ('documentation = "docs/**"', "review.documentation"),
+        ("sensitive = [1]", "review.sensitive"),
+        ('sensitive = [""]', "review.sensitive"),
+        ("skip = true", "review"),
+    ],
+)
+def test_invalid_review_settings_fail_planning(repo, setting, message):
+    commit_base_settings(repo, settings_text(["docs/**"]))
+    (repo / CONFIG).write_text(f"schema_version = 2\n[review]\n{setting}\n")
+    change_plan(repo, paths=["app.txt", CONFIG])
+    result = prepare(repo, status=1)
+    assert result["status"] == "INCOMPLETE" and message in result["error"]
+
+
+@pytest.mark.parametrize(
+    "name,rule",
+    [
+        ("GNUmakefile", "build recipe"),
+        ("build/rules.mk", "build recipe"),
+        (".engineering/scripts/check.sh", "check script"),
+        (".claude/statusline.sh", "agent-executed script"),
+    ],
+)
+def test_build_and_agent_scripts_floor_at_sensitive(repo, name, rule):
+    error = prepare_edits(repo, [name], tier="ordinary")["error"]
+    assert f"{name} ({rule})" in error
 
 
 def test_one_session_may_file_both_ordinary_reports(repo):
@@ -196,6 +352,23 @@ def test_agent_policy_is_never_documentation(project, name):
     assert result["required_roles"] == ["maintainability", "behavioral"]
 
 
+def test_generated_and_adopted_projects_share_review_defaults(pristine):
+    settings = [
+        tomllib.loads((pristine[kind] / CONFIG).read_text())["review"]
+        for kind in ("generated", "adopted")
+    ]
+    assert settings[0] == settings[1]
+    assert settings[0] == {"documentation": ["README.md", "docs/**"], "sensitive": []}
+
+
+@consumers
+def test_consumer_readme_is_documentation_by_default(project):
+    edit(project, "README.md")
+    result = prepare_paths(project, ["README.md"], [CHECK], tier="documentation")
+    assert result["floor"] == "documentation"
+    assert result["required_roles"] == ["behavioral"]
+
+
 @consumers
 def test_mixed_change_takes_the_highest_path_floor(project):
     edit(project, "README.md")
@@ -225,6 +398,7 @@ def test_required_checks_are_unchanged_by_tier(project):
         (".engineering/engineering/verification.py", "verification module"),
         (".engineering/engineering/publication_git.py", "publication module"),
         (".engineering/engineering/deps.py", "dependency module"),
+        (".engineering/engineering/graft.py", "dependency module"),
         (".engineering/engineering/skill_install.py", "skill installation module"),
         (".engineering/engineering/transaction.py", "apply or transaction module"),
         (".engineering/engineering/migrate/legacy.py", "migration module"),

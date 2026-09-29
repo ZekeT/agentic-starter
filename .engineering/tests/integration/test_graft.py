@@ -23,7 +23,7 @@ pytestmark = pytest.mark.integration
 
 def configure(root, roots):
     (root / ".engineering/config.toml").write_text(
-        "schema_version = 1\n[navigation]\napplication_roots = "
+        "schema_version = 2\n[navigation]\napplication_roots = "
         + json.dumps(roots)
         + "\n"
     )

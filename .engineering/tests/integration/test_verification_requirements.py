@@ -78,7 +78,7 @@ def maintainer(base):
     content = {
         ".engineering/engineering/tool.py": "VALUE = 1\n",
         ".engineering/engineering/extra.py": "EXTRA = 1\n",
-        ".engineering/config.toml": 'schema_version = 1\n[navigation]\nprovider = "none"\n',
+        ".engineering/config.toml": 'schema_version = 2\n[navigation]\nprovider = "none"\n',
         "Makefile": (
             "check:\n\t@true\nengineering-test:\n\t@true\n"
             "# engineering:integration:begin\nengineering-check:\n\t@true\n"
@@ -367,7 +367,7 @@ def test_maintainer_configuration_needs_only_project_and_health_checks(project):
     edit(
         project,
         ".engineering/config.toml",
-        'schema_version = 1\n[navigation]\nprovider = "none"\n\n',
+        'schema_version = 2\n[navigation]\nprovider = "none"\n\n',
     )
     name = ".engineering/config.toml"
     assert "engineering-check" in prepare(project, [name], [CHECK], status=1)["error"]
@@ -382,7 +382,7 @@ def test_maintainer_manifest_is_maintainer_source(project):
         {
             ".engineering/engineering/tool.py": ("VALUE = 1\n", {"mode": "preserve"}),
             ".engineering/config.toml": (
-                'schema_version = 1\n[navigation]\nprovider = "none"\n',
+                'schema_version = 2\n[navigation]\nprovider = "none"\n',
                 {"mode": "preserve"},
             ),
         },
@@ -438,7 +438,7 @@ def test_removing_distributed_source_still_requires_maintainer_suites(project):
         {
             ".engineering/engineering/tool.py": ("VALUE = 1\n", {"mode": "file"}),
             ".engineering/config.toml": (
-                'schema_version = 1\n[navigation]\nprovider = "none"\n',
+                'schema_version = 2\n[navigation]\nprovider = "none"\n',
                 {"mode": "preserve"},
             ),
         },

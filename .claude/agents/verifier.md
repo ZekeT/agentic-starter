@@ -35,6 +35,8 @@ your behavioral report with that same snapshot and observed coverage/gaps.
 When asked for a combined ordinary-tier session, also inspect maintainability as
 the maintainability reviewer would and file it as a separate report with its own
 verdict and the same `reviewer` identifier. Never combine roles for a sensitive tier.
+For a documentation tier, check each changed claim against the code, tests and
+recorded decisions (domain context, ADRs); a contradiction is a FAIL finding.
 If inputs change, do not relabel old findings with a new token: reverify. Local
 evidence output is allowed, application edits are not. Never substitute implementer
 self-review for independent evidence.

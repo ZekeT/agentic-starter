@@ -322,8 +322,10 @@ implement → targeted tests → make fmt
 ```
 
 Use [REVIEW.md](REVIEW.md) for human review. The review tier decides reviewer
-roles; the tool's floor makes dependency, hook, settings, workflow and launcher
-changes sensitive, and agent policy at least ordinary. Declare sensitive for
+roles; the tool's floor makes dependency, hook, settings, workflow, build-recipe
+and launcher changes sensitive, and agent policy and review settings at least
+ordinary. Paths listed under `[review] documentation` in
+`.engineering/config.toml` may use the documentation tier. Declare sensitive for
 auth, secrets, cryptography, untrusted input, payments, privilege boundaries,
 destructive operations, sensitive storage, network exposure and dependency
 execution. One fresh session may cover both ordinary roles.
@@ -553,7 +555,9 @@ upstream in the Engineering checkout instead.
 Adoption seeds it from the template copy (`.engineering/template/config.toml` in
 the maintainer checkout, which is maintainer source). Updates never overwrite its
 values: they validate it, refuse to plan while it is invalid, and apply
-configuration schema migrations shown as `MIGRATE` in the preview. Installations
+configuration schema migrations shown as `MIGRATE` in the preview; schema 2 adds
+`[review]` with `documentation = ["README.md", "docs/**"]` and an empty
+`sensitive` list, applied only with the approved update. Installations
 that recorded it as managed move it to project ownership on their next update,
 keeping its values.
 

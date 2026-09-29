@@ -1,6 +1,6 @@
 id: review-tiers-without-self-certification
 kind: static
-why: Review tiers change reviewer roles, never checks, and never permit self-certification.
+why: Review tiers change reviewer roles, never checks, and never permit self-certification; documentation review checks docs against code.
 shell: |
   python3 - <<'PY'
   from pathlib import Path
@@ -21,4 +21,12 @@ shell: |
   assert 'recomputes the' in ship and 'tier floor' in ship
   verifier = Path('.claude/agents/verifier.md').read_text()
   assert 'Never combine roles for a sensitive tier' in verifier and 'readonly: true' in verifier
+  assert 'recorded decisions' in verifier and 'recorded decisions' in command
+  for phrase in ('[review]', 'can never reduce them', 'stricter result', 'recorded decisions'):
+      assert phrase in guide, phrase
+  import tomllib
+  template = tomllib.loads(Path('.engineering/template/config.toml').read_text())['review']
+  assert template == {'documentation': ['README.md', 'docs/**'], 'sensitive': []}
+  own = tomllib.loads(Path('.engineering/config.toml').read_text())['review']
+  assert own['documentation'] == ['docs/**'], own
   PY
