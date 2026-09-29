@@ -74,3 +74,12 @@ to preserve; route to focused `/grill-me`. Record the human-agreed resolution in
 the relevant decision/spec or ticket before resuming and reverifying. Material
 scope expansion returns to `/to-spec` and `/to-tickets`. This bounds attempts at a
 finding, not the number of legitimate findings reviewers may raise.
+
+For carried snapshots only, the implementer may run `verify check`. A clean rebase
+can carry independent reports through `verify prepare` when the own patches,
+plan, tools and checks are unchanged and upstream paths do not overlap scope or
+explicit inputs. Reports record `carried_from`; fresh checks are required before
+PASS. Failed checks drop the carried behavioral report and require independent
+review. Other changes follow review corrections; never self-certify or manually
+relabel reports. Publication accepts current carried PASS evidence and still
+requires the remote base tip recorded at the latest prepare.

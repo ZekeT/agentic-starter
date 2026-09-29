@@ -84,7 +84,7 @@ cheap.
 35. As an existing consumer-project owner, I want the update preview to show the new review settings and their documentation defaults before anything changes, so that lowering review for documentation is a visible, approved decision.
 36. As an existing consumer-project owner, I want the review settings migration applied only with the approved update, so that my review requirements never change silently.
 37. As a new consumer-project developer, I want generated and adopted projects to start with the same documentation defaults, so that both installation routes classify identically.
-38. As a maintainer, I want the maintainer checkout's own settings to list `docs/**` but not maintainer docs that are shipped as policy, so that the starter's own policy prose keeps full review.
+38. As a maintainer, I want the maintainer checkout's own settings to list `docs/**/*.md` but not maintainer docs that are shipped as policy, so that the starter's own policy prose keeps full review.
 39. As an agent following project policy, I want `CLAUDE.md`, `REVIEW.md` and the verification guide to describe tiers, combined sessions and carried-snapshot check runs, so that I request the right reviewers and never self-certify outside the permitted rerun.
 40. As a reviewer agent, I want the `/review` flow to spawn only the roles the tier requires, and one combined session when the tier permits, so that review cost matches risk.
 
@@ -106,7 +106,7 @@ cheap.
 - **Carried check runs**: `verify check` on a record containing carried reports keeps those reports and records fresh check results. Any failing check makes the outcome FAIL and removes the carried behavioral report. On a record without carried reports, current behavior is unchanged (checks clear behavioral proof first).
 - **Overlap**: if any condition fails, nothing is carried; the existing previous-evidence reference and review-corrections procedure apply.
 - **Publication**: the preflight keeps requiring the remote base tip to equal the tip recorded at the latest prepare. It additionally recomputes the tier floor for the current scope and refuses when the recorded tier is below it. Carried evidence that is current and PASS is accepted without further review.
-- **Migration and generation**: an Engineering migration adds `[review]` with `documentation = ["README.md", "docs/**"]` and an empty `sensitive` list to existing project configuration, reported in the update preview and applied only with the approved update. Generated and adopted projects start with the same section. The maintainer checkout's own configuration lists `docs/**` only.
+- **Migration and generation**: an Engineering migration adds `[review]` with `documentation = ["README.md", "docs/**/*.md"]` and an empty `sensitive` list to existing project configuration, reported in the update preview and applied only with the approved update. Generated and adopted projects start with the same section. The maintainer checkout's own configuration lists `docs/**/*.md` only.
 - **Policy and workflow text**: `CLAUDE.md`, `REVIEW.md`, the verification guide and the `/review` and `/ship` skills describe tiers, the floor, combined ordinary sessions, carried evidence and the permitted non-verifier check run for carried snapshots only. Reviewer agent definitions keep their read-only independence rules. Pinned upstream skills are not modified.
 
 ## Testing Decisions

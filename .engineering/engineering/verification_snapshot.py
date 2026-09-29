@@ -137,4 +137,9 @@ def snapshot(root: Path, plan: dict[str, Any]) -> tuple[str, dict[str, Any]]:
         "root": str(root.resolve()),
         "runtime": platform.python_version(),
     }
-    return str(digest(encoded(inputs))), inputs
+    return str(digest(encoded(identity(inputs)))), inputs
+
+
+def identity(inputs: dict[str, Any]) -> dict[str, Any]:
+    """Exclude the advisory base tip from content identity."""
+    return {key: value for key, value in inputs.items() if key != "base_tip"}

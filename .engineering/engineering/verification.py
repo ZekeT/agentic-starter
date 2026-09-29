@@ -12,10 +12,12 @@ from .config import safe_path
 from .ownership import encoded, json_object
 from .source import git
 from .transaction import write_files
+from .verification_carry import carried_reports
 from .verification_checkout import materialize, validate_checkout
 from .verification_inputs import STATE, strings
 from .verification_requirements import REVIEWERS, TIERS, requirements
 from .verification_snapshot import (
+    identity,
     read_plan,
     run_command,
     snapshot,
@@ -85,7 +87,27 @@ def read_record(root: Path, name: str) -> dict[str, Any]:
     for role, report in data["reports"].items():
         if not isinstance(report, dict):
             raise ValueError("Invalid stored report")
-        validate_report(report, data["snapshot"])
+        validate_report(
+            {key: value for key, value in report.items() if key != "carried_from"},
+            data["snapshot"],
+        )
+        if "carried_from" in report:
+            history = data.get("previous_evidence")
+            if not isinstance(history, str):
+                raise ValueError("Carried report requires previous evidence")
+            previous = json_object(safe_path(root, history).read_bytes())
+            original = previous.get("reports", {}).get(role)
+            if (
+                report["carried_from"] != previous.get("snapshot")
+                or not isinstance(original, dict)
+                or report
+                != {
+                    **original,
+                    "snapshot": data["snapshot"],
+                    "carried_from": previous["snapshot"],
+                }
+            ):
+                raise ValueError("Carried report differs from previous evidence")
         if report["role"] != role:
             raise ValueError("Stored reviewer role differs from report")
     for item in data["checks"]:
@@ -130,7 +152,13 @@ def outcome(data: dict[str, Any]) -> dict[str, Any]:
         "missing": missing,
         "reports": data["reports"],
         "checks": checks,
-        "handoff": "Fresh read-only reviewer: inspect the plan requirement and actual scope; record missing roles. No implementer self-review. "
+        "handoff": (
+            "Carried reports: the implementer may run verify check for this snapshot. "
+            "Missing roles still require fresh independent review. "
+        )
+        if missing
+        and any("carried_from" in report for report in data["reports"].values())
+        else "Fresh read-only reviewer: inspect the plan requirement and actual scope; record missing roles. No implementer self-review. "
         + SESSIONS[plan["tier"]]
         if missing
         else "",
@@ -215,7 +243,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             if (
                 reusable
                 and previous["snapshot"] == token
-                and previous["inputs"] == inputs
+                and identity(previous["inputs"]) == identity(inputs)
             ):
                 try:
                     validate_checkout(
@@ -224,7 +252,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 except (ValueError, OSError):
                     pass  # A fresh checkout requires fresh independent proof.
                 else:
-                    data = previous
+                    data = {**previous, "inputs": inputs}
         if "checkout" not in data:
             folder = Path(tempfile.mkdtemp(prefix=f"{args.change}-", dir=path.parent))
             checkout = folder / "checkout"
@@ -238,6 +266,8 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 history = str((folder / "previous.json").relative_to(root))
                 write_files(root, {history: encoded(previous)})
                 data["previous_evidence"] = history
+                if reusable:
+                    data["reports"] = carried_reports(root, previous, data)
         else:
             reused = safe_path(root, data["checkout"])
             validate_checkout(reused, inputs)
@@ -256,7 +286,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
             return 1
         data = read_record(root, name)
         token, inputs = snapshot(root, data["inputs"]["plan"])
-        if token != data["snapshot"] or inputs != data["inputs"]:
+        if token != data["snapshot"] or identity(inputs) != identity(data["inputs"]):
             print(
                 json.dumps(
                     {
@@ -275,10 +305,17 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 raise ValueError("STALE check request: obtain the current snapshot")
             # Clear old proof before running: interrupted or failed reruns cannot reuse PASS.
             data["checks"] = []
-            data["reports"].pop("behavioral", None)
+            carried = any(
+                "carried_from" in report for report in data["reports"].values()
+            )
+            if not carried:
+                data["reports"].pop("behavioral", None)
             write_files(root, {name: encoded(data)})
             for command in data["inputs"]["plan"]["checks"]:
                 data["checks"].append(run_command(checkout, command, timeout=900))
+                if carried and data["checks"][-1]["exit_code"]:
+                    data["reports"].pop("behavioral", None)
+                write_files(root, {name: encoded(data)})
             validate_checkout(checkout, inputs)
             after, _ = snapshot(root, data["inputs"]["plan"])
             if after != token:

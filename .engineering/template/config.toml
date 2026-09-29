@@ -22,5 +22,5 @@ substantial_growth_lines = 150
 exceptions = []
 
 [review]
-documentation = ["README.md", "docs/**"]
+documentation = ["README.md", "docs/**/*.md"]
 sensitive = []

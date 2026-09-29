@@ -49,7 +49,8 @@ STARTER_SENSITIVE = {
         ".engineering/dependencies.toml",
     ),
     "agent settings": (".claude/settings*.json",),
-    "hook": (".claude/hooks/**",),
+    "hook": (".claude/hooks/**", ".pre-commit-config.yaml"),
+    "environment loader": (".envrc",),
     "workflow": (".github/workflows/**",),
     "build recipe": ("Makefile", "GNUmakefile", "makefile", "*.mk"),
     "check script": (".engineering/scripts/**",),
@@ -223,10 +224,22 @@ def base_and_proposed_settings(checkout: Path) -> list[dict[str, tuple[str, ...]
 def matches(name: str, patterns: tuple[str, ...]) -> bool:
     """Match file-name patterns at any depth and path patterns from the root."""
     return any(
-        fnmatchcase(name, pattern.removeprefix("/"))
+        path_matches(name, pattern.removeprefix("/"))
         if "/" in pattern
         else fnmatchcase(PurePosixPath(name).name, pattern)
         for pattern in patterns
+    )
+
+
+def path_matches(name: str, pattern: str) -> bool:
+    """A globstar directory may match zero directories as well as many."""
+    if fnmatchcase(name, pattern):
+        return True
+    start = pattern.find("**/")
+    if start < 0:
+        return False
+    return path_matches(name, pattern[:start] + pattern[start + 3 :]) or path_matches(
+        name, pattern[:start] + "*/" + pattern[start + 3 :]
     )
 
 

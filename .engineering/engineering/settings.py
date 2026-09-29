@@ -12,7 +12,9 @@ CONFIGURATION = ".engineering/config.toml"
 SCHEMA_VERSION = 2
 # Review settings defaults (ADR 0002): documentation paths may use the
 # documentation tier; sensitive paths add to the starter's sensitive rules.
-REVIEW_DEFAULTS = '[review]\ndocumentation = ["README.md", "docs/**"]\nsensitive = []\n'
+REVIEW_DEFAULTS = (
+    '[review]\ndocumentation = ["README.md", "docs/**/*.md"]\nsensitive = []\n'
+)
 
 
 def add_review_settings(text: str) -> str:
@@ -142,6 +144,8 @@ def parse(root: Path, text: str) -> dict[str, Any]:
 def review_patterns(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
     """Review settings as documentation and sensitive glob lists (empty if unset)."""
     review = object_value(data.get("review", {}), "review")
+    if set(review) - {"documentation", "sensitive"}:
+        raise ValueError("config.unknown: review")
     result = {}
     for key in ("documentation", "sensitive"):
         patterns = review.get(key, [])

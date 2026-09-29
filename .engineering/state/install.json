@@ -22,13 +22,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "0031b8ae5774397e65c74157f2daa41d00b6f6e3450483c6825c80e85e3ac693"
+      "upstream": "c08b7a5418e5d69a846f50af4631c6488ee778602067b18ed864b1b4538b65bf"
     },
     ".claude/commands/ship.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "04ca216f3c33c6c39e4ef4f9ce0d3d4ce1e89ca4d28edb35221d53215dcdc893"
+      "upstream": "9f77b3bcd6f3748c55c91be127f7add4399e7821db4684ee24f40baae3863c8e"
     },
     ".claude/hooks/post_tool_lint.py": {
       "ownership": {
@@ -118,7 +118,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053"
+      "upstream": "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -274,7 +274,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a3718ee1698328f19bc1bdbe01ac8c7839fa8429a8487c72fee7c796421ee094"
+      "upstream": "1c9c00fede8e1f6e1c0a897e3f5c8b1b210eb9b1169da7744a70627e557d2969"
     },
     ".engineering/engineering/publication_git.py": {
       "ownership": {
@@ -298,7 +298,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "8c8cd49360a4e2076f2854a1a85db8c0c70377dfa11a3d20dc35f982679cc91b"
+      "upstream": "00f60e1aa1b8df3c7e9f51a6c3e0eb8cc31726834904d6f4ae718818932486e1"
     },
     ".engineering/engineering/skill_install.py": {
       "ownership": {
@@ -328,7 +328,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b"
+      "upstream": "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9"
+    },
+    ".engineering/engineering/verification_carry.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "3bb4d3447ff5fecd5b8f8fe713090612e4c2f748b9f25d15aafe9d286b3ee6ac"
     },
     ".engineering/engineering/verification_checkout.py": {
       "ownership": {
@@ -346,13 +352,13 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4b7ce18ee60d5f28cd9f99de44de90dc6819c921cd85d45f27520c3fcaee8e06"
+      "upstream": "bfc1e400d50a17f7a0c8c13478d019038e843f636ce1023d886943cac238d82e"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470"
+      "upstream": "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f"
     },
     ".engineering/evals/README.md": {
       "ownership": {
@@ -406,7 +412,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3"
+      "upstream": "f01545e4fbe1909a7e0cad628bc4ee836876a6a265f966cd788ad0c71f35cd79"
     },
     ".engineering/evals/cases/009-publication.yaml": {
       "ownership": {
@@ -436,7 +442,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "f105b09698cbe1d756b45ad4aefb3009d6325a04dccad97f036aaab8be57566a"
+      "upstream": "b36050e412badd289718ac3d5440dd2cae6ecd2ed1985f7a739eec12f7489644"
     },
     ".engineering/evals/cases/101-small-change.yaml": {
       "ownership": {
@@ -535,13 +541,13 @@
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "3f351da182ed8eff2a3c19fbbe5a11741148e1534f2850a1ad47954ad0a3ef53"
+      "upstream": "49140756ef5195894e658ebf319b506e694b0f97a7cfcd08f88ea9fe0bc178ed"
     },
     "ENGINEERING.md": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "abae1b7314d49b0aeef19555ce5199decf170cb4feaae3ddb340bdb3e4a79c63"
+      "upstream": "9ee3c850e8fafe7563ee2f932d800ee0149fc388a1ab510b67a91dba98959ad9"
     },
     "Makefile": {
       "ownership": {
@@ -554,7 +560,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "53a5380eef31fcec7864a6b78d69e1ceb76a30f7b2a80df49413611398b5e49a"
+      "upstream": "b40da735cd67db5733beca306c1e8b085c2911e64ac1cb53e1b41ff05b2657b4"
     },
     "engineering": {
       "ownership": {

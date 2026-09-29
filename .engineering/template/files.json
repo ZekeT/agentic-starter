@@ -52,6 +52,7 @@
     ".engineering/engineering/transaction.py": ".engineering/engineering/transaction.py",
     ".engineering/engineering/updates.py": ".engineering/engineering/updates.py",
     ".engineering/engineering/verification.py": ".engineering/engineering/verification.py",
+    ".engineering/engineering/verification_carry.py": ".engineering/engineering/verification_carry.py",
     ".engineering/engineering/verification_checkout.py": ".engineering/engineering/verification_checkout.py",
     ".engineering/engineering/verification_inputs.py": ".engineering/engineering/verification_inputs.py",
     ".engineering/engineering/verification_snapshot.py": ".engineering/engineering/verification_snapshot.py",

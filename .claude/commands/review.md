@@ -42,3 +42,12 @@ follow the incremental evidence procedure; present updated acceptance scope.
 Pause after two unsuccessful attempts at one finding or before undoing a settled
 decision, use focused `/grill-me`, and record the human-agreed resolution first.
 Material scope expansion returns to `/to-spec` and `/to-tickets`.
+
+For carried snapshots only, the implementer may run `verify check`. A clean rebase
+can carry independent reports through `verify prepare` when the own patches,
+plan, tools and checks are unchanged and upstream paths do not overlap scope or
+explicit inputs. Reports record `carried_from`; fresh checks are required before
+PASS. Failed checks drop the carried behavioral report and require independent
+review. Other changes follow review corrections; never self-certify or manually
+relabel reports. Publication accepts current carried PASS evidence and still
+requires the remote base tip recorded at the latest prepare.

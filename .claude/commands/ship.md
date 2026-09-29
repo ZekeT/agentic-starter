@@ -33,3 +33,12 @@ reuse saved scoped authorization and current evidence. The command reconciles
 actual Git/provider state, reuses the existing commit and PR/MR, and skips an
 already completed push. A transport failure alone does not repeat verification.
 Stop on uncertain lookup or changed inputs; never recover with automatic force-push.
+
+For carried snapshots only, the implementer may run `verify check`. A clean rebase
+can carry independent reports through `verify prepare` when the own patches,
+plan, tools and checks are unchanged and upstream paths do not overlap scope or
+explicit inputs. Reports record `carried_from`; fresh checks are required before
+PASS. Failed checks drop the carried behavioral report and require independent
+review. Other changes follow review corrections; never self-certify or manually
+relabel reports. Publication accepts current carried PASS evidence and still
+requires the remote base tip recorded at the latest prepare.

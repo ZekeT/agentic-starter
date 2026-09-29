@@ -88,6 +88,15 @@ authorizes local commits only. `/ship` after completed review accepts the unchan
 presented scope and authorizes scoped commits, push and PR/MR creation; explicit
 narrower instructions still apply.
 
+For carried snapshots only, the implementer may run `verify check`. A clean rebase
+can carry independent reports through `verify prepare` when the own patches,
+plan, tools and checks are unchanged and upstream paths do not overlap scope or
+explicit inputs. Reports record `carried_from`; fresh checks are required before
+PASS. Failed checks drop the carried behavioral report and require independent
+review. Other changes follow review corrections; never self-certify or manually
+relabel reports. Publication accepts current carried PASS evidence and still
+requires the remote base tip recorded at the latest prepare.
+
 ### Try it and direct corrections
 
 Run the supplied example and compare its output with your request. Read the
@@ -556,7 +565,7 @@ Adoption seeds it from the template copy (`.engineering/template/config.toml` in
 the maintainer checkout, which is maintainer source). Updates never overwrite its
 values: they validate it, refuse to plan while it is invalid, and apply
 configuration schema migrations shown as `MIGRATE` in the preview; schema 2 adds
-`[review]` with `documentation = ["README.md", "docs/**"]` and an empty
+`[review]` with `documentation = ["README.md", "docs/**/*.md"]` and an empty
 `sensitive` list, applied only with the approved update. Installations
 that recorded it as managed move it to project ownership on their next update,
 keeping its values.

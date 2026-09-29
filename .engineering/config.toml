@@ -26,5 +26,5 @@ legacy_history = "snapshot"
 
 [review]
 # Maintainer policy docs ship as agent policy; only project docs are documentation.
-documentation = ["docs/**"]
+documentation = ["docs/**/*.md"]
 sensitive = []

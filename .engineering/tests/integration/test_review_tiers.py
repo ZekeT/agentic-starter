@@ -358,7 +358,10 @@ def test_generated_and_adopted_projects_share_review_defaults(pristine):
         for kind in ("generated", "adopted")
     ]
     assert settings[0] == settings[1]
-    assert settings[0] == {"documentation": ["README.md", "docs/**"], "sensitive": []}
+    assert settings[0] == {
+        "documentation": ["README.md", "docs/**/*.md"],
+        "sensitive": [],
+    }
 
 
 @consumers
