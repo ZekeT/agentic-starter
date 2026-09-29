@@ -19,7 +19,7 @@ D, E and F remain in [intent](intent.md).
 | [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | ready-for-agent |
 | [11 Declare a review tier checked against a starter-rule floor](issues/11-declared-review-tier-and-floor.md) | None | completed — merged in [PR #39](https://github.com/ZekeT/agentic-starter/pull/39) |
 | [12 Project review settings enable the documentation tier](issues/12-project-review-settings.md) | 11 | completed — merged in [PR #40](https://github.com/ZekeT/agentic-starter/pull/40) (local merge commit 21ec8b6) |
-| [13 Carry reviewer reports across a clean rebase](issues/13-carried-evidence.md) | 11 (serialized after 12) | blocked on human fix instructions — behavioral FAIL (template module omission and stale policy eval); maintainability/security PASS |
+| [13 Carry reviewer reports across a clean rebase](issues/13-carried-evidence.md) | 11 (serialized after 12) | corrections implemented — independent reverification pending |
 
 Order agreed 2026-09-28: slice B 11 → 12 → 13 (serial; shared evidence and policy files) → 06 → 09 → 10 → 08. Each slice updates consumer generation,
 adoption/update behavior, documentation and evals, not only the maintainer

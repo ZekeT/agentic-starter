@@ -876,14 +876,15 @@
     },
     ".engineering/evals/cases/008-bounded-corrections.yaml": {
       "executable": false,
-      "owned_sha256": "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3",
+      "owned_sha256": "f01545e4fbe1909a7e0cad628bc4ee836876a6a265f966cd788ad0c71f35cd79",
       "ownership": {
         "mode": "file"
       },
       "previous": [
-        "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713"
+        "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713",
+        "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3"
       ],
-      "sha256": "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3"
+      "sha256": "f01545e4fbe1909a7e0cad628bc4ee836876a6a265f966cd788ad0c71f35cd79"
     },
     ".engineering/evals/cases/009-publication.yaml": {
       "executable": false,
