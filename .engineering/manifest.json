@@ -255,7 +255,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d",
+      "owned_sha256": "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1",
       "ownership": {
         "mode": "file"
       },
@@ -270,9 +270,10 @@
         "1f9935ddabca47c23f5b6012ea188bdeba3bff82ba92123b64102542637701ff",
         "61c218461a668b80001ab1eaa8729928d09f986137d6dc17fa4951043680b95c",
         "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7",
-        "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053"
+        "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053",
+        "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d"
       ],
-      "sha256": "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d"
+      "sha256": "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -719,7 +720,7 @@
     },
     ".engineering/engineering/verification.py": {
       "executable": false,
-      "owned_sha256": "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9",
+      "owned_sha256": "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119",
       "ownership": {
         "mode": "file"
       },
@@ -731,9 +732,10 @@
         "1aa510bd0f66df4d3863c9facea654a4a9d2b9f452e4bcf91a9b58159390e3e8",
         "ea9638f16e800d4cbee4f4dd9ed169eefce1a55b932d7d1d1e8a73069ee5f5e6",
         "912b876504bc8eb9a6db10fe7e1d9d04f345dfc529fdb301669d41f3b22eedfc",
-        "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b"
+        "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b",
+        "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9"
       ],
-      "sha256": "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9"
+      "sha256": "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119"
     },
     ".engineering/engineering/verification_carry.py": {
       "executable": false,

@@ -10,7 +10,7 @@ core prerequisites (including Node for skill installation) from optional ones.
 
 **Blocked by:** 05 (Enable and disable navigation).
 
-**Status:** implemented — verification incomplete (maintainer suite timeout)
+**Status:** implemented — verification in progress with approved 30-minute limit
 
 - [x] Updating an installation with a Graft index or recorded Graft installation keeps provider `graft`.
 - [x] Updating an installation with neither proposes `graft → none` in the preview with re-enable instructions.
@@ -78,3 +78,13 @@ the existing limit before obtaining current PASS evidence.
 This tracking update changes the snapshot; the results above are historical
 proof of the named implementation snapshot, not a current PASS. Acceptance and
 publication remain outstanding.
+
+### Authorized timeout correction (2026-09-30)
+
+The human reported a 21m18s suite runtime and subsequently authorized increasing
+per-check verification timeouts from 900 to 1,800 seconds and running verification.
+This supersedes the earlier instruction to retain the 900-second limit. Updated
+the verifier and its documented limit; all required check commands remain intact.
+The earlier `/ship` request authorizes publication after current proof is complete.
+Current results remain in the verification record; the full-check criterion stays
+unchecked until independent verification completes.

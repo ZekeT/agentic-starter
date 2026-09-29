@@ -312,7 +312,7 @@ def operate(root: Path, args: argparse.Namespace) -> int:
                 data["reports"].pop("behavioral", None)
             write_files(root, {name: encoded(data)})
             for command in data["inputs"]["plan"]["checks"]:
-                data["checks"].append(run_command(checkout, command, timeout=900))
+                data["checks"].append(run_command(checkout, command, timeout=1800))
                 if carried and data["checks"][-1]["exit_code"]:
                     data["reports"].pop("behavioral", None)
                 write_files(root, {name: encoded(data)})
