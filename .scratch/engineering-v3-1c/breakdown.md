@@ -13,7 +13,7 @@ D, E and F remain in [intent](intent.md).
 | [03 Derive verification requirements from role and ownership](issues/03-role-based-verification.md) | 01, 02 | completed — merged in [PR #36](https://github.com/ZekeT/agentic-starter/pull/36) |
 | [04 Make Graft an optional capability in dependencies and doctor](issues/04-optional-graft-dependency.md) | None | completed — merged in [PR #35](https://github.com/ZekeT/agentic-starter/pull/35) |
 | [05 Enable and disable navigation](issues/05-toggle-navigation.md) | 02, 04 | completed — merged in [PR #37](https://github.com/ZekeT/agentic-starter/pull/37) |
-| [06 Upgrade existing navigation and document prerequisites](issues/06-navigation-upgrade-and-prerequisites.md) | 05 | implemented — independent verification pending |
+| [06 Upgrade existing navigation and document prerequisites](issues/06-navigation-upgrade-and-prerequisites.md) | 05 | implemented — verification incomplete; full maintainer suite timed out twice |
 | [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | ready-for-agent |
 | [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
 | [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | ready-for-agent |

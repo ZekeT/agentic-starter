@@ -10,7 +10,7 @@ core prerequisites (including Node for skill installation) from optional ones.
 
 **Blocked by:** 05 (Enable and disable navigation).
 
-**Status:** implemented — independent verification pending
+**Status:** implemented — verification incomplete (maintainer suite timeout)
 
 - [x] Updating an installation with a Graft index or recorded Graft installation keeps provider `graft`.
 - [x] Updating an installation with neither proposes `graft → none` in the preview with re-enable instructions.
@@ -54,3 +54,27 @@ Independent verification uses change `v3-1c-06` and plan
 source of current check and reviewer results: `./engineering verify status
 --change v3-1c-06`. Full checks and fresh maintainability, behavioral and security
 review remain pending. Human acceptance and publication are separate and pending.
+
+### Independent review (2026-09-30)
+
+Implementation commit `aaf517a`, snapshot
+`654e4fb08d4afe52301ec8bc85d6885a930466f5cf8597f485973afe6f041f23`:
+maintainability PASS and security PASS, with no implementation findings.
+Behavioral FAIL because the full required proof is unavailable: both recorded
+runs passed `make check` and `make engineering-check`, but `make engineering-test`
+timed out after 900 seconds. The second run used approved access to the normal
+uv cache instead of the initial sandbox workaround. Neither run reported a test
+failure before timing out; this does not establish a full-suite pass.
+
+All 93 targeted tests passed during implementation. The independent verifier also
+ran the eval command separately: 13 static cases passed and five optional prompt
+cases were skipped. Both timeout histories and the reviewer reports are preserved
+under `.engineering/state/verification/` for change `v3-1c-06`.
+
+The human chose to keep the 900-second limit and hand off incomplete verification.
+No timeout or check command has been changed. The full-check criterion remains
+unchecked. A future fresh verification session must resolve suite runtime within
+the existing limit before obtaining current PASS evidence.
+This tracking update changes the snapshot; the results above are historical
+proof of the named implementation snapshot, not a current PASS. Acceptance and
+publication remain outstanding.
