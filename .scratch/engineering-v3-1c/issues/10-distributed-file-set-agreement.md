@@ -12,12 +12,38 @@ distributed consumer file set used by both generation and update.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** implemented — independent verification pending
 
-- [ ] Investigate why generation (template build) and update (distribution manifest) disagree, and which set is correct for consumer projects (greenfield payload decisions in earlier tickets may apply; external migration tooling is intentionally not shipped to consumers).
-- [ ] Generation and update derive the consumer file set from one source.
-- [ ] A command-level test generates a project, then updates it from the same starter checkout, and asserts the update preview has no ADD/MERGE/REMOVE actions.
-- [ ] Existing consumer projects that already received extra files are handled explicitly (kept, or removed with preview), never silently.
+- [x] Investigate why generation (template build) and update (distribution manifest) disagree, and which set is correct for consumer projects (greenfield payload decisions in earlier tickets may apply; external migration tooling is intentionally not shipped to consumers).
+- [x] Generation and update derive the consumer file set from one source.
+- [x] A command-level test generates a project, then updates it from the same starter checkout, and asserts the update preview has no ADD/MERGE/REMOVE actions.
+- [x] Existing consumer projects that already received extra files are handled explicitly (kept, or removed with preview), never silently.
 - [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
+
+## Implementation and handoff
+
+Branch: `fix/v3-1c-10-distributed-file-set`, based on `main` at `68490a0`,
+which includes ticket 06 / PR #42.
+
+Generation, manifest creation, adoption/update and legacy conversion resolve
+consumer content from `.engineering/template/files.json`. The source mapping
+selects the consumer Makefile and configuration; navigation content remains
+installed by its dependency. Generated manifests retain distribution hash history
+so the same-source update preserves metadata too. External migration tools,
+skills, evals and historical baselines stay in the source checkout.
+
+Command-level regressions in `.engineering/tests/test_template.py` cover an
+unchanged preview and apply, explicit retirement of pristine extra files,
+customization conflicts and preservation of unmanaged neighbors. Targeted
+validation passed 60 template/installation/navigation tests and 29 legacy/template
+tests. Typechecking and the maintainability gate passed (existing size warnings).
+
+Independent verification: change `v3-1c-10`, plan
+`.engineering/state/verification/v3-1c-10-plan.json`. Run
+`./engineering verify status --change v3-1c-10` for current checks and independent
+behavioral, maintainability and security reports. The unchecked full-check
+criterion above remains pending until the record establishes complete PASS.
+Human acceptance and publication are separate; neither is authorized by this
+implementation request.

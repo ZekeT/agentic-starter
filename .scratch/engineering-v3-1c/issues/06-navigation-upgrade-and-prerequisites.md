@@ -10,7 +10,9 @@ core prerequisites (including Node for skill installation) from optional ones.
 
 **Blocked by:** 05 (Enable and disable navigation).
 
-**Status:** implemented — verification in progress with approved 30-minute limit
+**Status:** completed — merged in [PR #42](https://github.com/ZekeT/agentic-starter/pull/42)
+
+Merge observed locally at `68490a0`, as reported by the human on 2026-09-30.
 
 - [x] Updating an installation with a Graft index or recorded Graft installation keeps provider `graft`.
 - [x] Updating an installation with neither proposes `graft → none` in the preview with re-enable instructions.
@@ -20,7 +22,7 @@ core prerequisites (including Node for skill installation) from optional ones.
 - [x] After `engineering update`, an existing `graft` installation must not fail `make check` with a misleading `graft: MISSING` merely because older records lack the launcher/guidance outputs — use a clearer status, state it in the update preview, or write the fixed launcher and guidance during the update (ticket 05 behavioral review).
 - [x] Command-level update fixture tests cover both upgrade paths and declined approval.
 - [x] Affected evals updated.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
 
@@ -88,3 +90,19 @@ the verifier and its documented limit; all required check commands remain intact
 The earlier `/ship` request authorizes publication after current proof is complete.
 Current results remain in the verification record; the full-check criterion stays
 unchecked until independent verification completes.
+
+### Verification and publication (2026-09-30)
+
+Published [PR #42](https://github.com/ZekeT/agentic-starter/pull/42) under the
+human's `/ship` authorization. Published head `0b32ad1`, verification snapshot
+`cf2cdc117adf23d73558ca052df93f741044d153bcb69596eac5b449809ad5ed`:
+`make check`, `make engineering-check`, `make engineering-test` and
+`make engineering-evals` all passed. The full suite passed 510 tests in 841.48
+seconds (14m01s); 13 static eval cases passed and five optional model-backed
+cases were skipped. Independent behavioral, maintainability and security reviews
+all passed. The per-check timeout is now 1,800 seconds.
+
+This delivery update and its matching breakdown status are local post-publication
+bookkeeping, outside the published verified head. They change the local snapshot
+and require evidence reassessment before any later publication. Merge remains
+pending.

@@ -7,6 +7,7 @@ from typing import Any
 
 from ..adoption import SEEDS, seed, template_manifest
 from ..config import object_value, safe_path, validate_config
+from ..distribution import content as distribution_content
 from ..installation import MANIFEST_PATH, STATE_PATH, build_state
 from ..ownership import (
     digest,
@@ -154,7 +155,7 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
             "hooks",
         }:
             spec = new_files[name]["ownership"]
-            incoming = owned_content(read_bytes(template, name), name, spec)
+            incoming = owned_content(distribution_content(template, name), name, spec)
             assert incoming is not None
             if spec["mode"] == "hooks":
                 current = owned_content(raw, name, spec)
@@ -182,7 +183,7 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
             else:
                 region = old_region(raw, name)
                 if name == "Makefile" and pristine:
-                    template_bytes = read_bytes(template, name)
+                    template_bytes = distribution_content(template, name)
                     assert template_bytes is not None
                     replacement = template_bytes
                 elif region is not None and (
@@ -223,7 +224,7 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
                     )
             result.add(name, replacement, replace=True)
         elif name in new_files and new_files[name]["ownership"]["mode"] == "file":
-            incoming = read_bytes(template, name)
+            incoming = distribution_content(template, name)
             if pristine or incoming == raw:
                 result.add(name, incoming, replace=True)
             else:
@@ -256,7 +257,7 @@ def plan(template: Path, root: Path, policy: str = "snapshot") -> Migration:
         spec = entry["ownership"]
         if spec["mode"] == "preserve":
             continue
-        incoming = read_bytes(template, name)
+        incoming = distribution_content(template, name)
         assert incoming is not None
         if name not in result.changes:
             current = read_bytes(root, name)
