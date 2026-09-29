@@ -79,7 +79,7 @@ until that change merges. A role change is visible in the diff. Configured appli
 `.engineering/bin/graft check` while `[navigation] provider = "graft"` (never
 with `none`). Add project-specific checks as needed.
 Formatting and graph building remain implementer preparation. Probes time out
-after 15 seconds, each check after 15 minutes. uv stays offline with interpreter
+after 15 seconds, each check after 30 minutes. uv stays offline with interpreter
 downloads disabled.
 
 ```bash

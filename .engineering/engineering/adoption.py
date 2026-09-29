@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .apply import Action, Plan, baseline
-from .capabilities import handover, plan_deselected
+from .capabilities import handover, plan_deselected, plan_registry, upgrade_navigation
 from .config import object_value, safe_path, validate_config
 from .inspection import INSPECTED, inspect_target
 from .installation import (
@@ -102,7 +102,7 @@ def seed(template: Path, name: str) -> bytes | None:
 
 
 def plan_configuration(plan: Plan) -> dict[str, Any]:
-    """Validate and schema-migrate project configuration; never overwrite values."""
+    """Validate configuration and preview explicit schema/navigation migrations."""
     from .settings import CONFIGURATION, MigrationGap, migrate, parse, validate
 
     local = read_bytes(plan.target, CONFIGURATION)
@@ -110,6 +110,10 @@ def plan_configuration(plan: Plan) -> dict[str, Any]:
     try:
         text, notes = migrate((raw or b"").decode())
         validate(plan.target, text)
+        if local is not None:
+            text, navigation = upgrade_navigation(plan, text, parse(plan.target, text))
+            if navigation:
+                notes.append(navigation)
     except MigrationGap as exc:
         raise ValueError(
             f"{CONFIGURATION}: {exc}; starter defect, not a project error: "
@@ -120,7 +124,7 @@ def plan_configuration(plan: Plan) -> dict[str, Any]:
             f"{CONFIGURATION}: {exc}; repair project configuration, then re-plan"
         ) from exc
     if local is not None and notes:
-        reason = f"Project configuration {', '.join(notes)}; values kept"
+        reason = f"Project configuration {', '.join(notes)}; other values kept"
         plan.actions.append(Action(CONFIGURATION, "MIGRATE", reason, text.encode()))
     return parse(plan.target, text)
 
@@ -262,10 +266,11 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
     removed = set(entries) - set(files)
     # Capability selection reads the migrated configuration the update proposes.
     config = plan_configuration(plan)
+    dependencies = plan_registry(plan)
     for name, entry in entries.items():
         if name not in files:
             plan.observed[name] = observe(target, name)
-            if transfer := handover(target, config, name, entry, legacy):
+            if transfer := handover(target, dependencies, config, name, entry, legacy):
                 # Visible ownership transfer: the selected capability's dependency
                 # installs and tracks this content from now on.
                 plan.actions.append(transfer)
@@ -297,7 +302,7 @@ def plan_installation(template: Path, target: Path, operation: str = "adopt") ->
                         remove_owned(local, name, spec),
                     )
                 )
-    plan_deselected(plan, config, removed, legacy)
+    plan_deselected(plan, dependencies, config, removed, legacy)
     for name in SEEDS:
         plan.observed[name] = observe(target, name)
         if read_bytes(target, name) is None:

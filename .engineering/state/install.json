@@ -118,7 +118,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d"
+      "upstream": "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -130,7 +130,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9330c14717adfaed124b6a5fe18e1bb1e9551e020b6f5a0aa5cf4b4961cf21ad"
+      "upstream": "0f694ea72f3485e5f3535fa65b2da75b51ac56e899d60707267755a6739bbfa9"
     },
     ".engineering/engineering/apply.py": {
       "ownership": {
@@ -142,7 +142,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "f5350563238266c59320aadaee1c87670c5d8ef52d6f5427b6a60f7a662d6d16"
+      "upstream": "32d7901b8c2f30476ae018e823cf95a6adbc2bf3107a060fde0272ff27fefef1"
     },
     ".engineering/engineering/cli.py": {
       "ownership": {
@@ -292,7 +292,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c452c4823c522a0b89092cc9a4a41d578e8811347eb8257e58fa9ed2cd42fb68"
+      "upstream": "dac367e2adbd1acafbea0e0895c4008868e976421ccc9df48140b2780ab71653"
     },
     ".engineering/engineering/settings.py": {
       "ownership": {
@@ -328,7 +328,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9"
+      "upstream": "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119"
     },
     ".engineering/engineering/verification_carry.py": {
       "ownership": {
@@ -436,7 +436,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d63631030ef1a2f642ddec5ecf31b0c388ce38b67ecca6f45f3e697f27a0270d"
+      "upstream": "df1e0562af3956ef65380e1d60a151b392ab30e73ae51b2a7a148013269a9164"
     },
     ".engineering/evals/cases/013-review-tiers.yaml": {
       "ownership": {
@@ -547,7 +547,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "9ee3c850e8fafe7563ee2f932d800ee0149fc388a1ab510b67a91dba98959ad9"
+      "upstream": "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07"
     },
     "Makefile": {
       "ownership": {
