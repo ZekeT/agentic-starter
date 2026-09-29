@@ -56,6 +56,15 @@ have the verifier run recorded checks, and record independent reports. `/review`
 obtains missing/stale proof and reuses current evidence. If fresh reviewers are
 unavailable, report INCOMPLETE and give a fresh-session handoff; never self-certify.
 
+For carried snapshots only, the implementer may run `verify check`. A clean rebase
+can carry independent reports through `verify prepare` when the own patches,
+plan, tools and checks are unchanged and upstream paths do not overlap scope or
+explicit inputs. Reports record `carried_from`; fresh checks are required before
+PASS. Failed checks drop the carried behavioral report and require independent
+review. Other changes follow review corrections; never self-certify or manually
+relabel reports. Publication accepts current carried PASS evidence and still
+requires the remote base tip recorded at the latest prepare.
+
 ## Agent skills
 
 ### Issue tracker

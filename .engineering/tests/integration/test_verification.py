@@ -154,13 +154,14 @@ def change_plan(root, **changes):
     path.write_text(json.dumps({**plan, **changes}))
 
 
-def test_moved_comparison_branch_invalidates_even_with_same_merge_base(repo):
+def test_moved_comparison_branch_preserves_same_merge_base_evidence(repo):
     complete(repo)
     old = git(repo, "rev-parse", "main")
     tree = git(repo, "rev-parse", "main^{tree}")
     new = git(repo, "commit-tree", tree, "-p", old, "-m", "base advanced")
     git(repo, "update-ref", "refs/heads/main", new)
-    assert cli(repo, "status", "--change", "example", status=1)["status"] == "STALE"
+    assert cli(repo, "status", "--change", "example")["status"] == "PASS"
+    assert prepare(repo)["status"] == "PASS"
 
 
 def test_untracked_and_deleted_content_survives_commit(repo):

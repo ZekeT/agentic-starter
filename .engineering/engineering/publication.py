@@ -15,7 +15,7 @@ from .transaction import write_files
 from .verification import location, outcome, read_record
 from .verification_checkout import validate_checkout
 from .verification_inputs import strings
-from .verification_snapshot import snapshot
+from .verification_snapshot import identity, snapshot
 
 
 def add_parser(sub: Any) -> None:
@@ -39,7 +39,7 @@ def current(root: Path, change: str) -> dict[str, Any]:
     """Consume current evidence without rerunning checks or semantic review."""
     data = read_record(root, location(root, change))
     token, inputs = snapshot(root, data["inputs"]["plan"])
-    if token != data["snapshot"] or inputs != data["inputs"]:
+    if token != data["snapshot"] or identity(inputs) != identity(data["inputs"]):
         raise ValueError("STALE evidence: return to verification and acceptance review")
     validate_checkout(safe_path(root, data.get("checkout", "")), inputs)
     if outcome(data)["status"] != "PASS":

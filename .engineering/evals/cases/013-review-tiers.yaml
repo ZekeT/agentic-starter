@@ -24,9 +24,14 @@ shell: |
   assert 'recorded decisions' in verifier and 'recorded decisions' in command
   for phrase in ('[review]', 'can never reduce them', 'stricter result', 'recorded decisions'):
       assert phrase in guide, phrase
+  for name in ('CLAUDE.md', 'REVIEW.md', '.engineering/docs/verification.md',
+               '.claude/commands/review.md', '.claude/commands/ship.md'):
+      text = Path(name).read_text()
+      assert 'carried snapshots only' in text.lower(), name
+      assert 'carried_from' in text and 'remote base tip' in text, name
   import tomllib
   template = tomllib.loads(Path('.engineering/template/config.toml').read_text())['review']
-  assert template == {'documentation': ['README.md', 'docs/**'], 'sensitive': []}
+  assert template == {'documentation': ['README.md', 'docs/**/*.md'], 'sensitive': []}
   own = tomllib.loads(Path('.engineering/config.toml').read_text())['review']
-  assert own['documentation'] == ['docs/**'], own
+  assert own['documentation'] == ['docs/**/*.md'], own
   PY

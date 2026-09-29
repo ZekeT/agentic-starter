@@ -94,8 +94,9 @@ exit zero when bookkeeping succeeds even if proof is incomplete; inspect their
 JSON status. No result grants acceptance or publication authorization.
 
 Snapshots include tracked context, explicit inputs, working bytes/executable bits,
-comparison base/tip, plan and tool-version outputs. Content-preserving commits
-retain proof; changed inputs do not. Base movement is assessed locally without
+merge-base, plan and tool-version outputs. The base tip is advisory recorded data,
+excluded from identity: fetching an advanced base without rebasing retains proof.
+Content-preserving commits retain proof; changed identity inputs do not. Base movement is assessed locally without
 fetching. Elapsed time and failed transport alone do not invalidate proof.
 
 Verification always prepares an isolated temporary checkout under ignored local
@@ -157,7 +158,7 @@ Starter-owned rules always apply:
 
 - `sensitive`: dependency manifests and locks (`pyproject.toml`, `uv.lock`,
   `package*.json`, `.engineering/dependencies.toml`), `.claude/settings*.json`,
-  hooks, `.claude/statusline.sh`, `.github/workflows/**`, make recipes
+  hooks, `.pre-commit-config.yaml`, `.envrc`, `.claude/statusline.sh`, `.github/workflows/**`, make recipes
   (`Makefile`, `GNUmakefile`, `makefile`, `*.mk`), `.engineering/scripts/**`
   and Engineering launchers. In the maintainer checkout also the dependency
   (including Graft), skill-installation, apply, transaction, update, migration,
@@ -173,14 +174,14 @@ Review settings live in project configuration:
 
 ```toml
 [review]
-documentation = ["README.md", "docs/**"]
+documentation = ["README.md", "docs/**/*.md"]
 sensitive = []
 ```
 
 `documentation` names paths eligible for the documentation tier, such as domain
 context and ADRs; `sensitive` adds project paths that always need security
 review. A pattern without `/` matches a file name at any depth; other patterns
-match the repository path, where `*` also crosses directories; a leading `/`
+match the repository path, where `*` also crosses directories and `**/` includes zero directories; a leading `/`
 anchors a file name to the root. Project settings add to the starter rules and
 can never reduce them. The floor evaluates both the base and the proposed
 settings and keeps the stricter result for each path, so a change cannot lower
@@ -249,9 +250,38 @@ PASS; missing roles the tier requires remain INCOMPLETE.
 Serialize evidence writes: run checks before recording the behavioral report and
 record reports one at a time. Never edit stored records manually. If inputs change,
 prepare again and obtain fresh proof; never relabel old findings with a new token.
-Changed inputs clear active reports and checks. Preparation saves the previous
+Outside the clean-rebase exception below, changed inputs clear active reports and checks. Preparation saves the previous
 record in the new checkout's sibling `previous.json`, exposed as
-`previous_evidence`. This is historical reference only, never current proof.
+`previous_evidence`. It remains historical evidence; only the automatic carry-forward below can
+rebind its reports to current proof.
+
+## Carried evidence after a clean rebase
+
+`verify prepare` automatically carries reports when the merge-base advances and
+each scoped path's own patch is identical, the plan, tools and required checks
+are unchanged, and no upstream path changed between merge-bases intersects the
+plan's paths or explicit inputs. Installed dependency evidence must also match.
+The previous checkout must remain intact. Base-tip movement alone preserves
+current proof; the latest prepare records the current advisory tip.
+
+Each carried report records `carried_from` naming its prior snapshot. Previous
+records remain available through `previous_evidence`. Only prepare may rebind
+reports; submitting a report with `carried_from` or manually relabelling old
+reports is forbidden.
+
+A carried snapshot starts with no checks and is INCOMPLETE until `verify check`
+passes. For carried snapshots only, the implementer may run `verify check`:
+this deterministic rerun preserves carried reports and grants no self-review
+permission. A failing check yields FAIL and drops the behavioral report; a fresh
+independent behavioral reviewer must investigate and attest after correction.
+Without carried reports, checks still clear behavioral proof before running.
+Interrupted runs cannot satisfy the full required check list.
+
+Any changed patch, plan, tools, checks or overlapping upstream path carries
+nothing. Follow the review-corrections procedure using the previous evidence.
+Publication accepts current carried PASS evidence without another review round,
+but still requires the remote base tip to equal the latest prepared tip. Human
+acceptance of the current presented scope remains required.
 
 ## Interpret proof honestly
 

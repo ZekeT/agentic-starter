@@ -366,7 +366,7 @@ def test_review_settings_arrive_only_with_the_approved_update(installation, caps
     migrated = tomllib.loads(text)
     assert migrated["schema_version"] == 2
     assert migrated["review"] == {
-        "documentation": ["README.md", "docs/**"],
+        "documentation": ["README.md", "docs/**/*.md"],
         "sensitive": [],
     }
     assert migrated["maintainability"]["warn_file_lines"] == 250
