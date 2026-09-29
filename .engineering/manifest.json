@@ -132,31 +132,6 @@
       "previous": [],
       "sha256": "30fc7259142bf0aa1a7c72a1afa2ef58dc9b4479e4ac8eb18ce18026190fe9e9"
     },
-    ".claude/skills/migrate-from-openspec/SKILL.md": {
-      "executable": false,
-      "owned_sha256": "cb68c5bb11db6a2301c720ef3683d431f7bfd8dae7b32ed02da18897ff2c3772",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "4632650c3d77247ae29a49e8665671a19e4c8b451983ae3c329fe73b502cb188",
-        "9c1414e0975d38f4f3cca2606a0d46c823f329f3afcb899de2ee451d597cdee6",
-        "6732314a1ec4455781bd0b15190889345eef9654a370b9fe9d7aa6af3213c5f5"
-      ],
-      "sha256": "cb68c5bb11db6a2301c720ef3683d431f7bfd8dae7b32ed02da18897ff2c3772"
-    },
-    ".claude/skills/migrate-from-openspec/references/application-manifest.md": {
-      "executable": false,
-      "owned_sha256": "8adf650b539185be8d209ba831abcff4c462e8052b8d96c0a63917d775c56b4f",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "42059a59931bde544a1bbbb90c9cbb49c36ed549b1cb3806f444cb64d5065d6b",
-        "f05c586f5f9e16e8f30ef839acf57c287460d871b635d350d86cbef0ed456eea"
-      ],
-      "sha256": "8adf650b539185be8d209ba831abcff4c462e8052b8d96c0a63917d775c56b4f"
-    },
     ".claude/statusline.sh": {
       "executable": true,
       "owned_sha256": "7347d9d2d35308e6bb437d65c0d64a5e15d15b6f8df745472d703e004bc4a051",
@@ -183,9 +158,10 @@
       },
       "previous": [
         "2030200d270c6ec908856b4dd81e680aa4ae94323e7fe4c6db652af0c087380c",
-        "4b8d9b439c6bf387aa929a7648a35e617bfa068ca23dcbda687318bd3469a124"
+        "4b8d9b439c6bf387aa929a7648a35e617bfa068ca23dcbda687318bd3469a124",
+        "5ac849a1c8dbd6120c43d517cbbbd7f4dbb6a2b4a3bdecab4c25925b840e4e30"
       ],
-      "sha256": "5ac849a1c8dbd6120c43d517cbbbd7f4dbb6a2b4a3bdecab4c25925b840e4e30"
+      "sha256": "df96453d0c77d5317b0c6767f468d4851397e82caab525bf9a08e4737c007e17"
     },
     ".engineering/dependencies.toml": {
       "executable": false,
@@ -286,7 +262,7 @@
     },
     ".engineering/engineering/adoption.py": {
       "executable": false,
-      "owned_sha256": "0f694ea72f3485e5f3535fa65b2da75b51ac56e899d60707267755a6739bbfa9",
+      "owned_sha256": "53cf22c62a5e531b4631cc0f857339555c278a823aa3748d894759d8c59e1101",
       "ownership": {
         "mode": "file"
       },
@@ -298,9 +274,10 @@
         "2d2bef65aa68fbdaf6cb3e08ed79bd181503db7bb64f53e81833157bdeb3d50f",
         "c5631914909d187e522ebc20cb8ada3d35d9a9697d784bec0cbef4d0c259496d",
         "9330c14717adfaed124b6a5fe18e1bb1e9551e020b6f5a0aa5cf4b4961cf21ad",
-        "33b29bd1f62be9bdc736d72fe15ebe9664dadb7ac9c303c3f1a72c52917930af"
+        "33b29bd1f62be9bdc736d72fe15ebe9664dadb7ac9c303c3f1a72c52917930af",
+        "0f694ea72f3485e5f3535fa65b2da75b51ac56e899d60707267755a6739bbfa9"
       ],
-      "sha256": "0f694ea72f3485e5f3535fa65b2da75b51ac56e899d60707267755a6739bbfa9"
+      "sha256": "53cf22c62a5e531b4631cc0f857339555c278a823aa3748d894759d8c59e1101"
     },
     ".engineering/engineering/apply.py": {
       "executable": false,
@@ -378,6 +355,15 @@
       ],
       "sha256": "19b9bc02b90cac6613574ce1e9ed192f1cbdedf8c223c3d80a996fff665686c1"
     },
+    ".engineering/engineering/distribution.py": {
+      "executable": false,
+      "owned_sha256": "6c2c5a8e7e68a9f14343cb2ed486332800715a5b26cfe85430ad9aadd57a701c",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "6c2c5a8e7e68a9f14343cb2ed486332800715a5b26cfe85430ad9aadd57a701c"
+    },
     ".engineering/engineering/doctor.py": {
       "executable": false,
       "owned_sha256": "ca91513d8cd7ccecd03a83dbb43713119156d4d5ea693546087145769a683caa",
@@ -404,15 +390,6 @@
         "14730dbd77d6082dcc0f12b1bbce8cde7c3496d77fcefd726ab21218c206c3b2"
       ],
       "sha256": "7e1ba332d2d64c2523fd7d68d7a38a23f02bbbe41000faf23c5fe920ec1e7920"
-    },
-    ".engineering/engineering/eval_config.py": {
-      "executable": false,
-      "owned_sha256": "de0906579a396215289ed825f14e46d964fc05fc53903123af2f3db00f4c881f",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "de0906579a396215289ed825f14e46d964fc05fc53903123af2f3db00f4c881f"
     },
     ".engineering/engineering/graft-package-lock.json": {
       "executable": false,
@@ -472,127 +449,6 @@
         "2547ce676863c8cb5570487dd85fa622ed1fa47990996c0fe7b6c7574016e311"
       ],
       "sha256": "009631470ff74f53bd3172a294e007297128d99db7a55def6ad8fdb22ee011eb"
-    },
-    ".engineering/engineering/migrate/__init__.py": {
-      "executable": false,
-      "owned_sha256": "f07058ec3465b8df2f65c9e19ce292d32fbfbf6d22014b6e98de1e03fea4333f",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "f07058ec3465b8df2f65c9e19ce292d32fbfbf6d22014b6e98de1e03fea4333f"
-    },
-    ".engineering/engineering/migrate/application.py": {
-      "executable": false,
-      "owned_sha256": "d9c18ce19cc5fa02f5c41a308af96d725d1e5843d66625957a48a963fb49639d",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "64def359f97cd7bed7ff870846dedfee571208635569fb775a4dcf13e6f61d7a",
-        "d777d981883c655fa43a6a622b9575a14b806e358ce15d5ae5cb3716586e891c"
-      ],
-      "sha256": "d9c18ce19cc5fa02f5c41a308af96d725d1e5843d66625957a48a963fb49639d"
-    },
-    ".engineering/engineering/migrate/closure.py": {
-      "executable": false,
-      "owned_sha256": "b796bc6978b41688b1fa884538e8c044fcf468616d1a5948aee9bc3f0b7fe5a4",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "b796bc6978b41688b1fa884538e8c044fcf468616d1a5948aee9bc3f0b7fe5a4"
-    },
-    ".engineering/engineering/migrate/common.py": {
-      "executable": false,
-      "owned_sha256": "6a4bc75f4441d9dcaf5a56ba6bcfb5b86a6a31b3427200b96afc403ff9604fc7",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "4d2a71783701f8c24894be3b08e5ec724e3d93061ffb0fb7117c21a1aba29646",
-        "1cc0268ff621068540d4ed5144194d367a27920653c193a541a09881972cf8b4",
-        "2937e17830b7bb64e87b023fc051d2826a6bf767aaf56113ae853f8dda77bcca",
-        "25ec2fb6393a3e4cbeaf0a62d46d395d6e8d20db8d5c3440610668552380538c",
-        "4bd5f8a5b3781ea4ad9b2a4f00be1b6e84dbf3e3938d3ea062fac00a94532954"
-      ],
-      "sha256": "6a4bc75f4441d9dcaf5a56ba6bcfb5b86a6a31b3427200b96afc403ff9604fc7"
-    },
-    ".engineering/engineering/migrate/finalize.py": {
-      "executable": false,
-      "owned_sha256": "efeb24348eb73e5e5e1ca4fa1f558e90c6424a212d3131c666f4505cc6e2ac66",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "b4606d0e9f437e8cd0a211c8b5784e10d70a08de73074154bf8dac765d2533e5",
-        "50b936b457d2c36a2a62b8948586bf1087b7c69a09e9b28d6ae4db2adf72db82",
-        "c62b745be8dab5588a5efcbfd50d2fcc71dfe44fe6c22344f131998e3202b136"
-      ],
-      "sha256": "efeb24348eb73e5e5e1ca4fa1f558e90c6424a212d3131c666f4505cc6e2ac66"
-    },
-    ".engineering/engineering/migrate/legacy.py": {
-      "executable": false,
-      "owned_sha256": "74508090cc05c2b714dd6e0ff9c022bd50ab1a6f297b2cc3e51acc42cc3e44f3",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "cb5ecc619778b65d36a062138ef5f07838b6a2e4c282c3d0835ee8b438bd7199",
-        "c4f707470d503bde32e35bc719ed0ca350b8c257cc79ed6eba360bbe2a46f41b",
-        "d8b7328e13a21667005abc93ed12e547df4ae3f46abdf89a1631c206af89c4a8",
-        "47f6a4a666c24247c1c10fe41e699958e28844b7710e67b46b7ac604fadfa0dd",
-        "72bddceee08d70d286ecb409315c8e1e63b8401b0e95c84954673960b0a47948",
-        "b9d1f1c7bfc120092a4353b1b661ea7c36b740e487948b25efe79ab1aaee10cc",
-        "d91391712dd018fca6fc6c3c0d58bbb7b0a31413b8c966bbab6815710a916fef",
-        "d588d12d8301363f8a769da2204b27a1dadd6e04a6d69a94d9996aaf30004dc0",
-        "f556987c9a6da3d0f92a1dddb23454a4ef0666fbbab3721d935a1f46fec1431a",
-        "212be79362035785a07555fdd451f83da2de7630b997d42dded543687e770f2c",
-        "a2107910a455a98d9de3892366b50e83a35951d04f5762d5e1137f1fbc67a7c4",
-        "100eeaa32f95182391a32e72f4b626a849f11c6b79b00bbcac100ea9cff21426"
-      ],
-      "sha256": "74508090cc05c2b714dd6e0ff9c022bd50ab1a6f297b2cc3e51acc42cc3e44f3"
-    },
-    ".engineering/engineering/migrate/openspec.py": {
-      "executable": false,
-      "owned_sha256": "022c085f3cc2ed2ab80ba549e1b7976f16db09329e8b3a0dc7c148dafd5e3f45",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "4dbf8284c897b8ecfdde357e95fbd985aef600343818d1ba983125d72d2bf420",
-        "01e8fffe0f7e19e43b7965215759761381bb5e7775b2faf22a1cd5a2779cb90a",
-        "4caf485a690678290e8404132a3b18ead92cbba3e65b5c4987eae97035db31ec",
-        "0c82c703313e6d0ed3c2716b7b309194e9753506ff420c49bb84f3a1dcb9ccee",
-        "0e08055e032cfae40a39f6c0f3e0876c84f1ea1cd826ff0ae057eb8d831afab1",
-        "e4258a1cae5e2b9c9500e5b9285d6070f8bc72c6bcaff3326472bcc3d96a9426",
-        "24888dae477dd7b247a16e53680ed2473d53562f692f91312906ff8a059ee565",
-        "bad1e28ad5000544d8b602af526882aeace7634a8c380e2100960ad134051567"
-      ],
-      "sha256": "022c085f3cc2ed2ab80ba549e1b7976f16db09329e8b3a0dc7c148dafd5e3f45"
-    },
-    ".engineering/engineering/migrate/validation.py": {
-      "executable": false,
-      "owned_sha256": "95a83bd79812e01d233c9a71b6bc8d7fd5937b7a08e7ad5658cf5ff861d5fda7",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "cbec755968f4e8768e6bcb0f2413c3b257736682e665acc7138a537327430046"
-      ],
-      "sha256": "95a83bd79812e01d233c9a71b6bc8d7fd5937b7a08e7ad5658cf5ff861d5fda7"
-    },
-    ".engineering/engineering/migrate/wiring.py": {
-      "executable": false,
-      "owned_sha256": "16b08d30815d0dcbc3ed469e6ee8d0c77d7e7f6bab090ee3bb7cfc0aebafeb84",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "8ef82871fb9b21aed11bab4d327cfcf6783665c3e8463451dad7a1bc73a6e1bc",
-        "a70ef23dfb46e8a4763c08c673aec6c8570b3d145a8bd19f256f4ce5b3601312"
-      ],
-      "sha256": "16b08d30815d0dcbc3ed469e6ee8d0c77d7e7f6bab090ee3bb7cfc0aebafeb84"
     },
     ".engineering/engineering/ownership.py": {
       "executable": false,
@@ -805,231 +661,6 @@
       ],
       "sha256": "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f"
     },
-    ".engineering/evals/README.md": {
-      "executable": false,
-      "owned_sha256": "271187ec472143475990c8874c5717be4a4b8929e8a9fb4e66f1b2a29ddaf8e6",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "271187ec472143475990c8874c5717be4a4b8929e8a9fb4e66f1b2a29ddaf8e6"
-    },
-    ".engineering/evals/cases/001-policy.yaml": {
-      "executable": false,
-      "owned_sha256": "9f8f62c3ed7bcfb22b33a2a777a09ac884ed42fbece2cc42c90b2fd1e346d40f",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "9f8f62c3ed7bcfb22b33a2a777a09ac884ed42fbece2cc42c90b2fd1e346d40f"
-    },
-    ".engineering/evals/cases/002-verification.yaml": {
-      "executable": false,
-      "owned_sha256": "87ce396d0a22ca57f8a6217e0e8f4c587378356d62e7877334da81e1862da8f7",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "afa628019ac2f96472fd780736c9ec77a383fe8a3c7b6461c59754018d604cbe"
-      ],
-      "sha256": "87ce396d0a22ca57f8a6217e0e8f4c587378356d62e7877334da81e1862da8f7"
-    },
-    ".engineering/evals/cases/003-boundaries.yaml": {
-      "executable": false,
-      "owned_sha256": "a7df44430aafc1dd077bf7535121d20d22a9eef3b5bcd06b8b45b5f9ebff843e",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "22e66193a921242f7857dbcb4320253dee0f43103f0aec3690cebfc7e0c9a961"
-      ],
-      "sha256": "a7df44430aafc1dd077bf7535121d20d22a9eef3b5bcd06b8b45b5f9ebff843e"
-    },
-    ".engineering/evals/cases/004-health.yaml": {
-      "executable": false,
-      "owned_sha256": "080de65a108b8ed4d2e69daa8af499480501879bb13118c92c3f798a64f4508e",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "080de65a108b8ed4d2e69daa8af499480501879bb13118c92c3f798a64f4508e"
-    },
-    ".engineering/evals/cases/005-plan.yaml": {
-      "executable": false,
-      "owned_sha256": "97f5bcc1ee0c184c91e15ed9068760e7762cfda8c8a67e799ffba3deaded3725",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "97f5bcc1ee0c184c91e15ed9068760e7762cfda8c8a67e799ffba3deaded3725"
-    },
-    ".engineering/evals/cases/006-semantic-migration.yaml": {
-      "executable": false,
-      "owned_sha256": "e095c4f7dcc980d819bb45e95764c533862c0a3904616733b7cb1b069c3e149b",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "e095c4f7dcc980d819bb45e95764c533862c0a3904616733b7cb1b069c3e149b"
-    },
-    ".engineering/evals/cases/007-reusable-verification.yaml": {
-      "executable": false,
-      "owned_sha256": "99d29748b26a61a37bad99250572264ca5ff376006a5d745599fafe910a04bc9",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "4a01eae0415f624aa0b3eb4124c8300e9193938f8b1773813e0f81e59272ee07",
-        "a4d4233c2ff55d46dc59f4c5db41bb7ef0ccbc40b946cc279aa1fa8f75233424",
-        "271f233db31cf7353e29c1f9ba1045e58dc4f5393a15cdd646d31efc13c63802"
-      ],
-      "sha256": "99d29748b26a61a37bad99250572264ca5ff376006a5d745599fafe910a04bc9"
-    },
-    ".engineering/evals/cases/008-bounded-corrections.yaml": {
-      "executable": false,
-      "owned_sha256": "f01545e4fbe1909a7e0cad628bc4ee836876a6a265f966cd788ad0c71f35cd79",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "bce69894ca2a96b580bb41ac657a2bd767ff012231c3a3f3a4c41484f8951713",
-        "a4ba5705aeafbfacdea61ecc176766c44f88327aaee4bde875439a7da516d6f3"
-      ],
-      "sha256": "f01545e4fbe1909a7e0cad628bc4ee836876a6a265f966cd788ad0c71f35cd79"
-    },
-    ".engineering/evals/cases/009-publication.yaml": {
-      "executable": false,
-      "owned_sha256": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "92ec527f7c62b1b6f4e172614d1bfbb659451f99ce799ddff7e8d6f89c548b14"
-      ],
-      "sha256": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb"
-    },
-    ".engineering/evals/cases/010-greenfield.yaml": {
-      "executable": false,
-      "owned_sha256": "62af70da3d583fd23e97f1d97bf92fe1838375b8b8a8e2162b10da34d5219030",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "eebea9de18d036ea8d6cecd00d787be219dc09d4b18d9a25aa9a858491115c01"
-      ],
-      "sha256": "62af70da3d583fd23e97f1d97bf92fe1838375b8b8a8e2162b10da34d5219030"
-    },
-    ".engineering/evals/cases/011-complete-journey.yaml": {
-      "executable": false,
-      "owned_sha256": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871"
-    },
-    ".engineering/evals/cases/012-optional-navigation.yaml": {
-      "executable": false,
-      "owned_sha256": "df1e0562af3956ef65380e1d60a151b392ab30e73ae51b2a7a148013269a9164",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "d63631030ef1a2f642ddec5ecf31b0c388ce38b67ecca6f45f3e697f27a0270d"
-      ],
-      "sha256": "df1e0562af3956ef65380e1d60a151b392ab30e73ae51b2a7a148013269a9164"
-    },
-    ".engineering/evals/cases/013-review-tiers.yaml": {
-      "executable": false,
-      "owned_sha256": "b36050e412badd289718ac3d5440dd2cae6ecd2ed1985f7a739eec12f7489644",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "be19ff2d5e0c34fbf067e5c162c574a83c082d139225b2de900df31dcfc3bccd",
-        "f105b09698cbe1d756b45ad4aefb3009d6325a04dccad97f036aaab8be57566a"
-      ],
-      "sha256": "b36050e412badd289718ac3d5440dd2cae6ecd2ed1985f7a739eec12f7489644"
-    },
-    ".engineering/evals/cases/101-small-change.yaml": {
-      "executable": false,
-      "owned_sha256": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339"
-    },
-    ".engineering/evals/cases/102-wayfinder.yaml": {
-      "executable": false,
-      "owned_sha256": "65738dbabb5a5f3c8f8148890cb2a535f48978bce421f82e0d23de4aac88fe7b",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "65738dbabb5a5f3c8f8148890cb2a535f48978bce421f82e0d23de4aac88fe7b"
-    },
-    ".engineering/evals/cases/103-ship.yaml": {
-      "executable": false,
-      "owned_sha256": "6c1f30c9795687222dc28ba825794f487d2ac07ee02da3c9460cec2a61deaed5",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "8229878db4af5a59232fe25867546a036f67726f9566c21713872413c722ae2d"
-      ],
-      "sha256": "6c1f30c9795687222dc28ba825794f487d2ac07ee02da3c9460cec2a61deaed5"
-    },
-    ".engineering/evals/cases/104-review-direction.yaml": {
-      "executable": false,
-      "owned_sha256": "ba985b5e651dd8f0114ab0669279e11d9022f8b3924aa5b10b1222affd94c8c9",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "ba985b5e651dd8f0114ab0669279e11d9022f8b3924aa5b10b1222affd94c8c9"
-    },
-    ".engineering/evals/cases/105-settled-decision.yaml": {
-      "executable": false,
-      "owned_sha256": "071260bc88193840aa1af27be82b84bfed915b7457580259cb2dc20274d10b6e",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "071260bc88193840aa1af27be82b84bfed915b7457580259cb2dc20274d10b6e"
-    },
-    ".engineering/evals/check_semantic_migration.py": {
-      "executable": false,
-      "owned_sha256": "c98958a46dac4de559ef15fe2d5783a35a24a2dbb7557c8bbecef6dc3bab645f",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "309a68291ea4240c46e04036289249d6c83c6a94ec86c7efb54ca12c7ac3a2e3",
-        "b27f88fb60f0ae8f493c76a7b250fd238b1c809d2b1d2d18a0f3011c490ea831"
-      ],
-      "sha256": "c98958a46dac4de559ef15fe2d5783a35a24a2dbb7557c8bbecef6dc3bab645f"
-    },
-    ".engineering/evals/run_evals.py": {
-      "executable": false,
-      "owned_sha256": "9f552bef16cce7195c6b2594d57125d08315ec30b279c047d7b4c2e252a59be6",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [
-        "59b4b93a8c6695b2c89d41b0039578aea05300586db6846a0b2ad81cf5cabe69"
-      ],
-      "sha256": "9f552bef16cce7195c6b2594d57125d08315ec30b279c047d7b4c2e252a59be6"
-    },
-    ".engineering/migrations/baselines/v2-manifest.json": {
-      "executable": false,
-      "owned_sha256": "47528767f142b90442877efe32df7912baead4d83f3a405a869cd3f8672e43be",
-      "ownership": {
-        "mode": "file"
-      },
-      "previous": [],
-      "sha256": "47528767f142b90442877efe32df7912baead4d83f3a405a869cd3f8672e43be"
-    },
     ".engineering/scripts/check_feature_docs.py": {
       "executable": false,
       "owned_sha256": "946b34646c9c930c508533f04f0b320f7e596e893428977e8910beb752cfb0f1",
@@ -1121,13 +752,14 @@
         "e3cfe41acde60beb654bd3713aee953afa276bb685d6880d8f632081d5c916f2",
         "4e61395d996547359e341cfdeaaf52fd448412f80ddca7efa560a0bb1c459745",
         "53f701baf33e8ad24481afd5aeb18d7411ef66d7a63e40620c5b669509fbb76a",
-        "fb0689ada910b8b91e55adfc010ff41cc3b459358d3d17ae94a2ba0804b108f6"
+        "fb0689ada910b8b91e55adfc010ff41cc3b459358d3d17ae94a2ba0804b108f6",
+        "0071191d2df11a65cb3f877c95b2376df54d0ab6da254d92ba8bd527cfc5c8ef"
       ],
-      "sha256": "0071191d2df11a65cb3f877c95b2376df54d0ab6da254d92ba8bd527cfc5c8ef"
+      "sha256": "49140756ef5195894e658ebf319b506e694b0f97a7cfcd08f88ea9fe0bc178ed"
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07",
+      "owned_sha256": "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a",
       "ownership": {
         "mode": "file"
       },
@@ -1157,13 +789,14 @@
         "7b5e0481acb7fedf91cf8adda21f38a9e9494195868537488ffafb28d795ecec",
         "abae1b7314d49b0aeef19555ce5199decf170cb4feaae3ddb340bdb3e4a79c63",
         "9ee3c850e8fafe7563ee2f932d800ee0149fc388a1ab510b67a91dba98959ad9",
-        "9c3ffe965a76b12762046862723b056162d01d59665b59eedebc31eb397c6b15"
+        "9c3ffe965a76b12762046862723b056162d01d59665b59eedebc31eb397c6b15",
+        "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07"
       ],
-      "sha256": "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07"
+      "sha256": "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a"
     },
     "Makefile": {
       "executable": false,
-      "owned_sha256": "2bcd371d69d34022f1bee7e8411918aa9e7fa722b29ef00961973f7cb800d23a",
+      "owned_sha256": "f98f59df64c120bb7fe0c72bfb3ee560acb2bb64253db531581f2a53f254d2b2",
       "ownership": {
         "marker": "integration",
         "mode": "section"
@@ -1171,9 +804,10 @@
       "previous": [
         "c7a1de6b9291cd784f9ae9693f53b305a6fa4c0ff290a333f14b5cac87ff0531",
         "8ccb72e5205b943cbd5d5add54586355304eda9d782e6ea75973cfb9295997e0",
-        "c94b507c735d1747c5d077400e7eda896230daca7ff335fee97d234dea8f5da0"
+        "c94b507c735d1747c5d077400e7eda896230daca7ff335fee97d234dea8f5da0",
+        "681b7f5ae64d5beb65d5333c70351684e49a6ca74db985116002200b0189d9e7"
       ],
-      "sha256": "681b7f5ae64d5beb65d5333c70351684e49a6ca74db985116002200b0189d9e7"
+      "sha256": "d976aa397da674d0ee2ff3e8f48e28d0d4070ee3c4cee1f6e8dfb3609a9b6c5b"
     },
     "REVIEW.md": {
       "executable": false,
