@@ -12,7 +12,7 @@ current carried PASS evidence and still requires the current remote base.
 
 **Blocked by:** 11 (Declare a review tier checked against a starter-rule floor). Serialized after 12 because both edit the evidence record and policy text.
 
-**Status:** corrections implemented — independent reverification pending
+**Status:** independently verified — awaiting human acceptance
 
 - [x] The base tip is removed from the snapshot fingerprint and kept as advisory recorded data; the merge-base stays in content identity; status and publication freshness compare identity fields, not the advisory tip.
 - [x] Fetching an advanced base without rebasing keeps `verify status` current.
@@ -25,7 +25,7 @@ current carried PASS evidence and still requires the current remote base.
 - [x] `CLAUDE.md`, `REVIEW.md`, the verification guide and `/review`/`/ship` skills describe carried evidence and permit the implementer `verify check` run for carried snapshots only.
 - [x] Fixtures gain a helper that advances `main` and rebases the feature branch; command-level tests cover every carry and no-carry case above plus the publication cases.
 - [x] Affected evals updated; no instruction permits self-certification outside the carried rerun.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (`sensitive`: three separate sessions).
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (`sensitive`: three separate sessions).
 
 - Follow-ups from ticket 12 review (human-requested 2026-09-29; small, independent
   of carry-forward):
@@ -56,8 +56,8 @@ Typechecking and the maintainability gate pass; the existing size warnings remai
 
 Independent evidence is recorded under the local change `v3-1c-13`:
 `./engineering verify status --change v3-1c-13`. The full-gate criterion above
-is left unchecked until independent evidence establishes it; implementation
-checkboxes do not claim full verification. Current checks, reports and any gaps
+is checked based on the corrected independent PASS recorded below. The local
+evidence record remains authoritative for freshness of the complete current scope. Current checks, reports and any gaps
 live in that record rather than being inferred from a commit. Human acceptance,
 publication and merge remain outstanding.
 
@@ -88,3 +88,15 @@ module to the consumer inclusion mapping and revised the bounded-corrections
 eval to check the qualified automatic carry exception while retaining the ban on
 manual relabelling and self-review. Prior failures remain historical; the current
 scope requires independent reverification before acceptance or publication.
+
+### Corrected independent verification (2026-09-29)
+
+Commit `5a7dd82`, snapshot
+`7b7170a8944a4223412138b9c0bf9b694ccb8e6b6545cf69f616f9c029d9efe8`:
+all three independent roles PASS. Both findings above are resolved. Recorded
+`make check`, `make engineering-check`, `make engineering-test` (501 tests), and
+`make engineering-evals` (13 static cases) all pass. Five optional model-backed
+prompt cases were not run; publication tests use local fixtures, not a live host.
+
+This final tracking update is included in the scope for freshness reassessment.
+Human acceptance, push/PR publication and merge remain outstanding.
