@@ -16,7 +16,7 @@ D, E and F remain in [intent](intent.md).
 | [06 Upgrade existing navigation and document prerequisites](issues/06-navigation-upgrade-and-prerequisites.md) | 05 | completed — merged in [PR #42](https://github.com/ZekeT/agentic-starter/pull/42) (local merge commit 68490a0) |
 | [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | ready-for-agent |
 | [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
-| [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | implemented — independent verification pending |
+| [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | implemented — 511 tests passed, 2 failed; awaiting human-directed test corrections |
 | [11 Declare a review tier checked against a starter-rule floor](issues/11-declared-review-tier-and-floor.md) | None | completed — merged in [PR #39](https://github.com/ZekeT/agentic-starter/pull/39) |
 | [12 Project review settings enable the documentation tier](issues/12-project-review-settings.md) | 11 | completed — merged in [PR #40](https://github.com/ZekeT/agentic-starter/pull/40) (local merge commit 21ec8b6) |
 | [13 Carry reviewer reports across a clean rebase](issues/13-carried-evidence.md) | 11 (serialized after 12) | completed — merged in [PR #41](https://github.com/ZekeT/agentic-starter/pull/41) (local merge commit 5a382bb) |
