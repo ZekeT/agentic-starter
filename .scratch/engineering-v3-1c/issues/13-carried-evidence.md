@@ -12,7 +12,7 @@ current carried PASS evidence and still requires the current remote base.
 
 **Blocked by:** 11 (Declare a review tier checked against a starter-rule floor). Serialized after 12 because both edit the evidence record and policy text.
 
-**Status:** implemented — independent verification recorded separately; awaiting human review
+**Status:** blocked on human fix instructions — independent behavioral verification FAIL
 
 - [x] The base tip is removed from the snapshot fingerprint and kept as advisory recorded data; the merge-base stays in content identity; status and publication freshness compare identity fields, not the advisory tip.
 - [x] Fetching an advanced base without rebasing keeps `verify status` current.
@@ -24,7 +24,7 @@ current carried PASS evidence and still requires the current remote base.
 - [x] The publication preflight accepts current carried PASS evidence without new review and still refuses when the remote base tip differs from the tip recorded at the latest prepare.
 - [x] `CLAUDE.md`, `REVIEW.md`, the verification guide and `/review`/`/ship` skills describe carried evidence and permit the implementer `verify check` run for carried snapshots only.
 - [x] Fixtures gain a helper that advances `main` and rebases the feature branch; command-level tests cover every carry and no-carry case above plus the publication cases.
-- [x] Affected evals updated; no instruction permits self-certification outside the carried rerun.
+- [ ] Affected evals updated; no instruction permits self-certification outside the carried rerun.
 - [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (`sensitive`: three separate sessions).
 
 - Follow-ups from ticket 12 review (human-requested 2026-09-29; small, independent
@@ -60,3 +60,23 @@ is left unchecked until independent evidence establishes it; implementation
 checkboxes do not claim full verification. Current checks, reports and any gaps
 live in that record rather than being inferred from a commit. Human acceptance,
 publication and merge remain outstanding.
+
+### Independent review findings (2026-09-29)
+
+Reviewed implementation commit: `0ca7503`; snapshot
+`70da63964a3adfb6166b7df8235f392c91012abe1da4cf854d4bc54244d392d9`.
+Maintainability PASS and security PASS. Behavioral FAIL: `make check` and
+`make engineering-check` pass; `make engineering-test` fails (7 failed, 414 passed,
+80 errors), and `make engineering-evals` fails (12/13 pass).
+
+1. `.engineering/template/files.json` omits `verification_carry.py`, so generated
+   consumers fail at CLI import. Add the module to the inclusion mapping.
+2. `.engineering/evals/cases/008-bounded-corrections.yaml` still expects the old
+   unconditional historical-evidence wording. Update it to cover the approved
+   automatic carry exception.
+
+Both corrections require human direction under CLAUDE.md. No corrections applied.
+Targeted tests passed (47), but do not override these full-gate failures. After
+approved fixes, regenerate applicable metadata, format and obtain independent
+verification of the corrected scope. The review reports remain historical
+proof of the implementation snapshot above; this tracking update is not a PASS.
