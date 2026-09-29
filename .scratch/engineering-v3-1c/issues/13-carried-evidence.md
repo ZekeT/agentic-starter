@@ -12,7 +12,7 @@ current carried PASS evidence and still requires the current remote base.
 
 **Blocked by:** 11 (Declare a review tier checked against a starter-rule floor). Serialized after 12 because both edit the evidence record and policy text.
 
-**Status:** independently verified — awaiting human acceptance
+**Status:** completed — merged in [PR #41](https://github.com/ZekeT/agentic-starter/pull/41)
 
 - [x] The base tip is removed from the snapshot fingerprint and kept as advisory recorded data; the merge-base stays in content identity; status and publication freshness compare identity fields, not the advisory tip.
 - [x] Fetching an advanced base without rebasing keeps `verify status` current.
@@ -100,3 +100,22 @@ prompt cases were not run; publication tests use local fixtures, not a live host
 
 This final tracking update is included in the scope for freshness reassessment.
 Human acceptance, push/PR publication and merge remain outstanding.
+
+### Publication (2026-09-29)
+
+The human accepted the presented scope and authorized publication with `/ship`.
+Published [PR #41](https://github.com/ZekeT/agentic-starter/pull/41) from
+`feat/v3-1c-13-carried-evidence` into `main`, with verified head `679228f` and
+snapshot `74670f1c21da11ea89cc6138a7facb19fed60375a1be2b2ea33457f2adeb768b`.
+No merge was requested or performed.
+
+This delivery entry and the breakdown link are local post-publication bookkeeping,
+not part of the published verified head. Their content changes make local snapshot
+evidence stale; reassess freshness before publishing these tracking edits. The
+published implementation retains its recorded PASS evidence.
+
+### Merge observed (2026-09-29)
+
+Local `main` contains merge commit `5a382bb` for PR #41, matching the human
+merge notification. Ticket 13 is complete; the publication notes above describe
+the earlier handoff.

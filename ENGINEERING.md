@@ -473,6 +473,19 @@ deleted. The Graft index (`graft/`), its local settings and
 `navigation.application_roots` are project data and are kept. Until the update
 runs, doctor fails while the Graft skill or guidance remains loadable by agents.
 
+For existing installations, an update keeps `graft` when a Graft index
+(`graft/.graph/wiring.json`) exists or dependency state records Graft installed.
+Otherwise the preview proposes `graft → none` and gives re-enable instructions;
+the configuration changes only with `--apply`. Declining leaves it untouched.
+An explicit `none` stays disabled even when an index or installation record exists.
+For older registries, the same preview adds the missing navigation capability
+declaration to Graft; apply keeps the project's dependency pins and other settings.
+
+Older Graft installation records may lack the launcher and guidance outputs.
+The update preview and doctor report `UPGRADE REQUIRED` for these records.
+After updating, run `engineering deps install graft --apply` to install and
+record the current navigation content before `make check`.
+
 With Graft selected, its launcher confines navigation to application roots,
 avoids implicit refreshes and keeps optional model enrichment out of normal
 gates. Preserve its package lock.

@@ -167,6 +167,7 @@ def shipped_launcher(template, target, local=None):
 
     adopt(template, target)
     navigate(target, "graft", ["src"])
+    save(target, "graft/.graph/wiring.json", '{"nodes": []}\n')
     raw = (ROOT / LAUNCHER).read_bytes()
     save(target, LAUNCHER, (local or raw).decode())
     (target / LAUNCHER).chmod(0o755)

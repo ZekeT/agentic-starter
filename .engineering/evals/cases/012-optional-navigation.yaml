@@ -30,6 +30,11 @@ shell: |
   guide = Path('ENGINEERING.md').read_text()
   for phrase in ('provider = "none"', 'provider = "graft"', 'core prerequisite', 'Graft is optional'):
       assert phrase in guide, phrase
+  for phrase in ('graft → none', 'Declining leaves it untouched', 'UPGRADE REQUIRED',
+                 'engineering deps install graft --apply', 'dependency state records Graft installed'):
+      assert phrase in guide, phrase
+  assert 'Node is\na core prerequisite' in guide
+  assert 'skills` npm installer' in guide
   readme = Path('.engineering/template/README.md').read_text()
   assert 'provider = "none"' in readme and 'optional' in readme
   PY

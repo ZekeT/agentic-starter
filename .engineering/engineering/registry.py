@@ -164,7 +164,10 @@ def installed_status(
     version = str(row["installed_version"])
     # Installations predating complete owned content reinstall it.
     if set(content(name)) - set(row["outputs"]):
-        return version, "MISSING"
+        return (
+            version,
+            "UPGRADE REQUIRED (installation record lacks navigation outputs)",
+        )
     # Fixed content from an earlier release is refreshed by reinstalling.
     for path in content(name):
         fixed = generated(name, path)
