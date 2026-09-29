@@ -12,7 +12,7 @@ update; generated and adopted projects start with identical defaults.
 
 **Blocked by:** 11 (Declare a review tier checked against a starter-rule floor).
 
-**Status:** in-progress — implemented on `feat/v3-1c-12-review-settings`; awaiting independent verification
+**Status:** published — [PR #40](https://github.com/ZekeT/agentic-starter/pull/40); awaiting merge
 
 - [x] `[review]` with `documentation` and `sensitive` glob lists is read from project configuration; invalid settings fail planning visibly, consistent with existing configuration validation.
 - [x] A path matching `documentation` and no starter or project sensitive/exclusion rule floors at `documentation`; domain context and ADRs are eligible, agent-policy Markdown is not.
@@ -25,7 +25,7 @@ update; generated and adopted projects start with identical defaults.
 - [x] Policy text and the `/review` flow describe the documentation tier and its reviewer brief (check docs against code and recorded decisions).
 - [x] Command-level tests: verification fixtures for the scenarios above; update preview/apply/decline and generation/adoption template tests.
 - [x] Affected evals updated.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (`sensitive`: three separate sessions).
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review (`sensitive`: three separate sessions).
 
 - Follow-ups from ticket 11 review (human-accepted 2026-09-29): add root
   `GNUmakefile`/`makefile` (optionally `*.mk`), `.engineering/scripts/**` and
@@ -55,5 +55,14 @@ update; generated and adopted projects start with identical defaults.
   `schema_version`; clearer test helper names. Not changed (judgement calls):
   defaults kept in both the migration and the template, the review-settings
   dict type, and rebuilding the rule table per path.
-- Remaining: three separate independent review sessions (sensitive), human
-  review, publication.
+- 2026-09-29: independent evidence for snapshot 0cb85cb5…: behavioral (after a
+  first FAIL from an unprepared checkout environment; `uv sync --offline
+  --all-extras` fixed it), maintainability and security PASS from three separate
+  sessions; `make check`, `make engineering-check`, `make engineering-test` (480
+  passed) and `make engineering-evals` (13/13 static) exit 0. Human accepted and
+  published via `/ship` as PR #40 (not merged).
+- Non-blocking follow-ups from review (moved to ticket 13): the `docs/**` default also covers
+  non-prose files under `docs/`; a broad project pattern such as `**` can reach
+  `.pre-commit-config.yaml`, `.envrc`, `CODEOWNERS` and installation metadata
+  (consider starter-sensitive additions); base-settings reading ignores unknown
+  `[review]` keys; `test_review_tiers.py` is at 374 code lines (split before 500).
