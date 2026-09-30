@@ -583,6 +583,18 @@ configuration schema migrations shown as `MIGRATE` in the preview; schema 2 adds
 that recorded it as managed move it to project ownership on their next update,
 keeping its values.
 
+Generation and system updates use the same positive consumer inventory in
+`.engineering/template/files.json`, including its source mappings for the
+consumer Makefile and initial configuration. `make manifest` fingerprints that
+payload; `make template` preserves its hash history. Maintainer evals, migration
+implementation, the migration skill and historical migration baselines stay in
+the external Engineering checkout.
+
+If an earlier update installed those extra managed files, the next preview lists
+pristine files as `REMOVE_SAFE`; removal happens only with `--apply`. Customized
+files produce `REMOVE_CONFLICT` and block apply until explicitly reconciled.
+Unmanaged files in those directories remain untouched.
+
 Installation state records the installation role: `consumer` for generated and
 adopted projects, `maintainer` for the starter's own checkout (written by `make
 manifest`). Updates keep a recorded role. An installation that predates roles

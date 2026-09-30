@@ -9,9 +9,8 @@ shell: |
   prefixes = ('.engineering/engineering/migrate/', '.engineering/migrations/', '.claude/skills/migrate-from-openspec/')
   assert not any(name.startswith(prefixes) for name in payload['managed'])
   distribution = json.loads(Path('.engineering/manifest.json').read_text())['files']
-  assert '.engineering/engineering/migrate/openspec.py' in distribution
-  assert '.claude/skills/migrate-from-openspec/SKILL.md' in distribution
-  assert '.engineering/migrations/baselines/v2-manifest.json' in distribution
+  assert set(distribution) == set(payload['managed'])
+  assert not any(name.startswith(prefixes + ('.engineering/evals/',)) for name in distribution)
   assert {'README.md', 'pyproject.toml', 'uv.lock'} <= payload['application'].keys()
   for name in ('README.md', 'ENGINEERING.md', '.engineering/template/README.md'):
       guide = Path(name).read_text()

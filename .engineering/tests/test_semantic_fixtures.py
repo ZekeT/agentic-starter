@@ -86,10 +86,11 @@ def test_authored_handoff_covers_prepared_inventory(
     assert all(name not in after for name in expected["proposed_documents"])
 
 
-def test_migration_skill_and_contract_are_in_distribution():
+def test_migration_skill_and_contract_stay_in_external_checkout():
     root = Path(__file__).parents[2]
     manifest = json.loads((root / ".engineering/manifest.json").read_text())
     prefix = ".claude/skills/migrate-from-openspec/"
     for relative in ("SKILL.md", "references/application-manifest.md"):
-        entry = manifest["files"][prefix + relative]
-        assert entry["ownership"]["mode"] == "file"
+        name = prefix + relative
+        assert (root / name).read_text().strip()
+        assert name not in manifest["files"]

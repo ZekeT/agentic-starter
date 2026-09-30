@@ -7,6 +7,7 @@ from typing import Any
 from .apply import Action, Plan, baseline
 from .capabilities import handover, plan_deselected, plan_registry, upgrade_navigation
 from .config import object_value, safe_path, validate_config
+from .distribution import content as distribution_content
 from .inspection import INSPECTED, inspect_target
 from .installation import (
     MANIFEST_PATH,
@@ -36,10 +37,6 @@ SEEDS = (
     "docs/agents/domain.md",
     ".engineering/dependencies.toml",
 )
-
-# The maintainer checkout's own configuration is its project configuration;
-# new installations start from the template copy (maintainer source).
-SEED_SOURCES = {".engineering/config.toml": ".engineering/template/config.toml"}
 
 DIRECTORIES = (
     "docs/context",
@@ -81,8 +78,8 @@ def template_manifest(root: Path) -> dict[str, Any]:
             safe_path(root, name)
         if spec["mode"] == "preserve":
             continue
-        content = read_bytes(root, name)
-        if content is None or digest(content) != item.get("sha256"):
+        content = distribution_content(root, name)
+        if digest(content) != item.get("sha256"):
             raise ValueError(
                 f"{name}: template distribution hash mismatch; refresh manifest"
             )
@@ -94,11 +91,9 @@ def template_manifest(root: Path) -> dict[str, Any]:
     return data
 
 
-def seed(template: Path, name: str) -> bytes | None:
-    """Read initial project content, preferring maintainer template copies."""
-    source = SEED_SOURCES.get(name)
-    content = read_bytes(template, source) if source else None
-    return content if content is not None else read_bytes(template, name)
+def seed(template: Path, name: str) -> bytes:
+    """Read initial project content from the shared consumer source mapping."""
+    return distribution_content(template, name)
 
 
 def plan_configuration(plan: Plan) -> dict[str, Any]:
@@ -144,7 +139,7 @@ def plan_scope(
             return Action(name, "PRESERVE", reason), None
         return Action(name, "SKIP", "Project-owned; never copied or updated"), None
     local = read_bytes(plan.target, name)
-    incoming = owned_content(read_bytes(plan.template, name), name, spec)
+    incoming = owned_content(distribution_content(plan.template, name), name, spec)
     assert incoming is not None
     scope = owned_content(local, name, spec)
     prior = old.get("upstream") if old else None

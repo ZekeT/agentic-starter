@@ -60,18 +60,6 @@
       },
       "upstream": "b91eab7247b9ca6d0093a089b128be5d7374cd60cd00ada3ef108d41738eff6e"
     },
-    ".claude/skills/migrate-from-openspec/SKILL.md": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "cb68c5bb11db6a2301c720ef3683d431f7bfd8dae7b32ed02da18897ff2c3772"
-    },
-    ".claude/skills/migrate-from-openspec/references/application-manifest.md": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "8adf650b539185be8d209ba831abcff4c462e8052b8d96c0a63917d775c56b4f"
-    },
     ".claude/statusline.sh": {
       "ownership": {
         "mode": "file"
@@ -130,7 +118,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "0f694ea72f3485e5f3535fa65b2da75b51ac56e899d60707267755a6739bbfa9"
+      "upstream": "53cf22c62a5e531b4631cc0f857339555c278a823aa3748d894759d8c59e1101"
     },
     ".engineering/engineering/apply.py": {
       "ownership": {
@@ -162,6 +150,12 @@
       },
       "upstream": "19b9bc02b90cac6613574ce1e9ed192f1cbdedf8c223c3d80a996fff665686c1"
     },
+    ".engineering/engineering/distribution.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "6c2c5a8e7e68a9f14343cb2ed486332800715a5b26cfe85430ad9aadd57a701c"
+    },
     ".engineering/engineering/doctor.py": {
       "ownership": {
         "mode": "file"
@@ -173,12 +167,6 @@
         "mode": "file"
       },
       "upstream": "7e1ba332d2d64c2523fd7d68d7a38a23f02bbbe41000faf23c5fe920ec1e7920"
-    },
-    ".engineering/engineering/eval_config.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "de0906579a396215289ed825f14e46d964fc05fc53903123af2f3db00f4c881f"
     },
     ".engineering/engineering/graft-package-lock.json": {
       "ownership": {
@@ -209,60 +197,6 @@
         "mode": "file"
       },
       "upstream": "009631470ff74f53bd3172a294e007297128d99db7a55def6ad8fdb22ee011eb"
-    },
-    ".engineering/engineering/migrate/__init__.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "f07058ec3465b8df2f65c9e19ce292d32fbfbf6d22014b6e98de1e03fea4333f"
-    },
-    ".engineering/engineering/migrate/application.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "d9c18ce19cc5fa02f5c41a308af96d725d1e5843d66625957a48a963fb49639d"
-    },
-    ".engineering/engineering/migrate/closure.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "b796bc6978b41688b1fa884538e8c044fcf468616d1a5948aee9bc3f0b7fe5a4"
-    },
-    ".engineering/engineering/migrate/common.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "6a4bc75f4441d9dcaf5a56ba6bcfb5b86a6a31b3427200b96afc403ff9604fc7"
-    },
-    ".engineering/engineering/migrate/finalize.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "efeb24348eb73e5e5e1ca4fa1f558e90c6424a212d3131c666f4505cc6e2ac66"
-    },
-    ".engineering/engineering/migrate/legacy.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "74508090cc05c2b714dd6e0ff9c022bd50ab1a6f297b2cc3e51acc42cc3e44f3"
-    },
-    ".engineering/engineering/migrate/openspec.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "022c085f3cc2ed2ab80ba549e1b7976f16db09329e8b3a0dc7c148dafd5e3f45"
-    },
-    ".engineering/engineering/migrate/validation.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "95a83bd79812e01d233c9a71b6bc8d7fd5937b7a08e7ad5658cf5ff861d5fda7"
-    },
-    ".engineering/engineering/migrate/wiring.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "16b08d30815d0dcbc3ed469e6ee8d0c77d7e7f6bab090ee3bb7cfc0aebafeb84"
     },
     ".engineering/engineering/ownership.py": {
       "ownership": {
@@ -360,138 +294,6 @@
       },
       "upstream": "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f"
     },
-    ".engineering/evals/README.md": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "271187ec472143475990c8874c5717be4a4b8929e8a9fb4e66f1b2a29ddaf8e6"
-    },
-    ".engineering/evals/cases/001-policy.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "9f8f62c3ed7bcfb22b33a2a777a09ac884ed42fbece2cc42c90b2fd1e346d40f"
-    },
-    ".engineering/evals/cases/002-verification.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "87ce396d0a22ca57f8a6217e0e8f4c587378356d62e7877334da81e1862da8f7"
-    },
-    ".engineering/evals/cases/003-boundaries.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "a7df44430aafc1dd077bf7535121d20d22a9eef3b5bcd06b8b45b5f9ebff843e"
-    },
-    ".engineering/evals/cases/004-health.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "080de65a108b8ed4d2e69daa8af499480501879bb13118c92c3f798a64f4508e"
-    },
-    ".engineering/evals/cases/005-plan.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "97f5bcc1ee0c184c91e15ed9068760e7762cfda8c8a67e799ffba3deaded3725"
-    },
-    ".engineering/evals/cases/006-semantic-migration.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "e095c4f7dcc980d819bb45e95764c533862c0a3904616733b7cb1b069c3e149b"
-    },
-    ".engineering/evals/cases/007-reusable-verification.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "99d29748b26a61a37bad99250572264ca5ff376006a5d745599fafe910a04bc9"
-    },
-    ".engineering/evals/cases/008-bounded-corrections.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "f01545e4fbe1909a7e0cad628bc4ee836876a6a265f966cd788ad0c71f35cd79"
-    },
-    ".engineering/evals/cases/009-publication.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "f4c4fba13e2902babfc841964fce400418b9c0e7c36197f84d7d42c21128f0cb"
-    },
-    ".engineering/evals/cases/010-greenfield.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "62af70da3d583fd23e97f1d97bf92fe1838375b8b8a8e2162b10da34d5219030"
-    },
-    ".engineering/evals/cases/011-complete-journey.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "95414f44728fe4bf3a75f99156d56bd5e1195d9c1e2b77d6b11a0a739cbc0871"
-    },
-    ".engineering/evals/cases/012-optional-navigation.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "df1e0562af3956ef65380e1d60a151b392ab30e73ae51b2a7a148013269a9164"
-    },
-    ".engineering/evals/cases/013-review-tiers.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "b36050e412badd289718ac3d5440dd2cae6ecd2ed1985f7a739eec12f7489644"
-    },
-    ".engineering/evals/cases/101-small-change.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "1ba445f1e5f6ba0ecab3e1d97850c9e52a948edf045a6643b98cda51ea4e5339"
-    },
-    ".engineering/evals/cases/102-wayfinder.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "65738dbabb5a5f3c8f8148890cb2a535f48978bce421f82e0d23de4aac88fe7b"
-    },
-    ".engineering/evals/cases/103-ship.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "6c1f30c9795687222dc28ba825794f487d2ac07ee02da3c9460cec2a61deaed5"
-    },
-    ".engineering/evals/cases/104-review-direction.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "ba985b5e651dd8f0114ab0669279e11d9022f8b3924aa5b10b1222affd94c8c9"
-    },
-    ".engineering/evals/cases/105-settled-decision.yaml": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "071260bc88193840aa1af27be82b84bfed915b7457580259cb2dc20274d10b6e"
-    },
-    ".engineering/evals/check_semantic_migration.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "c98958a46dac4de559ef15fe2d5783a35a24a2dbb7557c8bbecef6dc3bab645f"
-    },
-    ".engineering/evals/run_evals.py": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "9f552bef16cce7195c6b2594d57125d08315ec30b279c047d7b4c2e252a59be6"
-    },
-    ".engineering/migrations/baselines/v2-manifest.json": {
-      "ownership": {
-        "mode": "file"
-      },
-      "upstream": "47528767f142b90442877efe32df7912baead4d83f3a405a869cd3f8672e43be"
-    },
     ".engineering/scripts/check_feature_docs.py": {
       "ownership": {
         "mode": "file"
@@ -547,14 +349,14 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07"
+      "upstream": "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a"
     },
     "Makefile": {
       "ownership": {
         "marker": "integration",
         "mode": "section"
       },
-      "upstream": "2bcd371d69d34022f1bee7e8411918aa9e7fa722b29ef00961973f7cb800d23a"
+      "upstream": "f98f59df64c120bb7fe0c72bfb3ee560acb2bb64253db531581f2a53f254d2b2"
     },
     "REVIEW.md": {
       "ownership": {

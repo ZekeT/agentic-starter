@@ -2,7 +2,6 @@
 
 import json
 import re
-import shutil
 import subprocess
 import sys
 import tomllib
@@ -13,6 +12,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parents[1]))
 from engineering.adoption import plan_installation
 from engineering.apply import apply_plan
+from engineering.distribution import content, payload_path
 from engineering.installation import MANIFEST_PATH, STATE_PATH
 from engineering.ownership import digest, encoded, json_object, owned_content
 
@@ -43,7 +43,10 @@ def installation(tmp_path):
         src, dst = ROOT / name, template / name
         if src.is_file():
             dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src, dst)
+            dst.write_bytes(
+                content(ROOT, name) if name != MANIFEST_PATH else src.read_bytes()
+            )
+            dst.chmod(payload_path(ROOT, name).stat().st_mode)
     target = tmp_path / "target"
     target.mkdir()
     git(target, "init", "-b", "main")
@@ -427,6 +430,23 @@ def test_configuration_seeds_from_maintainer_template_copy(installation, capsys)
     customize(template, warn_file_lines=260)
     shipped = (ROOT / ".engineering/template/config.toml").read_text()
     save(template, ".engineering/template/config.toml", shipped)
+    save(
+        template,
+        ".engineering/template/files.json",
+        json.dumps(
+            {
+                "schema_version": 1,
+                "managed": {CONFIG: ".engineering/template/config.toml"},
+                "application": {},
+            }
+        ),
+    )
     status, output = engineering(capsys, template, "adopt", str(target), "--apply")
     assert status == 0, output
     assert (target / CONFIG).read_text() == shipped
+    assert (
+        tomllib.loads((template / CONFIG).read_text())["maintainability"][
+            "warn_file_lines"
+        ]
+        == 260
+    )

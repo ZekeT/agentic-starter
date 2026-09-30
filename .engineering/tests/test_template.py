@@ -289,3 +289,94 @@ def test_build_refuses_existing_destinations(tmp_path, kind):
     result = run(sys.executable, str(BUILD), str(target))
     assert result.returncode != 0
     assert contents(tmp_path) == before
+
+
+def test_same_checkout_update_has_no_changes(tmp_path):
+    root = build(tmp_path / "project")
+    assert cli(root, "init-installation").returncode == 0
+    for args in (
+        ("init", "-b", "main"),
+        ("config", "user.name", "Fixture"),
+        ("config", "user.email", "fixture@example.invalid"),
+        ("add", "."),
+        ("commit", "-m", "Initialize application"),
+    ):
+        assert run("git", *args, cwd=root).returncode == 0
+    before = contents(root)
+    result = cli(ROOT, "update", str(root))
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert not any(
+        line.split()[0] in {"ADD", "MERGE", "REMOVE_SAFE", "CONFLICT", "MIGRATE"}
+        for line in result.stdout.splitlines()
+        if line.split()
+    ), result.stdout
+    assert contents(root) == before
+    result = cli(ROOT, "update", str(root), "--apply")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert contents(root) == before
+
+
+@pytest.mark.parametrize("customized", [False, True])
+def test_update_previews_retired_payload_and_protects_customization(
+    tmp_path, customized
+):
+    import hashlib
+
+    root = build(tmp_path / "project")
+    assert cli(root, "init-installation").returncode == 0
+    retired = (
+        ".engineering/engineering/migrate/openspec.py",
+        ".engineering/engineering/eval_config.py",
+        ".engineering/evals/run_evals.py",
+        ".claude/skills/migrate-from-openspec/SKILL.md",
+        ".engineering/migrations/baselines/v2-manifest.json",
+    )
+    manifest_path = root / ".engineering/manifest.json"
+    state_path = root / ".engineering/state/install.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    state = json.loads(state_path.read_bytes())
+    for name in retired:
+        raw = (ROOT / name).read_bytes()
+        fingerprint = hashlib.sha256(raw).hexdigest()
+        manifest["files"][name] = {
+            "sha256": fingerprint,
+            "previous": [],
+            "ownership": {"mode": "file"},
+            "owned_sha256": fingerprint,
+            "executable": False,
+        }
+        state["entries"][name] = {
+            "ownership": {"mode": "file"},
+            "upstream": fingerprint,
+        }
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw + (b"\n# Local customization\n" if customized else b""))
+    manifest_path.write_text(json.dumps(manifest))
+    state_path.write_text(json.dumps(state))
+    unknown = root / ".engineering/evals/local.py"
+    unknown.write_text("# Project-owned helper\n")
+    for args in (
+        ("init", "-b", "main"),
+        ("config", "user.name", "Fixture"),
+        ("config", "user.email", "fixture@example.invalid"),
+        ("add", "."),
+        ("commit", "-m", "Previously updated consumer"),
+    ):
+        assert run("git", *args, cwd=root).returncode == 0
+    before = contents(root)
+    result = cli(ROOT, "update", str(root))
+    for name in retired:
+        assert f"{'CONFLICT' if customized else 'REMOVE_SAFE'} {name}:" in result.stdout
+    assert contents(root) == before
+    result = cli(ROOT, "update", str(root), "--apply")
+    if customized:
+        assert result.returncode != 0
+        assert "REMOVE_CONFLICT" in result.stdout
+        assert contents(root) == before
+    else:
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert all(not (root / name).exists() for name in retired)
+        assert not set(retired) & json.loads(state_path.read_bytes())["entries"].keys()
+        assert not set(retired) & json.loads(manifest_path.read_bytes())["files"].keys()
+    assert unknown.read_text() == "# Project-owned helper\n"
