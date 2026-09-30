@@ -106,7 +106,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1"
+      "upstream": "fcff581f23a692fafb0ac2b905278681b7e764df91e682ded447dc8686be140e"
     },
     ".engineering/engineering/__init__.py": {
       "ownership": {
@@ -214,7 +214,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d08f3d981a7cd7fe8f4a430c43d014e86ce90283506d02638ae5a49e21be6c62"
+      "upstream": "020106dce8491f8313ff2ca9f36637d03df96f105ed2fc3073cbe8e1e49bac56"
     },
     ".engineering/engineering/publication_provider.py": {
       "ownership": {
@@ -262,19 +262,25 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119"
+      "upstream": "613f991b307553381620f76b4115fcdfddff561c9ac5c6a118b23f3b511fec2d"
     },
     ".engineering/engineering/verification_carry.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "3bb4d3447ff5fecd5b8f8fe713090612e4c2f748b9f25d15aafe9d286b3ee6ac"
+      "upstream": "e26b9906fa960b55c596401830d629c27dad4d4b4a9b6e323b4f0838449add18"
     },
     ".engineering/engineering/verification_checkout.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "275ef55c45a443a4767341bd57862c91c02b068a9e18d5fc263a2f028e517e7a"
+      "upstream": "4aebc0e147f78703b13dccc4899d0a07b798eeee06e96b721f881b176abfd30a"
+    },
+    ".engineering/engineering/verification_git.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "3a2d983e4b243f4dac182a2295dcd2bf351cc5ff1ab09d4186f65c154521030c"
     },
     ".engineering/engineering/verification_inputs.py": {
       "ownership": {
@@ -286,13 +292,19 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "bfc1e400d50a17f7a0c8c13478d019038e843f636ce1023d886943cac238d82e"
+      "upstream": "1a47c2869c345de3bdfd9e1caeaaf5b256fdc8383c4d6aa0a12ea2893a8c6909"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f"
+      "upstream": "743c1d3367cdb7e836e13fdeeae06d95d604ef1b0355fd1851d44e6d1d030a01"
+    },
+    ".engineering/engineering/verification_source.py": {
+      "ownership": {
+        "mode": "file"
+      },
+      "upstream": "dd04fbc5e28efb88966b58313daa65016c24d42b46a701891db1ad44eee7e198"
     },
     ".engineering/scripts/check_feature_docs.py": {
       "ownership": {
@@ -349,7 +361,7 @@
       "ownership": {
         "mode": "file"
       },
-      "upstream": "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a"
+      "upstream": "3daa4fa62a23dd36aaba7cc878c4c391bf7ea618c98ec59d1afed89aa4b502b6"
     },
     "Makefile": {
       "ownership": {

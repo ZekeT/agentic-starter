@@ -23,6 +23,8 @@ def carried_reports(
     for key in ("plan", "tools", "root", "runtime"):
         if old[key] != new[key]:
             return {}
+    if old.get("starter_source") != new.get("starter_source"):
+        return {}
     if previous["requirements"] != current["requirements"]:
         return {}
     try:

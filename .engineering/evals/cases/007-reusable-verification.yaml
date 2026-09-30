@@ -20,6 +20,8 @@ shell: |
   assert 'installation role' in guide and 'No role is ever' in guide
   # Requirements follow role and ownership, never which Make targets exist.
   assert 'never which Make targets exist' in guide and 'never PASS' in guide
+  for phrase in ('starter_source', 'full-40-character', 'No source checkout filters', 'no cached/offline', 'security reviewers'):
+      assert phrase.lower() in guide.lower(), phrase
   assert 'update/upstream route' in Path('ENGINEERING.md').read_text()
   assert 'role and path ownership' in policy and 'role and path ownership' in review
   assert 'role and path ownership' in Path('.claude/agents/verifier.md').read_text()

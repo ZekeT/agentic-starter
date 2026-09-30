@@ -231,7 +231,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1",
+      "owned_sha256": "fcff581f23a692fafb0ac2b905278681b7e764df91e682ded447dc8686be140e",
       "ownership": {
         "mode": "file"
       },
@@ -247,9 +247,10 @@
         "61c218461a668b80001ab1eaa8729928d09f986137d6dc17fa4951043680b95c",
         "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7",
         "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053",
-        "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d"
+        "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d",
+        "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1"
       ],
-      "sha256": "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1"
+      "sha256": "fcff581f23a692fafb0ac2b905278681b7e764df91e682ded447dc8686be140e"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -478,16 +479,17 @@
     },
     ".engineering/engineering/publication_git.py": {
       "executable": false,
-      "owned_sha256": "d08f3d981a7cd7fe8f4a430c43d014e86ce90283506d02638ae5a49e21be6c62",
+      "owned_sha256": "020106dce8491f8313ff2ca9f36637d03df96f105ed2fc3073cbe8e1e49bac56",
       "ownership": {
         "mode": "file"
       },
       "previous": [
         "78134d767038032ce708e5b935ab38b96897b9fc3d73c0116337e1441f1058a6",
         "c124394b4c4cc49d5be02e3588cc7197d2060723ce2970a4c61a629a5beffe87",
-        "2ffac975065fe1dbff458f8096aa9ff41ef9e3097406ac5ea4dad9a5ff543eb7"
+        "2ffac975065fe1dbff458f8096aa9ff41ef9e3097406ac5ea4dad9a5ff543eb7",
+        "d08f3d981a7cd7fe8f4a430c43d014e86ce90283506d02638ae5a49e21be6c62"
       ],
-      "sha256": "d08f3d981a7cd7fe8f4a430c43d014e86ce90283506d02638ae5a49e21be6c62"
+      "sha256": "020106dce8491f8313ff2ca9f36637d03df96f105ed2fc3073cbe8e1e49bac56"
     },
     ".engineering/engineering/publication_provider.py": {
       "executable": false,
@@ -576,7 +578,7 @@
     },
     ".engineering/engineering/verification.py": {
       "executable": false,
-      "owned_sha256": "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119",
+      "owned_sha256": "613f991b307553381620f76b4115fcdfddff561c9ac5c6a118b23f3b511fec2d",
       "ownership": {
         "mode": "file"
       },
@@ -589,22 +591,25 @@
         "ea9638f16e800d4cbee4f4dd9ed169eefce1a55b932d7d1d1e8a73069ee5f5e6",
         "912b876504bc8eb9a6db10fe7e1d9d04f345dfc529fdb301669d41f3b22eedfc",
         "3add20ce05db2f56fc64735307671845145672680c4b529f457aa9f03628c14b",
-        "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9"
+        "9d03c6c51098a031d5033e51c62a3d7769f538711eecd4d061b5fd8dc5d94cc9",
+        "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119"
       ],
-      "sha256": "6c9fe0c71a87b1f6b914cdf082762a1a3547557d21f386eb63e4805891f59119"
+      "sha256": "613f991b307553381620f76b4115fcdfddff561c9ac5c6a118b23f3b511fec2d"
     },
     ".engineering/engineering/verification_carry.py": {
       "executable": false,
-      "owned_sha256": "3bb4d3447ff5fecd5b8f8fe713090612e4c2f748b9f25d15aafe9d286b3ee6ac",
+      "owned_sha256": "e26b9906fa960b55c596401830d629c27dad4d4b4a9b6e323b4f0838449add18",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "3bb4d3447ff5fecd5b8f8fe713090612e4c2f748b9f25d15aafe9d286b3ee6ac"
+      "previous": [
+        "3bb4d3447ff5fecd5b8f8fe713090612e4c2f748b9f25d15aafe9d286b3ee6ac"
+      ],
+      "sha256": "e26b9906fa960b55c596401830d629c27dad4d4b4a9b6e323b4f0838449add18"
     },
     ".engineering/engineering/verification_checkout.py": {
       "executable": false,
-      "owned_sha256": "275ef55c45a443a4767341bd57862c91c02b068a9e18d5fc263a2f028e517e7a",
+      "owned_sha256": "4aebc0e147f78703b13dccc4899d0a07b798eeee06e96b721f881b176abfd30a",
       "ownership": {
         "mode": "file"
       },
@@ -613,9 +618,19 @@
         "9c15fda7c7b2eb303b18763ca5f0857d0d28a2af5b3c10b4f07566a479c30bce",
         "404a72cddc861623a53693762c6dbf863ead61246dd6f840edab52fd8ecd749c",
         "4513cc9b7316ace2ce5f257fcebdb8708c1f1f84f62e622bf98bcb85380520c5",
-        "13ea45e6319066018561ae1cbf257889bbfb2a3eb3675fa0abb2426fa8ed9c9b"
+        "13ea45e6319066018561ae1cbf257889bbfb2a3eb3675fa0abb2426fa8ed9c9b",
+        "275ef55c45a443a4767341bd57862c91c02b068a9e18d5fc263a2f028e517e7a"
       ],
-      "sha256": "275ef55c45a443a4767341bd57862c91c02b068a9e18d5fc263a2f028e517e7a"
+      "sha256": "4aebc0e147f78703b13dccc4899d0a07b798eeee06e96b721f881b176abfd30a"
+    },
+    ".engineering/engineering/verification_git.py": {
+      "executable": false,
+      "owned_sha256": "3a2d983e4b243f4dac182a2295dcd2bf351cc5ff1ab09d4186f65c154521030c",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "3a2d983e4b243f4dac182a2295dcd2bf351cc5ff1ab09d4186f65c154521030c"
     },
     ".engineering/engineering/verification_inputs.py": {
       "executable": false,
@@ -631,7 +646,7 @@
     },
     ".engineering/engineering/verification_requirements.py": {
       "executable": false,
-      "owned_sha256": "bfc1e400d50a17f7a0c8c13478d019038e843f636ce1023d886943cac238d82e",
+      "owned_sha256": "1a47c2869c345de3bdfd9e1caeaaf5b256fdc8383c4d6aa0a12ea2893a8c6909",
       "ownership": {
         "mode": "file"
       },
@@ -641,13 +656,14 @@
         "69e94c56e00fba2c4c199adcec7334214e915a2da81e3097fe4ea8ac2911f342",
         "fc15fdddcd8aa83133d101468ef3799490a0bb0d00a4bf8d8f5de2122c6be464",
         "f2be84a2eae0c69e91e3c35b1be2f0466feb7ff7fc2cb2c4f3ae27447dbb8d56",
-        "4b7ce18ee60d5f28cd9f99de44de90dc6819c921cd85d45f27520c3fcaee8e06"
+        "4b7ce18ee60d5f28cd9f99de44de90dc6819c921cd85d45f27520c3fcaee8e06",
+        "bfc1e400d50a17f7a0c8c13478d019038e843f636ce1023d886943cac238d82e"
       ],
-      "sha256": "bfc1e400d50a17f7a0c8c13478d019038e843f636ce1023d886943cac238d82e"
+      "sha256": "1a47c2869c345de3bdfd9e1caeaaf5b256fdc8383c4d6aa0a12ea2893a8c6909"
     },
     ".engineering/engineering/verification_snapshot.py": {
       "executable": false,
-      "owned_sha256": "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f",
+      "owned_sha256": "743c1d3367cdb7e836e13fdeeae06d95d604ef1b0355fd1851d44e6d1d030a01",
       "ownership": {
         "mode": "file"
       },
@@ -657,9 +673,19 @@
         "58a15c5a0d3543905c89fd76bd22b7c109035e392c35dc61491df09a729ed26a",
         "ab5201408f10df9d110d85d56a3c98d087b6aa83b8c9f5f8070c008fe1b0d45e",
         "cb866deb1937018a33042047a5a75ab3370e610a0f30fe613d9795bc687a2e21",
-        "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470"
+        "0f726d2c583f724b11375909f3d13aea3cb146cdfcf573ce78f6d3adbad68470",
+        "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f"
       ],
-      "sha256": "d5fd4cdee48c73212820ebcf8e96b6225c2c22a199c7d3668b7b43b50b9e137f"
+      "sha256": "743c1d3367cdb7e836e13fdeeae06d95d604ef1b0355fd1851d44e6d1d030a01"
+    },
+    ".engineering/engineering/verification_source.py": {
+      "executable": false,
+      "owned_sha256": "dd04fbc5e28efb88966b58313daa65016c24d42b46a701891db1ad44eee7e198",
+      "ownership": {
+        "mode": "file"
+      },
+      "previous": [],
+      "sha256": "dd04fbc5e28efb88966b58313daa65016c24d42b46a701891db1ad44eee7e198"
     },
     ".engineering/scripts/check_feature_docs.py": {
       "executable": false,
@@ -759,7 +785,7 @@
     },
     "ENGINEERING.md": {
       "executable": false,
-      "owned_sha256": "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a",
+      "owned_sha256": "3daa4fa62a23dd36aaba7cc878c4c391bf7ea618c98ec59d1afed89aa4b502b6",
       "ownership": {
         "mode": "file"
       },
@@ -790,9 +816,11 @@
         "abae1b7314d49b0aeef19555ce5199decf170cb4feaae3ddb340bdb3e4a79c63",
         "9ee3c850e8fafe7563ee2f932d800ee0149fc388a1ab510b67a91dba98959ad9",
         "9c3ffe965a76b12762046862723b056162d01d59665b59eedebc31eb397c6b15",
-        "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07"
+        "4e11d7ec9b3a1ca4e7c7b60229816a7c324bd50f1dd0099e81278db78a0edd07",
+        "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a",
+        "c95bd104aa0e58d1431b4f2e8895632d058195432300ac94e7c0b006e1961607"
       ],
-      "sha256": "d8ce408cfc00b0ca2220093a536a15f49d6dd9df6d141c40d131ad7fa1cf241a"
+      "sha256": "3daa4fa62a23dd36aaba7cc878c4c391bf7ea618c98ec59d1afed89aa4b502b6"
     },
     "Makefile": {
       "executable": false,

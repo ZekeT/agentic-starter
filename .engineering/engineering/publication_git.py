@@ -10,7 +10,7 @@ from typing import Any
 
 from .ownership import digest
 from .source import git
-from .verification_checkout import baseline_content
+from .verification_git import baseline_content
 from .verification_inputs import paths_from_git, source_path
 
 ORIGINAL_GIT_PARAMETERS = "ENGINEERING_PUBLISH_ORIGINAL_GIT_CONFIG_PARAMETERS"

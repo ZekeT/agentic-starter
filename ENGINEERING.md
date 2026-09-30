@@ -391,8 +391,8 @@ which targets exist: project configuration, integration sections, hooks and
 installation metadata add `make engineering-check`; maintainer source in the
 maintainer checkout, including its installation metadata, adds
 `make engineering-test` and `make engineering-evals`; a
-consumer edit or deletion of managed implementation is rejected with the
-update/upstream route. See
+consumer edit or deletion of managed implementation requires the
+update/upstream route with pinned source evidence. See
 [verification evidence](.engineering/docs/verification.md).
 
 `make check` does not mutate source, fetch dependencies, update pins, build a
@@ -600,6 +600,14 @@ adopted projects, `maintainer` for the starter's own checkout (written by `make
 manifest`). Updates keep a recorded role. An installation that predates roles
 gets `consumer` through an Engineering migration shown in the update preview.
 Verification refuses to plan without a recorded role; it never guesses one.
+
+A consumer pull request applying a starter update can be verified by adding
+`starter_source` (repository URL and full commit SHA, optionally a pinned tag) to
+its verification plan. Verification fetches that revision and compares the
+managed files, modes, removals and manifest with its distribution. The source
+identity is included in evidence; unavailable or moved sources fail closed.
+Use the sensitive review tier and both `make check` and `make engineering-check`.
+See [the pinned-source plan and trust boundary](.engineering/docs/verification.md#verify-a-consumer-starter-update).
 
 After adoption install required dependencies and run doctor and both project
 and engineering checks. Doctor validates structure during apply; missing

@@ -16,6 +16,7 @@ from .settings import (
     validate,
 )
 from .source import git
+from .verification_source import verify_update
 
 # Starter tooling directories; some files are distributed, but everything here
 # is maintainer source in the maintainer checkout (never consumer policy).
@@ -92,7 +93,9 @@ AGENT_POLICY = (
 )
 
 
-def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
+def requirements(
+    checkout: Path, plan: dict[str, Any], starter_source: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """Required checks, tier floor, per-path floor rules and reviewer roles.
 
     Rejects a plan that omits a required check or declares a tier below the
@@ -122,20 +125,30 @@ def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
             'select [navigation] provider = "graft"'
         )
     categories = classify(checkout, role, plan["paths"])
-    if edited := categories["managed implementation"]:
+    if "starter_source" in plan:
+        if starter_source is None:
+            raise ValueError("Pinned starter source evidence is missing")
+        verify_update(
+            checkout,
+            starter_source,
+            manifest_files(baseline(checkout, MANIFEST_PATH)) or {},
+        )
+    if (edited := categories["managed implementation"]) and starter_source is None:
         raise ValueError(
             f"Managed implementation edited in a consumer project: {edited}. "
             "Engineering owns these files, so verification cannot pass. Restore "
             "them; get changes through `./engineering update <project>` from a "
             "starter checkout (review the preview, then rerun with --apply), or "
-            "propose the change upstream in the starter repository. Manifest "
-            "digests are proposed content, so update output is not yet verifiable."
+            "propose the change upstream in the starter repository. For update output, "
+            "declare starter_source with the repository and pinned commit in the "
+            "verification plan. Proposed manifest digests cannot vouch for bytes."
         )
     required = [PROJECT]
     if (
         categories["project configuration"]
         or categories["managed integration"]
         or categories["installation metadata"]
+        or starter_source is not None
     ):
         required.append(HEALTH)
     # In the maintainer checkout the metadata is the ownership contract every
@@ -158,6 +171,13 @@ def requirements(checkout: Path, plan: dict[str, Any]) -> dict[str, Any]:
             f"Required checks missing: {missing} (role {role}; {'; '.join(reasons)})"
         )
     paths = tier_paths(role, plan["paths"], base_and_proposed_settings(checkout))
+    if starter_source is not None:
+        # The source is an explicit trust decision, including which repository
+        # may vouch for executable code. Always obtain independent security review.
+        for name in plan["paths"]:
+            for tier in TIERS:
+                paths[tier].pop(name, None)
+            paths["sensitive"][name] = "pinned starter update source"
     floor = max((tier for tier in TIERS if paths[tier]), key=TIERS.index)
     if TIERS.index(plan["tier"]) < TIERS.index(floor):
         reasons = [f"{name} ({rule})" for name, rule in paths[floor].items()]
@@ -211,9 +231,8 @@ def path_floor(
 def base_and_proposed_settings(checkout: Path) -> list[dict[str, tuple[str, ...]]]:
     """Base and proposed review settings; a change cannot weaken its own floor.
 
-    Starter lists are code in a module that is sensitive in the maintainer
-    checkout and managed implementation elsewhere, so base and proposed agree
-    whenever verification can pass (ADR 0002).
+    Starter lists come from the running verifier. Consumer updates to those
+    lists require a pinned source and sensitive review (ADR 0002).
     """
     return [
         review_settings(baseline(checkout, CONFIGURATION)),
@@ -273,7 +292,7 @@ def classify(checkout: Path, role: str, paths: list[str]) -> dict[str, list[str]
             category = "maintainer source"
         elif "file" in modes and read_bytes(checkout, name) != baseline(checkout, name):
             # Manifest digests are proposed content too, so they never vouch
-            # for an edit or removal; the update route is not yet verifiable.
+            # for an edit or removal; a fetched starter source must vouch for it.
             category = "managed implementation"
         elif modes == {"preserve"}:
             category = "project configuration"

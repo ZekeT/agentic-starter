@@ -62,16 +62,16 @@ cannot lower them), never which Make targets exist:
 | `.engineering/manifest.json`, `.engineering/state/install.json` | maintainer | `make engineering-check`, `make engineering-test`, `make engineering-evals` |
 | Managed implementation (`file` entries) | maintainer | `make engineering-test`, `make engineering-evals` |
 | Starter tooling under `.engineering/` `template/`, `tests/`, `evals/`, `scripts/`, `migrations/` | maintainer | `make engineering-test`, `make engineering-evals` |
-| Managed implementation edited or deleted | consumer | Rejected: INCOMPLETE, never PASS |
+| Managed implementation edited or deleted without a pinned source | consumer | Rejected: INCOMPLETE, never PASS |
+| Managed implementation matching a pinned starter update source | consumer | `make engineering-check`; sensitive review |
 | Any other path | both | nothing further |
 
-Any consumer change to a path owned as `file` in the base or proposed manifest
-is rejected, whatever the manifest digests say: the manifest is proposed content
-too, so it cannot vouch for the file. Restore the file and obtain changes with
-`engineering update <project>` from a starter checkout, or propose them
-upstream. A consumer starter-update PR is therefore not yet verifiable by this
-workflow. In the maintainer checkout the installation metadata is maintainer
-source as well: the manifest is the ownership contract every consumer receives.
+Consumer changes to `file`-owned managed bytes require the pinned-source route
+below. Proposed manifest digests cannot vouch for those bytes. Without that
+source, restore the file and obtain changes with `engineering update <project>`
+from a starter checkout, or propose them upstream. In the maintainer checkout
+installation metadata is maintainer source as well: the manifest is the
+ownership contract every consumer receives.
 Invalid project configuration fails preparation, naming the file. The recorded role is
 trusted and fails closed: a consumer declaring `maintainer` must run suites it
 lacks; a maintainer checkout proposing `consumer` keeps maintainer requirements
@@ -97,7 +97,8 @@ Snapshots include tracked context, explicit inputs, working bytes/executable bit
 merge-base, plan and tool-version outputs. The base tip is advisory recorded data,
 excluded from identity: fetching an advanced base without rebasing retains proof.
 Content-preserving commits retain proof; changed identity inputs do not. Base movement is assessed locally without
-fetching. Elapsed time and failed transport alone do not invalidate proof.
+fetching. Elapsed time alone does not invalidate proof. Plans with a starter
+source additionally require a successful source fetch on each evidence operation.
 
 Verification always prepares an isolated temporary checkout under ignored local
 state. The JSON `checkout` path identifies the tree all reviewers inspect and
@@ -138,6 +139,59 @@ Symlinks, submodules/nonregular inputs, unmerged entries and secret paths fail
 closed; the public `.env.template` is permitted. Secret/environment values are
 not fingerprinted. Disclose material external/environment gaps; this is not a
 hermetic snapshot of the machine or external services.
+
+## Verify a consumer starter update
+
+Apply the update from a starter checkout at the agreed revision, then include
+all resulting changes (including new files, metadata and removals) in `paths`.
+Add this optional field to the verification plan:
+
+```json
+"starter_source": {
+  "repository": "https://github.com/ZekeT/agentic-starter.git",
+  "commit": "<full-40-character-lowercase-commit-sha>",
+  "tag": "refs/tags/<release-tag>"
+}
+```
+
+Replace the placeholders. `commit` is mandatory; `tag` is optional and, when
+present, must still resolve to that commit. Branch names, abbreviated hashes,
+local checkout paths and `file://` URLs cannot serve as source authority.
+Supported repository URL transports are HTTPS, HTTP, SSH and Git. Choose the
+agreed starter repository and release: a pin proves byte identity, not publisher
+identity or a signed release. Independent reviewers must assess that choice.
+
+Use `tier: "sensitive"` and include `make check` and `make engineering-check`.
+Source-backed updates always require separate behavioral, maintainability and
+security reviewers. Consumer projects do not acquire maintainer test/eval
+requirements. Application changes may accompany an update and remain subject to
+normal scope, checks and review rules.
+
+Every `prepare`, `status`, `check` and `record` operation fetches the named Git
+objects into temporary storage. No source checkout filters, hooks or downloaded
+scripts are executed to validate the source. Git transport uses no global/system
+Git configuration or interactive credentials; SSH can use an existing agent and
+known host configuration. Each transport operation has a 60-second timeout.
+An unreachable source, a tag resolving to another commit, or an inconsistent
+source manifest leaves verification INCOMPLETE. There is no cached/offline
+fallback. Normal plans without `starter_source` remain offline.
+
+The source manifest is checked against the source distribution using the same
+file mappings as generation and update. Proposed manifest metadata must match
+that source (apart from the consumer's `project` settings). All proposed
+`file`-owned bytes and executable modes must match the fetched distribution;
+files owned as `file` in the base and absent from the source must be removed.
+A forged digest, dropped manifest entry, omitted changed path or missing new
+managed file cannot authorize an update. Installation baselines must agree too.
+Integration sections and project-owned configuration retain their normal review
+rules; source proof does not attest arbitrary application or integration edits.
+
+The evidence snapshot includes the repository, commit, fetched revision object
+(including an annotated tag object), source manifest and its SHA-256 fingerprint.
+The command result exposes the source identity for reviewers. A changed source
+invalidates reusable proof and prevents report carry-forward. A changed tag
+object pointing to the same commit changes snapshot identity too. Source
+working-tree edits cannot affect proof: only the fetched commit is authority.
 
 ## Review tiers
 

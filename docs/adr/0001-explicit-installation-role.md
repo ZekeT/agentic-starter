@@ -2,7 +2,7 @@
 
 Status: accepted (2026-09-27)
 
-Every installation records its installation role — maintainer checkout or consumer project — and verification requires the maintainer suites only when the role is maintainer and a changed path is maintainer source according to its manifest ownership. A missing role blocks verification; a migration records it for existing installations. Consumer projects cannot change managed implementation through verification: such a plan is rejected with the supported update route, and updates report the edit as a conflict.
+Every installation records its installation role — maintainer checkout or consumer project — and verification requires the maintainer suites only when the role is maintainer and a changed path is maintainer source according to its manifest ownership. A missing role blocks verification; a migration records it for existing installations. Consumer projects cannot independently change managed implementation through verification. Ticket 08 adds a bounded exception: update output may match a fetched, pinned starter distribution named explicitly in the verification plan. Proposed manifest digests alone remain insufficient. The recorded installation role still determines which suites apply.
 
 ## Considered options
 
