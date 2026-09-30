@@ -430,6 +430,23 @@ def test_configuration_seeds_from_maintainer_template_copy(installation, capsys)
     customize(template, warn_file_lines=260)
     shipped = (ROOT / ".engineering/template/config.toml").read_text()
     save(template, ".engineering/template/config.toml", shipped)
+    save(
+        template,
+        ".engineering/template/files.json",
+        json.dumps(
+            {
+                "schema_version": 1,
+                "managed": {CONFIG: ".engineering/template/config.toml"},
+                "application": {},
+            }
+        ),
+    )
     status, output = engineering(capsys, template, "adopt", str(target), "--apply")
     assert status == 0, output
     assert (target / CONFIG).read_text() == shipped
+    assert (
+        tomllib.loads((template / CONFIG).read_text())["maintainability"][
+            "warn_file_lines"
+        ]
+        == 260
+    )

@@ -12,7 +12,7 @@ distributed consumer file set used by both generation and update.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** implemented — verification failed; awaiting human-directed test corrections
+**Status:** implemented — authorized test corrections complete; independent re-verification pending
 
 - [x] Investigate why generation (template build) and update (distribution manifest) disagree, and which set is correct for consumer projects (greenfield payload decisions in earlier tickets may apply; external migration tooling is intentionally not shipped to consumers).
 - [x] Generation and update derive the consumer file set from one source.
@@ -75,3 +75,15 @@ This tracking-only update follows review and changes snapshot identity; the
 results above describe the named implementation snapshot. After authorized
 correction, prepare the complete scope and obtain current independent evidence.
 Human acceptance, publication and merge remain outstanding.
+
+### Authorized corrections (2026-09-30)
+
+The human authorized both test updates. The configuration-seeding fixture now
+declares its consumer configuration mapping and also verifies that adoption
+leaves the customized maintainer configuration unchanged. The migration test
+checks that both skill and contract remain present in the external checkout
+and absent from the consumer manifest. Production behavior is unchanged.
+
+Fresh verification is pending under the same change and plan. The prior failed
+run remains historical evidence; the full-check criterion stays unchecked until
+the current evidence record reports PASS.
