@@ -12,7 +12,7 @@ manifest, not the proposed one.
 
 **Blocked by:** 03 (merged), 10 (Make generation and update agree on the distributed file set).
 
-**Status:** implemented — independent verification tracked under change `v3-1c-08`; human acceptance and publication outstanding
+**Status:** blocked — security correction awaits human direction; independent evidence `v3-1c-08` is FAIL for implementation head `d3d2faa`
 
 ## Design question
 
@@ -35,7 +35,7 @@ update, and how does a stale or altered source fail closed?
 ## Acceptance ideas
 
 - [x] The plan names a pinned starter commit or tag as the update source; without it, a managed-file change stays rejected (INCOMPLETE).
-- [x] Proposed managed bytes and removals are compared against the source's manifest and distribution, never the proposed manifest.
+- [ ] Proposed managed bytes and removals are compared against the source's manifest and distribution, never the proposed manifest. — Security review found an inherited Git-environment bypass; see below.
 - [x] A forged proposed manifest digest or a dropped entry is still rejected.
 - [x] An update PR produced by `./engineering update --apply` from that source prepares a valid plan requiring `make check` and `make engineering-check`.
 - [x] Documentation replaces "consumer starter-update PRs are not yet verifiable" with the supported route.
@@ -93,3 +93,36 @@ Usage and the trust boundary are documented in
 [the verification guide](../../../.engineering/docs/verification.md#verify-a-consumer-starter-update).
 The approved source choice is an explicit review decision; this does not add
 release signing. Ticket 09's broader verification hardening remains separate.
+
+### Independent review and correction handoff (2026-09-30)
+
+Implementation head `d3d2faa`, snapshot
+`0559436d87cb34e043ff51390bbffd15881086cc4580387cd46b4d242fe2f085`:
+maintainability PASS, security FAIL, behavioral CONCERNS. The recorded overall
+result is FAIL. Reports are stored under `.engineering/state/verification/` as
+`v3-1c-08-maintainability-report.json`, `v3-1c-08-security-review.json` and
+`v3-1c-08-behavioral-review.json`.
+
+**Blocking security finding (P1):** fetching isolates Git's environment, but
+`verification_source.py` then calls `verification_git.baseline_content`, whose
+Git readers inherit `GIT_DIR` and replacement refs. The reviewer reproduced
+substitution of local bytes while the evidence still named the genuine fetched
+commit. This violates the source-authority requirement. Recommended correction:
+use the isolated environment for every fetched-source Git read (including batch
+`cat-file`), explicitly disable replacement objects, and add an integration
+regression. Human direction was requested under REVIEW.md before editing.
+
+The authoritative run passed `make check`, `make engineering-check`, and
+13 static evals (five optional prompt cases skipped). `make engineering-test`
+recorded 513 passed and 27 fixture setup errors in 854.40 seconds because the
+sandbox denied localhost socket binding. The independent verifier reran those
+27 update cases with the required execution permission; all passed in 93.97
+seconds. That supplemental result does not replace the recorded failed gate.
+After correction, run full authoritative verification with localhost fixture
+access and obtain current independent reports.
+
+This tracking update follows review and changes snapshot identity. The reports
+above remain evidence for `d3d2faa`, not certification of this later tracking
+snapshot. Preparing the correction must preserve those reports as historical
+evidence; never relabel them. Source code is unchanged since the reviewed head.
+Human acceptance, publication and merge remain outstanding.

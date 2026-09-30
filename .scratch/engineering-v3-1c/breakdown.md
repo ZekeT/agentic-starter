@@ -14,7 +14,7 @@ D, E and F remain in [intent](intent.md).
 | [04 Make Graft an optional capability in dependencies and doctor](issues/04-optional-graft-dependency.md) | None | completed — merged in [PR #35](https://github.com/ZekeT/agentic-starter/pull/35) |
 | [05 Enable and disable navigation](issues/05-toggle-navigation.md) | 02, 04 | completed — merged in [PR #37](https://github.com/ZekeT/agentic-starter/pull/37) |
 | [06 Upgrade existing navigation and document prerequisites](issues/06-navigation-upgrade-and-prerequisites.md) | 05 | completed — merged in [PR #42](https://github.com/ZekeT/agentic-starter/pull/42) (local merge commit 68490a0) |
-| [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | implemented — independent evidence `v3-1c-08`; human acceptance/publication outstanding |
+| [08 Verify consumer starter-update output against its source](issues/08-verified-starter-update-evidence.md) | 03, 10 | blocked — security correction awaits human direction; `v3-1c-08` review FAIL at `d3d2faa` |
 | [09 Harden verification requirement edge cases](issues/09-verification-hardening.md) | 03 | ready-for-agent |
 | [10 Make generation and update agree on the distributed file set](issues/10-distributed-file-set-agreement.md) | None | completed — merged in [PR #43](https://github.com/ZekeT/agentic-starter/pull/43) (observed merge commit `86c3df2`) |
 | [11 Declare a review tier checked against a starter-rule floor](issues/11-declared-review-tier-and-floor.md) | None | completed — merged in [PR #39](https://github.com/ZekeT/agentic-starter/pull/39) |
