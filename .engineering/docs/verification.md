@@ -169,8 +169,10 @@ normal scope, checks and review rules.
 
 Every `prepare`, `status`, `check` and `record` operation fetches the named Git
 objects into temporary storage. No source checkout filters, hooks or downloaded
-scripts are executed to validate the source. Git transport uses no global/system
-Git configuration or interactive credentials; SSH can use an existing agent and
+scripts are executed to validate the source. Fetching and all Git object reads
+use the same isolated environment: inherited `GIT_*` overrides and global/system
+Git configuration are ignored, and replacement objects are disabled.
+Git transport uses no interactive credentials; SSH can use an existing agent and
 known host configuration. Each transport operation has a 60-second timeout.
 An unreachable source, a tag resolving to another commit, or an inconsistent
 source manifest leaves verification INCOMPLETE. There is no cached/offline

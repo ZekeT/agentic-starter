@@ -231,7 +231,7 @@
     },
     ".engineering/docs/verification.md": {
       "executable": false,
-      "owned_sha256": "fcff581f23a692fafb0ac2b905278681b7e764df91e682ded447dc8686be140e",
+      "owned_sha256": "2cc73e971083c4176955ec8745cb03b2f0ffa38d6a699d437779abc823b1430c",
       "ownership": {
         "mode": "file"
       },
@@ -248,9 +248,10 @@
         "58c857e88a526d2b6efc63623258d6bc6a1420d92ea226f41e0e7c3401fb11b7",
         "ed001ce25bd140ab8204cf4779c100d0861e56f947581486259fd1d8f620a053",
         "1355303211854318cee8fb8f4fee08d64623fc0eca742592c7023ac7b483ea8d",
-        "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1"
+        "c84a7daecae82939f9916118be97a71ef59831f8f13fc4c5badfcc3abb1d09e1",
+        "fcff581f23a692fafb0ac2b905278681b7e764df91e682ded447dc8686be140e"
       ],
-      "sha256": "fcff581f23a692fafb0ac2b905278681b7e764df91e682ded447dc8686be140e"
+      "sha256": "2cc73e971083c4176955ec8745cb03b2f0ffa38d6a699d437779abc823b1430c"
     },
     ".engineering/engineering/__init__.py": {
       "executable": false,
@@ -625,12 +626,14 @@
     },
     ".engineering/engineering/verification_git.py": {
       "executable": false,
-      "owned_sha256": "3a2d983e4b243f4dac182a2295dcd2bf351cc5ff1ab09d4186f65c154521030c",
+      "owned_sha256": "6efaa7d7dbcc7a5c22867f6cd3374486c0f850414bdf0acd685fdb271437e709",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "3a2d983e4b243f4dac182a2295dcd2bf351cc5ff1ab09d4186f65c154521030c"
+      "previous": [
+        "3a2d983e4b243f4dac182a2295dcd2bf351cc5ff1ab09d4186f65c154521030c"
+      ],
+      "sha256": "6efaa7d7dbcc7a5c22867f6cd3374486c0f850414bdf0acd685fdb271437e709"
     },
     ".engineering/engineering/verification_inputs.py": {
       "executable": false,
@@ -680,12 +683,14 @@
     },
     ".engineering/engineering/verification_source.py": {
       "executable": false,
-      "owned_sha256": "dd04fbc5e28efb88966b58313daa65016c24d42b46a701891db1ad44eee7e198",
+      "owned_sha256": "6d05f392ff849f33253cb81c385bf2260a7f59f8e7c224c721767bdcb50a4621",
       "ownership": {
         "mode": "file"
       },
-      "previous": [],
-      "sha256": "dd04fbc5e28efb88966b58313daa65016c24d42b46a701891db1ad44eee7e198"
+      "previous": [
+        "dd04fbc5e28efb88966b58313daa65016c24d42b46a701891db1ad44eee7e198"
+      ],
+      "sha256": "6d05f392ff849f33253cb81c385bf2260a7f59f8e7c224c721767bdcb50a4621"
     },
     ".engineering/scripts/check_feature_docs.py": {
       "executable": false,

@@ -298,3 +298,33 @@ def test_source_plan_requires_repository_and_immutable_pin(update, source_spec):
     plan["starter_source"] = source_spec
     result = prepare(update, status=1)
     assert result["status"] == "INCOMPLETE" and "starter_source" in result["error"]
+
+
+@pytest.mark.parametrize("replacement_kind", ["commit", "blob"])
+def test_inherited_git_directory_cannot_substitute_a_local_distribution(
+    update, monkeypatch, replacement_kind
+):
+    consumer, source, plan = update
+    # A local replacement is self-consistent, but the served tag still names the
+    # genuine source. Only the latter may authorize this consumer's update.
+    git(consumer, "add", ".")
+    git(consumer, "commit", "--quiet", "-m", "genuine update")
+    managed = source / MANAGED
+    managed.write_bytes(managed.read_bytes() + b"\n# Local substitute\n")
+    refresh(source)
+    git(source, "add", ".")
+    git(source, "commit", "--quiet", "-m", "local substitute distribution")
+    replacement = git(source, "rev-parse", "HEAD")
+    run(sys.executable, "engineering", "update", str(consumer), "--apply", cwd=source)
+    git(consumer, "fetch", "--quiet", str(source), "main")
+    pin = plan["starter_source"]["commit"]
+    if replacement_kind == "commit":
+        git(consumer, "replace", pin, replacement)
+    else:
+        for name in (MANAGED, MANIFEST):
+            original_blob = git(source, "rev-parse", f"{pin}:{name}")
+            replacement_blob = git(source, "rev-parse", f"{replacement}:{name}")
+            git(consumer, "replace", original_blob, replacement_blob)
+    monkeypatch.setenv("GIT_DIR", str(consumer / ".git"))
+    result = prepare(update, status=1)
+    assert "Proposed manifest differs from pinned starter source" in result["error"]

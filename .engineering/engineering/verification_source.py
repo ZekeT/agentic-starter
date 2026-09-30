@@ -15,7 +15,7 @@ from .distribution import payload_path
 from .installation import MANIFEST_PATH, check_state
 from .ownership import digest, json_object, read_bytes
 from .source import git
-from .verification_git import baseline_content
+from .verification_git import baseline_content, git_environment
 from .verification_inputs import files, source_path
 
 
@@ -57,22 +57,13 @@ def validate_source(value: Any) -> None:
 
 def fetch_git(root: Path, *args: str) -> bytes:
     """Fetch without custom transports, credential prompts, hooks or Git aliases."""
-    environment = {
-        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
-    }
-    environment.update(
-        GIT_CONFIG_NOSYSTEM="1",
-        GIT_CONFIG_GLOBAL=os.devnull,
-        GIT_TERMINAL_PROMPT="0",
-        GIT_SSH_COMMAND="ssh -oBatchMode=yes -oStrictHostKeyChecking=yes",
-    )
     options = ["-c", "protocol.allow=never", "-c", f"core.hooksPath={os.devnull}"]
     for protocol in ("https", "http", "ssh", "git"):
         options += ["-c", f"protocol.{protocol}.allow=always"]
     try:
         result = subprocess.run(
             ["git", *options, "-C", str(root), *args],
-            env=environment,
+            env=git_environment(),
             capture_output=True,
             stdin=subprocess.DEVNULL,
             timeout=60,

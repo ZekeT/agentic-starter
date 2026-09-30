@@ -12,7 +12,7 @@ manifest, not the proposed one.
 
 **Blocked by:** 03 (merged), 10 (Make generation and update agree on the distributed file set).
 
-**Status:** blocked — security correction awaits human direction; independent evidence `v3-1c-08` is FAIL for implementation head `d3d2faa`
+**Status:** implemented with authorized security correction — current independent evidence is tracked under `v3-1c-08`; human acceptance/publication outstanding
 
 ## Design question
 
@@ -35,7 +35,7 @@ update, and how does a stale or altered source fail closed?
 ## Acceptance ideas
 
 - [x] The plan names a pinned starter commit or tag as the update source; without it, a managed-file change stays rejected (INCOMPLETE).
-- [ ] Proposed managed bytes and removals are compared against the source's manifest and distribution, never the proposed manifest. — Security review found an inherited Git-environment bypass; see below.
+- [x] Proposed managed bytes and removals are compared against the source's manifest and distribution, never the proposed manifest. — Includes the authorized Git-environment isolation correction described below.
 - [x] A forged proposed manifest digest or a dropped entry is still rejected.
 - [x] An update PR produced by `./engineering update --apply` from that source prepares a valid plan requiring `make check` and `make engineering-check`.
 - [x] Documentation replaces "consumer starter-update PRs are not yet verifiable" with the supported route.
@@ -126,3 +126,28 @@ above remain evidence for `d3d2faa`, not certification of this later tracking
 snapshot. Preparing the correction must preserve those reports as historical
 evidence; never relabel them. Source code is unchanged since the reviewed head.
 Human acceptance, publication and merge remain outstanding.
+
+### Authorized security correction (2026-09-30)
+
+The human authorized the recommended fix and fresh verification. Fetching, tree
+reads and batch blob reads now share the isolated Git environment. Inherited
+`GIT_*` overrides and global/system Git configuration are excluded, and
+`GIT_NO_REPLACE_OBJECTS=1` explicitly disables replacement interpretation. The
+shared reader also applies those safeguards to verification/publication baseline
+objects. The fetch transport restrictions remain in force.
+
+The new command-level regression first reproduced successful preparation of a
+substituted local distribution while evidence named the genuine remote pin.
+The correction rejects that proposal against the actual pinned source manifest.
+Cases cover both commit replacement and individual blob replacement with an
+inherited `GIT_DIR`. This follows the already agreed command-level test seams.
+
+The current complete scope is prepared under the same plan/change. Independent
+reviewers compare the correction against the prior findings; current reports
+and checks live in the evidence record and historical reports remain preserved.
+The behavioral verifier must run the full gate with permission for localhost
+Git fixtures. The earlier failed sandbox run is not reused as a passing gate.
+Consult `./engineering verify status --change v3-1c-08` for the current outcome.
+This tracking entry is included before verification so reporting its result does
+not require a later source edit. Human acceptance, publication and merge remain
+separate and outstanding.
