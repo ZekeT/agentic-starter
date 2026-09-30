@@ -12,7 +12,7 @@ update; generated and adopted projects start with identical defaults.
 
 **Blocked by:** 11 (Declare a review tier checked against a starter-rule floor).
 
-**Status:** published — [PR #40](https://github.com/ZekeT/agentic-starter/pull/40); awaiting merge
+**Status:** completed — merged in [PR #40](https://github.com/ZekeT/agentic-starter/pull/40)
 
 - [x] `[review]` with `documentation` and `sensitive` glob lists is read from project configuration; invalid settings fail planning visibly, consistent with existing configuration validation.
 - [x] A path matching `documentation` and no starter or project sensitive/exclusion rule floors at `documentation`; domain context and ADRs are eligible, agent-policy Markdown is not.
@@ -66,3 +66,7 @@ update; generated and adopted projects start with identical defaults.
   `.pre-commit-config.yaml`, `.envrc`, `CODEOWNERS` and installation metadata
   (consider starter-sensitive additions); base-settings reading ignores unknown
   `[review]` keys; `test_review_tiers.py` is at 374 code lines (split before 500).
+
+### Status audit (2026-09-30)
+
+Merge `21ec8b6` is present in `origin/main`. Earlier pending-merge notes are historical. Ticket 13 subsequently narrowed the documentation default to `docs/**/*.md` with human approval.

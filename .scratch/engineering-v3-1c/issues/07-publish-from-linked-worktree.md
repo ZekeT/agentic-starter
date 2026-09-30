@@ -14,7 +14,7 @@ they name.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** implemented — awaiting independent verification
+**Status:** implemented and merged — [PR #32](https://github.com/ZekeT/agentic-starter/pull/32); original independent-review evidence not established
 
 - [x] Nested Git commands started from the pre-push guard (and any other Engineering code path running inside Git hooks) ignore hook-provided repository environment such as `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_COMMON_DIR` and `GIT_PREFIX`, while the caller's original Git configuration handling is preserved.
 - [x] Publishing from a linked worktree never moves the publishing branch or any other ref, and pushes the accepted commit.
@@ -37,3 +37,7 @@ they name.
   observed "Committed content differs" stop and passes after it. All 44
   publication integration tests pass; `make check`, `make engineering-evals` (11/11)
   and `make engineering-test` (318 passed) pass locally. Remaining: independent review and human acceptance.
+
+### Status audit (2026-09-30)
+
+Merged at `28dd92c`, present in `origin/main`. The guard and linked-worktree regression remain implemented. This audit does not establish the original independent review, so its final gate checkbox remains unchecked.

@@ -12,7 +12,7 @@ manifest, not the proposed one.
 
 **Blocked by:** 03 (merged), 10 (Make generation and update agree on the distributed file set).
 
-**Status:** implemented with authorized security correction — current independent evidence is tracked under `v3-1c-08`; human acceptance/publication outstanding
+**Status:** completed — merged in [PR #44](https://github.com/ZekeT/agentic-starter/pull/44)
 
 ## Design question
 
@@ -151,3 +151,20 @@ Consult `./engineering verify status --change v3-1c-08` for the current outcome.
 This tracking entry is included before verification so reporting its result does
 not require a later source edit. Human acceptance, publication and merge remain
 separate and outstanding.
+
+### Publication (2026-09-30)
+
+The human accepted the presented scope with `/ship`. Publication preflight reused
+PASS evidence for snapshot `973d288fb6e3c4afd0647855d0b102cff29dafd3559828795994752a69b2b50c`
+and confirmed the remote comparison base. Published commit `fff610e` in
+[PR #44](https://github.com/ZekeT/agentic-starter/pull/44). All four authoritative gates and
+three independent reviews passed (542 tests; 13 static evals; five optional
+prompt evals skipped). Merge was outstanding at that handoff.
+
+This delivery entry was recorded after publication, outside PR #44's verified
+snapshot. The tracking updates are reviewed separately before publication; they
+do not change the verified implementation content.
+
+### Status audit (2026-09-30)
+
+GitHub confirms PR #44 merged on 2026-09-30 at `43a0b85`, present in `origin/main`. Earlier pending-merge notes describe the publication handoff; merge is now complete.
