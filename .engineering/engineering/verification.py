@@ -143,6 +143,11 @@ def outcome(data: dict[str, Any]) -> dict[str, Any]:
         "snapshot": data["snapshot"],
         "checkout": data.get("checkout"),
         "previous_evidence": data.get("previous_evidence"),
+        "starter_source": {
+            key: value
+            for key, value in data["inputs"].get("starter_source", {}).items()
+            if key != "manifest"
+        },
         "tier": plan["tier"],
         "tier_reason": plan["tier_reason"],
         "floor": data["requirements"]["floor"],
@@ -271,7 +276,9 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         else:
             reused = safe_path(root, data["checkout"])
             validate_checkout(reused, inputs)
-            data["requirements"] = requirements(reused, inputs["plan"])
+            data["requirements"] = requirements(
+                reused, inputs["plan"], inputs.get("starter_source")
+            )
         write_files(root, {name: encoded(data)})
     else:
         if not path.exists():
@@ -299,7 +306,9 @@ def operate(root: Path, args: argparse.Namespace) -> int:
         checkout = safe_path(root, data.get("checkout", ""))
         validate_checkout(checkout, inputs)
         # Report the floor current rules give this scope, not the prepared one.
-        data["requirements"] = requirements(checkout, data["inputs"]["plan"])
+        data["requirements"] = requirements(
+            checkout, data["inputs"]["plan"], inputs.get("starter_source")
+        )
         if args.operation == "check":
             if args.snapshot != token:
                 raise ValueError("STALE check request: obtain the current snapshot")

@@ -12,6 +12,7 @@ from .ownership import digest, encoded, json_object
 from .verification_checkout import proposed_files, temporary_checkout
 from .verification_inputs import STATE, paths_from_git, source_path, strings
 from .verification_requirements import TIERS
+from .verification_source import fetch_source, validate_source
 
 
 def read_plan(root: Path, name: str) -> dict[str, Any]:
@@ -39,8 +40,10 @@ def validate_plan(root: Path, plan: dict[str, Any]) -> None:
             "tier_reason: declare the review tier (documentation, ordinary or "
             "sensitive) and why"
         )
-    if set(plan) != fields:
-        raise ValueError(f"Plan requires exactly: {sorted(fields)}")
+    if set(plan) - {"starter_source"} != fields:
+        raise ValueError(f"Plan requires {sorted(fields)} and optional starter_source")
+    if "starter_source" in plan:
+        validate_source(plan["starter_source"])
     for field in ("base", "requirement", "tier_reason"):
         if not isinstance(plan[field], str) or not plan[field].strip():
             raise ValueError(f"{field}: nonempty text required")
@@ -95,7 +98,10 @@ def repository_inputs(root: Path, plan: dict[str, Any]) -> dict[str, Any]:
         env={**os.environ, "ENGINEERING_BASE_BRANCH": plan["base"]},
         check=True,
     ).stdout.strip()
-    return {"base": baseline, "base_tip": resolved, "files": proposed}
+    result = {"base": baseline, "base_tip": resolved, "files": proposed}
+    if "starter_source" in plan:
+        result["starter_source"] = fetch_source(plan["starter_source"])
+    return result
 
 
 def run_command(root: Path, command: list[str], *, timeout: int) -> dict[str, Any]:

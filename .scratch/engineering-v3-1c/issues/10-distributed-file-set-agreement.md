@@ -12,7 +12,7 @@ distributed consumer file set used by both generation and update.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** implemented — independent verification recorded; awaiting human review
+**Status:** completed — merged in [PR #43](https://github.com/ZekeT/agentic-starter/pull/43), observed at `86c3df2`
 
 - [x] Investigate why generation (template build) and update (distribution manifest) disagree, and which set is correct for consumer projects (greenfield payload decisions in earlier tickets may apply; external migration tooling is intentionally not shipped to consumers).
 - [x] Generation and update derive the consumer file set from one source.
@@ -102,3 +102,22 @@ tracking update is included in the prepared scope for re-verification; use
 `./engineering verify status --change v3-1c-10` for current snapshot and proof.
 No further tracker edits are needed to report the evidence tool's outcome.
 Human acceptance, publication and merge remain separate and outstanding.
+
+### Publication (2026-09-30)
+
+The human accepted the reviewed scope with `/ship`. Published
+[PR #43](https://github.com/ZekeT/agentic-starter/pull/43) from head `b2a8676`.
+Published verification snapshot
+`fdf5693510d0dbd2c2bc3a97092774870f6f38b605675530af9bf5adfe7ea4c5`
+has PASS for all four required commands and all three independent reviews:
+513 tests passed in 774.40s; 13 static evals passed and five optional prompt
+cases were skipped. Shipping reused this proof without repeating checks.
+
+This delivery update and the matching breakdown status are local bookkeeping
+outside the published verified head. They change the local snapshot and require
+evidence reassessment before any later publication. Merge remains pending.
+
+### Merge observed (2026-09-30)
+
+Fetched `origin/main` contains merge commit `86c3df2` for PR #43. Ticket 10
+is complete and ticket 08’s prerequisite is satisfied.

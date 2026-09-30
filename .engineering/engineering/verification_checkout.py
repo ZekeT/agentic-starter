@@ -1,6 +1,5 @@
 """Materialize proposed content without touching the user's index or working tree."""
 
-import subprocess
 import tempfile
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -9,6 +8,7 @@ from typing import Any
 
 from .ownership import digest
 from .source import git
+from .verification_git import baseline_content
 from .verification_inputs import (
     STATE,
     files,
@@ -16,42 +16,6 @@ from .verification_inputs import (
     source_path,
 )
 from .verification_requirements import requirements
-
-
-def baseline_files(root: Path, base: str) -> dict[str, tuple[str, str]]:
-    """Read regular baseline blobs; never check out links or run Git filters."""
-    entries = {}
-    for entry in git(root, "ls-tree", "-r", "-z", base).split(b"\0"):
-        if not entry:
-            continue
-        metadata, raw_name = entry.split(b"\t", 1)
-        mode, kind, oid = metadata.decode().split()
-        name = raw_name.decode(errors="surrogateescape")
-        source_path(root, name)
-        if mode not in ("100644", "100755") or kind != "blob":
-            raise ValueError(f"Unsupported baseline verification input: {name}")
-        if name == STATE or name.startswith(STATE + "/"):
-            raise ValueError("Verification records must not be tracked")
-        entries[name] = (mode, oid)
-    return entries
-
-
-def baseline_content(root: Path, base: str) -> Iterator[tuple[str, str, bytes]]:
-    """Read validated blobs in one plumbing call, without filters or archive rules."""
-    entries = baseline_files(root, base)
-    result = subprocess.run(
-        ["git", "-C", str(root), "cat-file", "--batch"],
-        input="".join(oid + "\n" for _, oid in entries.values()).encode(),
-        capture_output=True,
-        check=True,
-    )
-    offset = 0
-    for name, (mode, _) in entries.items():
-        end = result.stdout.index(b"\n", offset)
-        size = int(result.stdout[offset:end].split()[-1])
-        offset = end + 1
-        yield name, mode, result.stdout[offset : offset + size]
-        offset += size + 1
 
 
 def proposed_files(root: Path, base: str, plan: dict[str, Any]) -> dict[str, Any]:
@@ -112,7 +76,7 @@ def materialize(
     # and base-plus-proposed ownership (ADR 0001), never a default or an
     # out-of-scope working edit; checked on every reuse, so status and
     # publication recompute the tier floor for the current scope.
-    return requirements(destination, plan)
+    return requirements(destination, plan, inputs.get("starter_source"))
 
 
 def validate_checkout(checkout: Path, inputs: dict[str, Any]) -> None:
