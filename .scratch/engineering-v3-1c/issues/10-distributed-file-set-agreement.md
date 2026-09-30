@@ -12,13 +12,13 @@ distributed consumer file set used by both generation and update.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** implemented — authorized test corrections complete; independent re-verification pending
+**Status:** implemented — independent verification recorded; awaiting human review
 
 - [x] Investigate why generation (template build) and update (distribution manifest) disagree, and which set is correct for consumer projects (greenfield payload decisions in earlier tickets may apply; external migration tooling is intentionally not shipped to consumers).
 - [x] Generation and update derive the consumer file set from one source.
 - [x] A command-level test generates a project, then updates it from the same starter checkout, and asserts the update preview has no ADD/MERGE/REMOVE actions.
 - [x] Existing consumer projects that already received extra files are handled explicitly (kept, or removed with preview), never silently.
-- [ ] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
+- [x] `make check`, `make engineering-test` and `make engineering-evals` pass with independent review.
 
 ## Comments
 
@@ -43,8 +43,8 @@ tests. Typechecking and the maintainability gate passed (existing size warnings)
 Independent verification: change `v3-1c-10`, plan
 `.engineering/state/verification/v3-1c-10-plan.json`. Run
 `./engineering verify status --change v3-1c-10` for current checks and independent
-behavioral, maintainability and security reports. The unchecked full-check
-criterion above remains pending until the record establishes complete PASS.
+behavioral, maintainability and security reports. Current evidence is kept in
+that record; the dated entries below preserve historical verification outcomes.
 Human acceptance and publication are separate; neither is authorized by this
 implementation request.
 
@@ -87,3 +87,18 @@ and absent from the consumer manifest. Production behavior is unchanged.
 Fresh verification is pending under the same change and plan. The prior failed
 run remains historical evidence; the full-check criterion stays unchecked until
 the current evidence record reports PASS.
+
+### Correction verification and handoff (2026-09-30)
+
+Correction head `572db89`, snapshot
+`7d9e59afb93cafd363149b142dbdd3f7b662a999c799c80757e6392d17925a59`:
+all four authoritative checks passed, including 513 tests in 790.87s and
+13 static evals (five optional prompt cases skipped). Independent behavioral,
+maintainability and security reviews passed. Both historical findings are
+resolved; production code was unchanged by the corrections.
+
+The full-check criterion is satisfied by that independent run. This final
+tracking update is included in the prepared scope for re-verification; use
+`./engineering verify status --change v3-1c-10` for current snapshot and proof.
+No further tracker edits are needed to report the evidence tool's outcome.
+Human acceptance, publication and merge remain separate and outstanding.
